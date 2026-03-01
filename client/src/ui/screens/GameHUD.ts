@@ -11,7 +11,7 @@ export class GameHUD {
   private crosshairEl!: HTMLElement;
   private vignetteEl!: HTMLElement;
   private flashEl!: HTMLElement;
-  private killfeedEntries: Array<{ el: HTMLElement; time: number }> = [];
+  private killfeedEntries: { el: HTMLElement; time: number }[] = [];
 
   constructor() {
     this.element = document.createElement("div");

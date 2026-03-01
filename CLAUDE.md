@@ -27,7 +27,19 @@ npm run test:coverage        # Run tests with coverage report
 
 Tests live in `server/tests/` and use Vitest. Helper factories are in `server/tests/helpers/factories.ts`.
 
+```bash
+npm run lint                 # ESLint strict-type-checked (errors block CI)
+npm run lint:fix             # Auto-fix lint issues
+```
+
 **Important**: After any change to `shared/`, you must rebuild it (`npm run build:shared`) before the server picks up the changes. The Vite client resolves shared source directly via path alias so client hot-reload works without rebuilding shared.
+
+## CI/CD & Deployment
+
+- **CI**: GitHub Actions (`.github/workflows/ci.yml`) runs lint, test, and build on every push/PR to `main`.
+- **Client**: Deployed to **Vercel** (static site). Set Root Directory to `client` in Vercel Dashboard. Set env var `VITE_SERVER_URL` to the Render server WSS URL.
+- **Server**: Deployed to **Render.com** (web service with WebSocket). Config in `render.yaml`. Free tier sleeps after 15 min idle.
+- **Env var**: `VITE_SERVER_URL` controls the WebSocket server URL at build time (e.g. `wss://catchandrun-server.onrender.com`). Falls back to `ws://localhost:2567` in dev.
 
 ## Architecture
 

@@ -1,6 +1,6 @@
 export class UIManager {
   private root: HTMLElement;
-  private screens: Map<string, HTMLElement> = new Map();
+  private screens = new Map<string, HTMLElement>();
   private currentScreen: string = "";
 
   constructor() {

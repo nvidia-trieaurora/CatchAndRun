@@ -18,12 +18,12 @@ export class AudioSystem {
   playSound(name: string) {
     if (!this.enabled) return;
     try {
-      if (this.ctx.state === "suspended") this.ctx.resume();
+      if (this.ctx.state === "suspended") void this.ctx.resume();
       const fn = SOUND_GENERATORS[name];
       if (fn) {
         fn(this.ctx);
       }
-    } catch {}
+    } catch { /* audio playback is best-effort */ }
   }
 
   playSpatialSound(name: string, _position: THREE.Vector3) {

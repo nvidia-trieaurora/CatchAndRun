@@ -1,7 +1,7 @@
 import { PlayerRole } from "@catch-and-run/shared";
 
 export class RoleAssigner {
-  private previousHunters: Set<string> = new Set();
+  private previousHunters = new Set<string>();
 
   assignRoles(
     playerIds: string[],

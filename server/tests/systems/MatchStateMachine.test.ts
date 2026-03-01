@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { MatchStateMachine } from "../../src/systems/MatchStateMachine";
 import { createMockRoom, addPlayerToRoom, type MockGameRoom } from "../helpers/factories";
 import {

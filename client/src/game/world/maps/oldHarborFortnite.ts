@@ -9,7 +9,7 @@ interface MapBuildResult {
   gateMesh: THREE.Mesh | null;
 }
 
-export function buildOldHarborFortniteMap(scene: THREE.Scene, mapData: MapData): MapBuildResult {
+export function buildOldHarborFortniteMap(scene: THREE.Scene, _mapData: MapData): MapBuildResult {
   const colliders: THREE.Box3[] = [];
   const B = new MapBoxHelper(scene, colliders);
 

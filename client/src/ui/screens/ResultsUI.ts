@@ -35,7 +35,7 @@ export class ResultsUI {
 
   showResults(
     title: string,
-    scores: Array<{ nickname: string; score: number; kills: number }>
+    scores: { nickname: string; score: number; kills: number }[]
   ) {
     const h2 = this.containerEl.querySelector("h2")!;
     h2.textContent = title;

@@ -65,7 +65,7 @@ export class GameRoom extends Room<GameState> {
     this.maxClients = state.config.maxPlayers;
 
     if (!state.isPrivate) {
-      this.setMetadata({
+      void this.setMetadata({
         roomName: state.roomName,
         roomCode: state.roomCode,
         mapId: state.config.mapId,
@@ -169,7 +169,7 @@ export class GameRoom extends Room<GameState> {
     this.broadcastRoomState();
   }
 
-  onLeave(client: Client, consented: boolean) {
+  onLeave(client: Client, _consented: boolean) {
     const player = this.state.players.get(client.sessionId);
     if (!player) return;
 
@@ -196,7 +196,7 @@ export class GameRoom extends Room<GameState> {
     }
 
     if (this.state.players.size === 0) {
-      this.disconnect();
+      void this.disconnect();
     }
   }
 
@@ -264,7 +264,7 @@ export class GameRoom extends Room<GameState> {
 
   private handlePlayerInput(client: Client, data: PlayerInputData) {
     const player = this.state.players.get(client.sessionId);
-    if (!player || !player.isAlive) return;
+    if (!player?.isAlive) return;
 
     // During HIDING, hunters can move but only inside the jail (-49 to -35 on X, -7 to 7 on Z)
     if (this.state.phase === GamePhase.HIDING && player.role === PlayerRole.HUNTER) {
@@ -290,7 +290,7 @@ export class GameRoom extends Room<GameState> {
 
   private handleShoot(client: Client, data: ShootData) {
     const player = this.state.players.get(client.sessionId);
-    if (!player || !player.isAlive) return;
+    if (!player?.isAlive) return;
     if (player.role !== PlayerRole.HUNTER) return;
     if (this.state.phase !== GamePhase.ACTIVE) return;
 
@@ -356,14 +356,14 @@ export class GameRoom extends Room<GameState> {
 
   private handleReload(client: Client) {
     const player = this.state.players.get(client.sessionId);
-    if (!player || !player.isAlive) return;
+    if (!player?.isAlive) return;
     if (player.role !== PlayerRole.HUNTER) return;
     player.ammo = WEAPON_MAX_AMMO;
   }
 
   private handleTransformRequest(client: Client, data: TransformRequestData) {
     const player = this.state.players.get(client.sessionId);
-    if (!player || !player.isAlive) return;
+    if (!player?.isAlive) return;
     if (player.role !== PlayerRole.PROP) return;
     if (this.state.phase !== GamePhase.ACTIVE && this.state.phase !== GamePhase.HIDING) return;
 
@@ -378,16 +378,16 @@ export class GameRoom extends Room<GameState> {
 
   private handleLockPose(client: Client) {
     const player = this.state.players.get(client.sessionId);
-    if (!player || !player.isAlive) return;
+    if (!player?.isAlive) return;
     if (player.role !== PlayerRole.PROP) return;
     player.isLocked = !player.isLocked;
   }
 
-  private lastAbility2Time: Map<string, number> = new Map();
+  private lastAbility2Time = new Map<string, number>();
 
   private handleUseAbility(client: Client) {
     const player = this.state.players.get(client.sessionId);
-    if (!player || !player.isAlive) return;
+    if (!player?.isAlive) return;
     if (this.state.phase !== GamePhase.ACTIVE) return;
 
     const now = Date.now();
@@ -421,7 +421,7 @@ export class GameRoom extends Room<GameState> {
 
   private handleThrowGrenade(client: Client, data: ThrowGrenadeData) {
     const player = this.state.players.get(client.sessionId);
-    if (!player || !player.isAlive) return;
+    if (!player?.isAlive) return;
     if (player.role !== PlayerRole.HUNTER) return;
     if (this.state.phase !== GamePhase.ACTIVE) return;
 
@@ -493,7 +493,7 @@ export class GameRoom extends Room<GameState> {
 
   private handleScanArea(client: Client) {
     const player = this.state.players.get(client.sessionId);
-    if (!player || !player.isAlive) return;
+    if (!player?.isAlive) return;
     if (player.role !== PlayerRole.HUNTER) return;
     if (this.state.phase !== GamePhase.ACTIVE) return;
 
@@ -501,7 +501,7 @@ export class GameRoom extends Room<GameState> {
     if (now - player.lastScanTime < HUNTER_SCAN_COOLDOWN_MS) return;
     player.lastScanTime = now;
 
-    const detected: Array<{ sessionId: string; x: number; y: number; z: number }> = [];
+    const detected: { sessionId: string; x: number; y: number; z: number }[] = [];
     this.state.players.forEach((other, sid) => {
       if (other.role !== PlayerRole.PROP || !other.isAlive) return;
       const dx = other.x - player.x;
@@ -521,7 +521,7 @@ export class GameRoom extends Room<GameState> {
 
   private handleUseAbility2(client: Client) {
     const player = this.state.players.get(client.sessionId);
-    if (!player || !player.isAlive) return;
+    if (!player?.isAlive) return;
     if (this.state.phase !== GamePhase.ACTIVE) return;
     if (player.role !== PlayerRole.PROP) return;
 

@@ -3,16 +3,22 @@ import { DEFAULT_SERVER_PORT } from "@catch-and-run/shared";
 
 export type RoomState = any;
 
+function getServerUrl(): string {
+  const envUrl = import.meta.env.VITE_SERVER_URL;
+  if (envUrl) return envUrl;
+  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+  const host = window.location.hostname || "localhost";
+  return `${protocol}://${host}:${DEFAULT_SERVER_PORT}`;
+}
+
 export class NetworkManager {
   private client: Client;
-  private room: Room<RoomState> | null = null;
-  private stateChangeCallbacks: Array<(state: RoomState) => void> = [];
-  private messageCallbacks: Map<string, Array<(data: any) => void>> = new Map();
+  private room: Room | null = null;
+  private stateChangeCallbacks: ((state: RoomState) => void)[] = [];
+  private messageCallbacks = new Map<string, ((data: any) => void)[]>();
 
   constructor() {
-    const host = window.location.hostname || "localhost";
-    const wsUrl = `ws://${host}:${DEFAULT_SERVER_PORT}`;
-    this.client = new Client(wsUrl);
+    this.client = new Client(getServerUrl());
   }
 
   async createRoom(options: {
@@ -20,26 +26,26 @@ export class NetworkManager {
     roomName?: string;
     isPrivate?: boolean;
     maxPlayers?: number;
-  }): Promise<Room<RoomState>> {
+  }): Promise<Room> {
     this.room = await this.client.create("game_room", options);
     this.setupRoomListeners();
     return this.room;
   }
 
-  async joinRoom(roomId: string, nickname: string): Promise<Room<RoomState>> {
+  async joinRoom(roomId: string, nickname: string): Promise<Room> {
     this.room = await this.client.joinById(roomId, { nickname });
     this.setupRoomListeners();
     return this.room;
   }
 
-  async joinByCode(code: string, nickname: string): Promise<Room<RoomState>> {
+  async joinByCode(code: string, nickname: string): Promise<Room> {
     const rooms = await this.getAvailableRooms();
     const match = rooms.find((r: any) => r.metadata?.roomCode === code);
     if (!match) throw new Error("Room not found with that code");
     return this.joinRoom(match.roomId, nickname);
   }
 
-  async quickJoin(nickname: string): Promise<Room<RoomState>> {
+  async quickJoin(nickname: string): Promise<Room> {
     this.room = await this.client.joinOrCreate("game_room", { nickname });
     this.setupRoomListeners();
     return this.room;
@@ -100,7 +106,7 @@ export class NetworkManager {
     }
   }
 
-  getRoom(): Room<RoomState> | null {
+  getRoom(): Room | null {
     return this.room;
   }
 
@@ -109,7 +115,7 @@ export class NetworkManager {
   }
 
   leaveRoom() {
-    this.room?.leave();
+    void this.room?.leave();
     this.room = null;
   }
 

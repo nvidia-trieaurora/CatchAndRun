@@ -44,34 +44,12 @@ describe("RoleAssigner", () => {
   });
 
   it("should deprioritize previous hunters for fair rotation", () => {
-    const assigner = new RoleAssigner();
+    const assigner2 = new RoleAssigner();
     const players = ["p1", "p2", "p3", "p4"];
 
-    const round1 = assigner.assignRoles(players, 4);
-    const hunterInRound1 = [...round1.entries()].find(([, r]) => r === PlayerRole.HUNTER)![0];
-
-    let wasHunterAgain = 0;
-    const trials = 30;
-    for (let i = 0; i < trials; i++) {
-      const tempAssigner = new RoleAssigner();
-      tempAssigner.assignRoles(players, 4);
-      const round2 = tempAssigner.assignRoles(players, 4);
-      const hunterR1 = [...tempAssigner.assignRoles(players, 4).entries()];
-      // Re-create to test the deprioritization pattern
-    }
-
-    const assigner2 = new RoleAssigner();
-    const r1 = assigner2.assignRoles(players, 4);
-    const hunterR1 = [...r1.entries()].find(([, r]) => r === PlayerRole.HUNTER)![0];
-
+    assigner2.assignRoles(players, 4);
     const r2 = assigner2.assignRoles(players, 4);
-    const hunterR2 = [...r2.entries()].find(([, r]) => r === PlayerRole.HUNTER)![0];
 
-    // The previous hunter should be deprioritized (placed later in the sorted array),
-    // meaning a different player is more likely to become hunter. With 4 players and
-    // deprioritization, the previous hunter should almost never be hunter again.
-    // But since there's randomness, we just verify the mechanism works by checking
-    // the role assignment is valid.
     expect(r2.size).toBe(4);
     const hunterCount = [...r2.values()].filter((r) => r === PlayerRole.HUNTER).length;
     expect(hunterCount).toBe(1);

@@ -15,7 +15,7 @@ export interface InputState {
 }
 
 export class InputManager {
-  private keys: Set<string> = new Set();
+  private keys = new Set<string>();
   private mouseDown = false;
   private mouseDeltaX = 0;
   private mouseDeltaY = 0;
@@ -56,7 +56,7 @@ export class InputManager {
   }
 
   requestPointerLock() {
-    this.canvas.requestPointerLock();
+    void this.canvas.requestPointerLock();
   }
 
   exitPointerLock() {

@@ -103,7 +103,7 @@ function loadGifTexture(filePath: string, memeId: string, memeName: string): THR
       try {
         ctx.drawImage(img, 0, 0, size, size);
         texture.needsUpdate = true;
-      } catch {}
+      } catch { /* GIF frame drawing is best-effort */ }
     }
     requestAnimationFrame(drawFrame);
   }

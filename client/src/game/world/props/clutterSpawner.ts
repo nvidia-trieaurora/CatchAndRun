@@ -17,7 +17,7 @@ export const MAP_SEED = 42;
 interface ClutterDef {
   geometry: THREE.BufferGeometry;
   material: THREE.Material;
-  positions: Array<{ x: number; z: number; y?: number }>;
+  positions: { x: number; z: number; y?: number }[];
   scaleRange: [number, number];
   rotRange: [number, number];
   castShadow?: boolean;

@@ -1,6 +1,5 @@
 import type { RoomState } from "./NetworkManager";
 
-type ChangeCallback = (state: RoomState) => void;
 type PlayerCallback = (player: any, sessionId: string) => void;
 
 export class StateSync {

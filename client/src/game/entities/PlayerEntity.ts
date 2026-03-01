@@ -183,7 +183,7 @@ export class PlayerEntity {
       if (Array.isArray(this.propMesh.material)) {
         this.propMesh.material.forEach((m) => m.dispose());
       } else {
-        (this.propMesh.material as THREE.Material).dispose();
+        (this.propMesh.material).dispose();
       }
       this.propMesh = null;
     }
@@ -225,13 +225,13 @@ export class PlayerEntity {
       if (Array.isArray(this.propMesh.material)) {
         this.propMesh.material.forEach((m) => m.dispose());
       } else {
-        (this.propMesh.material as THREE.Material).dispose();
+        (this.propMesh.material).dispose();
       }
     }
     if (this.hunterModel) {
       this.hunterModel.dispose();
     }
     this.nameSprite.material.dispose();
-    (this.nameSprite.material as THREE.SpriteMaterial).map?.dispose();
+    (this.nameSprite.material).map?.dispose();
   }
 }

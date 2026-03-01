@@ -17,10 +17,10 @@ describe("HitValidation", () => {
 
   describe("processShot — hit detection", () => {
     it("should detect a hit when shooting directly at a prop", () => {
-      const shooter = addPlayerToRoom(room, "hunter-1", {
+      addPlayerToRoom(room, "hunter-1", {
         role: PlayerRole.HUNTER, x: 0, y: 1, z: 0,
       });
-      const target = addPlayerToRoom(room, "prop-1", {
+      addPlayerToRoom(room, "prop-1", {
         role: PlayerRole.PROP, x: 10, y: 1, z: 0,
       });
 

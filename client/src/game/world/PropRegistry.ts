@@ -2,7 +2,7 @@ import * as THREE from "three";
 import type { PropDefinition } from "@catch-and-run/shared";
 
 export class PropRegistry {
-  private definitions: Map<string, PropDefinition> = new Map();
+  private definitions = new Map<string, PropDefinition>();
 
   loadFromMapData(props: PropDefinition[]) {
     props.forEach((p) => this.definitions.set(p.id, p));
@@ -58,7 +58,7 @@ function buildDefault(group: THREE.Group, def: PropDefinition) {
   addPart(group, geo, mat(def.color), 0, y / 2, 0);
 }
 
-function buildCrate(group: THREE.Group, def: PropDefinition) {
+function buildCrate(group: THREE.Group, _def: PropDefinition) {
   const s = 1.1;
   const woodMat = mat(0xb8803a);
   const plankMat = mat(0x9a6c2e);

@@ -30,7 +30,7 @@ async function test() {
 
       console.log("[DEBUG] Trying for-of entries...");
       try {
-        for (const [key, p] of (s.players as any).entries()) {
+        for (const [key, p] of (s.players).entries()) {
           console.log("[DEBUG] Player entry:", key, p.nickname);
         }
       } catch (e) {
@@ -39,7 +39,7 @@ async function test() {
 
       console.log("[DEBUG] Trying keys...");
       try {
-        const keys = Array.from((s.players as any).keys());
+        const keys = Array.from((s.players).keys());
         console.log("[DEBUG] Player keys:", keys);
       } catch (e) {
         console.error("[DEBUG] keys failed:", e);
@@ -69,8 +69,8 @@ async function test() {
     (room.state as any)?.players?.forEach((p: any, key: string) => {
       console.log("[DEBUG] 2s Player:", key, "nick:", p.nickname);
     });
-    room.leave();
+    void room.leave();
   }, 2000);
 }
 
-test().catch(e => console.error("[DEBUG] Error:", e));
+test().catch((e: unknown) => console.error("[DEBUG] Error:", e));

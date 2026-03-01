@@ -23,7 +23,7 @@ app.get("/health", (_req, res) => {
 
 const port = Number(process.env.PORT) || DEFAULT_SERVER_PORT;
 
-gameServer.listen(port).then(() => {
+void gameServer.listen(port).then(() => {
   console.log(`[Catch&Run] Server listening on http://localhost:${port}`);
   console.log(`[Catch&Run] Colyseus Monitor: http://localhost:${port}/colyseus`);
 });

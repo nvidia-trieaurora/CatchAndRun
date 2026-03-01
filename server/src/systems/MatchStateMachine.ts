@@ -134,8 +134,8 @@ export class MatchStateMachine {
     });
   }
 
-  private getScores(): Array<{ sessionId: string; nickname: string; score: number; kills: number }> {
-    const scores: Array<{ sessionId: string; nickname: string; score: number; kills: number }> = [];
+  private getScores(): { sessionId: string; nickname: string; score: number; kills: number }[] {
+    const scores: { sessionId: string; nickname: string; score: number; kills: number }[] = [];
     this.room.state.players.forEach((player, sessionId) => {
       scores.push({
         sessionId,

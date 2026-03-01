@@ -75,7 +75,7 @@ export class MapBuilder {
     this.scene = scene;
   }
 
-  build(mapData: MapData): THREE.Box3[] {
+  build(_mapData: MapData): THREE.Box3[] {
     this.colliders = [];
     this.buildGround();
     this.buildWarehouse();
@@ -742,8 +742,8 @@ export class MapBuilder {
   // ===================== VEHICLES & EQUIPMENT =====================
   private buildVehiclesAndEquipment() {
     // Forklift near warehouse entrance
-    const fkBody = mat(0xddaa22, 0.7, 0.2);
-    const fkMetal = mat(P.metalDark, 0.5, 0.5);
+    const _fkBody = mat(0xddaa22, 0.7, 0.2);
+    const _fkMetal = mat(P.metalDark, 0.5, 0.5);
     this.box(1.2, 0.8, 2.0, 12, 0.4, 18, 0xddaa22, true);
     this.box(1.0, 1.2, 0.6, 12, 1.2, 17.3, 0xddaa22, true);
     this.box(0.08, 1.5, 0.08, 11.5, 0.75, 19.2, P.metalDark, false, 0.5, 0.5);
@@ -770,7 +770,7 @@ export class MapBuilder {
 
   // ===================== VEGETATION =====================
   private buildVegetation() {
-    const trunkMat = mat(0x5a3a1a, 0.9, 0);
+    const _trunkMat = mat(0x5a3a1a, 0.9, 0);
     const leafMat = mat(0x3a7a2a, 0.85, 0);
     const leafLt = mat(0x4a8a3a, 0.85, 0);
 

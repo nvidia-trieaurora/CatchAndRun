@@ -62,7 +62,7 @@ export class GameManager {
   private propController!: PropController;
   private spectatorController!: SpectatorController;
 
-  private playerEntities: Map<string, PlayerEntity> = new Map();
+  private playerEntities = new Map<string, PlayerEntity>();
   private colliders: THREE.Box3[] = [];
   private gateColliderIndex = -1;
   private gateCollider: THREE.Box3 | null = null;
@@ -82,7 +82,7 @@ export class GameManager {
   private lastAbility2Time = 0;
   private currentPhase: string = GamePhase.WAITING;
   private mapBuilt = false;
-  private invisibleProps: Set<string> = new Set();
+  private invisibleProps = new Set<string>();
   private grenadeMode = false;
   private fpGrenade: THREE.Group | null = null;
   private lastGrenadeTime = 0;
@@ -115,7 +115,7 @@ export class GameManager {
     this.propRegistry = new PropRegistry();
     this.propRegistry.loadFromMapData(mapDataJson.props as any);
 
-    loadMemeManifest().then((memes) => preloadMemeTextures(memes));
+    void loadMemeManifest().then((memes) => preloadMemeTextures(memes));
 
     this.setupUI();
 
@@ -143,9 +143,9 @@ export class GameManager {
 
   private setupUI() {
     this.mainMenu = new MainMenuUI({
-      onQuickJoin: (nickname) => this.quickJoin(nickname),
-      onCreate: (nickname, roomName, isPrivate) => this.createRoom(nickname, roomName, isPrivate),
-      onJoinCode: (nickname, code) => this.joinByCode(nickname, code),
+      onQuickJoin: (nickname) => void this.quickJoin(nickname),
+      onCreate: (nickname, roomName, isPrivate) => void this.createRoom(nickname, roomName, isPrivate),
+      onJoinCode: (nickname, code) => void this.joinByCode(nickname, code),
     });
 
     this.roomLobby = new RoomLobbyUI({
@@ -803,7 +803,7 @@ export class GameManager {
     this.sendInputToServer(pos!);
   }
 
-  private handleHunterActions(dt: number) {
+  private handleHunterActions(_dt: number) {
     if (this.currentPhase !== GamePhase.ACTIVE) return;
 
     const state = this.input.getState();
@@ -1008,7 +1008,7 @@ export class GameManager {
       u.pitch = 1.0;
       u.volume = 0.7;
       speechSynthesis.speak(u);
-    } catch {}
+    } catch { /* speech synthesis is best-effort */ }
   }
 
   private gunBobTime = 0;
@@ -1038,7 +1038,7 @@ export class GameManager {
     this.recoilBackVel += (-this.recoilBack * springK - this.recoilBackVel * dampK) * dt;
     this.recoilBack += this.recoilBackVel * dt;
 
-    let bobX = 0, bobY = 0, bobZ = 0, bobRotZ = 0;
+    let bobX = 0, bobY = 0, bobRotZ = 0;
 
     if (isMoving) {
       this.gunBobTime += dt * 9;

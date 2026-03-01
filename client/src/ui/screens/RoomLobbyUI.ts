@@ -1,4 +1,4 @@
-import { getMemePreviewDataURL, loadMemeManifest, type MemeEntry } from "../../game/entities/MemeTextureLoader";
+import { getMemePreviewDataURL, loadMemeManifest } from "../../game/entities/MemeTextureLoader";
 
 export interface RoomLobbyCallbacks {
   onReady: () => void;
@@ -90,7 +90,7 @@ export class RoomLobbyUI {
         if (e.key === "Enter") this.sendChat();
       });
 
-      this.loadMemeGrid();
+      void this.loadMemeGrid();
     }, 0);
   }
 
@@ -137,7 +137,7 @@ export class RoomLobbyUI {
     this.chatInputEl.value = "";
   }
 
-  updatePlayerList(players: Array<{ sessionId: string; nickname: string; isReady: boolean; isHost: boolean; memeId?: string }>, selfSessionId: string) {
+  updatePlayerList(players: { sessionId: string; nickname: string; isReady: boolean; isHost: boolean; memeId?: string }[], selfSessionId: string) {
     if (!this.playerListEl) return;
     this.playerListEl.innerHTML = players
       .map((p) => {
@@ -159,7 +159,7 @@ export class RoomLobbyUI {
       .join("");
   }
 
-  updateChat(messages: Array<{ sender: string; message: string }>) {
+  updateChat(messages: { sender: string; message: string }[]) {
     if (!this.chatMessagesEl) return;
     this.chatMessagesEl.innerHTML = messages
       .map((m) => {

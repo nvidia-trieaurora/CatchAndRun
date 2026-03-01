@@ -1,4 +1,3 @@
-import { MapSchema } from "@colyseus/schema";
 import { PlayerSchema } from "../../src/schemas/PlayerSchema";
 import { GameState } from "../../src/schemas/GameState";
 import { GamePhase, PlayerRole } from "@catch-and-run/shared";
@@ -46,7 +45,7 @@ export function createGameState(overrides: Partial<Record<string, any>> = {}): G
 export interface MockGameRoom {
   state: GameState;
   broadcast: ReturnType<typeof vi.fn>;
-  clients: Array<{ sessionId: string; send: ReturnType<typeof vi.fn> }>;
+  clients: { sessionId: string; send: ReturnType<typeof vi.fn> }[];
   initRound: ReturnType<typeof vi.fn>;
 }
 

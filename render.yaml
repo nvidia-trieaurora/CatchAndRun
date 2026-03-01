@@ -1,0 +1,11 @@
+services:
+  - type: web
+    runtime: node
+    name: catchandrun-server
+    plan: free
+    buildCommand: npm install && npm run build:shared && npm run build -w server
+    startCommand: node server/dist/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production

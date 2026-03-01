@@ -15,7 +15,9 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "test": "npm run test -w server",
     "test:watch": "npm run test:watch -w server",
-    "test:coverage": "npm run test:coverage -w server"
+    "test:coverage": "npm run test:coverage -w server",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
     "concurrently": "^9.1.0",
