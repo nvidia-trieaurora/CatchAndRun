@@ -27,6 +27,8 @@ export function buildOldHarborFortniteMap(scene: THREE.Scene, _mapData: MapData)
   buildParkour(B);
   buildBackgroundVista(B, scene);
 
+  buildParkourStructures(B, scene);
+
   const clutterColliders = spawnClutterProps(scene, MAP_SEED);
   colliders.push(...clutterColliders);
 
@@ -716,6 +718,151 @@ function buildParkour(B: MapBoxHelper) {
   B.colorBox(1.5, 0.15, 1.5, 8, 5.0, 4, PALETTE.steel, 0.5, 0.5, true);
 }
 
+// ========== PARKOUR STRUCTURES & ARCHITECTURE ==========
+function buildParkourStructures(B: MapBoxHelper, scene: THREE.Scene) {
+  // ===== WATCHTOWER near dock (climbable) =====
+  const twX = 40, twZ = 30;
+  // 4 legs
+  B.colorBox(0.2, 6, 0.2, twX - 1.5, 3, twZ - 1.5, PALETTE.steelDark, 0.5, 0.5, false);
+  B.colorBox(0.2, 6, 0.2, twX + 1.5, 3, twZ - 1.5, PALETTE.steelDark, 0.5, 0.5, false);
+  B.colorBox(0.2, 6, 0.2, twX - 1.5, 3, twZ + 1.5, PALETTE.steelDark, 0.5, 0.5, false);
+  B.colorBox(0.2, 6, 0.2, twX + 1.5, 3, twZ + 1.5, PALETTE.steelDark, 0.5, 0.5, false);
+  // Platform
+  B.colorBox(4, 0.15, 4, twX, 6, twZ, PALETTE.steel, 0.5, 0.5, true);
+  // Half-walls
+  B.colorBox(4, 1.0, 0.12, twX, 6.6, twZ - 2, PALETTE.woodDark, 0.85, 0.02, true);
+  B.colorBox(4, 1.0, 0.12, twX, 6.6, twZ + 2, PALETTE.woodDark, 0.85, 0.02, true);
+  B.colorBox(0.12, 1.0, 4, twX - 2, 6.6, twZ, PALETTE.woodDark, 0.85, 0.02, true);
+  B.colorBox(0.12, 1.0, 4, twX + 2, 6.6, twZ, PALETTE.woodDark, 0.85, 0.02, false);
+  // Ladder up
+  for (let i = 0; i < 15; i++) {
+    B.colorBox(0.6, 0.04, 0.04, twX + 1.8, i * 0.4 + 0.2, twZ, PALETTE.steelLight, 0.5, 0.5, false);
+  }
+  B.addCollider(twX + 1.5, 0, twZ - 0.3, twX + 2.1, 6, twZ + 0.3);
+  // Roof
+  const towerRoof = new THREE.Mesh(new THREE.ConeGeometry(3, 1.5, 4), getCustomMaterial(PALETTE.containerRed, 0.7, 0.2));
+  towerRoof.position.set(twX, 7.5, twZ);
+  towerRoof.rotation.y = Math.PI / 4;
+  towerRoof.castShadow = true;
+  scene.add(towerRoof);
+
+  // ===== PIPE BRIDGE across warehouse exterior (walkable) =====
+  B.colorBox(1.5, 0.12, 20, -24, 3.5, 22, PALETTE.steel, 0.5, 0.5, true);
+  // Railing
+  B.colorBox(0.05, 0.8, 20, -24.7, 4.0, 22, PALETTE.steelLight, 0.5, 0.5, false);
+  B.colorBox(0.05, 0.8, 20, -23.3, 4.0, 22, PALETTE.steelLight, 0.5, 0.5, false);
+  // Support pillars
+  B.colorBox(0.15, 3.5, 0.15, -24, 1.75, 14, PALETTE.steelDark, 0.5, 0.5, false);
+  B.colorBox(0.15, 3.5, 0.15, -24, 1.75, 22, PALETTE.steelDark, 0.5, 0.5, false);
+  B.colorBox(0.15, 3.5, 0.15, -24, 1.75, 30, PALETTE.steelDark, 0.5, 0.5, false);
+
+  // ===== SHIPPING CRATE PARKOUR near container yard =====
+  // Staggered crates at different heights for jumping
+  B.colorBox(2, 0.8, 2, 52, 0.4, -30, PALETTE.containerBlue, 0.7, 0.2, true);
+  B.colorBox(1.8, 0.8, 1.8, 55, 1.2, -28, PALETTE.containerRed, 0.7, 0.2, true);
+  B.colorBox(1.5, 0.8, 1.5, 52, 2.0, -26, PALETTE.containerGreen, 0.7, 0.2, true);
+  B.colorBox(2, 0.8, 2, 56, 2.8, -24, PALETTE.containerYlow, 0.7, 0.2, true);
+  B.colorBox(1.5, 0.8, 1.5, 53, 3.6, -22, PALETTE.containerBlue, 0.7, 0.2, true);
+
+  // ===== BRICK ARCHWAY (decorative entrance to construction zone) =====
+  const archX = -28, archZ = -15;
+  B.colorBox(0.5, 4, 1, archX - 2, 2, archZ, 0x8a4030, 0.85, 0.02, true);
+  B.colorBox(0.5, 4, 1, archX + 2, 2, archZ, 0x8a4030, 0.85, 0.02, true);
+  B.colorBox(4.5, 0.6, 1, archX, 4.3, archZ, 0x8a4030, 0.85, 0.02, false);
+  // Keystone accent
+  B.colorBox(0.4, 0.7, 1.02, archX, 4.65, archZ, PALETTE.concreteDark, 0.9, 0.03, false);
+
+  // ===== GAZEBO / REST AREA near dock =====
+  const gzX = 5, gzZ = 30;
+  // 4 pillars
+  for (const [dx, dz] of [[-2, -2], [2, -2], [-2, 2], [2, 2]]) {
+    B.cyl(0.08, 0.1, 3, gzX + dx, 1.5, gzZ + dz, "woodDark");
+  }
+  // Roof beams
+  B.colorBox(4.5, 0.1, 0.15, gzX, 3, gzZ - 2, PALETTE.woodDark, 0.85, 0.02, false);
+  B.colorBox(4.5, 0.1, 0.15, gzX, 3, gzZ + 2, PALETTE.woodDark, 0.85, 0.02, false);
+  B.colorBox(0.15, 0.1, 4.5, gzX - 2, 3, gzZ, PALETTE.woodDark, 0.85, 0.02, false);
+  B.colorBox(0.15, 0.1, 4.5, gzX + 2, 3, gzZ, PALETTE.woodDark, 0.85, 0.02, false);
+  // Roof panels
+  B.colorBox(4.8, 0.08, 4.8, gzX, 3.1, gzZ, PALETTE.woodWarm, 0.85, 0.02, false);
+  // Bench inside
+  B.colorBox(3, 0.06, 0.4, gzX, 0.45, gzZ - 1.2, PALETTE.woodWarm, 0.85, 0.02, false);
+  B.colorBox(3, 0.5, 0.06, gzX, 0.7, gzZ - 1.4, PALETTE.woodDark, 0.85, 0.02, false);
+
+  // ===== WALL-RUN PLATFORMS inside warehouse =====
+  // Thin ledges on warehouse walls for skilled movement
+  B.colorBox(8, 0.15, 0.6, -18, 2.5, -17, PALETTE.steel, 0.5, 0.5, true);
+  B.colorBox(8, 0.15, 0.6, 18, 2.5, -17, PALETTE.steel, 0.5, 0.5, true);
+  B.colorBox(0.6, 0.15, 8, -22, 3.0, -8, PALETTE.steel, 0.5, 0.5, true);
+  B.colorBox(0.6, 0.15, 8, 22, 3.0, 8, PALETTE.steel, 0.5, 0.5, true);
+
+  // ===== CARGO NET FRAME (visual + climbable ladder) =====
+  const netX = -45, netZ = -30;
+  B.colorBox(0.12, 4, 0.12, netX - 2, 2, netZ, PALETTE.steelDark, 0.5, 0.5, false);
+  B.colorBox(0.12, 4, 0.12, netX + 2, 2, netZ, PALETTE.steelDark, 0.5, 0.5, false);
+  B.colorBox(4.2, 0.12, 0.12, netX, 4, netZ, PALETTE.steelDark, 0.5, 0.5, false);
+  // Net lines (visual)
+  for (let i = 0; i < 5; i++) {
+    B.colorBox(0.02, 4, 0.02, netX - 2 + i, 2, netZ, PALETTE.ropeBeige, 0.9, 0, false);
+    B.colorBox(4, 0.02, 0.02, netX, i * 0.8 + 0.4, netZ, PALETTE.ropeBeige, 0.9, 0, false);
+  }
+  // Platform on top
+  B.colorBox(4.5, 0.15, 2, netX, 4.1, netZ, PALETTE.steel, 0.5, 0.5, true);
+  B.addCollider(netX - 2.2, 0, netZ - 0.2, netX - 1.8, 4, netZ + 0.2);
+
+  // ===== SILO TOWER (cylinder landmark near construction zone) =====
+  const siloMat = getCustomMaterial(PALETTE.concreteDark, 0.85, 0.03);
+  const silo = new THREE.Mesh(new THREE.CylinderGeometry(2, 2.2, 8, 16), siloMat);
+  silo.position.set(-48, 4, -22);
+  silo.castShadow = true;
+  silo.receiveShadow = true;
+  scene.add(silo);
+  B.addCollider(-50.2, 0, -24.2, -45.8, 8, -19.8);
+  // Silo top platform (walkable)
+  B.colorBox(5, 0.15, 5, -48, 8.1, -22, PALETTE.steel, 0.5, 0.5, true);
+  // Railing
+  B.colorBox(5, 0.06, 0.06, -48, 9.0, -24.5, PALETTE.steelLight, 0.5, 0.5, false);
+  B.colorBox(5, 0.06, 0.06, -48, 9.0, -19.5, PALETTE.steelLight, 0.5, 0.5, false);
+  // Ladder on silo exterior
+  for (let i = 0; i < 20; i++) {
+    B.colorBox(0.5, 0.04, 0.04, -46, i * 0.4 + 0.2, -22, PALETTE.steelLight, 0.5, 0.5, false);
+  }
+  B.addCollider(-46.3, 0, -22.2, -45.7, 8, -21.8);
+
+  // ===== SUSPENDED PLATFORMS (warehouse ceiling) =====
+  // Chain-suspended metal platforms hanging from roof beams
+  const suspMat = getCustomMaterial(PALETTE.steel, 0.5, 0.5);
+  const chainMat = getCustomMaterial(PALETTE.steelLight, 0.4, 0.6);
+  const suspPositions: [number, number, number][] = [[-15, 5.5, 0], [0, 5.8, 8], [12, 5.3, -5]];
+  for (const [sx, sy, sz] of suspPositions) {
+    B.colorBox(2.5, 0.12, 2.5, sx, sy, sz, PALETTE.steel, 0.5, 0.5, true);
+    // Chains (4 corners)
+    for (const [cdx, cdz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+      const chain = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.015, 0.015, 8 - sy + 0.5, 4),
+        chainMat
+      );
+      chain.position.set(sx + cdx, (8 + sy) / 2, sz + cdz);
+      scene.add(chain);
+    }
+    // Hazard stripe on platform edge
+    B.colorBox(2.5, 0.02, 0.12, sx, sy + 0.07, sz - 1.2, PALETTE.accentYellow, 0.7, 0.1, false);
+  }
+
+  // ===== TIRE WALL (parkour obstacle in yard) =====
+  const tireMat = getCustomMaterial(0x1a1a1a, 0.92, 0);
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 5; col++) {
+      const t = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.12, 8, 12), tireMat);
+      t.position.set(28 + col * 0.7, 0.35 + row * 0.65, -30);
+      t.rotation.x = Math.PI / 2;
+      t.castShadow = true;
+      scene.add(t);
+    }
+  }
+  B.addCollider(27.5, 0, -30.3, 31.5, 2.3, -29.7);
+}
+
 // ========== FERRIS WHEEL ==========
 function buildFerrisWheel(scene: THREE.Scene): THREE.Group {
   const group = new THREE.Group();
@@ -767,7 +914,7 @@ function buildFerrisWheel(scene: THREE.Scene): THREE.Group {
   cross.position.set(0, R * 0.2, 0);
   group.add(cross);
 
-  group.position.set(18, R + 1.5, 50);
+  group.position.set(-10, R + 1.5, 32);
   scene.add(group);
   return group;
 }
