@@ -513,8 +513,8 @@ function buildVegetation(scene: THREE.Scene, B: MapBoxHelper) {
     trunk.castShadow = true;
     scene.add(trunk);
 
-    // Trunk collision box (players cannot walk through trees)
-    B.addCollider(tx - 0.25, 0, tz - 0.25, tx + 0.25, h, tz + 0.25);
+    // Short trunk collider (waist-height only) -- prevents walking through but allows shooting over
+    B.addCollider(tx - 0.25, 0, tz - 0.25, tx + 0.25, 1.5, tz + 0.25);
 
     const crownR = 1.8 + Math.sin(tz * 7.13) * 0.6;
     const crown = new THREE.Mesh(new THREE.SphereGeometry(crownR, 8, 6), leafMats[Math.abs(Math.floor(tx)) % 3]);
@@ -652,6 +652,34 @@ function buildParkour(B: MapBoxHelper) {
 
   // Hazard stripe at bottom of staircase
   B.colorBox(stairW, 0.02, 0.2, stairX, stepH + 0.01, stairStartZ - 0.1, PALETTE.accentYellow, 0.7, 0.1, false);
+
+  // ===== EAST SIDE FIRE-ESCAPE STAIRCASE (right wall, x=26) =====
+  const stairX2 = 26;
+  const stairStartZ2 = 15;
+  const numSteps2 = 21;
+
+  B.colorBox(0.15, ROOF_Y + 0.5, 0.15, stairX2 - 1.6, (ROOF_Y + 0.5) / 2, stairStartZ2, PALETTE.steelDark, 0.5, 0.5, false);
+  B.colorBox(0.15, ROOF_Y + 0.5, 0.15, stairX2 + 1.6, (ROOF_Y + 0.5) / 2, stairStartZ2, PALETTE.steelDark, 0.5, 0.5, false);
+  B.colorBox(0.15, ROOF_Y + 0.5, 0.15, stairX2 - 1.6, (ROOF_Y + 0.5) / 2, stairStartZ2 - numSteps2 * stepDZ, PALETTE.steelDark, 0.5, 0.5, false);
+  B.colorBox(0.15, ROOF_Y + 0.5, 0.15, stairX2 + 1.6, (ROOF_Y + 0.5) / 2, stairStartZ2 - numSteps2 * stepDZ, PALETTE.steelDark, 0.5, 0.5, false);
+
+  for (let i = 0; i < numSteps2; i++) {
+    const boxH2 = stepH;
+    const centerY2 = i * stepH + boxH2 / 2;
+    const centerZ2 = stairStartZ2 - i * stepDZ - stepDZ / 2;
+    B.colorBox(stairW, boxH2, stepDZ, stairX2, centerY2, centerZ2, PALETTE.steel, 0.5, 0.5, true);
+  }
+
+  const landingZ2 = stairStartZ2 - (numSteps2 - 1) * stepDZ - stepDZ / 2;
+  B.colorBox(7, 0.2, stepDZ + 0.5, stairX2 - 2, ROOF_Y + 0.15, landingZ2, PALETTE.steel, 0.5, 0.5, true);
+
+  for (let i = 0; i < numSteps2; i += 3) {
+    const postY2 = (i + 1) * stepH + 0.6;
+    const postZ2 = stairStartZ2 - i * stepDZ;
+    B.colorBox(0.06, 1.2, 0.06, stairX2 + stairW / 2 + 0.1, postY2, postZ2, PALETTE.steelLight, 0.5, 0.5, false);
+  }
+  B.colorBox(0.05, 0.06, numSteps2 * stepDZ, stairX2 + stairW / 2 + 0.1, ROOF_Y / 2 + 1, stairStartZ2 - (numSteps2 * stepDZ) / 2, PALETTE.steelLight, 0.5, 0.5, false);
+  B.colorBox(stairW, 0.02, 0.2, stairX2, stepH + 0.01, stairStartZ2 + 0.1, PALETTE.accentYellow, 0.7, 0.1, false);
 
   // ===== ROOFTOP OBSTACLES & DETAILS =====
   // Air conditioning units on warehouse roof

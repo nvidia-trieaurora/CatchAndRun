@@ -146,11 +146,26 @@ export class PropController {
       const camPos = new THREE.Vector3(targetX, targetY, targetZ);
 
       const clipped = this.clipCameraToWalls(lookAt, camPos);
+      const clippedDist = clipped.distanceTo(lookAt);
 
-      this.camera.position.copy(clipped);
-      this.camera.lookAt(lookAt);
+      if (clippedDist < 1.2) {
+        // Too close to wall/tree -- switch to over-shoulder view to avoid glitching
+        const shoulderOff = 0.4;
+        this.camera.position.set(
+          this.position.x + Math.sin(camYaw) * shoulderOff,
+          this.position.y + EYE_HEIGHT + 0.3,
+          this.position.z + Math.cos(camYaw) * shoulderOff
+        );
+        this.camera.lookAt(
+          this.position.x - Math.sin(camYaw) * 2,
+          this.position.y + EYE_HEIGHT,
+          this.position.z - Math.cos(camYaw) * 2
+        );
+      } else {
+        this.camera.position.copy(clipped);
+        this.camera.lookAt(lookAt);
+      }
     } else {
-      // First-person: camera at prop eye height
       this.camera.position.set(
         this.position.x,
         this.position.y + EYE_HEIGHT,
