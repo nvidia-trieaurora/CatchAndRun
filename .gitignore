@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.vite/
+client/node_modules/
+client/dist/
+client/node_modules/.vite/
+server/dist/
+shared/dist/

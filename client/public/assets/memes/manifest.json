@@ -1,0 +1,14 @@
+{
+  "memes": [
+    {
+      "id": "jam-2",
+      "name": "Jam",
+      "file": "jam (2).gif"
+    },
+    {
+      "id": "pig-kiss",
+      "name": "Pig Kiss",
+      "file": "pig-kiss.jpeg"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "id": "harbor-warehouse",
+  "name": "Old Harbor Warehouse",
+  "bounds": {
+    "min": { "x": -50, "y": -5, "z": -40 },
+    "max": { "x": 50, "y": 20, "z": 40 }
+  },
+  "killZoneY": -5,
+  "hunterSpawnPoints": [
+    { "position": { "x": -40, "y": 0, "z": 0 }, "rotation": 0, "zone": "hunterSpawn" },
+    { "position": { "x": -38, "y": 0, "z": 3 }, "rotation": 0, "zone": "hunterSpawn" },
+    { "position": { "x": -38, "y": 0, "z": -3 }, "rotation": 0, "zone": "hunterSpawn" }
+  ],
+  "propSpawnPoints": [
+    { "position": { "x": 0, "y": 0, "z": 5 }, "rotation": 0, "zone": "warehouse" },
+    { "position": { "x": 5, "y": 0, "z": -8 }, "rotation": 1.57, "zone": "warehouse" },
+    { "position": { "x": -10, "y": 0, "z": 12 }, "rotation": 3.14, "zone": "warehouse" },
+    { "position": { "x": 10, "y": 0, "z": -5 }, "rotation": 0, "zone": "warehouse" },
+    { "position": { "x": 15, "y": 0, "z": 10 }, "rotation": 0.78, "zone": "warehouse" },
+    { "position": { "x": -5, "y": 0, "z": -15 }, "rotation": 0, "zone": "warehouse" },
+    { "position": { "x": 25, "y": 3.3, "z": 5 }, "rotation": 0, "zone": "office" },
+    { "position": { "x": 28, "y": 3.3, "z": 2 }, "rotation": 1.57, "zone": "office" },
+    { "position": { "x": 35, "y": 0, "z": -15 }, "rotation": 0, "zone": "containerYard" },
+    { "position": { "x": 40, "y": 0, "z": -20 }, "rotation": 0, "zone": "containerYard" },
+    { "position": { "x": 30, "y": 0, "z": -25 }, "rotation": 0, "zone": "containerYard" },
+    { "position": { "x": 38, "y": 0, "z": -10 }, "rotation": 0, "zone": "containerYard" }
+  ],
+  "props": [
+    { "id": "crate", "name": "Wooden Crate", "meshType": "box", "dimensions": { "x": 1.2, "y": 1.2, "z": 1.2 }, "color": 9596728, "rarity": "common", "minScale": 0.8, "maxScale": 1.2 },
+    { "id": "barrel", "name": "Barrel", "meshType": "cylinder", "dimensions": { "x": 0.6, "y": 1.0, "z": 0.6 }, "color": 5592405, "rarity": "common", "minScale": 0.8, "maxScale": 1.0 },
+    { "id": "chair", "name": "Office Chair", "meshType": "box", "dimensions": { "x": 0.5, "y": 0.9, "z": 0.5 }, "color": 3355443, "rarity": "common", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "desk", "name": "Desk", "meshType": "box", "dimensions": { "x": 1.5, "y": 0.8, "z": 0.8 }, "color": 7494450, "rarity": "uncommon", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "fire_extinguisher", "name": "Fire Extinguisher", "meshType": "cylinder", "dimensions": { "x": 0.2, "y": 0.5, "z": 0.2 }, "color": 13369344, "rarity": "rare", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "cardboard_box", "name": "Cardboard Box", "meshType": "box", "dimensions": { "x": 0.8, "y": 0.6, "z": 0.6 }, "color": 12556120, "rarity": "common", "minScale": 0.5, "maxScale": 1.2 },
+    { "id": "bucket", "name": "Bucket", "meshType": "cylinder", "dimensions": { "x": 0.35, "y": 0.4, "z": 0.35 }, "color": 4474111, "rarity": "uncommon", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "cone", "name": "Traffic Cone", "meshType": "cylinder", "dimensions": { "x": 0.3, "y": 0.7, "z": 0.3 }, "color": 16744448, "rarity": "common", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "pallet", "name": "Pallet", "meshType": "box", "dimensions": { "x": 1.2, "y": 0.15, "z": 1.0 }, "color": 9596728, "rarity": "common", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "toolbox", "name": "Toolbox", "meshType": "box", "dimensions": { "x": 0.5, "y": 0.3, "z": 0.3 }, "color": 13369344, "rarity": "uncommon", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "tire", "name": "Tire", "meshType": "cylinder", "dimensions": { "x": 0.7, "y": 0.25, "z": 0.7 }, "color": 2236962, "rarity": "common", "minScale": 0.8, "maxScale": 1.2 },
+    { "id": "anchor", "name": "Anchor", "meshType": "box", "dimensions": { "x": 0.8, "y": 1.0, "z": 0.3 }, "color": 5592405, "rarity": "rare", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "rope_coil", "name": "Rope Coil", "meshType": "cylinder", "dimensions": { "x": 0.5, "y": 0.3, "z": 0.5 }, "color": 11571186, "rarity": "common", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "lantern", "name": "Lantern", "meshType": "box", "dimensions": { "x": 0.2, "y": 0.4, "z": 0.2 }, "color": 16776960, "rarity": "rare", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "life_ring", "name": "Life Ring", "meshType": "cylinder", "dimensions": { "x": 0.7, "y": 0.1, "z": 0.7 }, "color": 16744448, "rarity": "uncommon", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "paint_can", "name": "Paint Can", "meshType": "cylinder", "dimensions": { "x": 0.2, "y": 0.3, "z": 0.2 }, "color": 255, "rarity": "uncommon", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "gas_can", "name": "Gas Can", "meshType": "box", "dimensions": { "x": 0.3, "y": 0.4, "z": 0.2 }, "color": 16711680, "rarity": "uncommon", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "crate_small", "name": "Small Crate", "meshType": "box", "dimensions": { "x": 0.6, "y": 0.6, "z": 0.6 }, "color": 11571186, "rarity": "common", "minScale": 0.8, "maxScale": 1.0 },
+    { "id": "bottle", "name": "Bottle", "meshType": "cylinder", "dimensions": { "x": 0.1, "y": 0.3, "z": 0.1 }, "color": 3407667, "rarity": "rare", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "mop", "name": "Mop", "meshType": "cylinder", "dimensions": { "x": 0.1, "y": 1.5, "z": 0.1 }, "color": 9596728, "rarity": "uncommon", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "broom", "name": "Broom", "meshType": "cylinder", "dimensions": { "x": 0.1, "y": 1.4, "z": 0.1 }, "color": 7494450, "rarity": "uncommon", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "hardhat", "name": "Hard Hat", "meshType": "sphere", "dimensions": { "x": 0.3, "y": 0.2, "z": 0.3 }, "color": 16776960, "rarity": "rare", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "sign_board", "name": "Sign Board", "meshType": "box", "dimensions": { "x": 0.8, "y": 0.6, "z": 0.05 }, "color": 16777215, "rarity": "uncommon", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "buoy", "name": "Buoy", "meshType": "sphere", "dimensions": { "x": 0.5, "y": 0.5, "z": 0.5 }, "color": 16711680, "rarity": "uncommon", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "net_bundle", "name": "Net Bundle", "meshType": "box", "dimensions": { "x": 0.8, "y": 0.5, "z": 0.6 }, "color": 5592405, "rarity": "common", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "chain_pile", "name": "Chain Pile", "meshType": "cylinder", "dimensions": { "x": 0.4, "y": 0.3, "z": 0.4 }, "color": 8421504, "rarity": "uncommon", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "hook", "name": "Hook", "meshType": "box", "dimensions": { "x": 0.3, "y": 0.5, "z": 0.1 }, "color": 8421504, "rarity": "rare", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "wrench", "name": "Wrench", "meshType": "box", "dimensions": { "x": 0.1, "y": 0.4, "z": 0.05 }, "color": 8421504, "rarity": "rare", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "ladder_section", "name": "Ladder Section", "meshType": "box", "dimensions": { "x": 0.5, "y": 2.0, "z": 0.1 }, "color": 9596728, "rarity": "uncommon", "minScale": 1.0, "maxScale": 1.0 },
+    { "id": "trash_can", "name": "Trash Can", "meshType": "cylinder", "dimensions": { "x": 0.4, "y": 0.8, "z": 0.4 }, "color": 5592405, "rarity": "common", "minScale": 1.0, "maxScale": 1.0 }
+  ]
+}

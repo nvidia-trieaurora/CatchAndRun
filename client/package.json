@@ -1,0 +1,20 @@
+{
+  "name": "@catch-and-run/client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node ../tools/scan-memes.js && vite",
+    "build": "node ../tools/scan-memes.js && tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@catch-and-run/shared": "*",
+    "colyseus.js": "^0.15.0",
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.170.0",
+    "vite": "^6.0.0"
+  }
+}
