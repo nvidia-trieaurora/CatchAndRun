@@ -6,7 +6,7 @@ import { PROP_SPEED } from "@catch-and-run/shared";
 const RADIUS = 0.35;
 const HEIGHT = 0.9;
 const GROUND_Y = 0.0;
-const STEP_UP = 0.5;
+const STEP_UP = 0.55;
 const EYE_HEIGHT = 0.7;
 const THIRD_PERSON_DIST = 4.5;
 const THIRD_PERSON_HEIGHT = 2.0;
@@ -47,7 +47,10 @@ export class PropController {
     this.config = config;
   }
 
+  private colliders: THREE.Box3[] = [];
+
   update(dt: number, colliders: THREE.Box3[]): THREE.Vector3 {
+    this.colliders = colliders;
     if (!this.input.isPointerLocked()) return this.position.clone();
 
     // Mouse look always works (even when locked pose)
@@ -127,29 +130,25 @@ export class PropController {
 
   private updateCamera() {
     if (this.thirdPerson) {
-      // Third-person: camera behind and above, using yaw + pitch
-      // Pitch controls vertical angle of camera orbit
-      // Positive pitch = look up (camera goes above), negative = look down
-
       const camYaw = this.currentYaw;
       const camPitch = this.currentPitch;
 
-      // Spherical offset from prop
       const dist = THIRD_PERSON_DIST;
       const offX = Math.sin(camYaw) * dist * Math.cos(camPitch);
       const offZ = Math.cos(camYaw) * dist * Math.cos(camPitch);
       const offY = THIRD_PERSON_HEIGHT - Math.sin(camPitch) * dist * 0.6;
 
-      this.camera.position.set(
-        this.position.x + offX,
-        this.position.y + Math.max(1.0, offY),
-        this.position.z + offZ
-      );
-      this.camera.lookAt(
-        this.position.x,
-        this.position.y + EYE_HEIGHT,
-        this.position.z
-      );
+      const targetX = this.position.x + offX;
+      const targetY = this.position.y + Math.max(1.0, offY);
+      const targetZ = this.position.z + offZ;
+
+      const lookAt = new THREE.Vector3(this.position.x, this.position.y + EYE_HEIGHT, this.position.z);
+      const camPos = new THREE.Vector3(targetX, targetY, targetZ);
+
+      const clipped = this.clipCameraToWalls(lookAt, camPos);
+
+      this.camera.position.copy(clipped);
+      this.camera.lookAt(lookAt);
     } else {
       // First-person: camera at prop eye height
       this.camera.position.set(
@@ -162,6 +161,47 @@ export class PropController {
       q.setFromEuler(euler);
       this.camera.quaternion.copy(q);
     }
+  }
+
+  private clipCameraToWalls(origin: THREE.Vector3, target: THREE.Vector3): THREE.Vector3 {
+    const dir = new THREE.Vector3().subVectors(target, origin);
+    const maxDist = dir.length();
+    if (maxDist < 0.01) return target;
+    dir.normalize();
+
+    let closestDist = maxDist;
+
+    for (const box of this.colliders) {
+      const t = this.rayVsAABB(origin, dir, box);
+      if (t !== null && t > 0.1 && t < closestDist) {
+        closestDist = t - 0.15;
+      }
+    }
+
+    if (closestDist < 0.5) closestDist = 0.5;
+
+    return origin.clone().addScaledVector(dir, closestDist);
+  }
+
+  private rayVsAABB(origin: THREE.Vector3, dir: THREE.Vector3, box: THREE.Box3): number | null {
+    let tmin = -Infinity;
+    let tmax = Infinity;
+
+    const axes: ("x" | "y" | "z")[] = ["x", "y", "z"];
+    for (const axis of axes) {
+      if (Math.abs(dir[axis]) < 1e-8) {
+        if (origin[axis] < box.min[axis] || origin[axis] > box.max[axis]) return null;
+      } else {
+        let t1 = (box.min[axis] - origin[axis]) / dir[axis];
+        let t2 = (box.max[axis] - origin[axis]) / dir[axis];
+        if (t1 > t2) [t1, t2] = [t2, t1];
+        tmin = Math.max(tmin, t1);
+        tmax = Math.min(tmax, t2);
+        if (tmin > tmax) return null;
+      }
+    }
+
+    return tmin >= 0 ? tmin : (tmax >= 0 ? tmax : null);
   }
 
   // --- Collision helpers ---
@@ -198,7 +238,7 @@ export class PropController {
       new THREE.Vector3(this.position.x + RADIUS * 0.6, this.position.y + STEP_UP, this.position.z + RADIUS * 0.6)
     );
     for (const c of colliders) {
-      if (probe.intersectsBox(c) && c.max.y > best && c.max.y <= this.position.y + STEP_UP + 0.1) {
+      if (probe.intersectsBox(c) && c.max.y > best && c.max.y <= this.position.y + STEP_UP + 0.25) {
         best = c.max.y;
       }
     }

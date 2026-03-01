@@ -7,6 +7,7 @@ interface MapBuildResult {
   colliders: THREE.Box3[];
   gateColliderIndex: number;
   gateMesh: THREE.Mesh | null;
+  ferrisWheel: THREE.Group | null;
 }
 
 export function buildOldHarborFortniteMap(scene: THREE.Scene, _mapData: MapData): MapBuildResult {
@@ -29,7 +30,9 @@ export function buildOldHarborFortniteMap(scene: THREE.Scene, _mapData: MapData)
   const clutterColliders = spawnClutterProps(scene, MAP_SEED);
   colliders.push(...clutterColliders);
 
-  return { colliders, gateColliderIndex, gateMesh };
+  const ferrisWheel = buildFerrisWheel(scene);
+
+  return { colliders, gateColliderIndex, gateMesh, ferrisWheel };
 }
 
 class MapBoxHelper {
@@ -240,6 +243,22 @@ function buildContainerYard(B: MapBoxHelper) {
   buildContainer(B, 46, 0, -3, PALETTE.containerYlow, Math.PI / 2);
   buildContainer(B, 32, 0, -18, PALETTE.containerRed, 0.15);
 
+  // Metal staircase up to stacked container top
+  const csH = 5.1;
+  const csSteps = 14;
+  const csRise = csH / csSteps;
+  const csRun = 0.5;
+  const csStartX = 32;
+  const csZ = -8;
+  for (let i = 0; i < csSteps; i++) {
+    const sx = csStartX + i * csRun + csRun / 2;
+    const sy = csRise * (i + 1);
+    B.colorBox(1.6, 0.06, csRun - 0.04, sx, sy, csZ, PALETTE.steel, 0.5, 0.5, false);
+    B.addCollider(sx - 0.8, sy - 0.06, csZ - 0.8, sx + 0.8, sy, csZ + 0.8);
+  }
+  // Platform on top of stacked container
+  B.addCollider(36.9, 5.1, -10.2, 43.1, 5.2, -5.8);
+
   // Fence - extended to cover full yard boundary
   for (let i = 0; i < 14; i++) {
     B.colorBox(0.06, 2.2, 0.06, 22 + i * 2.8, 1.1, 2, PALETTE.steel, 0.5, 0.5, false);
@@ -384,26 +403,7 @@ function buildCatwalkNetwork(B: MapBoxHelper) {
 }
 
 function buildStairs(B: MapBoxHelper, ox: number, oz: number, oy: number) {
-  // Office floor
-  B.box(9, 0.25, 7, ox, oy, oz, "offWhite", true);
-
-  // Office walls
-  B.box(9, 3.5, 0.18, ox, oy + 1.75, oz - 3.5, "offWhite");
-  B.box(9, 3.5, 0.18, ox, oy + 1.75, oz + 3.5, "offWhite");
-  B.colorBox(0.18, 3.5, 7, ox + 4.5, oy + 1.75, oz, PALETTE.offWhite, 0.85, 0.02, true);
-  B.colorBox(0.05, 1.2, 2.5, ox + 4.52, oy + 2.2, oz, 0x88bbdd, 0.1, 0.3, false);
-  B.colorBox(3.5, 1.5, 0.18, ox - 2.75, oy + 3, oz - 3.5, PALETTE.offWhite, 0.85, 0.02, false);
-  B.colorBox(3.5, 1.5, 0.18, ox + 2.75, oy + 3, oz - 3.5, PALETTE.offWhite, 0.85, 0.02, false);
-
-  // Balcony railing
-  B.colorBox(8, 0.06, 0.06, ox, oy + 0.9, oz - 3.8, PALETTE.steelLight, 0.5, 0.5, false);
-
-  // Furniture
-  B.box(1.6, 0.05, 0.85, ox + 1, oy + 0.72, oz, "woodDark");
-  B.colorBox(0.45, 0.05, 0.45, ox - 0.5, oy + 0.42, oz, 0x282828, 0.8, 0.1, false);
-  B.box(0.45, 1.4, 0.55, ox + 3.8, oy + 0.7, oz + 2, "steelLight", true);
-
-  // ===== PARKOUR PLATFORM STAIRCASE =====
+  // ===== PARKOUR PLATFORM STAIRCASE (Office removed) =====
   // 3 large platforms in zigzag pattern -- simple, no getting stuck
   const platW = 5.0;
   const platD = 3.0;
@@ -524,7 +524,7 @@ function buildVegetation(scene: THREE.Scene, B: MapBoxHelper) {
     scene.add(crown);
   }
 
-  // Bushes (purely visual, no collision needed - too small)
+  // Bushes
   const bushMat = getCustomMaterial(0x3a6a2a, 0.9, 0);
   const bushes = [[-22, 18], [22, 20], [-15, 22], [0, 22], [45, 6], [-42, 12], [-42, -12], [32, 28], [-20, -25]];
   for (const [bx, bz] of bushes) {
@@ -534,6 +534,58 @@ function buildVegetation(scene: THREE.Scene, B: MapBoxHelper) {
     bush.scale.y = 0.6;
     bush.castShadow = true;
     scene.add(bush);
+  }
+
+  // Rocks
+  const rockMat = getCustomMaterial(0x7a7a72, 0.92, 0.03);
+  const rockPositions = [
+    [-32, 22], [-38, -18], [50, 10], [55, -15], [-48, 12],
+    [42, 22], [-25, -30], [48, -22], [-52, -8], [35, 30],
+    [-30, -10], [52, 5], [30, -20], [-20, 30],
+  ];
+  for (const [rx, rz] of rockPositions) {
+    const s = 0.2 + Math.abs(Math.sin(rx * 7 + rz * 3)) * 0.5;
+    const geo = Math.abs(rx) % 2 === 0
+      ? new THREE.DodecahedronGeometry(s, 0)
+      : new THREE.IcosahedronGeometry(s, 0);
+    const rock = new THREE.Mesh(geo, rockMat);
+    rock.position.set(rx, s * 0.35, rz);
+    rock.rotation.set(rx * 0.3, rz * 0.5, rx * 0.2);
+    rock.scale.y = 0.4 + Math.abs(Math.sin(rx)) * 0.4;
+    rock.castShadow = true;
+    rock.receiveShadow = true;
+    scene.add(rock);
+  }
+
+  // Tall grass clusters
+  const grassMat2 = getCustomMaterial(0x4a7a28, 0.95, 0);
+  const grassClusters = [
+    [-30, 25], [-35, 18], [48, 15], [52, -10], [-50, -5],
+    [45, 25], [-45, 20], [55, -20], [-38, -15], [30, 28],
+  ];
+  for (const [gx, gz] of grassClusters) {
+    for (let j = 0; j < 6; j++) {
+      const ox = gx + (Math.sin(j * 17 + gx) * 1.5);
+      const oz = gz + (Math.cos(j * 13 + gz) * 1.5);
+      const h = 0.3 + Math.abs(Math.sin(j * 7)) * 0.3;
+      const blade = new THREE.Mesh(new THREE.ConeGeometry(0.05 + j * 0.008, h, 4), grassMat2);
+      blade.position.set(ox, h / 2, oz);
+      blade.rotation.y = j * 1.2;
+      scene.add(blade);
+    }
+  }
+
+  // Flower patches near bushes
+  const flowerColors = [0xff88aa, 0xcc66ff, 0xffffff, 0xffcc66];
+  for (const [bx, bz] of bushes) {
+    for (let f = 0; f < 3; f++) {
+      const flower = new THREE.Mesh(
+        new THREE.SphereGeometry(0.05, 4, 4),
+        getCustomMaterial(flowerColors[f % flowerColors.length], 0.8, 0)
+      );
+      flower.position.set(bx + Math.sin(f * 2) * 0.8, 0.15, bz + Math.cos(f * 2) * 0.8);
+      scene.add(flower);
+    }
   }
 }
 
@@ -634,6 +686,62 @@ function buildParkour(B: MapBoxHelper) {
   B.colorBox(1.5, 0.15, 1.5, -8, 5.0, -12, PALETTE.steel, 0.5, 0.5, true);
   B.colorBox(1.5, 0.15, 1.5, 0, 5.0, -4, PALETTE.steel, 0.5, 0.5, true);
   B.colorBox(1.5, 0.15, 1.5, 8, 5.0, 4, PALETTE.steel, 0.5, 0.5, true);
+}
+
+// ========== FERRIS WHEEL ==========
+function buildFerrisWheel(scene: THREE.Scene): THREE.Group {
+  const group = new THREE.Group();
+  const R = 5;
+  const hubMat = getCustomMaterial(PALETTE.steelDark, 0.4, 0.6);
+  const spokeMat = getCustomMaterial(PALETTE.steel, 0.5, 0.5);
+  const cabinColors = [PALETTE.containerRed, PALETTE.containerBlue, PALETTE.containerYlow, PALETTE.containerGreen];
+
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.5, 10), hubMat);
+  hub.rotation.x = Math.PI / 2;
+  group.add(hub);
+
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(R, 0.06, 8, 32), spokeMat);
+  group.add(rim);
+
+  const numCabins = 8;
+  for (let i = 0; i < numCabins; i++) {
+    const angle = (i / numCabins) * Math.PI * 2;
+    const spoke = new THREE.Mesh(new THREE.BoxGeometry(0.05, R * 2, 0.05), spokeMat);
+    spoke.rotation.z = angle;
+    group.add(spoke);
+
+    const cabinG = new THREE.Group();
+    const cabin = new THREE.Mesh(
+      new THREE.BoxGeometry(0.7, 0.5, 0.4),
+      getCustomMaterial(cabinColors[i % cabinColors.length], 0.7, 0.2)
+    );
+    cabin.castShadow = true;
+    cabinG.add(cabin);
+    const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.35, 4), hubMat);
+    bar.position.y = 0.42;
+    cabinG.add(bar);
+    cabinG.position.set(Math.cos(angle) * R, Math.sin(angle) * R, 0);
+    group.add(cabinG);
+  }
+
+  // A-frame legs
+  const legH = R + 1.5;
+  const legMat = getCustomMaterial(PALETTE.steelDark, 0.5, 0.5);
+  const legL = new THREE.Mesh(new THREE.BoxGeometry(0.18, legH, 0.18), legMat);
+  legL.position.set(0, -legH / 2 + R, -1.8);
+  legL.rotation.x = 0.12;
+  group.add(legL);
+  const legR = new THREE.Mesh(new THREE.BoxGeometry(0.18, legH, 0.18), legMat);
+  legR.position.set(0, -legH / 2 + R, 1.8);
+  legR.rotation.x = -0.12;
+  group.add(legR);
+  const cross = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 4), legMat);
+  cross.position.set(0, R * 0.2, 0);
+  group.add(cross);
+
+  group.position.set(18, R + 1.5, 50);
+  scene.add(group);
+  return group;
 }
 
 function buildBackgroundVista(B: MapBoxHelper, scene: THREE.Scene) {

@@ -9,7 +9,7 @@ const CROUCH_EYE_H = 0.9;
 const BODY_H = 1.8;
 const CROUCH_BODY_H = 1.1;
 const GROUND_Y = 0.0;
-const STEP_UP = 0.5;
+const STEP_UP = 0.55;
 const CROUCH_SPEED = 0.45;
 
 export class HunterController {
@@ -179,7 +179,7 @@ export class HunterController {
       new THREE.Vector3(this.position.x + RADIUS * 0.6, this.feetY + STEP_UP, this.position.z + RADIUS * 0.6)
     );
     for (const c of colliders) {
-      if (probe.intersectsBox(c) && c.max.y > best && c.max.y <= this.feetY + STEP_UP + 0.1) {
+      if (probe.intersectsBox(c) && c.max.y > best && c.max.y <= this.feetY + STEP_UP + 0.25) {
         best = c.max.y;
       }
     }

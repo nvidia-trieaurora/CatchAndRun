@@ -8,6 +8,7 @@ import { RoomLobbyUI } from "../ui/screens/RoomLobbyUI";
 import { GameHUD } from "../ui/screens/GameHUD";
 import { ResultsUI } from "../ui/screens/ResultsUI";
 import { SettingsPanel } from "../ui/components/SettingsPanel";
+import { Minimap } from "../ui/components/Minimap";
 import { buildOldHarborFortniteMap } from "./world/maps/oldHarborFortnite";
 import { createFortniteLighting } from "./world/lighting/fortniteLighting";
 import { PropRegistry } from "./world/PropRegistry";
@@ -91,6 +92,8 @@ export class GameManager {
   private inputSeq = 0;
   private lastSendTime = 0;
   private sendInterval = 1000 / CLIENT_SEND_RATE;
+  private ferrisWheel: THREE.Group | null = null;
+  private minimap: Minimap;
 
   constructor(canvas: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
@@ -112,6 +115,8 @@ export class GameManager {
     this.input = new InputManager(canvas);
     this.config = new ClientConfig();
     this.uiManager = new UIManager();
+    this.minimap = new Minimap();
+    document.getElementById("ui-root")!.appendChild(this.minimap.element);
     this.propRegistry = new PropRegistry();
     this.propRegistry.loadFromMapData(mapDataJson.props as any);
 
@@ -347,6 +352,7 @@ export class GameManager {
     this.gateColliderIndex = mapResult.gateColliderIndex;
     this.gateCollider = this.colliders[this.gateColliderIndex] || null;
     this.gateMesh = mapResult.gateMesh;
+    this.ferrisWheel = mapResult.ferrisWheel;
 
     this.weaponSystem = new WeaponSystem(this.scene);
     this.propTransformSystem = new PropTransformSystem(this.scene, this.propRegistry);
@@ -621,6 +627,7 @@ export class GameManager {
       } else {
         this.uiManager.showNotification(`Scanner: ${data.count} prop(s) detected!`);
         if (data.detected) {
+          this.minimap.addDetectedProps(data.detected);
           for (const d of data.detected) {
             const entity = this.playerEntities.get(d.sessionId);
             if (entity) entity.setHighlighted(true);
@@ -728,6 +735,7 @@ export class GameManager {
     this.network.leaveRoom();
     this.uiManager.showScreen("mainMenu");
     this.input.exitPointerLock();
+    this.minimap.hide();
     this.clearGameEntities();
     this.currentPhase = GamePhase.WAITING;
     this.latestRoomState = null;
@@ -756,6 +764,15 @@ export class GameManager {
     this.weaponSystem?.update(dt);
     this.particleSystem?.update(dt);
     this.updateGunViewmodel(dt);
+
+    if (this.ferrisWheel) {
+      this.ferrisWheel.rotation.z += dt * 0.15;
+      this.ferrisWheel.children.forEach((child) => {
+        if (child instanceof THREE.Group) {
+          child.rotation.z -= dt * 0.15;
+        }
+      });
+    }
 
     this.renderer.render(this.scene, this.camera);
   }
@@ -926,9 +943,15 @@ export class GameManager {
 
   private handlePropActions() {
     if (this.input.consumeKey("KeyE")) {
-      const allProps = this.propRegistry.getAll();
-      const randomProp = allProps[Math.floor(Math.random() * allProps.length)];
-      this.network.send(ClientMessage.TRANSFORM_REQUEST, { propId: randomProp.id });
+      const cdSpeed = Date.now() - this.lastAbility2Time;
+      if (cdSpeed >= 30000) {
+        this.network.send(ClientMessage.USE_ABILITY_2);
+        this.lastAbility2Time = Date.now();
+      } else {
+        const allProps = this.propRegistry.getAll();
+        const randomProp = allProps[Math.floor(Math.random() * allProps.length)];
+        this.network.send(ClientMessage.TRANSFORM_REQUEST, { propId: randomProp.id });
+      }
     }
 
     if (this.input.consumeKey("KeyF")) {
@@ -937,16 +960,9 @@ export class GameManager {
       this.network.send(ClientMessage.LOCK_POSE);
     }
 
-    // Q = Invisibility (120s cooldown)
     if (this.input.consumeKey("KeyQ")) {
       this.network.send(ClientMessage.USE_ABILITY);
       this.lastAbilityTime = Date.now();
-    }
-
-    // 1 = Speed Boost (30s cooldown)
-    if (this.input.consumeKey("Digit1")) {
-      this.network.send(ClientMessage.USE_ABILITY_2);
-      this.lastAbility2Time = Date.now();
     }
   }
 
@@ -957,9 +973,15 @@ export class GameManager {
     const cdScan = Math.max(0, HUNTER_SCAN_COOLDOWN_MS - (Date.now() - this.lastScanTime));
     this.gameHUD.updateHunterAbilities(cdGrenade, cdScan, this.grenadeMode);
     this.gameHUD.updateDamageOverlay(this.localHealth, HUNTER_MAX_HEALTH, true);
+
+    this.minimap.show();
+    const pos = this.hunterController.getPosition();
+    const rot = this.hunterController.getRotation();
+    this.minimap.updatePlayerPosition(pos.x, pos.z, rot.y);
   }
 
   private updatePropHUD() {
+    this.minimap.hide();
     this.gameHUD.updateHealth(this.localHealth, PROP_MAX_HEALTH);
     const propDef = this.propRegistry.get(this.localPropId);
     this.gameHUD.updatePropInfo(propDef?.name || "", this.localIsLocked);
@@ -968,9 +990,9 @@ export class GameManager {
     if (cdInvis > 0) {
       this.gameHUD.updateAbility("Invisible", "Q", cdInvis);
     } else if (cdSpeed > 0) {
-      this.gameHUD.updateAbility("Speed", "1", cdSpeed);
+      this.gameHUD.updateAbility("Speed", "E", cdSpeed);
     } else {
-      this.gameHUD.updateAbility("Q:Invis  1:Speed", "", 0);
+      this.gameHUD.updateAbility("Q:INVIS  E:SPEED", "", 0);
     }
     this.gameHUD.updateDamageOverlay(this.localHealth, PROP_MAX_HEALTH, false);
   }

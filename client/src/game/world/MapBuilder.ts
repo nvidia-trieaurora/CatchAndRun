@@ -70,6 +70,7 @@ function matFlat(color: number): THREE.MeshStandardMaterial {
 export class MapBuilder {
   private scene: THREE.Scene;
   private colliders: THREE.Box3[] = [];
+  private ferrisWheel: THREE.Group | null = null;
 
   constructor(scene: THREE.Scene) {
     this.scene = scene;
@@ -89,6 +90,8 @@ export class MapBuilder {
     this.buildSignsAndPoles();
     this.buildBackgroundDepth();
     this.buildDecals();
+    this.buildFoliageAndRocks();
+    this.ferrisWheel = this.buildFerrisWheel();
     return this.colliders;
   }
 
@@ -278,113 +281,78 @@ export class MapBuilder {
     this.add(crossGeo, fm, x, 0.5, z + 0.55, false);
   }
 
-  // ===================== OFFICE =====================
+  // ===================== WAREHOUSE ROOF ACCESS (was Office) =====================
   private buildOffice() {
-    const ox = 26, oz = 6, oy = 3.2;
+    const wh = 7.5;
+    const oy = 3.2;
+    const stairBaseX = 17;
+    const stairZ = 0.5;
 
-    // Floor -- WITH collider so player can stand on it
-    this.box(9, 0.25, 7, ox, oy, oz, P.officeFloor, true);
-
-    // Walls
-    this.box(9, 3.5, 0.18, ox, oy + 1.75, oz - 3.5, P.officeWall);
-    this.box(9, 3.5, 0.18, ox, oy + 1.75, oz + 3.5, P.officeWall);
-    this.box(0.18, 3.5, 7, ox + 4.5, oy + 1.75, oz, P.officeWall);
-
-    // Window in side wall
-    this.box(0.05, 1.2, 2.5, ox + 4.52, oy + 2.2, oz, 0x88bbdd, false, 0.1, 0.3);
-
-    // Door frame in front wall (leave gap for door opening)
-    this.box(3.5, 1.5, 0.18, ox - 2.75, oy + 3, oz - 3.5, P.officeWall, false);
-    this.box(3.5, 1.5, 0.18, ox + 2.75, oy + 3, oz - 3.5, P.officeWall, false);
-
-    // Balcony railing (no collider -- decorative)
-    this.box(8, 0.06, 0.06, ox, oy + 0.9, oz - 3.7, P.metalFrame, false, 0.5, 0.5);
-    for (let i = 0; i < 6; i++) {
-      this.box(0.04, 0.9, 0.04, ox - 4 + i * 1.6, oy + 0.45, oz - 3.7, P.metalFrame, false, 0.5, 0.5);
-    }
-
-    // ===== WIDE WOODEN DECK STAIRCASE =====
-    const stairW = 4.0;
-    const stairZ = oz - 5.5;
-    const numSteps = 10;
-    const stepRise = oy / numSteps;
-    const stepRun = 0.75;
-    const stairStartX = ox - 9;
+    // ===== STAIRCASE UP TO WAREHOUSE ROOF =====
+    const stairW = 3.0;
+    const numSteps = 14;
+    const roofH = wh + 0.2;
+    const stepRise = roofH / numSteps;
+    const stepRun = 0.55;
+    const stairStartX = stairBaseX;
     const stairLen = numSteps * stepRun;
     const leftZ = stairZ - stairW / 2;
     const rightZ = stairZ + stairW / 2;
 
-    // Wooden step planks -- each step is a thin platform collider
     for (let i = 0; i < numSteps; i++) {
       const sx = stairStartX + i * stepRun + stepRun / 2;
       const sy = stepRise * (i + 1);
-      // Visual plank
-      this.box(stairW - 0.3, 0.08, stepRun - 0.06, sx, sy, stairZ, P.woodWarm, false);
-      // Thin collider just for this step surface (ground detection only)
+      this.box(stairW - 0.3, 0.06, stepRun - 0.04, sx, sy, stairZ, P.metalFrame, false, 0.5, 0.5);
       this.colliders.push(new THREE.Box3(
-        new THREE.Vector3(sx - stairW / 2, sy - 0.08, stairZ - stairW / 2),
+        new THREE.Vector3(sx - stairW / 2, sy - 0.06, stairZ - stairW / 2),
         new THREE.Vector3(sx + stairW / 2, sy, stairZ + stairW / 2)
       ));
     }
 
-    // Side stringers (thick wooden beams on each side)
-    const stairAngle = Math.atan2(oy, stairLen);
-    const stringerLen = Math.sqrt(oy * oy + stairLen * stairLen);
+    const stairAngle = Math.atan2(roofH, stairLen);
+    const stringerLen = Math.sqrt(roofH * roofH + stairLen * stairLen);
     const midX = stairStartX + stairLen / 2;
-    const midY = oy / 2;
+    const midY = roofH / 2;
 
-    const lStr = this.box(stringerLen + 0.3, 0.2, 0.12, midX, midY, leftZ, P.woodDark, false);
+    const lStr = this.box(stringerLen + 0.3, 0.15, 0.08, midX, midY, leftZ, P.metalDark, false, 0.5, 0.5);
     lStr.rotation.z = -stairAngle;
-    const rStr = this.box(stringerLen + 0.3, 0.2, 0.12, midX, midY, rightZ, P.woodDark, false);
+    const rStr = this.box(stringerLen + 0.3, 0.15, 0.08, midX, midY, rightZ, P.metalDark, false, 0.5, 0.5);
     rStr.rotation.z = -stairAngle;
 
-    // Handrail posts
     for (let i = 0; i <= numSteps; i += 2) {
       const px = stairStartX + i * stepRun;
       const py = stepRise * i;
-      this.box(0.07, 1.0, 0.07, px, py + 0.5, leftZ - 0.15, P.woodDark, false);
-      this.box(0.07, 1.0, 0.07, px, py + 0.5, rightZ + 0.15, P.woodDark, false);
+      this.box(0.05, 1.0, 0.05, px, py + 0.5, leftZ - 0.1, P.metalFrame, false, 0.5, 0.5);
+      this.box(0.05, 1.0, 0.05, px, py + 0.5, rightZ + 0.1, P.metalFrame, false, 0.5, 0.5);
     }
 
-    // Top rail beams (angled)
-    const railOffset = 1.0;
-    const tRailL = this.box(stringerLen + 0.3, 0.06, 0.06, midX, midY + railOffset, leftZ - 0.15, P.woodDark, false);
+    const railOff = 1.0;
+    const tRailL = this.box(stringerLen + 0.3, 0.05, 0.05, midX, midY + railOff, leftZ - 0.1, P.metalDark, false, 0.5, 0.5);
     tRailL.rotation.z = -stairAngle;
-    const tRailR = this.box(stringerLen + 0.3, 0.06, 0.06, midX, midY + railOffset, rightZ + 0.15, P.woodDark, false);
+    const tRailR = this.box(stringerLen + 0.3, 0.05, 0.05, midX, midY + railOff, rightZ + 0.1, P.metalDark, false, 0.5, 0.5);
     tRailR.rotation.z = -stairAngle;
 
-    // Support posts underneath
     const supports = [0.25, 0.5, 0.75];
     for (const frac of supports) {
       const spx = stairStartX + stairLen * frac;
       const h = stepRise * numSteps * frac;
       if (h > 0.5) {
-        this.box(0.12, h, 0.12, spx, h / 2, leftZ, P.woodDark, false);
-        this.box(0.12, h, 0.12, spx, h / 2, rightZ, P.woodDark, false);
+        this.box(0.1, h, 0.1, spx, h / 2, leftZ, P.metalDark, false, 0.5, 0.5);
+        this.box(0.1, h, 0.1, spx, h / 2, rightZ, P.metalDark, false, 0.5, 0.5);
       }
     }
 
-    // Landing platform connecting stairs to office door
-    const landX = stairStartX + stairLen + 0.8;
-    this.box(2.5, 0.15, stairW + 1.5, landX, oy - 0.08, stairZ + 0.5, P.woodWarm, true);
-
-    // Desk
-    this.box(1.6, 0.05, 0.85, ox + 1, oy + 0.72, oz, P.deskBrown);
-    this.box(0.04, 0.7, 0.85, ox + 1.78, oy + 0.35, oz, P.deskBrown, false);
-    this.box(0.04, 0.7, 0.85, ox + 0.22, oy + 0.35, oz, P.deskBrown, false);
-    this.box(0.5, 0.5, 0.7, ox + 1.5, oy + 0.4, oz, P.woodDark, false);
-
-    // Chair
-    this.box(0.45, 0.05, 0.45, ox - 0.5, oy + 0.42, oz, P.chairDark);
-    this.box(0.45, 0.4, 0.05, ox - 0.5, oy + 0.65, oz - 0.2, P.chairDark, false);
-
-    // Filing cabinets
-    this.box(0.45, 1.4, 0.55, ox + 3.8, oy + 0.7, oz + 2.5, P.cabinetMtl, true, 0.5, 0.4);
-    this.box(0.45, 1.4, 0.55, ox + 3.8, oy + 0.7, oz + 1.8, P.cabinetMtl, true, 0.5, 0.4);
-
-    // Whiteboard
-    this.box(2.0, 1.2, 0.04, ox + 4.4, oy + 2.2, oz - 1, 0xf0f0f0, false);
-    this.box(2.1, 0.08, 0.06, ox + 4.4, oy + 1.6, oz - 1, P.metalFrame, false, 0.5, 0.5);
+    // Roof walkway platform
+    const roofWalkX = stairStartX + stairLen + 1.5;
+    this.box(4, 0.12, stairW + 1, roofWalkX, roofH - 0.06, stairZ, P.metalFrame, true, 0.5, 0.5);
+    // Railing on roof walkway
+    this.box(4, 0.05, 0.05, roofWalkX, roofH + 0.9, stairZ - stairW / 2 - 0.5, P.metalDark, false, 0.5, 0.5);
+    this.box(4, 0.05, 0.05, roofWalkX, roofH + 0.9, stairZ + stairW / 2 + 0.5, P.metalDark, false, 0.5, 0.5);
+    for (let i = 0; i < 5; i++) {
+      const rx = roofWalkX - 2 + i;
+      this.box(0.04, 0.9, 0.04, rx, roofH + 0.45, stairZ - stairW / 2 - 0.5, P.metalFrame, false, 0.5, 0.5);
+      this.box(0.04, 0.9, 0.04, rx, roofH + 0.45, stairZ + stairW / 2 + 0.5, P.metalFrame, false, 0.5, 0.5);
+    }
   }
 
   // ===================== CONTAINER YARD =====================
@@ -404,6 +372,47 @@ export class MapBuilder {
     this.buildContainer(cx + 12, 0, cz - 5, P.containerBl, 0);
     // Remove back wall of open container by adding dark interior
     this.box(5.8, 2.3, 2.2, cx + 12, 1.2, cz - 5, P.metalDark, false, 0.9, 0.1);
+
+    // Platform on top of stacked container for walkable area
+    this.colliders.push(new THREE.Box3(
+      new THREE.Vector3(cx - 5.1, 5.1, cz - 5.2),
+      new THREE.Vector3(cx + 3.1, 5.2, cz - 0.8)
+    ));
+
+    // ===== METAL STAIRCASE UP TO CONTAINER TOP =====
+    const csNumSteps = 14;
+    const csHeight = 5.1;
+    const csStepRise = csHeight / csNumSteps;
+    const csStepRun = 0.5;
+    const csStartX = cx - 8;
+    const csZ = cz - 3;
+    const csW = 1.8;
+    const csLeftZ = csZ - csW / 2;
+    const csRightZ = csZ + csW / 2;
+    for (let i = 0; i < csNumSteps; i++) {
+      const sx = csStartX + i * csStepRun + csStepRun / 2;
+      const sy = csStepRise * (i + 1);
+      this.box(csW - 0.2, 0.06, csStepRun - 0.04, sx, sy, csZ, P.metalFrame, false, 0.5, 0.5);
+      this.colliders.push(new THREE.Box3(
+        new THREE.Vector3(sx - csW / 2, sy - 0.06, csZ - csW / 2),
+        new THREE.Vector3(sx + csW / 2, sy, csZ + csW / 2)
+      ));
+    }
+    const csLen = csNumSteps * csStepRun;
+    const csAngle = Math.atan2(csHeight, csLen);
+    const csStringerLen = Math.sqrt(csHeight * csHeight + csLen * csLen);
+    const csMidX = csStartX + csLen / 2;
+    const csMidY = csHeight / 2;
+    const csLStr = this.box(csStringerLen + 0.3, 0.12, 0.06, csMidX, csMidY, csLeftZ, P.metalDark, false, 0.5, 0.5);
+    csLStr.rotation.z = -csAngle;
+    const csRStr = this.box(csStringerLen + 0.3, 0.12, 0.06, csMidX, csMidY, csRightZ, P.metalDark, false, 0.5, 0.5);
+    csRStr.rotation.z = -csAngle;
+    for (let i = 0; i <= csNumSteps; i += 2) {
+      const px = csStartX + i * csStepRun;
+      const py = csStepRise * i;
+      this.box(0.05, 0.9, 0.05, px, py + 0.45, csLeftZ - 0.1, P.metalFrame, false, 0.5, 0.5);
+      this.box(0.05, 0.9, 0.05, px, py + 0.45, csRightZ + 0.1, P.metalFrame, false, 0.5, 0.5);
+    }
 
     // Concrete barriers between containers
     this.box(2.5, 0.9, 0.4, cx + 4, 0.45, cz - 1, P.concreteDk);
@@ -1149,6 +1158,163 @@ export class MapBuilder {
       const sh = new THREE.Mesh(new THREE.PlaneGeometry(8, 3), wMat);
       sh.rotation.x = -Math.PI/2; sh.position.set(-10+i*8, -0.1, 52+Math.random()*5);
       this.scene.add(sh);
+    }
+  }
+
+  // ===================== FERRIS WHEEL =====================
+  private buildFerrisWheel(): THREE.Group {
+    const group = new THREE.Group();
+    const wheelRadius = 6;
+    const hubMat = mat(P.metalDark, 0.4, 0.6);
+    const spokeMat = mat(P.metalFrame, 0.5, 0.5);
+    const cabinMat = mat(P.containerRd, 0.7, 0.2);
+    const cabinMat2 = mat(P.containerBl, 0.7, 0.2);
+    const cabinMat3 = mat(P.containerYl, 0.7, 0.2);
+    const cabinMats = [cabinMat, cabinMat2, cabinMat3];
+
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.6, 12), hubMat);
+    hub.rotation.x = Math.PI / 2;
+    group.add(hub);
+
+    const rimGeo = new THREE.TorusGeometry(wheelRadius, 0.08, 8, 32);
+    const rim = new THREE.Mesh(rimGeo, spokeMat);
+    group.add(rim);
+
+    const numSpokes = 8;
+    for (let i = 0; i < numSpokes; i++) {
+      const angle = (i / numSpokes) * Math.PI * 2;
+      const spoke = new THREE.Mesh(new THREE.BoxGeometry(0.06, wheelRadius * 2, 0.06), spokeMat);
+      spoke.rotation.z = angle;
+      group.add(spoke);
+
+      const cabinGroup = new THREE.Group();
+      const cabin = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.6, 0.5), cabinMats[i % 3]);
+      cabin.castShadow = true;
+      cabinGroup.add(cabin);
+      const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.4, 4), hubMat);
+      bar.position.y = 0.5;
+      cabinGroup.add(bar);
+      cabinGroup.position.set(Math.cos(angle) * wheelRadius, Math.sin(angle) * wheelRadius, 0);
+      group.add(cabinGroup);
+    }
+
+    // Support legs (A-frame)
+    const legMat = mat(P.metalDark, 0.5, 0.5);
+    const legH = wheelRadius + 2;
+    const legL = new THREE.Mesh(new THREE.BoxGeometry(0.2, legH, 0.2), legMat);
+    legL.position.set(0, -legH / 2 + wheelRadius, -2);
+    legL.rotation.x = 0.15;
+    group.add(legL);
+    const legR = new THREE.Mesh(new THREE.BoxGeometry(0.2, legH, 0.2), legMat);
+    legR.position.set(0, -legH / 2 + wheelRadius, 2);
+    legR.rotation.x = -0.15;
+    group.add(legR);
+    const crossBar = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.15, 4.5), legMat);
+    crossBar.position.set(0, wheelRadius * 0.3, 0);
+    group.add(crossBar);
+
+    group.position.set(20, wheelRadius + 2, 48);
+    this.scene.add(group);
+    return group;
+  }
+
+  getFerrisWheel(): THREE.Group | null {
+    return this.ferrisWheel;
+  }
+
+  // ===================== FOLIAGE & ROCKS =====================
+  private buildFoliageAndRocks() {
+    // Tall grass clusters
+    const tallGrassMat = mat(0x4a7a28, 0.95, 0);
+    const tallGrassDkMat = mat(0x3a6a20, 0.95, 0);
+    const grassClusterPositions = [
+      [-30, 25], [-35, 18], [48, 15], [52, -10], [-50, -5],
+      [-28, -20], [45, 25], [-45, 20], [55, -20], [-38, -15],
+      [30, 28], [-15, 25], [50, 28], [-55, 5], [40, -25],
+    ];
+    for (const [gx, gz] of grassClusterPositions) {
+      const count = 5 + Math.floor(Math.random() * 4);
+      for (let j = 0; j < count; j++) {
+        const ox = gx + (Math.random() - 0.5) * 2;
+        const oz = gz + (Math.random() - 0.5) * 2;
+        const h = 0.3 + Math.random() * 0.4;
+        const grass = new THREE.Mesh(
+          new THREE.ConeGeometry(0.06 + Math.random() * 0.04, h, 4),
+          Math.random() > 0.4 ? tallGrassMat : tallGrassDkMat
+        );
+        grass.position.set(ox, h / 2, oz);
+        grass.rotation.y = Math.random() * Math.PI;
+        grass.rotation.x = (Math.random() - 0.5) * 0.2;
+        this.scene.add(grass);
+      }
+    }
+
+    // Rocks scattered around the map
+    const rockColors = [0x8a8a82, 0x7a7a72, 0x6a6a62, 0x9a9a92];
+    const rockPositions = [
+      [-32, 22], [-38, -18], [50, 10], [55, -15], [-48, 12],
+      [42, 22], [-25, -25], [48, -22], [-52, -8], [35, 30],
+      [-30, -10], [52, 5], [-42, 0], [30, -20], [-20, 28],
+    ];
+    for (const [rx, rz] of rockPositions) {
+      const s = 0.2 + Math.random() * 0.5;
+      const rockGeo = Math.random() > 0.5
+        ? new THREE.DodecahedronGeometry(s, 0)
+        : new THREE.IcosahedronGeometry(s, 0);
+      const rock = new THREE.Mesh(rockGeo, mat(rockColors[Math.floor(Math.random() * rockColors.length)], 0.9, 0.05));
+      rock.position.set(rx, s * 0.4, rz);
+      rock.rotation.set(Math.random(), Math.random(), Math.random());
+      rock.scale.y = 0.5 + Math.random() * 0.5;
+      rock.castShadow = true;
+      rock.receiveShadow = true;
+      this.scene.add(rock);
+    }
+
+    // Small flower bushes near existing bushes
+    const flowerBushColors = [0xff88aa, 0xcc66ff, 0xffffff, 0xffcc66, 0xff6688];
+    const flowerBushPositions = [
+      [-22, 18], [22, 19], [-16, 21], [1, 21], [46, 6],
+      [-41, 11], [-41, -9], [31, 26], [-21, -21],
+    ];
+    for (const [fx, fz] of flowerBushPositions) {
+      const bushGroup = new THREE.Group();
+      const leafS = 0.3 + Math.random() * 0.2;
+      const leafMesh = new THREE.Mesh(new THREE.SphereGeometry(leafS, 5, 4), mat(0x3a6a2a, 0.9, 0));
+      leafMesh.scale.y = 0.6;
+      bushGroup.add(leafMesh);
+      for (let f = 0; f < 4 + Math.floor(Math.random() * 3); f++) {
+        const flower = new THREE.Mesh(
+          new THREE.SphereGeometry(0.04 + Math.random() * 0.03, 4, 4),
+          mat(flowerBushColors[Math.floor(Math.random() * flowerBushColors.length)])
+        );
+        const angle = Math.random() * Math.PI * 2;
+        const r = leafS * 0.6;
+        flower.position.set(Math.cos(angle) * r, leafS * 0.3 + Math.random() * 0.1, Math.sin(angle) * r);
+        bushGroup.add(flower);
+      }
+      bushGroup.position.set(fx + (Math.random() - 0.5), leafS * 0.35, fz + (Math.random() - 0.5));
+      this.scene.add(bushGroup);
+    }
+
+    // Larger rock formations (landmark-style)
+    const bigRockPositions = [
+      [-45, -20], [55, 25], [-55, 20],
+    ];
+    for (const [bx, bz] of bigRockPositions) {
+      const group = new THREE.Group();
+      for (let i = 0; i < 3; i++) {
+        const s = 0.5 + Math.random() * 0.8;
+        const geo = new THREE.DodecahedronGeometry(s, 1);
+        const rock = new THREE.Mesh(geo, mat(0x7a7a72, 0.92, 0.03));
+        rock.position.set((Math.random() - 0.5) * 1.5, s * 0.3, (Math.random() - 0.5) * 1.5);
+        rock.rotation.set(Math.random(), Math.random(), Math.random());
+        rock.scale.y = 0.4 + Math.random() * 0.3;
+        rock.castShadow = true;
+        rock.receiveShadow = true;
+        group.add(rock);
+      }
+      group.position.set(bx, 0, bz);
+      this.scene.add(group);
     }
   }
 
