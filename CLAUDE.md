@@ -27,6 +27,8 @@ npm run test:coverage        # Run tests with coverage report
 
 Tests live in `server/tests/` and use Vitest. Helper factories are in `server/tests/helpers/factories.ts`.
 
+**RULE: Every new feature or bug fix that touches server-side game logic MUST include corresponding unit tests.** Add tests to the relevant file in `server/tests/systems/` or create a new test file. Tests must pass before committing. Use `createMockRoom`, `addPlayerToRoom`, and `createPlayer` factories from `tests/helpers/factories.ts`.
+
 ```bash
 npm run lint                 # ESLint strict-type-checked (errors block CI)
 npm run lint:fix             # Auto-fix lint issues
