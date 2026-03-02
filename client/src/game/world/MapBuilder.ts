@@ -284,7 +284,6 @@ export class MapBuilder {
   // ===================== WAREHOUSE ROOF ACCESS (was Office) =====================
   private buildOffice() {
     const wh = 7.5;
-    const oy = 3.2;
     const stairBaseX = 17;
     const stairZ = 0.5;
 

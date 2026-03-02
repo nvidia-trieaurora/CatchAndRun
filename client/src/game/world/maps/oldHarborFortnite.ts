@@ -842,7 +842,6 @@ function buildParkourStructures(B: MapBoxHelper, scene: THREE.Scene) {
 
   // ===== SUSPENDED PLATFORMS (warehouse ceiling) =====
   // Chain-suspended metal platforms hanging from roof beams
-  const suspMat = getCustomMaterial(PALETTE.steel, 0.5, 0.5);
   const chainMat = getCustomMaterial(PALETTE.steelLight, 0.4, 0.6);
   const suspPositions: [number, number, number][] = [[-15, 5.5, 0], [0, 5.8, 8], [12, 5.3, -5]];
   for (const [sx, sy, sz] of suspPositions) {
