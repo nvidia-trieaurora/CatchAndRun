@@ -925,14 +925,57 @@ function buildFerrisWheel(scene: THREE.Scene, colliders: THREE.Box3[]): THREE.Gr
   group.add(cross);
 
   const fwX = -10, fwZ = 32;
-  group.position.set(fwX, R + 1.5, fwZ);
+  const fwBaseY = R + 1.5;
+  group.position.set(fwX, fwBaseY, fwZ);
   scene.add(group);
 
-  // Base colliders for ferris wheel legs
+  // Leg colliders
   colliders.push(
     new THREE.Box3(new THREE.Vector3(fwX - 0.3, 0, fwZ - 2.2), new THREE.Vector3(fwX + 0.3, 3, fwZ - 1.4)),
     new THREE.Box3(new THREE.Vector3(fwX - 0.3, 0, fwZ + 1.4), new THREE.Vector3(fwX + 0.3, 3, fwZ + 2.2)),
   );
+
+  // Cross bar platform (walkable, at world y = fwBaseY + R*0.2)
+  const crossWorldY = fwBaseY + R * 0.2;
+  colliders.push(new THREE.Box3(
+    new THREE.Vector3(fwX - 0.2, crossWorldY - 0.1, fwZ - 2),
+    new THREE.Vector3(fwX + 0.2, crossWorldY + 0.1, fwZ + 2)
+  ));
+
+  // Hub platform (walkable, at world y = fwBaseY = center of wheel)
+  colliders.push(new THREE.Box3(
+    new THREE.Vector3(fwX - 0.5, fwBaseY - 0.15, fwZ - 0.5),
+    new THREE.Vector3(fwX + 0.5, fwBaseY + 0.15, fwZ + 0.5)
+  ));
+
+  // Ladder from ground to cross bar (step colliders on the back leg)
+  const ladderX = fwX;
+  const ladderZ = fwZ + 1.8;
+  const ladderTopY = crossWorldY;
+  const ladderSteps = Math.ceil(ladderTopY / 0.4);
+  for (let i = 0; i < ladderSteps; i++) {
+    const stepY = i * 0.4;
+    colliders.push(new THREE.Box3(
+      new THREE.Vector3(ladderX - 0.3, stepY, ladderZ - 0.2),
+      new THREE.Vector3(ladderX + 0.3, stepY + 0.4, ladderZ + 0.2)
+    ));
+  }
+
+  // Visual ladder rungs on the back leg
+  const rungMat = getCustomMaterial(PALETTE.steelLight, 0.5, 0.5);
+  for (let i = 0; i < ladderSteps; i++) {
+    const rung = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.04, 0.04), rungMat);
+    rung.position.set(ladderX, i * 0.4 + 0.2, ladderZ);
+    scene.add(rung);
+  }
+  // Ladder side rails
+  const railMat = getCustomMaterial(PALETTE.steelLight, 0.5, 0.5);
+  const railL = new THREE.Mesh(new THREE.BoxGeometry(0.04, ladderTopY, 0.04), railMat);
+  railL.position.set(ladderX - 0.25, ladderTopY / 2, ladderZ);
+  scene.add(railL);
+  const railR = new THREE.Mesh(new THREE.BoxGeometry(0.04, ladderTopY, 0.04), railMat);
+  railR.position.set(ladderX + 0.25, ladderTopY / 2, ladderZ);
+  scene.add(railR);
 
   return group;
 }
