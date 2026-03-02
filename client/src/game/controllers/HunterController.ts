@@ -216,9 +216,15 @@ export class HunterController {
       const ox2 = c.max.x - box.min.x;
       const oz1 = box.max.z - c.min.z;
       const oz2 = c.max.z - box.min.z;
-      const min = Math.min(ox1, ox2, oz1, oz2);
+      const oy2 = c.max.y - box.min.y;
+      const min = Math.min(ox1, ox2, oz1, oz2, oy2);
 
-      if (min === ox1) this.position.x -= ox1 + 0.01;
+      if (min === oy2 && oy2 < 0.6) {
+        this.feetY = c.max.y;
+        this.position.y = this.feetY + this.currentEyeH;
+        this.verticalVelocity = 0;
+        this.onGround = true;
+      } else if (min === ox1) this.position.x -= ox1 + 0.01;
       else if (min === ox2) this.position.x += ox2 + 0.01;
       else if (min === oz1) this.position.z -= oz1 + 0.01;
       else this.position.z += oz2 + 0.01;
