@@ -82,7 +82,7 @@ export class InputManager {
       interact: this.keys.has("KeyE"),
       lockPose: this.keys.has("KeyF"),
       ability: this.keys.has("KeyQ"),
-      ability2: this.keys.has("KeyE"),
+      ability2: this.keys.has("KeyR"),
       scoreboard: this.keys.has("Tab"),
     };
   }

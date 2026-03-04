@@ -802,7 +802,7 @@ export class GameManager {
       // Apply speed boost if active
       const boosted = Date.now() < this.speedBoostEnd;
       if (boosted) {
-        (this.propController as any).speed = 22;
+        (this.propController as any).speed = 18;
         this.speedBoostSmoke += dt;
         if (this.speedBoostSmoke > 0.08) {
           this.speedBoostSmoke = 0;
@@ -810,7 +810,7 @@ export class GameManager {
           this.particleSystem?.spawnImpact(new THREE.Vector3(p.x, p.y + 0.1, p.z), 3);
         }
       } else {
-        (this.propController as any).speed = 13;
+        (this.propController as any).speed = 9;
       }
       pos = this.propController.update(dt, this.colliders);
       this.handlePropActions();
@@ -942,15 +942,19 @@ export class GameManager {
   }
 
   private handlePropActions() {
+    // E = Transform into random prop
     if (this.input.consumeKey("KeyE")) {
+      const allProps = this.propRegistry.getAll();
+      const randomProp = allProps[Math.floor(Math.random() * allProps.length)];
+      this.network.send(ClientMessage.TRANSFORM_REQUEST, { propId: randomProp.id });
+    }
+
+    // R = Speed Boost
+    if (this.input.consumeKey("KeyR")) {
       const cdSpeed = Date.now() - this.lastAbility2Time;
       if (cdSpeed >= 30000) {
         this.network.send(ClientMessage.USE_ABILITY_2);
         this.lastAbility2Time = Date.now();
-      } else {
-        const allProps = this.propRegistry.getAll();
-        const randomProp = allProps[Math.floor(Math.random() * allProps.length)];
-        this.network.send(ClientMessage.TRANSFORM_REQUEST, { propId: randomProp.id });
       }
     }
 
@@ -990,9 +994,9 @@ export class GameManager {
     if (cdInvis > 0) {
       this.gameHUD.updateAbility("Invisible", "Q", cdInvis);
     } else if (cdSpeed > 0) {
-      this.gameHUD.updateAbility("Speed", "E", cdSpeed);
+      this.gameHUD.updateAbility("Speed", "R", cdSpeed);
     } else {
-      this.gameHUD.updateAbility("Q:INVIS  E:SPEED", "", 0);
+      this.gameHUD.updateAbility("Q:INVIS E:TRANS R:SPEED", "", 0);
     }
     this.gameHUD.updateDamageOverlay(this.localHealth, PROP_MAX_HEALTH, false);
   }

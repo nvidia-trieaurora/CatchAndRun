@@ -16,7 +16,7 @@ export const HUNTERS_PER_PLAYERS = 4;
 export const HUNTER_MAX_HEALTH = 100;
 export const PROP_MAX_HEALTH = 100;
 export const HUNTER_SPEED = 10.0;
-export const PROP_SPEED = 11.0;
+export const PROP_SPEED = 9.0;
 
 export const WEAPON_DAMAGE = 25;
 export const WEAPON_FIRE_RATE_MS = 200;

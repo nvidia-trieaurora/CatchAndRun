@@ -28,6 +28,8 @@ export function buildOldHarborFortniteMap(scene: THREE.Scene, _mapData: MapData)
   buildBackgroundVista(B, scene);
 
   buildParkourStructures(B, scene);
+  buildBackyardHouse(B, scene);
+  buildBackyardGarden(B, scene);
 
   const clutterColliders = spawnClutterProps(scene, MAP_SEED);
   colliders.push(...clutterColliders);
@@ -100,7 +102,7 @@ function buildGround(B: MapBoxHelper) {
 
   // ===== BOUNDARY WALLS (prevent leaving play area) =====
   // Map bounds: x from -55 to 63, z from -43 to 47
-  const BW = 1.0, BH = 6;
+  const BW = 2.0, BH = 8; // Thicker walls, taller to prevent any escape
   const MAP_MIN_X = -55, MAP_MAX_X = 63;
   const MAP_MIN_Z = -43, MAP_MAX_Z = 47;
   const MAP_WIDTH = MAP_MAX_X - MAP_MIN_X;
@@ -109,13 +111,13 @@ function buildGround(B: MapBoxHelper) {
   const MAP_CENTER_Z = (MAP_MIN_Z + MAP_MAX_Z) / 2;
 
   // North wall (z = MAP_MIN_Z)
-  B.colorBox(MAP_WIDTH + BW * 2, BH, BW, MAP_CENTER_X, BH / 2, MAP_MIN_Z, PALETTE.concreteDark, 0.9, 0.03, true);
+  B.colorBox(MAP_WIDTH + BW * 2, BH, BW, MAP_CENTER_X, BH / 2, MAP_MIN_Z - BW / 2, PALETTE.concreteDark, 0.9, 0.03, true);
   // South wall (z = MAP_MAX_Z)
-  B.colorBox(MAP_WIDTH + BW * 2, BH, BW, MAP_CENTER_X, BH / 2, MAP_MAX_Z, PALETTE.concreteDark, 0.9, 0.03, true);
+  B.colorBox(MAP_WIDTH + BW * 2, BH, BW, MAP_CENTER_X, BH / 2, MAP_MAX_Z + BW / 2, PALETTE.concreteDark, 0.9, 0.03, true);
   // West wall (x = MAP_MIN_X)
-  B.colorBox(BW, BH, MAP_DEPTH + BW * 2, MAP_MIN_X, BH / 2, MAP_CENTER_Z, PALETTE.concreteDark, 0.9, 0.03, true);
+  B.colorBox(BW, BH, MAP_DEPTH + BW * 2, MAP_MIN_X - BW / 2, BH / 2, MAP_CENTER_Z, PALETTE.concreteDark, 0.9, 0.03, true);
   // East wall (x = MAP_MAX_X)
-  B.colorBox(BW, BH, MAP_DEPTH + BW * 2, MAP_MAX_X, BH / 2, MAP_CENTER_Z, PALETTE.concreteDark, 0.9, 0.03, true);
+  B.colorBox(BW, BH, MAP_DEPTH + BW * 2, MAP_MAX_X + BW / 2, BH / 2, MAP_CENTER_Z, PALETTE.concreteDark, 0.9, 0.03, true);
 
   // Visual fence on top of boundary walls
   const fenceH = 2.0;
@@ -141,11 +143,11 @@ function buildGround(B: MapBoxHelper) {
   B.colorBox(0.06, 0.06, MAP_DEPTH, MAP_MIN_X, BH + fenceH * 0.3, MAP_CENTER_Z, PALETTE.steel, 0.5, 0.5, false);
   B.colorBox(0.06, 0.06, MAP_DEPTH, MAP_MAX_X, BH + fenceH * 0.3, MAP_CENTER_Z, PALETTE.steel, 0.5, 0.5, false);
 
-  // Fence top colliders to prevent jumping over (all 4 sides)
-  B.addCollider(MAP_MIN_X - 1, BH, MAP_MIN_Z - 1, MAP_MAX_X + 1, BH + fenceH + 1, MAP_MIN_Z + 0.5);
-  B.addCollider(MAP_MIN_X - 1, BH, MAP_MAX_Z - 0.5, MAP_MAX_X + 1, BH + fenceH + 1, MAP_MAX_Z + 1);
-  B.addCollider(MAP_MIN_X - 1, BH, MAP_MIN_Z - 1, MAP_MIN_X + 0.5, BH + fenceH + 1, MAP_MAX_Z + 1);
-  B.addCollider(MAP_MAX_X - 0.5, BH, MAP_MIN_Z - 1, MAP_MAX_X + 1, BH + fenceH + 1, MAP_MAX_Z + 1);
+  // Fence top colliders to prevent jumping over (all 4 sides) - extended to be thicker
+  B.addCollider(MAP_MIN_X - BW, BH, MAP_MIN_Z - BW, MAP_MAX_X + BW, BH + fenceH + 2, MAP_MIN_Z + BW);
+  B.addCollider(MAP_MIN_X - BW, BH, MAP_MAX_Z - BW, MAP_MAX_X + BW, BH + fenceH + 2, MAP_MAX_Z + BW);
+  B.addCollider(MAP_MIN_X - BW, BH, MAP_MIN_Z - BW, MAP_MIN_X + BW, BH + fenceH + 2, MAP_MAX_Z + BW);
+  B.addCollider(MAP_MAX_X - BW, BH, MAP_MIN_Z - BW, MAP_MAX_X + BW, BH + fenceH + 2, MAP_MAX_Z + BW);
 }
 
 // ========== ZONE 2: WAREHOUSE HALL ==========
@@ -172,9 +174,9 @@ function buildWarehouseHall(B: MapBoxHelper) {
     const shade = i % 2 === 0 ? 0x7a7570 : 0x888380;
     B.colorBox(W + 1, 0.15, D / 5 + 0.5, 0, H + 0.08, rz, shade, 0.55, 0.35, false);
   }
-  // ONE solid roof collider covering the entire roof - reliable, no gaps
-  // min.y=H=8 ensures feetY=8 when standing; thickness 0.4 prevents tunneling
-  B.addCollider(-W / 2 - 0.5, H, -D / 2 - 0.5, W / 2 + 0.5, H + 0.4, D / 2 + 0.5);
+  // ONE solid roof collider - thin slab at exactly roof height
+  // min.y = H so players stand on top at feetY=H; max.y = H+0.2 thin
+  B.addCollider(-W / 2 - 0.5, H, -D / 2 - 0.5, W / 2 + 0.5, H + 0.2, D / 2 + 0.5);
 
   // Steel I-beams
   for (let i = 0; i < 4; i++) {
@@ -206,6 +208,46 @@ function buildWarehouseHall(B: MapBoxHelper) {
   B.colorBox(0.7, 0.5, 0.5, 8, 0.25, -14, cb, 0.9, 0, false);
   B.colorBox(0.7, 0.5, 0.5, 8.8, 0.25, -14, cb, 0.9, 0, false);
   B.colorBox(0.6, 0.5, 0.5, 8.4, 0.75, -14, cb, 0.9, 0, false);
+
+  // Photo frames on walls with actual photo texture
+  const frameColors = [0xddcc88, 0xbb9966, 0x996644, 0xaa8855];
+  const photoTexture = new THREE.TextureLoader().load('/assets/photos/thinhdeptrai.jpg');
+  photoTexture.colorSpace = THREE.SRGBColorSpace;
+  const photoMaterial = new THREE.MeshStandardMaterial({ map: photoTexture, roughness: 0.3, metalness: 0.02 });
+  const photoWall: [number, number, number, number][] = [
+    // [x, y, z, rotY] - positions on warehouse interior walls
+    [-20, 3.5, -17.7, 0],  // back wall
+    [-10, 4.0, -17.7, 0],
+    [0, 3.2, -17.7, 0],
+    [10, 3.8, -17.7, 0],
+    [-22.6, 3.0, -10, Math.PI / 2],  // left wall
+    [-22.6, 4.2, 0, Math.PI / 2],
+    [-22.6, 3.5, 8, Math.PI / 2],
+  ];
+  for (let i = 0; i < photoWall.length; i++) {
+    const [px, py, pz, pRot] = photoWall[i];
+    const frameW = 1.2 + (i % 3) * 0.3;
+    const frameH = 0.9 + (i % 2) * 0.3;
+    const isHorizontal = pRot !== 0;
+
+    // Frame border
+    const frameMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(isHorizontal ? 0.06 : frameW + 0.15, frameH + 0.15, isHorizontal ? frameW + 0.15 : 0.06),
+      getCustomMaterial(frameColors[i % frameColors.length], 0.8, 0.1)
+    );
+    frameMesh.position.set(px, py, pz);
+    (B as any).scene.add(frameMesh);
+
+    // Photo with actual texture
+    const photoGeo = new THREE.PlaneGeometry(frameW, frameH);
+    const photoMesh = new THREE.Mesh(photoGeo, photoMaterial);
+    photoMesh.position.set(px, py, pz + (isHorizontal ? 0 : 0.035));
+    if (isHorizontal) {
+      photoMesh.rotation.y = Math.PI / 2;
+      photoMesh.position.x = px + 0.035;
+    }
+    (B as any).scene.add(photoMesh);
+  }
 
   // Hanging light fixtures
   const fixtureMat = getMaterial("steelDark");
@@ -592,7 +634,15 @@ function buildVegetation(scene: THREE.Scene, B: MapBoxHelper) {
 
 // ========== STREET LAMPS ==========
 function buildStreetLamps(B: MapBoxHelper, scene: THREE.Scene) {
-  const lampPositions = [[-25, 32], [0, 32], [25, 32], [52, 0], [-32, -15], [50, -20]];
+  const lampPositions: [number, number][] = [
+    [-25, 32], [0, 32], [25, 32], [52, 0], [-32, -15], [50, -20],
+    [-40, 20], [-15, 20], [10, 20], [35, 20],
+    [-50, 0], [-35, 0], [0, 0], [20, 0],
+    [-45, -25], [-20, -30], [10, -25], [40, -30],
+    [-50, 38], [-30, 42], [50, 30],
+    [-10, 42], [30, 42],
+    [55, -10], [-55, 10],
+  ];
   for (const [lx, lz] of lampPositions) {
     B.cyl(0.06, 0.08, 5, lx, 2.5, lz, "steelDark");
     B.colorBox(1.0, 0.06, 0.06, lx + 0.5, 5, lz, PALETTE.steelDark, 0.5, 0.5, false);
@@ -621,13 +671,7 @@ function buildParkour(B: MapBoxHelper) {
   const stairStartZ = -13;
   const numSteps = 21;       // 21 × 0.4 = 8.4m → clears roof at 8m
 
-  // Vertical support columns
-  B.colorBox(0.15, ROOF_Y + 0.5, 0.15, stairX - 1.6, (ROOF_Y + 0.5) / 2, stairStartZ, PALETTE.steelDark, 0.5, 0.5, false);
-  B.colorBox(0.15, ROOF_Y + 0.5, 0.15, stairX + 1.6, (ROOF_Y + 0.5) / 2, stairStartZ, PALETTE.steelDark, 0.5, 0.5, false);
-  B.colorBox(0.15, ROOF_Y + 0.5, 0.15, stairX - 1.6, (ROOF_Y + 0.5) / 2, stairStartZ + numSteps * stepDZ, PALETTE.steelDark, 0.5, 0.5, false);
-  B.colorBox(0.15, ROOF_Y + 0.5, 0.15, stairX + 1.6, (ROOF_Y + 0.5) / 2, stairStartZ + numSteps * stepDZ, PALETTE.steelDark, 0.5, 0.5, false);
-
-  // Walkable step boxes — each step is a solid box whose TOP SURFACE is at (i+1)*stepH
+  // Walkable step boxes
   // Physics: body check starts at feetY+STEP_UP, so steps ≤ 0.5m tall are automatically
   // climbed by findGround without horizontal blocking.
   for (let i = 0; i < numSteps; i++) {
@@ -642,27 +686,17 @@ function buildParkour(B: MapBoxHelper) {
   const landingZ = stairStartZ + (numSteps - 1) * stepDZ + stepDZ / 2;
   B.colorBox(7, 0.2, stepDZ + 0.5, stairX + 2, ROOF_Y + 0.15, landingZ, PALETTE.steel, 0.5, 0.5, true);
 
-  // Railing posts every 3 steps
-  for (let i = 0; i < numSteps; i += 3) {
-    const postY = (i + 1) * stepH + 0.6;
+  // Railing posts every 4 steps
+  for (let i = 0; i < numSteps; i += 4) {
+    const postY = (i + 1) * stepH + 0.5;
     const postZ = stairStartZ + i * stepDZ;
-    B.colorBox(0.06, 1.2, 0.06, stairX - stairW / 2 - 0.1, postY, postZ, PALETTE.steelLight, 0.5, 0.5, false);
+    B.colorBox(0.05, 1.0, 0.05, stairX - stairW / 2, postY, postZ, PALETTE.steelLight, 0.5, 0.5, false);
   }
-  // Continuous railing bar
-  B.colorBox(0.05, 0.06, numSteps * stepDZ, stairX - stairW / 2 - 0.1, ROOF_Y / 2 + 1, stairStartZ + (numSteps * stepDZ) / 2, PALETTE.steelLight, 0.5, 0.5, false);
-
-  // Hazard stripe at bottom of staircase
-  B.colorBox(stairW, 0.02, 0.2, stairX, stepH + 0.01, stairStartZ - 0.1, PALETTE.accentYellow, 0.7, 0.1, false);
 
   // ===== EAST SIDE FIRE-ESCAPE STAIRCASE (right wall, x=26) =====
   const stairX2 = 26;
   const stairStartZ2 = 15;
   const numSteps2 = 21;
-
-  B.colorBox(0.15, ROOF_Y + 0.5, 0.15, stairX2 - 1.6, (ROOF_Y + 0.5) / 2, stairStartZ2, PALETTE.steelDark, 0.5, 0.5, false);
-  B.colorBox(0.15, ROOF_Y + 0.5, 0.15, stairX2 + 1.6, (ROOF_Y + 0.5) / 2, stairStartZ2, PALETTE.steelDark, 0.5, 0.5, false);
-  B.colorBox(0.15, ROOF_Y + 0.5, 0.15, stairX2 - 1.6, (ROOF_Y + 0.5) / 2, stairStartZ2 - numSteps2 * stepDZ, PALETTE.steelDark, 0.5, 0.5, false);
-  B.colorBox(0.15, ROOF_Y + 0.5, 0.15, stairX2 + 1.6, (ROOF_Y + 0.5) / 2, stairStartZ2 - numSteps2 * stepDZ, PALETTE.steelDark, 0.5, 0.5, false);
 
   for (let i = 0; i < numSteps2; i++) {
     const boxH2 = stepH;
@@ -674,13 +708,11 @@ function buildParkour(B: MapBoxHelper) {
   const landingZ2 = stairStartZ2 - (numSteps2 - 1) * stepDZ - stepDZ / 2;
   B.colorBox(7, 0.2, stepDZ + 0.5, stairX2 - 2, ROOF_Y + 0.15, landingZ2, PALETTE.steel, 0.5, 0.5, true);
 
-  for (let i = 0; i < numSteps2; i += 3) {
-    const postY2 = (i + 1) * stepH + 0.6;
+  for (let i = 0; i < numSteps2; i += 4) {
+    const postY2 = (i + 1) * stepH + 0.5;
     const postZ2 = stairStartZ2 - i * stepDZ;
-    B.colorBox(0.06, 1.2, 0.06, stairX2 + stairW / 2 + 0.1, postY2, postZ2, PALETTE.steelLight, 0.5, 0.5, false);
+    B.colorBox(0.05, 1.0, 0.05, stairX2 + stairW / 2, postY2, postZ2, PALETTE.steelLight, 0.5, 0.5, false);
   }
-  B.colorBox(0.05, 0.06, numSteps2 * stepDZ, stairX2 + stairW / 2 + 0.1, ROOF_Y / 2 + 1, stairStartZ2 - (numSteps2 * stepDZ) / 2, PALETTE.steelLight, 0.5, 0.5, false);
-  B.colorBox(stairW, 0.02, 0.2, stairX2, stepH + 0.01, stairStartZ2 + 0.1, PALETTE.accentYellow, 0.7, 0.1, false);
 
   // ===== ROOFTOP OBSTACLES & DETAILS =====
   // Air conditioning units on warehouse roof
@@ -748,15 +780,7 @@ function buildParkourStructures(B: MapBoxHelper, scene: THREE.Scene) {
   towerRoof.castShadow = true;
   scene.add(towerRoof);
 
-  // ===== PIPE BRIDGE across warehouse exterior (walkable) =====
-  B.colorBox(1.5, 0.12, 20, -24, 3.5, 22, PALETTE.steel, 0.5, 0.5, true);
-  // Railing
-  B.colorBox(0.05, 0.8, 20, -24.7, 4.0, 22, PALETTE.steelLight, 0.5, 0.5, false);
-  B.colorBox(0.05, 0.8, 20, -23.3, 4.0, 22, PALETTE.steelLight, 0.5, 0.5, false);
-  // Support pillars (with colliders)
-  B.colorBox(0.2, 3.5, 0.2, -24, 1.75, 14, PALETTE.steelDark, 0.5, 0.5, true);
-  B.colorBox(0.2, 3.5, 0.2, -24, 1.75, 22, PALETTE.steelDark, 0.5, 0.5, true);
-  B.colorBox(0.2, 3.5, 0.2, -24, 1.75, 30, PALETTE.steelDark, 0.5, 0.5, true);
+  // (pipe bridge removed)
 
   // ===== SHIPPING CRATE PARKOUR near container yard =====
   // Staggered crates at different heights for jumping
@@ -776,6 +800,9 @@ function buildParkourStructures(B: MapBoxHelper, scene: THREE.Scene) {
 
   // ===== GAZEBO / REST AREA near dock =====
   const gzX = 5, gzZ = 30;
+  // Floor platform (solid)
+  B.colorBox(4.5, 0.15, 4.5, gzX, 0.08, gzZ, PALETTE.woodWarm, 0.82, 0.02, false);
+  B.addCollider(gzX - 2.25, 0, gzZ - 2.25, gzX + 2.25, 0.2, gzZ + 2.25);
   // 4 pillars (with colliders)
   for (const [dx, dz] of [[-2, -2], [2, -2], [-2, 2], [2, 2]]) {
     B.cyl(0.08, 0.1, 3, gzX + dx, 1.5, gzZ + dz, "woodDark");
@@ -786,10 +813,11 @@ function buildParkourStructures(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(4.5, 0.1, 0.15, gzX, 3, gzZ + 2, PALETTE.woodDark, 0.85, 0.02, false);
   B.colorBox(0.15, 0.1, 4.5, gzX - 2, 3, gzZ, PALETTE.woodDark, 0.85, 0.02, false);
   B.colorBox(0.15, 0.1, 4.5, gzX + 2, 3, gzZ, PALETTE.woodDark, 0.85, 0.02, false);
-  // Roof panels
-  B.colorBox(4.8, 0.08, 4.8, gzX, 3.1, gzZ, PALETTE.woodWarm, 0.85, 0.02, false);
+  // Roof panels (with collider - walkable on top)
+  B.colorBox(4.8, 0.15, 4.8, gzX, 3.1, gzZ, PALETTE.woodWarm, 0.85, 0.02, false);
+  B.addCollider(gzX - 2.4, 3.0, gzZ - 2.4, gzX + 2.4, 3.2, gzZ + 2.4);
   // Bench inside
-  B.colorBox(3, 0.06, 0.4, gzX, 0.45, gzZ - 1.2, PALETTE.woodWarm, 0.85, 0.02, false);
+  B.colorBox(3, 0.06, 0.4, gzX, 0.45, gzZ - 1.2, PALETTE.woodWarm, 0.85, 0.02, true);
   B.colorBox(3, 0.5, 0.06, gzX, 0.7, gzZ - 1.4, PALETTE.woodDark, 0.85, 0.02, false);
 
   // ===== WALL-RUN PLATFORMS inside warehouse =====
@@ -873,109 +901,520 @@ function buildParkourStructures(B: MapBoxHelper, scene: THREE.Scene) {
   B.addCollider(27.5, 0, -30.3, 31.5, 2.3, -29.7);
 }
 
+// ========== BACKYARD 2-STORY HOUSE ==========
+function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
+  const hx = -35, hz = 22;
+  const F = 4.2;
+  const W = 0.5;
+  const HW = 10, HD = 8;
+  const wallColor = 0xf0e6d0;
+  const trimColor = PALETTE.woodDark;
+  const windowGlass = 0x88ccee;
+
+  // === FOUNDATION ===
+  B.colorBox(HW + 2, 0.35, HD + 2, hx, 0.175, hz, PALETTE.concreteDark, 0.9, 0.03, false);
+
+  // === 1F FLOOR ===
+  B.colorBox(HW, 0.15, HD, hx, 0.35, hz, PALETTE.woodWarm, 0.82, 0.02, false);
+  B.addCollider(hx - HW / 2, 0.2, hz - HD / 2, hx + HW / 2, 0.5, hz + HD / 2);
+
+  // === 1F WALLS ===
+  // Back wall - solid
+  B.colorBox(HW + W, F, W, hx, 0.35 + F / 2, hz - HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - W / 2, 0.35, hz - HD / 2 - W / 2, hx + HW / 2 + W / 2, 0.35 + F, hz - HD / 2 + W / 2);
+
+  // Left wall - with window opening (visual glass, wall still solid)
+  B.colorBox(W, F, 2.5, hx - HW / 2, 0.35 + F / 2, hz - 2.5, wallColor, 0.85, 0.02, false);
+  B.colorBox(W, F, 2.5, hx - HW / 2, 0.35 + F / 2, hz + 2.5, wallColor, 0.85, 0.02, false);
+  B.colorBox(W, 0.8, 3, hx - HW / 2, 0.35 + F - 0.4, hz, wallColor, 0.85, 0.02, false);
+  B.colorBox(W, 0.8, 3, hx - HW / 2, 0.75, hz, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - W / 2, 0.35, hz - HD / 2, hx - HW / 2 + W / 2, 0.35 + F, hz + HD / 2);
+  // Window glass
+  const glassMat = getCustomMaterial(windowGlass, 0.1, 0.6);
+  const winL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.8, 2.5), glassMat);
+  winL.position.set(hx - HW / 2, 2.1, hz);
+  scene.add(winL);
+  // Window frame
+  B.colorBox(0.08, 2.0, 0.08, hx - HW / 2, 2.1, hz - 1.3, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 2.0, 0.08, hx - HW / 2, 2.1, hz + 1.3, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.08, 2.7, hx - HW / 2, 1.1, hz, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.08, 2.7, hx - HW / 2, 3.1, hz, trimColor, 0.85, 0.02, false);
+
+  // Right wall - with window
+  B.colorBox(W, F, 2.5, hx + HW / 2, 0.35 + F / 2, hz - 2.5, wallColor, 0.85, 0.02, false);
+  B.colorBox(W, F, 2.5, hx + HW / 2, 0.35 + F / 2, hz + 2.5, wallColor, 0.85, 0.02, false);
+  B.colorBox(W, 0.8, 3, hx + HW / 2, 0.35 + F - 0.4, hz, wallColor, 0.85, 0.02, false);
+  B.colorBox(W, 0.8, 3, hx + HW / 2, 0.75, hz, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx + HW / 2 - W / 2, 0.35, hz - HD / 2, hx + HW / 2 + W / 2, 0.35 + F, hz + HD / 2);
+  // Window glass
+  const winR = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.8, 2.5), glassMat);
+  winR.position.set(hx + HW / 2, 2.1, hz);
+  scene.add(winR);
+  // Window frame
+  B.colorBox(0.08, 2.0, 0.08, hx + HW / 2, 2.1, hz - 1.3, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 2.0, 0.08, hx + HW / 2, 2.1, hz + 1.3, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.08, 2.7, hx + HW / 2, 1.1, hz, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.08, 2.7, hx + HW / 2, 3.1, hz, trimColor, 0.85, 0.02, false);
+
+  // Front wall - with door
+  B.colorBox(3.5, F, W, hx - 3.25, 0.35 + F / 2, hz + HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - 5, 0.35, hz + HD / 2 - W / 2, hx - 1.5, 0.35 + F, hz + HD / 2 + W / 2);
+  B.colorBox(3.5, F, W, hx + 3.25, 0.35 + F / 2, hz + HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx + 1.5, 0.35, hz + HD / 2 - W / 2, hx + 5, 0.35 + F, hz + HD / 2 + W / 2);
+  B.colorBox(3, 0.7, W, hx, 0.35 + F - 0.35, hz + HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - 1.5, 0.35 + F - 0.7, hz + HD / 2 - W / 2, hx + 1.5, 0.35 + F, hz + HD / 2 + W / 2);
+  // Door frame
+  B.colorBox(0.12, 2.8, 0.15, hx - 1.5, 1.75, hz + HD / 2, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.12, 2.8, 0.15, hx + 1.5, 1.75, hz + HD / 2, trimColor, 0.85, 0.02, false);
+  B.colorBox(3.1, 0.12, 0.15, hx, 3.15, hz + HD / 2, trimColor, 0.85, 0.02, false);
+
+  // === 2F FLOOR - with staircase opening on left side ===
+  // Main floor (right portion)
+  B.colorBox(HW - 3, 0.2, HD, hx + 1.5, F + 0.45, hz, PALETTE.woodWarm, 0.82, 0.02, false);
+  B.addCollider(hx - HW / 2 + 3, F + 0.35, hz - HD / 2, hx + HW / 2, F + 0.55, hz + HD / 2);
+  // Small section near front (covers stair exit area)
+  B.colorBox(3, 0.2, 2.5, hx - 3.5, F + 0.45, hz + 2.75, PALETTE.woodWarm, 0.82, 0.02, false);
+  B.addCollider(hx - 5, F + 0.35, hz + 1.5, hx - 2, F + 0.55, hz + 4);
+
+  // === 2F WALLS ===
+  // Back wall
+  B.colorBox(HW + W, F, W, hx, F + 0.35 + F / 2, hz - HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - W / 2, F + 0.35, hz - HD / 2 - W / 2, hx + HW / 2 + W / 2, F * 2 + 0.35, hz - HD / 2 + W / 2);
+  // Left wall 2F
+  B.colorBox(W, F, HD, hx - HW / 2, F + 0.35 + F / 2, hz, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - W / 2, F + 0.35, hz - HD / 2, hx - HW / 2 + W / 2, F * 2 + 0.35, hz + HD / 2);
+  // 2F left wall window
+  const winL2 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.5, 2.0), glassMat);
+  winL2.position.set(hx - HW / 2, F + 2.0, hz);
+  scene.add(winL2);
+  // Right wall 2F
+  B.colorBox(W, F, HD, hx + HW / 2, F + 0.35 + F / 2, hz, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx + HW / 2 - W / 2, F + 0.35, hz - HD / 2, hx + HW / 2 + W / 2, F * 2 + 0.35, hz + HD / 2);
+  // 2F right wall window
+  const winR2 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.5, 2.0), glassMat);
+  winR2.position.set(hx + HW / 2, F + 2.0, hz);
+  scene.add(winR2);
+  // Front wall 2F - with balcony door
+  B.colorBox(2.5, F, W, hx - 3.75, F + 0.35 + F / 2, hz + HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - 5, F + 0.35, hz + HD / 2 - W / 2, hx - 2.5, F * 2 + 0.35, hz + HD / 2 + W / 2);
+  B.colorBox(2.5, F, W, hx + 3.75, F + 0.35 + F / 2, hz + HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx + 2.5, F + 0.35, hz + HD / 2 - W / 2, hx + 5, F * 2 + 0.35, hz + HD / 2 + W / 2);
+  B.colorBox(5, 0.6, W, hx, F * 2 + 0.05, hz + HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - 2.5, F * 2 - 0.3, hz + HD / 2 - W / 2, hx + 2.5, F * 2 + 0.35, hz + HD / 2 + W / 2);
+
+  // === BALCONY ===
+  const balD = 1.8;
+  B.colorBox(5, 0.15, balD, hx, F + 0.43, hz + HD / 2 + balD / 2, PALETTE.woodWarm, 0.82, 0.02, false);
+  B.addCollider(hx - 2.5, F + 0.35, hz + HD / 2, hx + 2.5, F + 0.55, hz + HD / 2 + balD);
+  // Balcony railing
+  B.colorBox(5, 0.08, 0.08, hx, F + 1.3, hz + HD / 2 + balD, trimColor, 0.85, 0.02, false);
+  B.addCollider(hx - 2.5, F + 0.35, hz + HD / 2 + balD - 0.15, hx + 2.5, F + 1.4, hz + HD / 2 + balD + 0.15);
+  for (let i = 0; i < 6; i++) {
+    B.colorBox(0.05, 0.9, 0.05, hx - 2.3 + i * 0.92, F + 0.88, hz + HD / 2 + balD, trimColor, 0.85, 0.02, false);
+  }
+  B.colorBox(0.08, 0.9, balD, hx - 2.5, F + 0.88, hz + HD / 2 + balD / 2, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.9, balD, hx + 2.5, F + 0.88, hz + HD / 2 + balD / 2, trimColor, 0.85, 0.02, false);
+
+  // === ROOF (flat collider slab + visual pitched panels) ===
+  const roofMat = getCustomMaterial(0x6b3a1a, 0.75, 0.15);
+  const roofOverhang = 1.2;
+  const roofTopY = F * 2 + 0.35;
+  // Flat walkable roof collider slab
+  B.colorBox(HW + roofOverhang, 0.25, HD + roofOverhang, hx, roofTopY + 0.12, hz, roofMat.color ? 0x6b3a1a : 0x6b3a1a, 0.75, 0.15, false);
+  B.addCollider(hx - HW / 2 - roofOverhang / 2, roofTopY, hz - HD / 2 - roofOverhang / 2, hx + HW / 2 + roofOverhang / 2, roofTopY + 0.3, hz + HD / 2 + roofOverhang / 2);
+  // Visual pitched roof on top
+  const roofGeoF = new THREE.BoxGeometry(HW + roofOverhang * 2, 0.15, HD / 2 + roofOverhang + 0.5);
+  const roofF = new THREE.Mesh(roofGeoF, roofMat);
+  roofF.position.set(hx, roofTopY + 1.1, hz + HD / 4 + 0.3);
+  roofF.rotation.x = -0.38;
+  scene.add(roofF);
+  const roofGeoB = new THREE.BoxGeometry(HW + roofOverhang * 2, 0.15, HD / 2 + roofOverhang + 0.5);
+  const roofB = new THREE.Mesh(roofGeoB, roofMat);
+  roofB.position.set(hx, roofTopY + 1.1, hz - HD / 4 - 0.3);
+  roofB.rotation.x = 0.38;
+  scene.add(roofB);
+  // Ridge cap
+  B.colorBox(HW + roofOverhang * 2, 0.2, 0.3, hx, roofTopY + 1.75, hz, trimColor, 0.85, 0.02, false);
+  // Gable triangles
+  const gableMat = getCustomMaterial(wallColor, 0.85, 0.02);
+  const gableShape = new THREE.Shape();
+  gableShape.moveTo(-HW / 2 - 0.3, 0);
+  gableShape.lineTo(0, 1.5);
+  gableShape.lineTo(HW / 2 + 0.3, 0);
+  gableShape.lineTo(-HW / 2 - 0.3, 0);
+  const gableGeo = new THREE.ExtrudeGeometry(gableShape, { depth: 0.2, bevelEnabled: false });
+  const gableFront = new THREE.Mesh(gableGeo, gableMat);
+  gableFront.position.set(hx, roofTopY, hz + HD / 2 + W / 2);
+  gableFront.rotation.y = Math.PI;
+  scene.add(gableFront);
+  const gableBack = new THREE.Mesh(gableGeo, gableMat);
+  gableBack.position.set(hx, roofTopY, hz - HD / 2 - W / 2 + 0.2);
+  scene.add(gableBack);
+
+  // === INTERIOR STAIRCASE (straight along left wall, goes to 2F) ===
+  const stairW = 1.3;
+  const numSteps = 14;
+  const stepRise = F / numSteps;
+  const stepRun = 0.38;
+  const stairStartZ = hz - HD / 2 + 1.0;
+  const stairX = hx - HW / 2 + W / 2 + stairW / 2 + 0.15;
+  
+  for (let i = 0; i < numSteps; i++) {
+    const sy = 0.35 + (i + 1) * stepRise;
+    const sz = stairStartZ + i * stepRun;
+    B.colorBox(stairW, 0.1, stepRun, stairX, sy - 0.05, sz, PALETTE.woodWarm, 0.82, 0.02, false);
+    B.addCollider(stairX - stairW / 2 - 0.1, sy - 0.1, sz - stepRun / 2 - 0.05, stairX + stairW / 2 + 0.1, sy, sz + stepRun / 2 + 0.05);
+  }
+  
+  // Stair railing posts
+  for (let i = 0; i < numSteps; i += 4) {
+    const sy = 0.35 + (i + 1) * stepRise + 0.5;
+    const sz = stairStartZ + i * stepRun;
+    B.colorBox(0.06, 0.9, 0.06, stairX + stairW / 2 + 0.1, sy, sz, trimColor, 0.85, 0.02, false);
+  }
+  // Handrail
+  B.colorBox(0.06, 0.06, numSteps * stepRun, stairX + stairW / 2 + 0.1, 0.35 + stepRise * numSteps / 2 + 0.55, stairStartZ + numSteps * stepRun / 2 - stepRun / 2, trimColor, 0.85, 0.02, false);
+
+  // === INTERIOR DETAILS 1F ===
+  // Table with 4 chairs
+  B.colorBox(1.8, 0.06, 1.0, hx + 2, 1.1, hz + 1.5, PALETTE.woodWarm, 0.82, 0.02, true);
+  B.colorBox(0.08, 0.75, 0.08, hx + 2 - 0.8, 0.72, hz + 1.1, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.75, 0.08, hx + 2 + 0.8, 0.72, hz + 1.1, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.75, 0.08, hx + 2 - 0.8, 0.72, hz + 1.9, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.75, 0.08, hx + 2 + 0.8, 0.72, hz + 1.9, trimColor, 0.85, 0.02, false);
+  // Chairs
+  const chairMat = getCustomMaterial(PALETTE.woodWarm, 0.82, 0.02);
+  for (const [cx, cz, rot] of [[hx + 2, hz + 0.5, 0], [hx + 2, hz + 2.5, Math.PI], [hx + 0.8, hz + 1.5, -Math.PI / 2], [hx + 3.2, hz + 1.5, Math.PI / 2]] as [number, number, number][]) {
+    const chairSeat = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.06, 0.5), chairMat);
+    chairSeat.position.set(cx, 0.8, cz);
+    chairSeat.rotation.y = rot;
+    scene.add(chairSeat);
+  }
+
+  // Sofa against back wall
+  B.colorBox(2.8, 0.45, 1.0, hx + 2.5, 0.58, hz - HD / 2 + 1.0, 0x6666aa, 0.9, 0.02, true);
+  B.colorBox(2.8, 0.6, 0.15, hx + 2.5, 0.95, hz - HD / 2 + 0.58, 0x5555aa, 0.9, 0.02, false);
+  B.colorBox(0.15, 0.45, 1.0, hx + 2.5 - 1.45, 0.8, hz - HD / 2 + 1.0, 0x5555aa, 0.9, 0.02, false);
+  B.colorBox(0.15, 0.45, 1.0, hx + 2.5 + 1.45, 0.8, hz - HD / 2 + 1.0, 0x5555aa, 0.9, 0.02, false);
+
+  // TV stand
+  B.colorBox(1.5, 0.5, 0.4, hx + 2.5, 0.6, hz + 3.4, trimColor, 0.85, 0.02, true);
+  // TV (black rectangle)
+  B.colorBox(1.2, 0.8, 0.05, hx + 2.5, 1.3, hz + 3.38, 0x111111, 0.95, 0.5, false);
+
+  // Rug
+  B.colorBox(2.5, 0.02, 1.8, hx + 2, 0.37, hz + 1.5, 0x885533, 0.95, 0, false);
+
+  // === INTERIOR DETAILS 2F ===
+  // Bed
+  B.colorBox(2.5, 0.45, 1.9, hx + 2.5, F + 0.58, hz - 1.5, 0xcc9988, 0.9, 0.02, true);
+  B.colorBox(2.5, 0.8, 0.2, hx + 2.5, F + 0.75, hz - 2.4, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.55, 0.12, 0.4, hx + 2.5, F + 0.85, hz - 2.1, 0xffffff, 0.9, 0, false);
+  // Blanket
+  B.colorBox(2.3, 0.08, 1.4, hx + 2.5, F + 0.85, hz - 1.3, 0x7788aa, 0.9, 0.02, false);
+
+  // Bedside table + lamp
+  B.colorBox(0.5, 0.5, 0.5, hx + 4.3, F + 0.8, hz - 1.5, PALETTE.woodWarm, 0.82, 0.02, true);
+  B.cyl(0.08, 0.08, 0.35, hx + 4.3, F + 1.2, hz - 1.5, "steelDark");
+  B.colorBox(0.25, 0.2, 0.25, hx + 4.3, F + 1.45, hz - 1.5, 0xffeecc, 0.9, 0, false);
+
+  // Desk
+  B.colorBox(1.6, 0.06, 0.7, hx + 2.5, F + 1.1, hz + 2.8, PALETTE.woodWarm, 0.82, 0.02, true);
+  B.colorBox(0.08, 0.75, 0.08, hx + 2.5 - 0.7, F + 0.72, hz + 2.5, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.75, 0.08, hx + 2.5 + 0.7, F + 0.72, hz + 2.5, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.75, 0.08, hx + 2.5 - 0.7, F + 0.72, hz + 3.1, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.75, 0.08, hx + 2.5 + 0.7, F + 0.72, hz + 3.1, trimColor, 0.85, 0.02, false);
+  // Desk chair
+  B.colorBox(0.5, 0.06, 0.5, hx + 2.5, F + 0.85, hz + 2.0, 0x333333, 0.9, 0.02, false);
+
+  // Wardrobe
+  B.colorBox(1.2, 2.2, 0.6, hx + 0.2, F + 1.65, hz - HD / 2 + 0.7, trimColor, 0.85, 0.02, true);
+
+  // Photo frames
+  const houseFrameColor = getCustomMaterial(0xaa8855, 0.8, 0.1);
+  const housePhotoTex = new THREE.TextureLoader().load('/assets/photos/thinhdeptrai.jpg');
+  housePhotoTex.colorSpace = THREE.SRGBColorSpace;
+  const housePhotoMat = new THREE.MeshStandardMaterial({ map: housePhotoTex, roughness: 0.3, metalness: 0.02 });
+  // 1F photos
+  const frame1a = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.7, 0.06), houseFrameColor);
+  frame1a.position.set(hx - 1, 2.4, hz - HD / 2 + 0.28);
+  scene.add(frame1a);
+  const photo1a = new THREE.Mesh(new THREE.PlaneGeometry(0.75, 0.55), housePhotoMat);
+  photo1a.position.set(hx - 1, 2.4, hz - HD / 2 + 0.32);
+  scene.add(photo1a);
+  // 2F photo
+  const frame2f = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.8, 0.06), houseFrameColor);
+  frame2f.position.set(hx + 2, F + 2.4, hz - HD / 2 + 0.28);
+  scene.add(frame2f);
+  const photo2f = new THREE.Mesh(new THREE.PlaneGeometry(0.85, 0.65), housePhotoMat);
+  photo2f.position.set(hx + 2, F + 2.4, hz - HD / 2 + 0.32);
+  scene.add(photo2f);
+
+  // === PORCH ===
+  B.colorBox(HW + 1.5, 0.12, 2.5, hx, 0.24, hz + HD / 2 + 1.25, PALETTE.woodWarm, 0.82, 0.02, false);
+  B.addCollider(hx - HW / 2 - 0.75, 0.15, hz + HD / 2, hx + HW / 2 + 0.75, 0.35, hz + HD / 2 + 2.5);
+  // Porch columns
+  B.colorBox(0.25, 2.5, 0.25, hx - 4.5, 1.5, hz + HD / 2 + 2.2, 0xffffff, 0.85, 0.02, true);
+  B.colorBox(0.25, 2.5, 0.25, hx + 4.5, 1.5, hz + HD / 2 + 2.2, 0xffffff, 0.85, 0.02, true);
+  B.colorBox(0.25, 2.5, 0.25, hx, 1.5, hz + HD / 2 + 2.2, 0xffffff, 0.85, 0.02, true);
+  // Porch roof
+  B.colorBox(HW + 2, 0.1, 2.8, hx, 2.8, hz + HD / 2 + 1.4, trimColor, 0.85, 0.02, false);
+  // Porch steps
+  B.colorBox(3, 0.15, 0.5, hx, 0.15, hz + HD / 2 + 2.75, PALETTE.concreteDark, 0.9, 0.03, true);
+
+  // Chimney
+  B.colorBox(0.9, 3.5, 0.9, hx - 3.5, F * 2 + 1.2, hz - HD / 2 + 1.2, 0x884433, 0.85, 0.02, true);
+  B.colorBox(1.1, 0.2, 1.1, hx - 3.5, F * 2 + 3.0, hz - HD / 2 + 1.2, 0x663322, 0.85, 0.02, false);
+}
+
+// ========== BACKYARD KOI POND & GARDEN ==========
+function buildBackyardGarden(B: MapBoxHelper, scene: THREE.Scene) {
+  const gx = -48, gz = 38;
+
+  // Stone border path around the garden
+  B.colorBox(12, 0.08, 12, gx, 0.04, gz, 0x5a8a3c, 0.95, 0, false);
+
+  // Koi pond (recessed pool)
+  const pondW = 6, pondD = 4;
+  // Pond rim (stone border - walkable)
+  B.colorBox(pondW + 1.2, 0.3, pondD + 1.2, gx, 0.15, gz, 0x888877, 0.9, 0.05, false);
+  B.addCollider(gx - pondW / 2 - 0.6, 0, gz - pondD / 2 - 0.6, gx + pondW / 2 + 0.6, 0.35, gz + pondD / 2 + 0.6);
+  // Pond water surface
+  const waterMat = getCustomMaterial(0x3388bb, 0.15, 0.3);
+  const water = new THREE.Mesh(new THREE.BoxGeometry(pondW, 0.06, pondD), waterMat);
+  water.position.set(gx, 0.12, gz);
+  scene.add(water);
+
+  // Decorative rocks around pond
+  const rockPositions: [number, number, number, number][] = [
+    [gx - 3.5, 0.25, gz - 2.2, 0.35],
+    [gx + 3.2, 0.2, gz + 2.0, 0.25],
+    [gx - 3.0, 0.3, gz + 2.5, 0.4],
+    [gx + 3.5, 0.25, gz - 1.8, 0.3],
+    [gx + 0.5, 0.2, gz - 2.8, 0.25],
+  ];
+  const rockMat = getCustomMaterial(0x777766, 0.95, 0.02);
+  for (const [rx, ry, rz, rs] of rockPositions) {
+    const rock = new THREE.Mesh(new THREE.SphereGeometry(rs, 6, 5), rockMat);
+    rock.position.set(rx, ry, rz);
+    rock.scale.set(1, 0.6, 1);
+    rock.castShadow = true;
+    scene.add(rock);
+    B.addCollider(rx - rs, 0, rz - rs, rx + rs, ry + rs * 0.4, rz + rs);
+  }
+
+  // Miniature mountain (hon non bo) on one side
+  const mountainX = gx + 1, mountainZ = gz;
+  const mtnMat = getCustomMaterial(0x665544, 0.9, 0.02);
+  const mtnBase = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.6, 0.8, 6), mtnMat);
+  mtnBase.position.set(mountainX, 0.55, mountainZ);
+  scene.add(mtnBase);
+  const mtnPeak = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.3, 0.6, 5), mtnMat);
+  mtnPeak.position.set(mountainX, 1.15, mountainZ);
+  scene.add(mtnPeak);
+  // Mini tree on mountain
+  const miniTree = new THREE.Mesh(new THREE.SphereGeometry(0.15, 6, 6), getCustomMaterial(0x227722, 0.85, 0));
+  miniTree.position.set(mountainX + 0.1, 1.5, mountainZ);
+  scene.add(miniTree);
+
+  // Koi fish (small orange/white/red dots in water)
+  const fishColors = [0xff6633, 0xffffff, 0xcc2222, 0xff9900, 0xffcc66];
+  for (let i = 0; i < 5; i++) {
+    const fishMat = getCustomMaterial(fishColors[i], 0.5, 0.1);
+    const fish = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.04, 0.08), fishMat);
+    const angle = (i / 5) * Math.PI * 2;
+    fish.position.set(gx + Math.cos(angle) * 1.5, 0.16, gz + Math.sin(angle) * 1.0);
+    fish.rotation.y = angle;
+    scene.add(fish);
+  }
+
+  // Stone lantern
+  const lanX = gx - 4.5, lanZ = gz + 1;
+  B.colorBox(0.3, 0.5, 0.3, lanX, 0.25, lanZ, 0x888877, 0.9, 0.05, true);
+  B.colorBox(0.15, 0.8, 0.15, lanX, 0.9, lanZ, 0x888877, 0.9, 0.05, false);
+  B.colorBox(0.5, 0.1, 0.5, lanX, 1.35, lanZ, 0x888877, 0.9, 0.05, false);
+  B.colorBox(0.35, 0.35, 0.35, lanX, 1.55, lanZ, 0xffffcc, 0.3, 0, false);
+  B.colorBox(0.55, 0.08, 0.55, lanX, 1.78, lanZ, 0x888877, 0.9, 0.05, false);
+
+  // Small wooden bridge over pond
+  B.colorBox(1.2, 0.1, pondD + 0.5, gx - 1.5, 0.4, gz, PALETTE.woodWarm, 0.82, 0.02, false);
+  B.addCollider(gx - 2.1, 0.3, gz - pondD / 2 - 0.25, gx - 0.9, 0.5, gz + pondD / 2 + 0.25);
+  // Bridge railing
+  B.colorBox(0.04, 0.5, pondD + 0.5, gx - 2.05, 0.7, gz, PALETTE.woodDark, 0.85, 0.02, false);
+  B.colorBox(0.04, 0.5, pondD + 0.5, gx - 0.95, 0.7, gz, PALETTE.woodDark, 0.85, 0.02, false);
+
+  // Bamboo plants around the edge
+  const bambooPositions: [number, number][] = [
+    [gx + 5, gz - 4], [gx + 5.3, gz - 3.5], [gx + 4.8, gz - 3],
+    [gx - 5, gz + 4], [gx - 5.3, gz + 3.5], [gx - 4.8, gz + 3],
+  ];
+  for (const [bx, bz] of bambooPositions) {
+    B.cyl(0.04, 0.04, 3, bx, 1.5, bz, "woodDark");
+    const leaves = new THREE.Mesh(new THREE.SphereGeometry(0.3, 5, 5), getCustomMaterial(0x338833, 0.85, 0));
+    leaves.position.set(bx, 3.2, bz);
+    leaves.scale.set(1, 1.5, 1);
+    scene.add(leaves);
+  }
+
+  // Stone bench
+  B.colorBox(1.8, 0.12, 0.5, gx + 4, 0.45, gz + 3.5, 0x888877, 0.9, 0.05, true);
+  B.colorBox(0.3, 0.4, 0.5, gx + 3.2, 0.2, gz + 3.5, 0x888877, 0.9, 0.05, false);
+  B.colorBox(0.3, 0.4, 0.5, gx + 4.8, 0.2, gz + 3.5, 0x888877, 0.9, 0.05, false);
+}
+
 // ========== FERRIS WHEEL ==========
 function buildFerrisWheel(scene: THREE.Scene, colliders: THREE.Box3[]): THREE.Group {
   const group = new THREE.Group();
-  const R = 5;
-  const hubMat = getCustomMaterial(PALETTE.steelDark, 0.4, 0.6);
-  const spokeMat = getCustomMaterial(PALETTE.steel, 0.5, 0.5);
-  const cabinColors = [PALETTE.containerRed, PALETTE.containerBlue, PALETTE.containerYlow, PALETTE.containerGreen];
+  const R = 7;
+  const frameMat = getCustomMaterial(0x2266aa, 0.4, 0.5); // Blue frame like reference
+  const spokeMat = getCustomMaterial(0xdddddd, 0.4, 0.5); // White spokes
+  const hubMat = getCustomMaterial(0xcc2222, 0.4, 0.5); // Red hub accent
+  const cabinColors = [0xff3333, 0xffcc00, 0x33aa33, 0x3366ff, 0xff66aa, 0xff8800, 0x9933ff, 0x33cccc, 0xffff33, 0xcc6633, 0x66ff66, 0xff3399];
 
-  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.5, 10), hubMat);
+  // Hub
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.8, 16), hubMat);
   hub.rotation.x = Math.PI / 2;
   group.add(hub);
 
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(R, 0.06, 8, 32), spokeMat);
+  // Outer rim
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(R, 0.07, 8, 48), spokeMat);
   group.add(rim);
+  // Inner rim
+  const rim2 = new THREE.Mesh(new THREE.TorusGeometry(R * 0.7, 0.05, 6, 36), spokeMat);
+  group.add(rim2);
 
-  const numCabins = 8;
+  // Spokes from hub to rim
+  const numCabins = 12;
   for (let i = 0; i < numCabins; i++) {
     const angle = (i / numCabins) * Math.PI * 2;
-    const spoke = new THREE.Mesh(new THREE.BoxGeometry(0.05, R * 2, 0.05), spokeMat);
+    const spoke = new THREE.Mesh(new THREE.BoxGeometry(0.04, R * 2, 0.04), spokeMat);
     spoke.rotation.z = angle;
     group.add(spoke);
 
+    // Gondola/cabin hanging from rim
     const cabinG = new THREE.Group();
-    const cabin = new THREE.Mesh(
-      new THREE.BoxGeometry(0.7, 0.5, 0.4),
-      getCustomMaterial(cabinColors[i % cabinColors.length], 0.7, 0.2)
-    );
-    cabin.castShadow = true;
-    cabinG.add(cabin);
-    const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.35, 4), hubMat);
-    bar.position.y = 0.42;
-    cabinG.add(bar);
+    const color = cabinColors[i % cabinColors.length];
+    // Hanging rod
+    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.6, 4), hubMat);
+    rod.position.y = 0.3;
+    cabinG.add(rod);
+    // Cabin seat (open gondola style)
+    const seat = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.08, 0.5), getCustomMaterial(color, 0.6, 0.3));
+    seat.castShadow = true;
+    cabinG.add(seat);
+    // Back rest
+    const back = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.5, 0.06), getCustomMaterial(color, 0.6, 0.3));
+    back.position.set(0, 0.25, -0.22);
+    cabinG.add(back);
+    // Side panels
+    const sideMat = getCustomMaterial(color, 0.7, 0.2);
+    const sideL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.35, 0.5), sideMat);
+    sideL.position.set(-0.37, 0.18, 0);
+    cabinG.add(sideL);
+    const sideR = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.35, 0.5), sideMat);
+    sideR.position.set(0.37, 0.18, 0);
+    cabinG.add(sideR);
+
     cabinG.position.set(Math.cos(angle) * R, Math.sin(angle) * R, 0);
     group.add(cabinG);
   }
 
-  // A-frame legs
-  const legH = R + 1.5;
-  const legMat = getCustomMaterial(PALETTE.steelDark, 0.5, 0.5);
-  const legL = new THREE.Mesh(new THREE.BoxGeometry(0.18, legH, 0.18), legMat);
-  legL.position.set(0, -legH / 2 + R, -1.8);
-  legL.rotation.x = 0.12;
-  group.add(legL);
-  const legR = new THREE.Mesh(new THREE.BoxGeometry(0.18, legH, 0.18), legMat);
-  legR.position.set(0, -legH / 2 + R, 1.8);
-  legR.rotation.x = -0.12;
-  group.add(legR);
-  const cross = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 4), legMat);
-  cross.position.set(0, R * 0.2, 0);
-  group.add(cross);
+  // A-frame support (like real ferris wheel - tall triangle)
+  const legH = R + 2;
+  // Two A-frames (front and back)
+  for (const zOff of [-1.5, 1.5]) {
+    const leg1 = new THREE.Mesh(new THREE.BoxGeometry(0.2, legH * 1.1, 0.2), frameMat);
+    leg1.position.set(-1.5, -legH * 0.35 + R * 0.3, zOff);
+    leg1.rotation.z = 0.15;
+    group.add(leg1);
+    const leg2 = new THREE.Mesh(new THREE.BoxGeometry(0.2, legH * 1.1, 0.2), frameMat);
+    leg2.position.set(1.5, -legH * 0.35 + R * 0.3, zOff);
+    leg2.rotation.z = -0.15;
+    group.add(leg2);
+    // Cross brace
+    const brace = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.1, 0.1), frameMat);
+    brace.position.set(0, -R * 0.4, zOff);
+    group.add(brace);
+  }
+  // Horizontal connecting bars between frames
+  const hbar1 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 3.5), frameMat);
+  hbar1.position.set(0, -R * 0.4, 0);
+  group.add(hbar1);
+  const hbar2 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 3.5), frameMat);
+  hbar2.position.set(0, R * 0.3, 0);
+  group.add(hbar2);
 
-  const fwX = -10, fwZ = 32;
-  const fwBaseY = R + 1.5;
+  // Position in world
+  const fwX = -10, fwZ = 34;
+  const fwBaseY = R + 2.5;
   group.position.set(fwX, fwBaseY, fwZ);
   scene.add(group);
 
-  // Leg colliders
-  colliders.push(
-    new THREE.Box3(new THREE.Vector3(fwX - 0.3, 0, fwZ - 2.2), new THREE.Vector3(fwX + 0.3, 3, fwZ - 1.4)),
-    new THREE.Box3(new THREE.Vector3(fwX - 0.3, 0, fwZ + 1.4), new THREE.Vector3(fwX + 0.3, 3, fwZ + 2.2)),
-  );
-
-  // Cross bar platform (walkable, at world y = fwBaseY + R*0.2)
-  const crossWorldY = fwBaseY + R * 0.2;
+  // Ground platform for viewing/access
+  const platMat = getCustomMaterial(PALETTE.concreteDark, 0.85, 0.03);
+  const platform = new THREE.Mesh(new THREE.BoxGeometry(8, 0.25, 6), platMat);
+  platform.position.set(fwX, 0.125, fwZ);
+  scene.add(platform);
   colliders.push(new THREE.Box3(
-    new THREE.Vector3(fwX - 0.2, crossWorldY - 0.1, fwZ - 2),
-    new THREE.Vector3(fwX + 0.2, crossWorldY + 0.1, fwZ + 2)
+    new THREE.Vector3(fwX - 4, 0, fwZ - 3),
+    new THREE.Vector3(fwX + 4, 0.3, fwZ + 3)
   ));
 
-  // Hub platform (walkable, at world y = fwBaseY = center of wheel)
-  colliders.push(new THREE.Box3(
-    new THREE.Vector3(fwX - 0.5, fwBaseY - 0.15, fwZ - 0.5),
-    new THREE.Vector3(fwX + 0.5, fwBaseY + 0.15, fwZ + 0.5)
-  ));
+  // Safety barrier around the wheel base (prevents players from entering rotation zone)
+  const fenceMat = getCustomMaterial(PALETTE.steel, 0.5, 0.5);
+  const barrierH = 1.2;
+  // Front fence
+  const fenceF = new THREE.Mesh(new THREE.BoxGeometry(8, barrierH, 0.1), fenceMat);
+  fenceF.position.set(fwX, barrierH / 2, fwZ - 3);
+  scene.add(fenceF);
+  colliders.push(new THREE.Box3(new THREE.Vector3(fwX - 4, 0, fwZ - 3.1), new THREE.Vector3(fwX + 4, barrierH, fwZ - 2.9)));
+  // Left fence
+  const fenceL = new THREE.Mesh(new THREE.BoxGeometry(0.1, barrierH, 6), fenceMat);
+  fenceL.position.set(fwX - 4, barrierH / 2, fwZ);
+  scene.add(fenceL);
+  colliders.push(new THREE.Box3(new THREE.Vector3(fwX - 4.1, 0, fwZ - 3), new THREE.Vector3(fwX - 3.9, barrierH, fwZ + 3)));
+  // Right fence
+  const fenceR = new THREE.Mesh(new THREE.BoxGeometry(0.1, barrierH, 6), fenceMat);
+  fenceR.position.set(fwX + 4, barrierH / 2, fwZ);
+  scene.add(fenceR);
+  colliders.push(new THREE.Box3(new THREE.Vector3(fwX + 3.9, 0, fwZ - 3), new THREE.Vector3(fwX + 4.1, barrierH, fwZ + 3)));
+  // No back fence to allow approach, but add partial back fences
+  const fenceBL = new THREE.Mesh(new THREE.BoxGeometry(2.5, barrierH, 0.1), fenceMat);
+  fenceBL.position.set(fwX - 2.75, barrierH / 2, fwZ + 3);
+  scene.add(fenceBL);
+  colliders.push(new THREE.Box3(new THREE.Vector3(fwX - 4, 0, fwZ + 2.9), new THREE.Vector3(fwX - 1.5, barrierH, fwZ + 3.1)));
+  const fenceBR = new THREE.Mesh(new THREE.BoxGeometry(2.5, barrierH, 0.1), fenceMat);
+  fenceBR.position.set(fwX + 2.75, barrierH / 2, fwZ + 3);
+  scene.add(fenceBR);
+  colliders.push(new THREE.Box3(new THREE.Vector3(fwX + 1.5, 0, fwZ + 2.9), new THREE.Vector3(fwX + 4, barrierH, fwZ + 3.1)));
 
-  // Ladder from ground to cross bar (step colliders on the back leg)
-  const ladderX = fwX;
-  const ladderZ = fwZ + 1.8;
-  const ladderTopY = crossWorldY;
-  const ladderSteps = Math.ceil(ladderTopY / 0.4);
-  for (let i = 0; i < ladderSteps; i++) {
-    const stepY = i * 0.4;
-    colliders.push(new THREE.Box3(
-      new THREE.Vector3(ladderX - 0.3, stepY, ladderZ - 0.2),
-      new THREE.Vector3(ladderX + 0.3, stepY + 0.4, ladderZ + 0.2)
-    ));
-  }
+  // A-frame leg colliders (walkable near base)
+  colliders.push(new THREE.Box3(new THREE.Vector3(fwX - 2.2, 0, fwZ - 1.8), new THREE.Vector3(fwX - 1.0, 4, fwZ + 1.8)));
+  colliders.push(new THREE.Box3(new THREE.Vector3(fwX + 1.0, 0, fwZ - 1.8), new THREE.Vector3(fwX + 2.2, 4, fwZ + 1.8)));
 
-  // Visual ladder rungs on the back leg
-  const rungMat = getCustomMaterial(PALETTE.steelLight, 0.5, 0.5);
-  for (let i = 0; i < ladderSteps; i++) {
-    const rung = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.04, 0.04), rungMat);
-    rung.position.set(ladderX, i * 0.4 + 0.2, ladderZ);
-    scene.add(rung);
-  }
-  // Ladder side rails
+  // Cross bar walkable platform between the A-frames
+  const crossBarMat = getCustomMaterial(PALETTE.steel, 0.5, 0.5);
+  const crossBar = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.2, 4), crossBarMat);
+  crossBar.position.set(fwX, 2.8, fwZ);
+  scene.add(crossBar);
+  colliders.push(new THREE.Box3(new THREE.Vector3(fwX - 1.75, 2.7, fwZ - 2), new THREE.Vector3(fwX + 1.75, 2.95, fwZ + 2)));
+
+  // Ladder up to cross bar from back
   const railMat = getCustomMaterial(PALETTE.steelLight, 0.5, 0.5);
-  const railL = new THREE.Mesh(new THREE.BoxGeometry(0.04, ladderTopY, 0.04), railMat);
-  railL.position.set(ladderX - 0.25, ladderTopY / 2, ladderZ);
-  scene.add(railL);
-  const railR = new THREE.Mesh(new THREE.BoxGeometry(0.04, ladderTopY, 0.04), railMat);
-  railR.position.set(ladderX + 0.25, ladderTopY / 2, ladderZ);
-  scene.add(railR);
+  for (let i = 0; i < 7; i++) {
+    const ladY = i * 0.4;
+    const ladMesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.05, 0.05), railMat);
+    ladMesh.position.set(fwX, ladY + 0.2, fwZ + 2.1);
+    scene.add(ladMesh);
+    colliders.push(new THREE.Box3(new THREE.Vector3(fwX - 0.3, ladY, fwZ + 1.9), new THREE.Vector3(fwX + 0.3, ladY + 0.4, fwZ + 2.3)));
+  }
+  // Ladder rails
+  const ladRailL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.8, 0.04), railMat);
+  ladRailL.position.set(fwX - 0.28, 1.4, fwZ + 2.1);
+  scene.add(ladRailL);
+  const ladRailR = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.8, 0.04), railMat);
+  ladRailR.position.set(fwX + 0.28, 1.4, fwZ + 2.1);
+  scene.add(ladRailR);
 
   return group;
 }

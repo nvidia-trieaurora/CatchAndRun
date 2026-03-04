@@ -1,6 +1,16 @@
 {
   "memes": [
     {
+      "id": "dummy-frog",
+      "name": "Dummy Frog",
+      "file": "dummy-frog.jpeg"
+    },
+    {
+      "id": "dump-ghost",
+      "name": "Dump Ghost",
+      "file": "dump-ghost.jpeg"
+    },
+    {
       "id": "jam-2",
       "name": "Jam",
       "file": "jam (2).gif"

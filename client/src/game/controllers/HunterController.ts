@@ -30,6 +30,7 @@ export class HunterController {
   private verticalVelocity = 0;
   private isCrouching = false;
   private currentEyeH = EYE_H;
+  private smoothFeetY = 0;
 
   private bobTimer = 0;
 
@@ -40,6 +41,7 @@ export class HunterController {
     // Don't copy camera position -- wait for setPosition call
     this.position.set(0, EYE_H, 0);
     this.feetY = 0;
+    this.smoothFeetY = 0;
   }
 
   update(dt: number, colliders: THREE.Box3[]): THREE.Vector3 {
@@ -118,14 +120,23 @@ export class HunterController {
     const ground = this.findGround(colliders);
     const eyeGround = ground + this.currentEyeH;
     if (this.position.y <= eyeGround) {
-      this.position.y = eyeGround;
-      this.feetY = ground;
+      const targetFeetY = ground;
+      const heightDiff = targetFeetY - this.smoothFeetY;
+      
+      if (heightDiff > 0.05 && heightDiff < STEP_UP + 0.2) {
+        this.smoothFeetY += heightDiff * Math.min(1, dt * 20);
+      } else {
+        this.smoothFeetY = targetFeetY;
+      }
+      
+      this.feetY = targetFeetY;
+      this.position.y = this.smoothFeetY + this.currentEyeH;
       this.verticalVelocity = 0;
       this.onGround = true;
     }
 
-    // Unstuck
-    this.pushOut(colliders, bodyH);
+    // Unstuck - only push horizontally, skip vertical to avoid roof jitter
+    this.pushOutHorizontal(colliders, bodyH);
 
     // Head bob
     const isMoving = this.direction.lengthSq() > 0 && this.onGround;
@@ -147,18 +158,35 @@ export class HunterController {
   }
 
   private moveAndSlide(dx: number, dz: number, colliders: THREE.Box3[], bodyH: number) {
+    // Try full movement first
     this.position.x += dx;
     this.position.z += dz;
     if (!this.isColliding(colliders, bodyH)) return;
 
+    // Try X only
     this.position.z -= dz;
-    if (!this.isColliding(colliders, bodyH)) return;
+    if (!this.isColliding(colliders, bodyH)) {
+      // Slide along X axis only
+      return;
+    }
 
+    // Try Z only
     this.position.x -= dx;
     this.position.z += dz;
+    if (!this.isColliding(colliders, bodyH)) {
+      // Slide along Z axis only
+      return;
+    }
+
+    // Try reduced diagonal (helps with corner stuttering)
+    this.position.z -= dz;
+    this.position.x += dx * 0.5;
+    this.position.z += dz * 0.5;
     if (!this.isColliding(colliders, bodyH)) return;
 
-    this.position.z -= dz;
+    // Fully blocked
+    this.position.x -= dx * 0.5;
+    this.position.z -= dz * 0.5;
   }
 
   private isColliding(colliders: THREE.Box3[], bodyH: number): boolean {
@@ -174,12 +202,13 @@ export class HunterController {
 
   private findGround(colliders: THREE.Box3[]): number {
     let best = GROUND_Y;
+    // Wider probe with more generous height tolerance for smoother stair climbing
     const probe = new THREE.Box3(
-      new THREE.Vector3(this.position.x - RADIUS * 0.6, this.feetY - 0.2, this.position.z - RADIUS * 0.6),
-      new THREE.Vector3(this.position.x + RADIUS * 0.6, this.feetY + STEP_UP, this.position.z + RADIUS * 0.6)
+      new THREE.Vector3(this.position.x - RADIUS * 0.8, this.feetY - 0.3, this.position.z - RADIUS * 0.8),
+      new THREE.Vector3(this.position.x + RADIUS * 0.8, this.feetY + STEP_UP + 0.1, this.position.z + RADIUS * 0.8)
     );
     for (const c of colliders) {
-      if (probe.intersectsBox(c) && c.max.y > best && c.max.y <= this.feetY + STEP_UP + 0.25) {
+      if (probe.intersectsBox(c) && c.max.y > best && c.max.y <= this.feetY + STEP_UP + 0.35) {
         best = c.max.y;
       }
     }
@@ -203,9 +232,10 @@ export class HunterController {
     return lowestCeiling;
   }
 
-  private pushOut(colliders: THREE.Box3[], bodyH: number) {
+  private pushOutHorizontal(colliders: THREE.Box3[], bodyH: number) {
+    // Only check body above step-up height to avoid fighting with findGround
     const box = new THREE.Box3(
-      new THREE.Vector3(this.position.x - RADIUS, this.feetY + 0.05, this.position.z - RADIUS),
+      new THREE.Vector3(this.position.x - RADIUS, this.feetY + STEP_UP + 0.05, this.position.z - RADIUS),
       new THREE.Vector3(this.position.x + RADIUS, this.feetY + bodyH, this.position.z + RADIUS)
     );
 
@@ -216,21 +246,19 @@ export class HunterController {
       const ox2 = c.max.x - box.min.x;
       const oz1 = box.max.z - c.min.z;
       const oz2 = c.max.z - box.min.z;
-      const oy2 = c.max.y - box.min.y;
-      const min = Math.min(ox1, ox2, oz1, oz2, oy2);
+      const overlapX = Math.min(ox1, ox2);
+      const overlapZ = Math.min(oz1, oz2);
 
-      if (min === oy2 && oy2 < 0.6) {
-        this.feetY = c.max.y;
-        this.position.y = this.feetY + this.currentEyeH;
-        this.verticalVelocity = 0;
-        this.onGround = true;
-      } else if (min === ox1) this.position.x -= ox1 + 0.01;
-      else if (min === ox2) this.position.x += ox2 + 0.01;
-      else if (min === oz1) this.position.z -= oz1 + 0.01;
-      else this.position.z += oz2 + 0.01;
+      if (overlapX <= overlapZ) {
+        if (ox1 < ox2) this.position.x -= ox1 + 0.02;
+        else this.position.x += ox2 + 0.02;
+      } else {
+        if (oz1 < oz2) this.position.z -= oz1 + 0.02;
+        else this.position.z += oz2 + 0.02;
+      }
 
       this.feetY = this.position.y - this.currentEyeH;
-      box.min.set(this.position.x - RADIUS, this.feetY + 0.05, this.position.z - RADIUS);
+      box.min.set(this.position.x - RADIUS, this.feetY + STEP_UP + 0.05, this.position.z - RADIUS);
       box.max.set(this.position.x + RADIUS, this.feetY + bodyH, this.position.z + RADIUS);
     }
   }
@@ -240,6 +268,7 @@ export class HunterController {
   setPosition(x: number, y: number, z: number) {
     this.position.set(x, y + EYE_H, z);
     this.feetY = y;
+    this.smoothFeetY = y;
     this.verticalVelocity = 0;
     this.onGround = true;
     this.camera.position.copy(this.position);

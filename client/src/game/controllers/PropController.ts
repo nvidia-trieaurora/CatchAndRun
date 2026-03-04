@@ -37,6 +37,7 @@ export class PropController {
   private jumpSpeed = 12;
   private onGround = true;
   private moveDir = new THREE.Vector3();
+  private smoothY = 0;
 
   // Camera mode
   private thirdPerson = true;
@@ -111,12 +112,21 @@ export class PropController {
 
     const ground = this.findGround(colliders);
     if (this.position.y <= ground) {
-      this.position.y = ground;
+      const targetY = ground;
+      const heightDiff = targetY - this.smoothY;
+      
+      if (heightDiff > 0.05 && heightDiff < STEP_UP + 0.2) {
+        this.smoothY += heightDiff * Math.min(1, dt * 20);
+      } else {
+        this.smoothY = targetY;
+      }
+      
+      this.position.y = this.smoothY;
       this.verticalVelocity = 0;
       this.onGround = true;
     }
 
-    this.pushOutOfColliders(colliders);
+    this.pushOutHorizontal(colliders);
 
     // Update prop mesh: only yaw rotation (no pitch/roll)
     if (this.propMesh) {
@@ -221,18 +231,29 @@ export class PropController {
 
   // --- Collision helpers ---
   private moveAndSlide(dx: number, dz: number, colliders: THREE.Box3[]) {
+    // Try full movement first
     this.position.x += dx;
     this.position.z += dz;
     if (!this.isCollidingXZ(colliders)) return;
 
+    // Try X only (slide along wall)
     this.position.z -= dz;
     if (!this.isCollidingXZ(colliders)) return;
 
+    // Try Z only
     this.position.x -= dx;
     this.position.z += dz;
     if (!this.isCollidingXZ(colliders)) return;
 
+    // Try reduced diagonal (helps with corner stuttering)
     this.position.z -= dz;
+    this.position.x += dx * 0.5;
+    this.position.z += dz * 0.5;
+    if (!this.isCollidingXZ(colliders)) return;
+
+    // Fully blocked
+    this.position.x -= dx * 0.5;
+    this.position.z -= dz * 0.5;
   }
 
   private isCollidingXZ(colliders: THREE.Box3[]): boolean {
@@ -248,12 +269,13 @@ export class PropController {
 
   private findGround(colliders: THREE.Box3[]): number {
     let best = GROUND_Y;
+    // Wider probe with more generous height tolerance for smoother stair climbing
     const probe = new THREE.Box3(
-      new THREE.Vector3(this.position.x - RADIUS * 0.6, this.position.y - 0.2, this.position.z - RADIUS * 0.6),
-      new THREE.Vector3(this.position.x + RADIUS * 0.6, this.position.y + STEP_UP, this.position.z + RADIUS * 0.6)
+      new THREE.Vector3(this.position.x - RADIUS * 0.8, this.position.y - 0.3, this.position.z - RADIUS * 0.8),
+      new THREE.Vector3(this.position.x + RADIUS * 0.8, this.position.y + STEP_UP + 0.1, this.position.z + RADIUS * 0.8)
     );
     for (const c of colliders) {
-      if (probe.intersectsBox(c) && c.max.y > best && c.max.y <= this.position.y + STEP_UP + 0.25) {
+      if (probe.intersectsBox(c) && c.max.y > best && c.max.y <= this.position.y + STEP_UP + 0.35) {
         best = c.max.y;
       }
     }
@@ -277,9 +299,10 @@ export class PropController {
     return lowestCeiling;
   }
 
-  private pushOutOfColliders(colliders: THREE.Box3[]) {
+  private pushOutHorizontal(colliders: THREE.Box3[]) {
+    // Only check body above step-up height to avoid fighting with findGround
     const box = new THREE.Box3(
-      new THREE.Vector3(this.position.x - RADIUS, this.position.y + 0.05, this.position.z - RADIUS),
+      new THREE.Vector3(this.position.x - RADIUS, this.position.y + STEP_UP + 0.05, this.position.z - RADIUS),
       new THREE.Vector3(this.position.x + RADIUS, this.position.y + HEIGHT, this.position.z + RADIUS)
     );
 
@@ -289,18 +312,18 @@ export class PropController {
       const ox2 = c.max.x - box.min.x;
       const oz1 = box.max.z - c.min.z;
       const oz2 = c.max.z - box.min.z;
-      const oy2 = c.max.y - box.min.y;
-      const min = Math.min(ox1, ox2, oz1, oz2, oy2);
+      const overlapX = Math.min(ox1, ox2);
+      const overlapZ = Math.min(oz1, oz2);
 
-      if (min === oy2 && oy2 < 0.6) {
-        this.position.y = c.max.y - 0.05;
-        this.verticalVelocity = 0;
-        this.onGround = true;
-      } else if (min === ox1) this.position.x -= ox1 + 0.01;
-      else if (min === ox2) this.position.x += ox2 + 0.01;
-      else if (min === oz1) this.position.z -= oz1 + 0.01;
-      else this.position.z += oz2 + 0.01;
-      box.min.set(this.position.x - RADIUS, this.position.y + 0.05, this.position.z - RADIUS);
+      if (overlapX <= overlapZ) {
+        if (ox1 < ox2) this.position.x -= ox1 + 0.02;
+        else this.position.x += ox2 + 0.02;
+      } else {
+        if (oz1 < oz2) this.position.z -= oz1 + 0.02;
+        else this.position.z += oz2 + 0.02;
+      }
+
+      box.min.set(this.position.x - RADIUS, this.position.y + STEP_UP + 0.05, this.position.z - RADIUS);
       box.max.set(this.position.x + RADIUS, this.position.y + HEIGHT, this.position.z + RADIUS);
     }
   }
@@ -308,6 +331,7 @@ export class PropController {
   // --- Public API ---
   setPosition(x: number, y: number, z: number) {
     this.position.set(x, y, z);
+    this.smoothY = y;
     this.verticalVelocity = 0;
     this.onGround = true;
     if (this.propMesh) this.propMesh.position.copy(this.position);
