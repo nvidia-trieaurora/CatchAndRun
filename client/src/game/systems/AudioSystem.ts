@@ -1,29 +1,115 @@
 import * as THREE from "three";
 
+const BGM_PATH = "/assets/audio/starostin-comedy-quirky-sneaky-music-261165.mp3";
+const SHOOT_PATH = "/assets/audio/pistol-shot-233473.mp3";
+const RELOAD_PATH = "/assets/audio/reload-gun.mp3";
+const BGM_VOLUME = 0.15;
+const SFX_VOLUME = 0.4;
+
 export class AudioSystem {
   private listener: THREE.AudioListener;
   private ctx: AudioContext;
   private enabled = true;
+  private bgm: HTMLAudioElement | null = null;
+  private bgmPlaying = false;
+  private shootBuffer: AudioBuffer | null = null;
+  private reloadBuffer: AudioBuffer | null = null;
+  private shootLoading = false;
 
   constructor(camera: THREE.Camera) {
     this.listener = new THREE.AudioListener();
     camera.add(this.listener);
     this.ctx = this.listener.context;
+    this.preloadShootSound();
+  }
+
+  private async preloadShootSound() {
+    if (this.shootLoading) return;
+    this.shootLoading = true;
+    try {
+      const [shootResp, reloadResp] = await Promise.all([
+        fetch(SHOOT_PATH), fetch(RELOAD_PATH),
+      ]);
+      const [shootBuf, reloadBuf] = await Promise.all([
+        shootResp.arrayBuffer(), reloadResp.arrayBuffer(),
+      ]);
+      this.shootBuffer = await this.ctx.decodeAudioData(shootBuf);
+      this.reloadBuffer = await this.ctx.decodeAudioData(reloadBuf);
+    } catch {
+      this.shootBuffer = null;
+      this.reloadBuffer = null;
+    }
   }
 
   setEnabled(enabled: boolean) {
     this.enabled = enabled;
+    if (!enabled) this.stopBGM();
+  }
+
+  startBGM() {
+    if (this.bgmPlaying) return;
+    if (!this.bgm) {
+      this.bgm = new Audio(BGM_PATH);
+      this.bgm.loop = true;
+      this.bgm.volume = BGM_VOLUME;
+    }
+    this.bgm.play().catch(() => {});
+    this.bgmPlaying = true;
+  }
+
+  stopBGM() {
+    if (this.bgm) {
+      this.bgm.pause();
+      this.bgm.currentTime = 0;
+    }
+    this.bgmPlaying = false;
+  }
+
+  toggleBGM(): boolean {
+    if (this.bgmPlaying) {
+      this.stopBGM();
+      return false;
+    } else {
+      this.startBGM();
+      return true;
+    }
+  }
+
+  isBGMPlaying(): boolean {
+    return this.bgmPlaying;
+  }
+
+  setBGMVolume(vol: number) {
+    if (this.bgm) this.bgm.volume = Math.max(0, Math.min(1, vol));
   }
 
   playSound(name: string) {
     if (!this.enabled) return;
     try {
       if (this.ctx.state === "suspended") void this.ctx.resume();
-      const fn = SOUND_GENERATORS[name];
-      if (fn) {
-        fn(this.ctx);
+
+      if (name === "shoot" && this.shootBuffer) {
+        this.playBuffer(this.shootBuffer, SFX_VOLUME);
+        return;
       }
-    } catch { /* audio playback is best-effort */ }
+      if (name === "reload" && this.reloadBuffer) {
+        this.playBuffer(this.reloadBuffer, SFX_VOLUME * 0.8);
+        return;
+      }
+
+      const fn = SOUND_GENERATORS[name];
+      if (fn) fn(this.ctx);
+    } catch { /* best-effort */ }
+  }
+
+  private playBuffer(buffer: AudioBuffer, volume: number) {
+    const source = this.ctx.createBufferSource();
+    source.buffer = buffer;
+    const gain = this.ctx.createGain();
+    gain.gain.value = volume;
+    source.connect(gain);
+    gain.connect(this.ctx.destination);
+    source.start();
   }
 
   playSpatialSound(name: string, _position: THREE.Vector3) {
@@ -31,69 +117,15 @@ export class AudioSystem {
     this.playSound(name);
   }
 
-  dispose() {}
+  dispose() {
+    this.stopBGM();
+    this.bgm = null;
+  }
 }
 
 const SOUND_GENERATORS: Record<string, (ctx: AudioContext) => void> = {
-  shoot: (ctx) => {
-    const t = ctx.currentTime;
-
-    // Gunshot: noise burst + low thump
-    const bufferSize = ctx.sampleRate * 0.15;
-    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.08));
-    }
-    const noise = ctx.createBufferSource();
-    noise.buffer = noiseBuffer;
-
-    const noiseFilter = ctx.createBiquadFilter();
-    noiseFilter.type = "bandpass";
-    noiseFilter.frequency.value = 3000;
-    noiseFilter.Q.value = 0.5;
-
-    const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.25, t);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
-
-    noise.connect(noiseFilter);
-    noiseFilter.connect(noiseGain);
-    noiseGain.connect(ctx.destination);
-    noise.start(t);
-    noise.stop(t + 0.15);
-
-    // Low thump
-    const osc = ctx.createOscillator();
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(150, t);
-    osc.frequency.exponentialRampToValueAtTime(50, t + 0.08);
-
-    const oscGain = ctx.createGain();
-    oscGain.gain.setValueAtTime(0.3, t);
-    oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
-
-    osc.connect(oscGain);
-    oscGain.connect(ctx.destination);
-    osc.start(t);
-    osc.stop(t + 0.12);
-
-    // Click
-    const click = ctx.createOscillator();
-    click.type = "square";
-    click.frequency.value = 1200;
-    const clickGain = ctx.createGain();
-    clickGain.gain.setValueAtTime(0.15, t);
-    clickGain.gain.exponentialRampToValueAtTime(0.001, t + 0.02);
-    click.connect(clickGain);
-    clickGain.connect(ctx.destination);
-    click.start(t);
-    click.stop(t + 0.03);
-  },
-
   reload: (ctx) => {
     const t = ctx.currentTime;
-    // Magazine click
     for (let i = 0; i < 3; i++) {
       const osc = ctx.createOscillator();
       osc.type = "square";
@@ -106,7 +138,6 @@ const SOUND_GENERATORS: Record<string, (ctx: AudioContext) => void> = {
       osc.start(t + i * 0.15);
       osc.stop(t + i * 0.15 + 0.06);
     }
-    // Slide rack
     const slide = ctx.createOscillator();
     slide.type = "sawtooth";
     slide.frequency.setValueAtTime(200, t + 0.5);

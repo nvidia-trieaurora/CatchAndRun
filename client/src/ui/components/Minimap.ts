@@ -146,14 +146,13 @@ export class Minimap {
     }
 
     // Player triangle
-    // In THREE.js: yaw=0 => looking -Z (up on map), yaw increases CW when turning right
-    // Canvas: 0 angle = right (+X), need triangle pointing up at yaw=0
-    // Map: +Z = down on canvas. So -Z (forward at yaw=0) = up on canvas
-    // rotation = yaw maps correctly: yaw=0 -> up, yaw=PI/2 -> right
+    // euler.y=0 -> looking -Z -> canvas UP (triangle tip at 0,-7)
+    // euler.y decreases when turning right -> canvas rotate decreases -> CW
+    // So canvasRotation = euler.y (direct mapping, no offset)
     const [plx, plz] = this.worldToCanvas(this.playerX, this.playerZ);
     ctx.save();
     ctx.translate(plx, plz);
-    ctx.rotate(this.playerYaw + Math.PI);
+    ctx.rotate(-this.playerYaw);
     ctx.beginPath();
     ctx.moveTo(0, -7);
     ctx.lineTo(-4, 5);
@@ -164,6 +163,20 @@ export class Minimap {
     ctx.strokeStyle = "#ffffff";
     ctx.lineWidth = 1;
     ctx.stroke();
+    ctx.restore();
+
+    // FOV cone (shows field of view)
+    const fovLen = 18;
+    ctx.save();
+    ctx.translate(plx, plz);
+    ctx.rotate(-this.playerYaw);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(-8, -fovLen);
+    ctx.lineTo(8, -fovLen);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(68, 255, 68, 0.06)";
+    ctx.fill();
     ctx.restore();
 
     // Scan radius

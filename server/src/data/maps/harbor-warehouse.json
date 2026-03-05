@@ -2,8 +2,8 @@
   "id": "harbor-warehouse",
   "name": "Old Harbor Warehouse",
   "bounds": {
-    "min": { "x": -50, "y": -5, "z": -40 },
-    "max": { "x": 50, "y": 20, "z": 40 }
+    "min": { "x": -57, "y": -5, "z": -45 },
+    "max": { "x": 65, "y": 25, "z": 49 }
   },
   "killZoneY": -5,
   "hunterSpawnPoints": [

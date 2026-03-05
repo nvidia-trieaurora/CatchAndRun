@@ -6,6 +6,7 @@ interface Snapshot {
   y: number;
   z: number;
   rotY: number;
+  rotX: number;
 }
 
 export class InterpolationBuffer {
@@ -16,14 +17,14 @@ export class InterpolationBuffer {
     this.renderDelay = delayMs;
   }
 
-  push(x: number, y: number, z: number, rotY: number) {
-    this.buffer.push({ timestamp: Date.now(), x, y, z, rotY });
+  push(x: number, y: number, z: number, rotY: number, rotX: number = 0) {
+    this.buffer.push({ timestamp: Date.now(), x, y, z, rotY, rotX });
     if (this.buffer.length > 10) {
       this.buffer.shift();
     }
   }
 
-  getInterpolated(): { x: number; y: number; z: number; rotY: number } | null {
+  getInterpolated(): { x: number; y: number; z: number; rotY: number; rotX: number } | null {
     if (this.buffer.length < 2) {
       return this.buffer.length === 1 ? this.buffer[0] : null;
     }
@@ -54,6 +55,7 @@ export class InterpolationBuffer {
       y: from.y + (to.y - from.y) * clamped,
       z: from.z + (to.z - from.z) * clamped,
       rotY: this.lerpAngle(from.rotY, to.rotY, clamped),
+      rotX: from.rotX + (to.rotX - from.rotX) * clamped,
     };
   }
 

@@ -58,6 +58,7 @@ export class GameManager {
   private propTransformSystem!: PropTransformSystem;
   private audioSystem!: AudioSystem;
   private particleSystem!: ParticleSystem;
+  private musicBtn: HTMLButtonElement | null = null;
 
   private hunterController!: HunterController;
   private propController!: PropController;
@@ -133,6 +134,7 @@ export class GameManager {
 
     this.setupUI();
     this.setupChat();
+    this.setupMusicToggle();
 
     window.addEventListener("resize", () => this.onResize());
 
@@ -235,7 +237,7 @@ export class GameManager {
           this.scene.add(entity.group);
           this.playerEntities.set(p.sessionId, entity);
         }
-        entity.updateFromServer(p.x, p.y, p.z, p.rotY, p.role, p.currentPropId, p.isAlive, p.memeId);
+        entity.updateFromServer(p.x, p.y, p.z, p.rotY, p.role, p.currentPropId, p.isAlive, p.memeId, p.rotX);
         if (this.localRole === PlayerRole.HUNTER && this.invisibleProps.has(p.sessionId)) {
           entity.group.visible = false;
         }
@@ -381,6 +383,8 @@ export class GameManager {
     this.weaponSystem = new WeaponSystem(this.scene);
     this.propTransformSystem = new PropTransformSystem(this.scene, this.propRegistry);
     this.audioSystem = new AudioSystem(this.camera);
+    this.audioSystem.startBGM();
+    if (this.musicBtn) this.musicBtn.textContent = "♪ ON";
     this.particleSystem = new ParticleSystem(this.scene);
   }
 
@@ -788,6 +792,29 @@ export class GameManager {
     this.gameHUD.setChatSendHandler((message: string) => {
       this.network.send(ClientMessage.CHAT, { message });
     });
+  }
+
+  private setupMusicToggle() {
+    const btn = document.createElement("button");
+    btn.id = "music-toggle";
+    btn.textContent = "♪ OFF";
+    btn.style.cssText = `
+      position: fixed; top: 16px; left: 16px; z-index: 100;
+      background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px; padding: 6px 12px; font-size: 0.8rem; cursor: pointer;
+      font-family: inherit; backdrop-filter: blur(4px); transition: background 0.2s;
+    `;
+    btn.addEventListener("mouseenter", () => { btn.style.background = "rgba(0,0,0,0.7)"; });
+    btn.addEventListener("mouseleave", () => { btn.style.background = "rgba(0,0,0,0.5)"; });
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (this.audioSystem) {
+        const playing = this.audioSystem.toggleBGM();
+        btn.textContent = playing ? "♪ ON" : "♪ OFF";
+      }
+    });
+    document.body.appendChild(btn);
+    this.musicBtn = btn;
   }
 
   private leaveRoom() {

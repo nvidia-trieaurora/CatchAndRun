@@ -63,10 +63,10 @@ export class PlayerEntity {
     }
   }
 
-  updateFromServer(x: number, y: number, z: number, rotY: number, role: string, propId: string, isAlive: boolean, memeId?: string) {
+  updateFromServer(x: number, y: number, z: number, rotY: number, role: string, propId: string, isAlive: boolean, memeId?: string, rotX?: number) {
     if (this.isLocalPlayer) return;
 
-    this.interpolation.push(x, y, z, rotY);
+    this.interpolation.push(x, y, z, rotY, rotX || 0);
 
     if (memeId && memeId !== this.memeId) {
       this.memeId = memeId;
@@ -107,6 +107,7 @@ export class PlayerEntity {
         const speed = Math.sqrt(dx * dx + dz * dz) / d;
         const isMoving = speed > 0.5;
         this.hunterModel.setMoving(isMoving);
+        this.hunterModel.setPitch(interp.rotX);
         this.hunterModel.update(d);
         this.prevPos.set(interp.x, interp.y, interp.z);
       }

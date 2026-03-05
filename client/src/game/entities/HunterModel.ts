@@ -37,6 +37,7 @@ export class HunterModel {
   private shootTimer = 0;
   private animTime = 0;
   private crouchAmount = 0;
+  private aimPitch = 0;
 
   constructor(memeId: string = "default", bodyColor?: number) {
     this.memeId = memeId;
@@ -179,6 +180,10 @@ export class HunterModel {
     this.isCrouching = crouching;
   }
 
+  setPitch(pitch: number) {
+    this.aimPitch = pitch;
+  }
+
   triggerShoot() {
     this.isShooting = true;
     this.shootTimer = 0.15;
@@ -217,6 +222,11 @@ export class HunterModel {
         this.isShooting = false;
       }
     }
+
+    // Apply aim pitch (looking up/down) to arm+gun and head
+    const pitchClamp = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.aimPitch));
+    this.armRGroup.rotation.x += pitchClamp;
+    this.head.rotation.x = pitchClamp * 0.6;
   }
 
   private animateIdle() {
