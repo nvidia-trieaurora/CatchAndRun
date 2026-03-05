@@ -36,6 +36,7 @@ export enum ServerMessage {
   PROP_INVISIBLE = "propInvisible",
   GRENADE_THROWN = "grenadeThrown",
   SCAN_RESULT = "scanResult",
+  CHAT_MESSAGE = "chatMessage",
 }
 
 export interface PlayerInputData {

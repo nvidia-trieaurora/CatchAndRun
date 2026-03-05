@@ -517,6 +517,19 @@ export class GameRoom extends Room<GameState> {
       count: detected.length,
       detected,
     });
+
+    // Notify all props that hunter used scan
+    this.state.players.forEach((other, sid) => {
+      if (other.role === PlayerRole.PROP && other.isAlive) {
+        const propClient = this.clients.find((c) => c.sessionId === sid);
+        if (propClient) {
+          propClient.send(ServerMessage.SCAN_RESULT, {
+            warning: true,
+            hunterName: player.nickname,
+          });
+        }
+      }
+    });
   }
 
   private handleUseAbility2(client: Client) {
@@ -547,15 +560,22 @@ export class GameRoom extends Room<GameState> {
     if (!player) return;
     if (!data.message || data.message.trim().length === 0) return;
 
+    const trimmed = data.message.trim().substring(0, 200);
+
     const msg = new ChatMessage();
     msg.sender = player.nickname;
-    msg.message = data.message.trim().substring(0, 200);
+    msg.message = trimmed;
     msg.timestamp = Date.now();
     this.state.chat.push(msg);
 
     while (this.state.chat.length > 50) {
       this.state.chat.shift();
     }
+
+    this.broadcast(ServerMessage.CHAT_MESSAGE, {
+      sender: player.nickname,
+      message: trimmed,
+    });
   }
 
   private handleReadyToggle(client: Client) {

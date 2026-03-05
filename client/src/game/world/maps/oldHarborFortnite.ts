@@ -91,14 +91,18 @@ function buildGround(B: MapBoxHelper) {
   grass.receiveShadow = true;
   (B as any).scene.add(grass);
 
-  // Warehouse concrete floor
-  B.box(46, 0.12, 36, 0, 0.06, 0, "concreteFloor", false);
+  // Warehouse concrete floor (with collider to prevent sinking)
+  B.box(46, 0.2, 36, 0, 0.1, 0, "concreteFloor", false);
+  B.addCollider(-23, 0, -18, 23, 0.22, 18);
   // Container yard asphalt
   B.box(32, 0.1, 30, 40, 0.04, -10, "asphalt", false);
-  // Dock planks
+  // Dock planks (with collider)
   B.box(70, 0.15, 8, 15, 0.07, 38, "dockWood", false);
+  B.addCollider(-20, 0, 34, 50, 0.18, 42);
   // Construction zone ground
   B.box(20, 0.1, 20, -35, 0.04, -22, "concreteDark", false);
+  // Backyard grass ground collider (prevents sinking in the yard area)
+  B.addCollider(-56, -0.1, 18, -16, 0.05, 48);
 
   // ===== BOUNDARY WALLS (prevent leaving play area) =====
   // Map bounds: x from -55 to 63, z from -43 to 47
@@ -155,18 +159,20 @@ function buildWarehouseHall(B: MapBoxHelper) {
   const W = 46, H = 8, D = 36;
 
   // Walls with door openings
-  B.box(W, H, 0.35, 0, H / 2, -D / 2, "concrete");         // back
-  B.box(14, H, 0.35, -16, H / 2, D / 2, "concrete");        // front-left
-  B.box(14, H, 0.35, 16, H / 2, D / 2, "concrete");         // front-right
-  B.box(18, 2.5, 0.35, 0, H - 1.25, D / 2, "concrete");     // front-top beam
+  B.box(W, H, 2.0, 0, H / 2, -D / 2, "concrete");           // back (extra thick to prevent clipping)
+  B.box(14, H, 0.6, -16, H / 2, D / 2, "concrete");         // front-left
+  B.box(14, H, 0.6, 16, H / 2, D / 2, "concrete");          // front-right
+  B.box(18, 2.5, 0.6, 0, H - 1.25, D / 2, "concrete");      // front-top beam
   B.box(0.35, H, D, -W / 2, H / 2, 0, "concrete");          // left
   B.box(0.35, H, 12, W / 2, H / 2, -12, "concrete");        // right-top
   B.box(0.35, H, 8, W / 2, H / 2, 14, "concrete");          // right-bottom
   B.box(0.35, 2.5, 16, W / 2, H - 1.25, 2, "concrete");     // right beam
+  // Back wall: very thick collider (3 units deep) so physics can never skip through
+  B.addCollider(-W / 2, 0, -D / 2 - 2.0, W / 2, H + 2, -D / 2 + 1.0);
+  // Front wall colliders (left and right of door opening)
+  B.addCollider(-W / 2, 0, D / 2 - 0.5, -9, H, D / 2 + 0.5);
+  B.addCollider(9, 0, D / 2 - 0.5, W / 2, H, D / 2 + 0.5);
 
-  // Hazard stripe on door frame (visual + full-height collider so no props crawl under)
-  B.colorBox(18.1, 0.3, 0.36, 0, 1.5, D / 2, PALETTE.accentYellow, 0.7, 0.1, false);
-  B.addCollider(-9, 0, D / 2 - 0.2, 9, 2.0, D / 2 + 0.2);
 
   // Roof panels (visual only - no individual collision to avoid gap issues)
   for (let i = 0; i < 5; i++) {
@@ -209,46 +215,6 @@ function buildWarehouseHall(B: MapBoxHelper) {
   B.colorBox(0.7, 0.5, 0.5, 8.8, 0.25, -14, cb, 0.9, 0, false);
   B.colorBox(0.6, 0.5, 0.5, 8.4, 0.75, -14, cb, 0.9, 0, false);
 
-  // Photo frames on walls with actual photo texture
-  const frameColors = [0xddcc88, 0xbb9966, 0x996644, 0xaa8855];
-  const photoTexture = new THREE.TextureLoader().load('/assets/photos/thinhdeptrai.jpg');
-  photoTexture.colorSpace = THREE.SRGBColorSpace;
-  const photoMaterial = new THREE.MeshStandardMaterial({ map: photoTexture, roughness: 0.3, metalness: 0.02 });
-  const photoWall: [number, number, number, number][] = [
-    // [x, y, z, rotY] - positions on warehouse interior walls
-    [-20, 3.5, -17.7, 0],  // back wall
-    [-10, 4.0, -17.7, 0],
-    [0, 3.2, -17.7, 0],
-    [10, 3.8, -17.7, 0],
-    [-22.6, 3.0, -10, Math.PI / 2],  // left wall
-    [-22.6, 4.2, 0, Math.PI / 2],
-    [-22.6, 3.5, 8, Math.PI / 2],
-  ];
-  for (let i = 0; i < photoWall.length; i++) {
-    const [px, py, pz, pRot] = photoWall[i];
-    const frameW = 1.2 + (i % 3) * 0.3;
-    const frameH = 0.9 + (i % 2) * 0.3;
-    const isHorizontal = pRot !== 0;
-
-    // Frame border
-    const frameMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(isHorizontal ? 0.06 : frameW + 0.15, frameH + 0.15, isHorizontal ? frameW + 0.15 : 0.06),
-      getCustomMaterial(frameColors[i % frameColors.length], 0.8, 0.1)
-    );
-    frameMesh.position.set(px, py, pz);
-    (B as any).scene.add(frameMesh);
-
-    // Photo with actual texture
-    const photoGeo = new THREE.PlaneGeometry(frameW, frameH);
-    const photoMesh = new THREE.Mesh(photoGeo, photoMaterial);
-    photoMesh.position.set(px, py, pz + (isHorizontal ? 0 : 0.035));
-    if (isHorizontal) {
-      photoMesh.rotation.y = Math.PI / 2;
-      photoMesh.position.x = px + 0.035;
-    }
-    (B as any).scene.add(photoMesh);
-  }
-
   // Hanging light fixtures
   const fixtureMat = getMaterial("steelDark");
   const bulbMat = getEmissiveMaterial(0xffffdd, 0xffeeaa, 0.8);
@@ -267,15 +233,28 @@ function buildWarehouseHall(B: MapBoxHelper) {
 }
 
 function buildShelfRack(B: MapBoxHelper, x: number, z: number) {
-  B.colorBox(0.06, 3.8, 0.06, x - 0.9, 1.9, z - 0.55, PALETTE.steelDark, 0.5, 0.5, false);
-  B.colorBox(0.06, 3.8, 0.06, x + 0.9, 1.9, z - 0.55, PALETTE.steelDark, 0.5, 0.5, false);
-  B.colorBox(0.06, 3.8, 0.06, x - 0.9, 1.9, z + 0.55, PALETTE.steelDark, 0.5, 0.5, false);
-  B.colorBox(0.06, 3.8, 0.06, x + 0.9, 1.9, z + 0.55, PALETTE.steelDark, 0.5, 0.5, false);
-  B.addCollider(x - 1.0, 0, z - 0.65, x + 1.0, 3.8, z + 0.65);
-  B.box(2.0, 0.06, 1.2, x, 1.3, z, "wood", false);
-  B.box(2.0, 0.06, 1.2, x, 2.6, z, "wood", false);
-  B.colorBox(2.0, 0.04, 0.04, x, 0.5, z - 0.55, PALETTE.steelDark, 0.5, 0.5, false);
-  B.colorBox(2.0, 0.04, 0.04, x, 0.5, z + 0.55, PALETTE.steelDark, 0.5, 0.5, false);
+  // Vertical posts (visual)
+  B.colorBox(0.08, 3.8, 0.08, x - 0.9, 1.9, z - 0.55, PALETTE.steelDark, 0.5, 0.5, false);
+  B.colorBox(0.08, 3.8, 0.08, x + 0.9, 1.9, z - 0.55, PALETTE.steelDark, 0.5, 0.5, false);
+  B.colorBox(0.08, 3.8, 0.08, x - 0.9, 1.9, z + 0.55, PALETTE.steelDark, 0.5, 0.5, false);
+  B.colorBox(0.08, 3.8, 0.08, x + 0.9, 1.9, z + 0.55, PALETTE.steelDark, 0.5, 0.5, false);
+  // Front/back face colliders (block passage through the rack)
+  B.addCollider(x - 1.0, 0, z - 0.65, x + 1.0, 0.45, z - 0.45);
+  B.addCollider(x - 1.0, 0, z + 0.45, x + 1.0, 0.45, z + 0.65);
+  // Shelf 1 (walkable)
+  B.box(2.0, 0.1, 1.2, x, 1.3, z, "wood", false);
+  B.addCollider(x - 1.0, 1.24, z - 0.6, x + 1.0, 1.36, z + 0.6);
+  // Shelf 2 (walkable)
+  B.box(2.0, 0.1, 1.2, x, 2.6, z, "wood", false);
+  B.addCollider(x - 1.0, 2.54, z - 0.6, x + 1.0, 2.66, z + 0.6);
+  // Top bar (walkable)
+  B.colorBox(2.0, 0.1, 1.2, x, 3.8, z, PALETTE.steelDark, 0.5, 0.5, false);
+  B.addCollider(x - 1.0, 3.74, z - 0.6, x + 1.0, 3.86, z + 0.6);
+  // Cross braces (with blocking colliders)
+  B.colorBox(2.0, 0.08, 0.08, x, 0.5, z - 0.55, PALETTE.steelDark, 0.5, 0.5, false);
+  B.addCollider(x - 1.0, 0.45, z - 0.65, x + 1.0, 0.58, z - 0.45);
+  B.colorBox(2.0, 0.08, 0.08, x, 0.5, z + 0.55, PALETTE.steelDark, 0.5, 0.5, false);
+  B.addCollider(x - 1.0, 0.45, z + 0.45, x + 1.0, 0.58, z + 0.65);
 }
 
 // ========== ZONE 3: CONTAINER YARD ==========
@@ -422,8 +401,9 @@ function buildCatwalkNetwork(B: MapBoxHelper) {
   // Railing (with collider strips to prevent falling off)
   B.colorBox(30, 0.05, 0.05, 0, 4.9, -17.3, PALETTE.steelLight, 0.5, 0.5, false);
   B.colorBox(30, 0.05, 0.05, 0, 4.9, -15.7, PALETTE.steelLight, 0.5, 0.5, false);
-  B.addCollider(-15, 4.0, -17.5, 15, 5.0, -17.1);
-  B.addCollider(-15, 4.0, -15.9, 15, 5.0, -15.5);
+  // Back-side railing: tall collider fills gap between catwalk and back wall (prevents jumping over)
+  B.addCollider(-15, 4.0, -18.5, 15, 8.0, -17.1);
+  B.addCollider(-15, 4.0, -15.9, 15, 5.5, -15.5);
   for (let i = 0; i < 10; i++) {
     B.colorBox(0.04, 0.9, 0.04, -14 + i * 3, 4.5, -17.3, PALETTE.steelLight, 0.5, 0.5, false);
   }
@@ -904,13 +884,11 @@ function buildParkourStructures(B: MapBoxHelper, scene: THREE.Scene) {
 // ========== BACKYARD 2-STORY HOUSE ==========
 function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   const hx = -35, hz = 22;
-  const F = 4.2;
+  const F = 5.0;
   const W = 0.5;
   const HW = 10, HD = 8;
   const wallColor = 0xf0e6d0;
   const trimColor = PALETTE.woodDark;
-  const windowGlass = 0x88ccee;
-
   // === FOUNDATION ===
   B.colorBox(HW + 2, 0.35, HD + 2, hx, 0.175, hz, PALETTE.concreteDark, 0.9, 0.03, false);
 
@@ -919,86 +897,115 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   B.addCollider(hx - HW / 2, 0.2, hz - HD / 2, hx + HW / 2, 0.5, hz + HD / 2);
 
   // === 1F WALLS ===
-  // Back wall - solid
-  B.colorBox(HW + W, F, W, hx, 0.35 + F / 2, hz - HD / 2, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - HW / 2 - W / 2, 0.35, hz - HD / 2 - W / 2, hx + HW / 2 + W / 2, 0.35 + F, hz - HD / 2 + W / 2);
+  const baseY1 = 0.35;
+  const winH1 = 2.0, winSill1 = 1.0;
 
-  // Left wall - with window opening (visual glass, wall still solid)
-  B.colorBox(W, F, 2.5, hx - HW / 2, 0.35 + F / 2, hz - 2.5, wallColor, 0.85, 0.02, false);
-  B.colorBox(W, F, 2.5, hx - HW / 2, 0.35 + F / 2, hz + 2.5, wallColor, 0.85, 0.02, false);
-  B.colorBox(W, 0.8, 3, hx - HW / 2, 0.35 + F - 0.4, hz, wallColor, 0.85, 0.02, false);
-  B.colorBox(W, 0.8, 3, hx - HW / 2, 0.75, hz, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - HW / 2 - W / 2, 0.35, hz - HD / 2, hx - HW / 2 + W / 2, 0.35 + F, hz + HD / 2);
-  // Window glass
-  const glassMat = getCustomMaterial(windowGlass, 0.1, 0.6);
-  const winL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.8, 2.5), glassMat);
-  winL.position.set(hx - HW / 2, 2.1, hz);
-  scene.add(winL);
-  // Window frame
-  B.colorBox(0.08, 2.0, 0.08, hx - HW / 2, 2.1, hz - 1.3, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.08, 2.0, 0.08, hx - HW / 2, 2.1, hz + 1.3, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.08, 0.08, 2.7, hx - HW / 2, 1.1, hz, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.08, 0.08, 2.7, hx - HW / 2, 3.1, hz, trimColor, 0.85, 0.02, false);
+  // Back wall 1F - solid wall, chimney protrudes inward from it
+  const chX = hx + HW / 2 - 1.5, chZ = hz - HD / 2 + 1.0;
+  B.colorBox(HW + W, F, W, hx, baseY1 + F / 2, hz - HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - W / 2, baseY1, hz - HD / 2 - W / 2, hx + HW / 2 + W / 2, baseY1 + F, hz - HD / 2 + W / 2);
 
-  // Right wall - with window
-  B.colorBox(W, F, 2.5, hx + HW / 2, 0.35 + F / 2, hz - 2.5, wallColor, 0.85, 0.02, false);
-  B.colorBox(W, F, 2.5, hx + HW / 2, 0.35 + F / 2, hz + 2.5, wallColor, 0.85, 0.02, false);
-  B.colorBox(W, 0.8, 3, hx + HW / 2, 0.35 + F - 0.4, hz, wallColor, 0.85, 0.02, false);
-  B.colorBox(W, 0.8, 3, hx + HW / 2, 0.75, hz, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx + HW / 2 - W / 2, 0.35, hz - HD / 2, hx + HW / 2 + W / 2, 0.35 + F, hz + HD / 2);
-  // Window glass
-  const winR = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.8, 2.5), glassMat);
-  winR.position.set(hx + HW / 2, 2.1, hz);
-  scene.add(winR);
+  // Left wall 1F - open window (can see through and jump in)
+  // Below window
+  B.colorBox(W, winSill1, HD, hx - HW / 2, baseY1 + winSill1 / 2, hz, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - W / 2, baseY1, hz - HD / 2, hx - HW / 2 + W / 2, baseY1 + winSill1, hz + HD / 2);
+  // Above window
+  B.colorBox(W, F - winSill1 - winH1, HD, hx - HW / 2, baseY1 + winSill1 + winH1 + (F - winSill1 - winH1) / 2, hz, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - W / 2, baseY1 + winSill1 + winH1, hz - HD / 2, hx - HW / 2 + W / 2, baseY1 + F, hz + HD / 2);
+  // Side pillars around window
+  B.colorBox(W, winH1, 1.5, hx - HW / 2, baseY1 + winSill1 + winH1 / 2, hz - HD / 2 + 0.75, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - W / 2, baseY1 + winSill1, hz - HD / 2, hx - HW / 2 + W / 2, baseY1 + winSill1 + winH1, hz - HD / 2 + 1.5);
+  B.colorBox(W, winH1, 1.5, hx - HW / 2, baseY1 + winSill1 + winH1 / 2, hz + HD / 2 - 0.75, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - W / 2, baseY1 + winSill1, hz + HD / 2 - 1.5, hx - HW / 2 + W / 2, baseY1 + winSill1 + winH1, hz + HD / 2);
   // Window frame
-  B.colorBox(0.08, 2.0, 0.08, hx + HW / 2, 2.1, hz - 1.3, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.08, 2.0, 0.08, hx + HW / 2, 2.1, hz + 1.3, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.08, 0.08, 2.7, hx + HW / 2, 1.1, hz, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.08, 0.08, 2.7, hx + HW / 2, 3.1, hz, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, winH1 + 0.1, 0.08, hx - HW / 2, baseY1 + winSill1 + winH1 / 2, hz - HD / 2 + 1.5, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, winH1 + 0.1, 0.08, hx - HW / 2, baseY1 + winSill1 + winH1 / 2, hz + HD / 2 - 1.5, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.08, HD - 3, hx - HW / 2, baseY1 + winSill1, hz, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.08, HD - 3, hx - HW / 2, baseY1 + winSill1 + winH1, hz, trimColor, 0.85, 0.02, false);
+
+  // Right wall 1F - same open window pattern
+  B.colorBox(W, winSill1, HD, hx + HW / 2, baseY1 + winSill1 / 2, hz, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx + HW / 2 - W / 2, baseY1, hz - HD / 2, hx + HW / 2 + W / 2, baseY1 + winSill1, hz + HD / 2);
+  B.colorBox(W, F - winSill1 - winH1, HD, hx + HW / 2, baseY1 + winSill1 + winH1 + (F - winSill1 - winH1) / 2, hz, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx + HW / 2 - W / 2, baseY1 + winSill1 + winH1, hz - HD / 2, hx + HW / 2 + W / 2, baseY1 + F, hz + HD / 2);
+  B.colorBox(W, winH1, 1.5, hx + HW / 2, baseY1 + winSill1 + winH1 / 2, hz - HD / 2 + 0.75, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx + HW / 2 - W / 2, baseY1 + winSill1, hz - HD / 2, hx + HW / 2 + W / 2, baseY1 + winSill1 + winH1, hz - HD / 2 + 1.5);
+  B.colorBox(W, winH1, 1.5, hx + HW / 2, baseY1 + winSill1 + winH1 / 2, hz + HD / 2 - 0.75, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx + HW / 2 - W / 2, baseY1 + winSill1, hz + HD / 2 - 1.5, hx + HW / 2 + W / 2, baseY1 + winSill1 + winH1, hz + HD / 2);
+  B.colorBox(0.08, winH1 + 0.1, 0.08, hx + HW / 2, baseY1 + winSill1 + winH1 / 2, hz - HD / 2 + 1.5, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, winH1 + 0.1, 0.08, hx + HW / 2, baseY1 + winSill1 + winH1 / 2, hz + HD / 2 - 1.5, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.08, HD - 3, hx + HW / 2, baseY1 + winSill1, hz, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.08, HD - 3, hx + HW / 2, baseY1 + winSill1 + winH1, hz, trimColor, 0.85, 0.02, false);
 
   // Front wall - with door
-  B.colorBox(3.5, F, W, hx - 3.25, 0.35 + F / 2, hz + HD / 2, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - 5, 0.35, hz + HD / 2 - W / 2, hx - 1.5, 0.35 + F, hz + HD / 2 + W / 2);
-  B.colorBox(3.5, F, W, hx + 3.25, 0.35 + F / 2, hz + HD / 2, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx + 1.5, 0.35, hz + HD / 2 - W / 2, hx + 5, 0.35 + F, hz + HD / 2 + W / 2);
-  B.colorBox(3, 0.7, W, hx, 0.35 + F - 0.35, hz + HD / 2, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - 1.5, 0.35 + F - 0.7, hz + HD / 2 - W / 2, hx + 1.5, 0.35 + F, hz + HD / 2 + W / 2);
+  B.colorBox(3.5, F, W, hx - 3.25, baseY1 + F / 2, hz + HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - 5, baseY1, hz + HD / 2 - W / 2, hx - 1.5, baseY1 + F, hz + HD / 2 + W / 2);
+  B.colorBox(3.5, F, W, hx + 3.25, baseY1 + F / 2, hz + HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx + 1.5, baseY1, hz + HD / 2 - W / 2, hx + 5, baseY1 + F, hz + HD / 2 + W / 2);
+  B.colorBox(3, 0.7, W, hx, baseY1 + F - 0.35, hz + HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - 1.5, baseY1 + F - 0.7, hz + HD / 2 - W / 2, hx + 1.5, baseY1 + F, hz + HD / 2 + W / 2);
   // Door frame
   B.colorBox(0.12, 2.8, 0.15, hx - 1.5, 1.75, hz + HD / 2, trimColor, 0.85, 0.02, false);
   B.colorBox(0.12, 2.8, 0.15, hx + 1.5, 1.75, hz + HD / 2, trimColor, 0.85, 0.02, false);
   B.colorBox(3.1, 0.12, 0.15, hx, 3.15, hz + HD / 2, trimColor, 0.85, 0.02, false);
 
-  // === 2F FLOOR - with staircase opening on left side ===
-  // Main floor (right portion)
-  B.colorBox(HW - 3, 0.2, HD, hx + 1.5, F + 0.45, hz, PALETTE.woodWarm, 0.82, 0.02, false);
-  B.addCollider(hx - HW / 2 + 3, F + 0.35, hz - HD / 2, hx + HW / 2, F + 0.55, hz + HD / 2);
-  // Small section near front (covers stair exit area)
-  B.colorBox(3, 0.2, 2.5, hx - 3.5, F + 0.45, hz + 2.75, PALETTE.woodWarm, 0.82, 0.02, false);
-  B.addCollider(hx - 5, F + 0.35, hz + 1.5, hx - 2, F + 0.55, hz + 4);
+  // === 2F FLOOR - with staircase opening on left side + chimney hole ===
+  const stairOpenW = 2.0;
+  const stairOpenZ2 = hz + 0.5;
+  const stairOpenX1 = hx - HW / 2;
+  const stairOpenX2 = hx - HW / 2 + stairOpenW;
+  const chHoleR = 0.7;
+  // Visual floor panels (with holes cut for stair and chimney)
+  B.colorBox(HW - stairOpenW, 0.2, HD, hx - HW / 2 + stairOpenW + (HW - stairOpenW) / 2, F + 0.45, hz, PALETTE.woodWarm, 0.82, 0.02, false);
+  B.colorBox(stairOpenW, 0.2, HD / 2 - 0.5, stairOpenX1 + stairOpenW / 2, F + 0.45, hz + HD / 4 + 0.25, PALETTE.woodWarm, 0.82, 0.02, false);
+  // Floor colliders split around stair opening AND chimney hole
+  // Left of chimney (from stair opening edge to chimney hole)
+  B.addCollider(stairOpenX2, F + 0.35, hz - HD / 2, chX - chHoleR, F + 0.55, hz + HD / 2);
+  // Right of chimney
+  B.addCollider(chX + chHoleR, F + 0.35, hz - HD / 2, hx + HW / 2, F + 0.55, hz + HD / 2);
+  // Front of chimney hole (chimney to front wall)
+  B.addCollider(chX - chHoleR, F + 0.35, chZ + chHoleR, chX + chHoleR, F + 0.55, hz + HD / 2);
+  // Back of chimney hole (chimney to back wall)
+  B.addCollider(chX - chHoleR, F + 0.35, hz - HD / 2, chX + chHoleR, F + 0.55, chZ - chHoleR);
+  // Stair exit landing
+  B.addCollider(stairOpenX1, F + 0.35, stairOpenZ2, stairOpenX2, F + 0.55, hz + HD / 2);
 
   // === 2F WALLS ===
-  // Back wall
-  B.colorBox(HW + W, F, W, hx, F + 0.35 + F / 2, hz - HD / 2, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - HW / 2 - W / 2, F + 0.35, hz - HD / 2 - W / 2, hx + HW / 2 + W / 2, F * 2 + 0.35, hz - HD / 2 + W / 2);
-  // Left wall 2F
-  B.colorBox(W, F, HD, hx - HW / 2, F + 0.35 + F / 2, hz, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - HW / 2 - W / 2, F + 0.35, hz - HD / 2, hx - HW / 2 + W / 2, F * 2 + 0.35, hz + HD / 2);
-  // 2F left wall window
-  const winL2 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.5, 2.0), glassMat);
-  winL2.position.set(hx - HW / 2, F + 2.0, hz);
-  scene.add(winL2);
-  // Right wall 2F
-  B.colorBox(W, F, HD, hx + HW / 2, F + 0.35 + F / 2, hz, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx + HW / 2 - W / 2, F + 0.35, hz - HD / 2, hx + HW / 2 + W / 2, F * 2 + 0.35, hz + HD / 2);
-  // 2F right wall window
-  const winR2 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.5, 2.0), glassMat);
-  winR2.position.set(hx + HW / 2, F + 2.0, hz);
-  scene.add(winR2);
+  const baseY2 = F + 0.35;
+  // Back wall 2F - solid
+  B.colorBox(HW + W, F, W, hx, baseY2 + F / 2, hz - HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - W / 2, baseY2, hz - HD / 2 - W / 2, hx + HW / 2 + W / 2, baseY2 + F, hz - HD / 2 + W / 2);
+  // Left wall 2F - open window (same pattern as 1F)
+  B.colorBox(W, winSill1, HD, hx - HW / 2, baseY2 + winSill1 / 2, hz, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - W / 2, baseY2, hz - HD / 2, hx - HW / 2 + W / 2, baseY2 + winSill1, hz + HD / 2);
+  B.colorBox(W, F - winSill1 - winH1, HD, hx - HW / 2, baseY2 + winSill1 + winH1 + (F - winSill1 - winH1) / 2, hz, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - W / 2, baseY2 + winSill1 + winH1, hz - HD / 2, hx - HW / 2 + W / 2, baseY2 + F, hz + HD / 2);
+  B.colorBox(W, winH1, 1.5, hx - HW / 2, baseY2 + winSill1 + winH1 / 2, hz - HD / 2 + 0.75, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - W / 2, baseY2 + winSill1, hz - HD / 2, hx - HW / 2 + W / 2, baseY2 + winSill1 + winH1, hz - HD / 2 + 1.5);
+  B.colorBox(W, winH1, 1.5, hx - HW / 2, baseY2 + winSill1 + winH1 / 2, hz + HD / 2 - 0.75, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - W / 2, baseY2 + winSill1, hz + HD / 2 - 1.5, hx - HW / 2 + W / 2, baseY2 + winSill1 + winH1, hz + HD / 2);
+  B.colorBox(0.08, winH1 + 0.1, 0.08, hx - HW / 2, baseY2 + winSill1 + winH1 / 2, hz - HD / 2 + 1.5, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, winH1 + 0.1, 0.08, hx - HW / 2, baseY2 + winSill1 + winH1 / 2, hz + HD / 2 - 1.5, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.08, HD - 3, hx - HW / 2, baseY2 + winSill1, hz, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.08, HD - 3, hx - HW / 2, baseY2 + winSill1 + winH1, hz, trimColor, 0.85, 0.02, false);
+  // Right wall 2F - open window
+  B.colorBox(W, winSill1, HD, hx + HW / 2, baseY2 + winSill1 / 2, hz, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx + HW / 2 - W / 2, baseY2, hz - HD / 2, hx + HW / 2 + W / 2, baseY2 + winSill1, hz + HD / 2);
+  B.colorBox(W, F - winSill1 - winH1, HD, hx + HW / 2, baseY2 + winSill1 + winH1 + (F - winSill1 - winH1) / 2, hz, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx + HW / 2 - W / 2, baseY2 + winSill1 + winH1, hz - HD / 2, hx + HW / 2 + W / 2, baseY2 + F, hz + HD / 2);
+  B.colorBox(W, winH1, 1.5, hx + HW / 2, baseY2 + winSill1 + winH1 / 2, hz - HD / 2 + 0.75, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx + HW / 2 - W / 2, baseY2 + winSill1, hz - HD / 2, hx + HW / 2 + W / 2, baseY2 + winSill1 + winH1, hz - HD / 2 + 1.5);
+  B.colorBox(W, winH1, 1.5, hx + HW / 2, baseY2 + winSill1 + winH1 / 2, hz + HD / 2 - 0.75, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx + HW / 2 - W / 2, baseY2 + winSill1, hz + HD / 2 - 1.5, hx + HW / 2 + W / 2, baseY2 + winSill1 + winH1, hz + HD / 2);
+  B.colorBox(0.08, winH1 + 0.1, 0.08, hx + HW / 2, baseY2 + winSill1 + winH1 / 2, hz - HD / 2 + 1.5, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, winH1 + 0.1, 0.08, hx + HW / 2, baseY2 + winSill1 + winH1 / 2, hz + HD / 2 - 1.5, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.08, HD - 3, hx + HW / 2, baseY2 + winSill1, hz, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.08, HD - 3, hx + HW / 2, baseY2 + winSill1 + winH1, hz, trimColor, 0.85, 0.02, false);
   // Front wall 2F - with balcony door
-  B.colorBox(2.5, F, W, hx - 3.75, F + 0.35 + F / 2, hz + HD / 2, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - 5, F + 0.35, hz + HD / 2 - W / 2, hx - 2.5, F * 2 + 0.35, hz + HD / 2 + W / 2);
-  B.colorBox(2.5, F, W, hx + 3.75, F + 0.35 + F / 2, hz + HD / 2, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx + 2.5, F + 0.35, hz + HD / 2 - W / 2, hx + 5, F * 2 + 0.35, hz + HD / 2 + W / 2);
+  B.colorBox(2.5, F, W, hx - 3.75, baseY2 + F / 2, hz + HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx - 5, baseY2, hz + HD / 2 - W / 2, hx - 2.5, baseY2 + F, hz + HD / 2 + W / 2);
+  B.colorBox(2.5, F, W, hx + 3.75, baseY2 + F / 2, hz + HD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(hx + 2.5, baseY2, hz + HD / 2 - W / 2, hx + 5, baseY2 + F, hz + HD / 2 + W / 2);
   B.colorBox(5, 0.6, W, hx, F * 2 + 0.05, hz + HD / 2, wallColor, 0.85, 0.02, false);
   B.addCollider(hx - 2.5, F * 2 - 0.3, hz + HD / 2 - W / 2, hx + 2.5, F * 2 + 0.35, hz + HD / 2 + W / 2);
 
@@ -1015,408 +1022,709 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(0.08, 0.9, balD, hx - 2.5, F + 0.88, hz + HD / 2 + balD / 2, trimColor, 0.85, 0.02, false);
   B.colorBox(0.08, 0.9, balD, hx + 2.5, F + 0.88, hz + HD / 2 + balD / 2, trimColor, 0.85, 0.02, false);
 
-  // === ROOF (flat collider slab + visual pitched panels) ===
-  const roofMat = getCustomMaterial(0x6b3a1a, 0.75, 0.15);
-  const roofOverhang = 1.2;
+  // === ROOF (flat horizontal - walkable) ===
+  const roofOverhang = 1.0;
   const roofTopY = F * 2 + 0.35;
-  // Flat walkable roof collider slab
-  B.colorBox(HW + roofOverhang, 0.25, HD + roofOverhang, hx, roofTopY + 0.12, hz, roofMat.color ? 0x6b3a1a : 0x6b3a1a, 0.75, 0.15, false);
-  B.addCollider(hx - HW / 2 - roofOverhang / 2, roofTopY, hz - HD / 2 - roofOverhang / 2, hx + HW / 2 + roofOverhang / 2, roofTopY + 0.3, hz + HD / 2 + roofOverhang / 2);
-  // Visual pitched roof on top
-  const roofGeoF = new THREE.BoxGeometry(HW + roofOverhang * 2, 0.15, HD / 2 + roofOverhang + 0.5);
-  const roofF = new THREE.Mesh(roofGeoF, roofMat);
-  roofF.position.set(hx, roofTopY + 1.1, hz + HD / 4 + 0.3);
-  roofF.rotation.x = -0.38;
-  scene.add(roofF);
-  const roofGeoB = new THREE.BoxGeometry(HW + roofOverhang * 2, 0.15, HD / 2 + roofOverhang + 0.5);
-  const roofB = new THREE.Mesh(roofGeoB, roofMat);
-  roofB.position.set(hx, roofTopY + 1.1, hz - HD / 4 - 0.3);
-  roofB.rotation.x = 0.38;
-  scene.add(roofB);
-  // Ridge cap
-  B.colorBox(HW + roofOverhang * 2, 0.2, 0.3, hx, roofTopY + 1.75, hz, trimColor, 0.85, 0.02, false);
-  // Gable triangles
-  const gableMat = getCustomMaterial(wallColor, 0.85, 0.02);
-  const gableShape = new THREE.Shape();
-  gableShape.moveTo(-HW / 2 - 0.3, 0);
-  gableShape.lineTo(0, 1.5);
-  gableShape.lineTo(HW / 2 + 0.3, 0);
-  gableShape.lineTo(-HW / 2 - 0.3, 0);
-  const gableGeo = new THREE.ExtrudeGeometry(gableShape, { depth: 0.2, bevelEnabled: false });
-  const gableFront = new THREE.Mesh(gableGeo, gableMat);
-  gableFront.position.set(hx, roofTopY, hz + HD / 2 + W / 2);
-  gableFront.rotation.y = Math.PI;
-  scene.add(gableFront);
-  const gableBack = new THREE.Mesh(gableGeo, gableMat);
-  gableBack.position.set(hx, roofTopY, hz - HD / 2 - W / 2 + 0.2);
-  scene.add(gableBack);
+  // Main flat roof slab (with collider - split around chimney hole)
+  B.colorBox(HW + roofOverhang * 2, 0.25, HD + roofOverhang * 2, hx, roofTopY + 0.12, hz, 0x555555, 0.7, 0.2, false);
+  // Roof colliders split around chimney opening
+  B.addCollider(hx - HW / 2 - roofOverhang, roofTopY, hz - HD / 2 - roofOverhang, chX - chHoleR, roofTopY + 0.3, hz + HD / 2 + roofOverhang);
+  B.addCollider(chX + chHoleR, roofTopY, hz - HD / 2 - roofOverhang, hx + HW / 2 + roofOverhang, roofTopY + 0.3, hz + HD / 2 + roofOverhang);
+  B.addCollider(chX - chHoleR, roofTopY, chZ + chHoleR, chX + chHoleR, roofTopY + 0.3, hz + HD / 2 + roofOverhang);
+  B.addCollider(chX - chHoleR, roofTopY, hz - HD / 2 - roofOverhang, chX + chHoleR, roofTopY + 0.3, chZ - chHoleR);
+  // Roof edge trim (parapet)
+  B.colorBox(HW + roofOverhang * 2, 0.5, 0.15, hx, roofTopY + 0.5, hz - HD / 2 - roofOverhang, wallColor, 0.85, 0.02, false);
+  B.colorBox(HW + roofOverhang * 2, 0.5, 0.15, hx, roofTopY + 0.5, hz + HD / 2 + roofOverhang, wallColor, 0.85, 0.02, false);
+  B.colorBox(0.15, 0.5, HD + roofOverhang * 2, hx - HW / 2 - roofOverhang, roofTopY + 0.5, hz, wallColor, 0.85, 0.02, false);
+  B.colorBox(0.15, 0.5, HD + roofOverhang * 2, hx + HW / 2 + roofOverhang, roofTopY + 0.5, hz, wallColor, 0.85, 0.02, false);
+  // Accent trim line
+  B.colorBox(HW + roofOverhang * 2 + 0.3, 0.08, 0.2, hx, roofTopY - 0.1, hz - HD / 2 - roofOverhang, trimColor, 0.85, 0.02, false);
+  B.colorBox(HW + roofOverhang * 2 + 0.3, 0.08, 0.2, hx, roofTopY - 0.1, hz + HD / 2 + roofOverhang, trimColor, 0.85, 0.02, false);
 
-  // === INTERIOR STAIRCASE (straight along left wall, goes to 2F) ===
-  const stairW = 1.3;
-  const numSteps = 14;
+  // === INTERIOR STAIRCASE (clean, along left wall) ===
+  const stairW = 1.4;
+  const numSteps = 16;
   const stepRise = F / numSteps;
-  const stepRun = 0.38;
-  const stairStartZ = hz - HD / 2 + 1.0;
+  const stepRun = 0.3;
+  const stairStartZ = hz - HD / 2 + 0.8;
   const stairX = hx - HW / 2 + W / 2 + stairW / 2 + 0.15;
-  
   for (let i = 0; i < numSteps; i++) {
     const sy = 0.35 + (i + 1) * stepRise;
     const sz = stairStartZ + i * stepRun;
-    B.colorBox(stairW, 0.1, stepRun, stairX, sy - 0.05, sz, PALETTE.woodWarm, 0.82, 0.02, false);
-    B.addCollider(stairX - stairW / 2 - 0.1, sy - 0.1, sz - stepRun / 2 - 0.05, stairX + stairW / 2 + 0.1, sy, sz + stepRun / 2 + 0.05);
+    B.colorBox(stairW, 0.1, stepRun + 0.02, stairX, sy - 0.05, sz, PALETTE.woodWarm, 0.82, 0.02, false);
+    B.addCollider(stairX - stairW / 2 - 0.05, sy - 0.1, sz - stepRun / 2 - 0.02, stairX + stairW / 2 + 0.05, sy, sz + stepRun / 2 + 0.02);
   }
-  
-  // Stair railing posts
-  for (let i = 0; i < numSteps; i += 4) {
-    const sy = 0.35 + (i + 1) * stepRise + 0.5;
-    const sz = stairStartZ + i * stepRun;
-    B.colorBox(0.06, 0.9, 0.06, stairX + stairW / 2 + 0.1, sy, sz, trimColor, 0.85, 0.02, false);
-  }
-  // Handrail
-  B.colorBox(0.06, 0.06, numSteps * stepRun, stairX + stairW / 2 + 0.1, 0.35 + stepRise * numSteps / 2 + 0.55, stairStartZ + numSteps * stepRun / 2 - stepRun / 2, trimColor, 0.85, 0.02, false);
-
   // === INTERIOR DETAILS 1F ===
-  // Table with 4 chairs
-  B.colorBox(1.8, 0.06, 1.0, hx + 2, 1.1, hz + 1.5, PALETTE.woodWarm, 0.82, 0.02, true);
-  B.colorBox(0.08, 0.75, 0.08, hx + 2 - 0.8, 0.72, hz + 1.1, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.08, 0.75, 0.08, hx + 2 + 0.8, 0.72, hz + 1.1, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.08, 0.75, 0.08, hx + 2 - 0.8, 0.72, hz + 1.9, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.08, 0.75, 0.08, hx + 2 + 0.8, 0.72, hz + 1.9, trimColor, 0.85, 0.02, false);
-  // Chairs
-  const chairMat = getCustomMaterial(PALETTE.woodWarm, 0.82, 0.02);
-  for (const [cx, cz, rot] of [[hx + 2, hz + 0.5, 0], [hx + 2, hz + 2.5, Math.PI], [hx + 0.8, hz + 1.5, -Math.PI / 2], [hx + 3.2, hz + 1.5, Math.PI / 2]] as [number, number, number][]) {
-    const chairSeat = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.06, 0.5), chairMat);
-    chairSeat.position.set(cx, 0.8, cz);
-    chairSeat.rotation.y = rot;
-    scene.add(chairSeat);
-  }
 
-  // Sofa against back wall
-  B.colorBox(2.8, 0.45, 1.0, hx + 2.5, 0.58, hz - HD / 2 + 1.0, 0x6666aa, 0.9, 0.02, true);
-  B.colorBox(2.8, 0.6, 0.15, hx + 2.5, 0.95, hz - HD / 2 + 0.58, 0x5555aa, 0.9, 0.02, false);
-  B.colorBox(0.15, 0.45, 1.0, hx + 2.5 - 1.45, 0.8, hz - HD / 2 + 1.0, 0x5555aa, 0.9, 0.02, false);
-  B.colorBox(0.15, 0.45, 1.0, hx + 2.5 + 1.45, 0.8, hz - HD / 2 + 1.0, 0x5555aa, 0.9, 0.02, false);
+  // --- LIVING ROOM (center of room, facing fireplace on right-back wall) ---
+  // Sofa (center of room, facing back-right where fireplace is)
+  const sofaX = hx, sofaZ = hz - 0.5;
+  B.colorBox(2.5, 0.45, 0.9, sofaX, 0.58, sofaZ, 0x3355aa, 0.85, 0.02, true);
+  B.colorBox(2.5, 0.6, 0.12, sofaX, 0.95, sofaZ + 0.42, 0x2244aa, 0.85, 0.02, false);
+  B.colorBox(0.12, 0.4, 0.9, sofaX - 1.25, 0.75, sofaZ, 0x2244aa, 0.85, 0.02, false);
+  B.colorBox(0.12, 0.4, 0.9, sofaX + 1.25, 0.75, sofaZ, 0x2244aa, 0.85, 0.02, false);
+  // Throw pillows
+  B.colorBox(0.3, 0.25, 0.25, sofaX - 0.8, 0.92, sofaZ - 0.15, 0xcc8844, 0.9, 0, false);
+  B.colorBox(0.3, 0.25, 0.25, sofaX + 0.8, 0.92, sofaZ - 0.15, 0x44aa88, 0.9, 0, false);
+  // Coffee table in front of sofa
+  B.colorBox(1.0, 0.06, 0.5, sofaX, 0.58, sofaZ - 1.0, PALETTE.woodWarm, 0.82, 0.02, true);
+  B.colorBox(0.06, 0.2, 0.06, sofaX - 0.4, 0.45, sofaZ - 1.2, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.06, 0.2, 0.06, sofaX + 0.4, 0.45, sofaZ - 1.2, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.06, 0.2, 0.06, sofaX - 0.4, 0.45, sofaZ - 0.8, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.06, 0.2, 0.06, sofaX + 0.4, 0.45, sofaZ - 0.8, trimColor, 0.85, 0.02, false);
+  // Vase on coffee table
+  B.cyl(0.08, 0.06, 0.2, sofaX + 0.2, 0.72, sofaZ - 1.0, "steelDark");
+  // Rug under seating area
+  B.colorBox(3.0, 0.02, 2.5, sofaX, 0.37, sofaZ - 0.3, 0x885544, 0.95, 0, false);
+  // Armchair (left side, near left wall)
+  B.colorBox(0.8, 0.4, 0.8, hx - HW / 2 + 1.5, 0.55, hz - 0.5, 0x556633, 0.9, 0.02, true);
+  B.colorBox(0.8, 0.5, 0.1, hx - HW / 2 + 1.5, 0.85, hz - 0.9, 0x445522, 0.9, 0.02, false);
+  // Bookshelf against left wall (near back, below staircase)
+  B.colorBox(1.2, 1.8, 0.4, hx - HW / 2 + 0.7, 1.25, hz - HD / 2 + 3.0, trimColor, 0.85, 0.02, true);
+  B.colorBox(1.0, 0.04, 0.35, hx - HW / 2 + 0.7, 0.9, hz - HD / 2 + 3.0, PALETTE.woodWarm, 0.82, 0.02, false);
+  B.colorBox(1.0, 0.04, 0.35, hx - HW / 2 + 0.7, 1.5, hz - HD / 2 + 3.0, PALETTE.woodWarm, 0.82, 0.02, false);
+  // Books
+  B.colorBox(0.3, 0.25, 0.18, hx - HW / 2 + 0.5, 1.0, hz - HD / 2 + 2.95, 0xaa2222, 0.9, 0, false);
+  B.colorBox(0.25, 0.3, 0.18, hx - HW / 2 + 0.9, 1.02, hz - HD / 2 + 2.95, 0x2255aa, 0.9, 0, false);
+  B.colorBox(0.35, 0.25, 0.18, hx - HW / 2 + 0.6, 1.6, hz - HD / 2 + 2.95, 0x885500, 0.9, 0, false);
+  // Floor lamp near armchair
+  B.cyl(0.04, 0.06, 1.6, hx - HW / 2 + 1.5, 1.15, hz + 0.5, "steelDark");
+  B.colorBox(0.35, 0.25, 0.35, hx - HW / 2 + 1.5, 2.0, hz + 0.5, 0xffeecc, 0.8, 0, false);
 
-  // TV stand
-  B.colorBox(1.5, 0.5, 0.4, hx + 2.5, 0.6, hz + 3.4, trimColor, 0.85, 0.02, true);
-  // TV (black rectangle)
-  B.colorBox(1.2, 0.8, 0.05, hx + 2.5, 1.3, hz + 3.38, 0x111111, 0.95, 0.5, false);
+  // --- KITCHEN AREA (left-front side, near staircase) ---
+  const kitX = hx - HW / 2 + 2.5, kitZ = hz + 1.5;
+  // Fridge (tall, silver)
+  B.colorBox(0.8, 2.0, 0.7, kitX - 1.0, 1.35, kitZ + 1.5, 0xcccccc, 0.3, 0.6, true);
+  B.colorBox(0.75, 0.95, 0.05, kitX - 1.0, 1.8, kitZ + 1.15, 0xbbbbbb, 0.3, 0.6, false);
+  B.colorBox(0.75, 0.95, 0.05, kitX - 1.0, 0.82, kitZ + 1.15, 0xbbbbbb, 0.3, 0.6, false);
+  B.colorBox(0.04, 0.15, 0.04, kitX - 0.7, 1.8, kitZ + 1.14, 0x888888, 0.3, 0.7, false);
+  B.colorBox(0.04, 0.15, 0.04, kitX - 0.7, 0.8, kitZ + 1.14, 0x888888, 0.3, 0.7, false);
+  // Kitchen counter (L-shape along left wall and front wall)
+  B.colorBox(2.0, 0.9, 0.6, kitX, 0.8, kitZ + 1.5, PALETTE.woodWarm, 0.82, 0.02, true);
+  // Counter top (marble white)
+  B.colorBox(2.0, 0.06, 0.65, kitX, 1.28, kitZ + 1.5, 0xeeeedd, 0.3, 0.1, false);
+  // Sink basin (dark recess in counter)
+  B.colorBox(0.5, 0.04, 0.35, kitX + 0.3, 1.22, kitZ + 1.5, 0x444444, 0.4, 0.5, false);
+  // Faucet
+  B.cyl(0.02, 0.02, 0.25, kitX + 0.3, 1.43, kitZ + 1.75, "steelDark");
+  B.colorBox(0.15, 0.02, 0.02, kitX + 0.3, 1.55, kitZ + 1.65, 0xcccccc, 0.3, 0.7, false);
+  // Stove / Cooktop (next to sink)
+  B.colorBox(0.6, 0.04, 0.55, kitX - 0.5, 1.28, kitZ + 1.5, 0x222222, 0.8, 0.3, false);
+  // Burner rings
+  B.cyl(0.1, 0.1, 0.01, kitX - 0.3, 1.31, kitZ + 1.35, "steelDark");
+  B.cyl(0.1, 0.1, 0.01, kitX - 0.7, 1.31, kitZ + 1.35, "steelDark");
+  B.cyl(0.08, 0.08, 0.01, kitX - 0.3, 1.31, kitZ + 1.65, "steelDark");
+  B.cyl(0.08, 0.08, 0.01, kitX - 0.7, 1.31, kitZ + 1.65, "steelDark");
+  // Upper cabinets (on wall above counter, with collider)
+  B.colorBox(2.0, 0.7, 0.35, kitX, 2.5, kitZ + 1.65, trimColor, 0.85, 0.02, true);
+  B.colorBox(0.04, 0.55, 0.04, kitX - 0.4, 2.5, kitZ + 1.47, 0x888888, 0.3, 0.7, false);
+  B.colorBox(0.04, 0.55, 0.04, kitX + 0.4, 2.5, kitZ + 1.47, 0x888888, 0.3, 0.7, false);
+  // Pot on stove
+  B.cyl(0.12, 0.1, 0.15, kitX - 0.5, 1.38, kitZ + 1.5, "steelDark");
 
-  // Rug
-  B.colorBox(2.5, 0.02, 1.8, hx + 2, 0.37, hz + 1.5, 0x885533, 0.95, 0, false);
+  // --- DINING AREA (center-right, near front door) ---
+  const dtX = hx + 2.0, dtZ = hz + 2.2;
+  B.colorBox(1.6, 0.06, 0.9, dtX, 1.1, dtZ, PALETTE.woodWarm, 0.82, 0.02, true);
+  B.colorBox(0.06, 0.72, 0.06, dtX - 0.7, 0.72, dtZ - 0.35, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.06, 0.72, 0.06, dtX + 0.7, 0.72, dtZ - 0.35, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.06, 0.72, 0.06, dtX - 0.7, 0.72, dtZ + 0.35, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.06, 0.72, 0.06, dtX + 0.7, 0.72, dtZ + 0.35, trimColor, 0.85, 0.02, false);
+  // Chairs (2 sides)
+  B.colorBox(0.4, 0.06, 0.4, dtX - 0.4, 0.8, dtZ - 0.7, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.4, 0.8, 0.06, dtX - 0.4, 1.1, dtZ - 0.9, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.4, 0.06, 0.4, dtX + 0.4, 0.8, dtZ - 0.7, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.4, 0.8, 0.06, dtX + 0.4, 1.1, dtZ - 0.9, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.4, 0.06, 0.4, dtX - 0.4, 0.8, dtZ + 0.7, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.4, 0.06, 0.4, dtX + 0.4, 0.8, dtZ + 0.7, trimColor, 0.85, 0.02, false);
+  // Plates on table
+  B.cyl(0.12, 0.12, 0.02, dtX - 0.3, 1.15, dtZ, "offWhite");
+  B.cyl(0.12, 0.12, 0.02, dtX + 0.3, 1.15, dtZ, "offWhite");
+  // Fruit bowl
+  B.cyl(0.15, 0.12, 0.08, dtX, 1.17, dtZ, "steelDark");
+  B.colorBox(0.1, 0.1, 0.1, dtX + 0.02, 1.25, dtZ, 0xff3333, 0.8, 0, false);
+  B.colorBox(0.09, 0.09, 0.09, dtX - 0.06, 1.24, dtZ + 0.05, 0x33cc33, 0.8, 0, false);
+
+  // --- ENTRYWAY (near front door) ---
+  // Coat rack
+  B.cyl(0.04, 0.06, 1.8, hx - 1.2, 1.25, hz + HD / 2 - 0.5, "steelDark");
+  B.colorBox(0.5, 0.04, 0.04, hx - 1.2, 2.15, hz + HD / 2 - 0.5, 0x333333, 0.5, 0.5, false);
+  // Shoe rack (low)
+  B.colorBox(0.8, 0.3, 0.3, hx + 1.0, 0.5, hz + HD / 2 - 0.5, trimColor, 0.85, 0.02, false);
+  // Welcome mat
+  B.colorBox(1.2, 0.02, 0.6, hx, 0.37, hz + HD / 2 - 0.1, 0x665533, 0.95, 0, false);
+  // Umbrella stand
+  B.cyl(0.1, 0.12, 0.5, hx + 1.3, 0.6, hz + HD / 2 - 0.4, "steelDark");
+  // Wall clock (on right wall near door)
+  B.cyl(0.2, 0.2, 0.04, hx + HW / 2 - 0.03, 2.8, hz + 2.0, "woodDark");
+  B.cyl(0.17, 0.17, 0.02, hx + HW / 2 - 0.01, 2.8, hz + 2.0, "offWhite");
 
   // === INTERIOR DETAILS 2F ===
-  // Bed
-  B.colorBox(2.5, 0.45, 1.9, hx + 2.5, F + 0.58, hz - 1.5, 0xcc9988, 0.9, 0.02, true);
-  B.colorBox(2.5, 0.8, 0.2, hx + 2.5, F + 0.75, hz - 2.4, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.55, 0.12, 0.4, hx + 2.5, F + 0.85, hz - 2.1, 0xffffff, 0.9, 0, false);
-  // Blanket
-  B.colorBox(2.3, 0.08, 1.4, hx + 2.5, F + 0.85, hz - 1.3, 0x7788aa, 0.9, 0.02, false);
+  const f2y = F + 0.35;
 
-  // Bedside table + lamp
-  B.colorBox(0.5, 0.5, 0.5, hx + 4.3, F + 0.8, hz - 1.5, PALETTE.woodWarm, 0.82, 0.02, true);
-  B.cyl(0.08, 0.08, 0.35, hx + 4.3, F + 1.2, hz - 1.5, "steelDark");
-  B.colorBox(0.25, 0.2, 0.25, hx + 4.3, F + 1.45, hz - 1.5, 0xffeecc, 0.9, 0, false);
+  // --- BEDROOM (center-left area, away from chimney) ---
+  const bedX = hx - 0.5;
+  B.colorBox(2.2, 0.4, 1.8, bedX, f2y + 0.2, hz - 1.0, 0xcc9988, 0.9, 0.02, true);
+  B.colorBox(2.2, 0.7, 0.15, bedX, f2y + 0.35, hz - 1.9, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.5, 0.08, 0.35, bedX, f2y + 0.45, hz - 1.6, 0xffffff, 0.9, 0, false);
+  B.colorBox(0.45, 0.08, 0.3, bedX + 0.6, f2y + 0.45, hz - 1.6, 0xeeeeee, 0.9, 0, false);
+  B.colorBox(2.0, 0.06, 1.3, bedX, f2y + 0.45, hz - 0.7, 0x7788aa, 0.9, 0.02, false);
+  // Bed footboard
+  B.colorBox(2.2, 0.4, 0.1, bedX, f2y + 0.2, hz - 0.1, trimColor, 0.85, 0.02, false);
 
-  // Desk
-  B.colorBox(1.6, 0.06, 0.7, hx + 2.5, F + 1.1, hz + 2.8, PALETTE.woodWarm, 0.82, 0.02, true);
-  B.colorBox(0.08, 0.75, 0.08, hx + 2.5 - 0.7, F + 0.72, hz + 2.5, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.08, 0.75, 0.08, hx + 2.5 + 0.7, F + 0.72, hz + 2.5, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.08, 0.75, 0.08, hx + 2.5 - 0.7, F + 0.72, hz + 3.1, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.08, 0.75, 0.08, hx + 2.5 + 0.7, F + 0.72, hz + 3.1, trimColor, 0.85, 0.02, false);
+  // Bedside table left + lamp
+  B.colorBox(0.45, 0.45, 0.45, bedX + 1.5, f2y + 0.22, hz - 1.0, PALETTE.woodWarm, 0.82, 0.02, true);
+  B.cyl(0.06, 0.06, 0.3, bedX + 1.5, f2y + 0.6, hz - 1.0, "steelDark");
+  B.colorBox(0.2, 0.18, 0.2, bedX + 1.5, f2y + 0.85, hz - 1.0, 0xffeecc, 0.9, 0, false);
+  // Bedside table right
+  B.colorBox(0.45, 0.45, 0.45, bedX - 1.5, f2y + 0.22, hz - 1.0, PALETTE.woodWarm, 0.82, 0.02, true);
+  // Alarm clock on right table
+  B.colorBox(0.12, 0.1, 0.06, bedX - 1.5, f2y + 0.5, hz - 1.0, 0x222222, 0.9, 0.3, false);
+  // Rug beside bed
+  B.colorBox(1.8, 0.02, 0.8, bedX, f2y + 0.01, hz + 0.5, 0x996655, 0.95, 0, false);
+
+  // --- STUDY AREA (center-right, near front wall) ---
+  // Desk against front wall
+  B.colorBox(1.5, 0.06, 0.6, hx + 1.5, f2y + 0.75, hz + HD / 2 - 0.7, PALETTE.woodWarm, 0.82, 0.02, true);
+  B.colorBox(0.06, 0.75, 0.55, hx + 1.5 - 0.7, f2y + 0.38, hz + HD / 2 - 0.7, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.06, 0.75, 0.55, hx + 1.5 + 0.7, f2y + 0.38, hz + HD / 2 - 0.7, trimColor, 0.85, 0.02, false);
   // Desk chair
-  B.colorBox(0.5, 0.06, 0.5, hx + 2.5, F + 0.85, hz + 2.0, 0x333333, 0.9, 0.02, false);
+  B.colorBox(0.45, 0.06, 0.45, hx + 1.5, f2y + 0.55, hz + HD / 2 - 1.5, 0x333333, 0.9, 0.02, false);
+  B.cyl(0.03, 0.04, 0.2, hx + 1.5, f2y + 0.42, hz + HD / 2 - 1.5, "steelDark");
+  // Monitor on desk
+  B.colorBox(0.6, 0.4, 0.04, hx + 1.5, f2y + 1.15, hz + HD / 2 - 0.55, 0x111111, 0.9, 0.5, false);
+  B.colorBox(0.15, 0.2, 0.15, hx + 1.5, f2y + 0.88, hz + HD / 2 - 0.6, 0x333333, 0.5, 0.5, false);
+  // Desk lamp
+  B.cyl(0.04, 0.04, 0.3, hx + 1.5 + 0.5, f2y + 0.93, hz + HD / 2 - 0.7, "steelDark");
+  B.colorBox(0.2, 0.1, 0.15, hx + 1.5 + 0.5, f2y + 1.13, hz + HD / 2 - 0.65, 0x333333, 0.5, 0.5, false);
+  // Pencil cup
+  B.cyl(0.04, 0.04, 0.1, hx + 1.5 - 0.5, f2y + 0.83, hz + HD / 2 - 0.7, "woodDark");
 
-  // Wardrobe
-  B.colorBox(1.2, 2.2, 0.6, hx + 0.2, F + 1.65, hz - HD / 2 + 0.7, trimColor, 0.85, 0.02, true);
+  // --- WARDROBE & DRESSER (back wall) ---
+  // Wardrobe (tall, away from chimney)
+  B.colorBox(1.2, 2.4, 0.55, hx - 0.5, f2y + 1.2, hz - HD / 2 + 0.65, trimColor, 0.85, 0.02, true);
+  B.colorBox(0.04, 0.2, 0.04, hx - 0.9, f2y + 1.2, hz - HD / 2 + 0.37, 0x888888, 0.3, 0.7, false);
+  B.colorBox(0.04, 0.2, 0.04, hx - 0.1, f2y + 1.2, hz - HD / 2 + 0.37, 0x888888, 0.3, 0.7, false);
+  // Dresser (low, next to wardrobe)
+  B.colorBox(0.9, 0.8, 0.45, hx + 0.8, f2y + 0.4, hz - HD / 2 + 0.6, trimColor, 0.85, 0.02, true);
+  B.colorBox(0.04, 0.08, 0.04, hx + 0.5, f2y + 0.65, hz - HD / 2 + 0.37, 0x888888, 0.3, 0.7, false);
+  B.colorBox(0.04, 0.08, 0.04, hx + 0.5, f2y + 0.45, hz - HD / 2 + 0.37, 0x888888, 0.3, 0.7, false);
+  B.colorBox(0.04, 0.08, 0.04, hx + 1.1, f2y + 0.65, hz - HD / 2 + 0.37, 0x888888, 0.3, 0.7, false);
+  // Mirror above dresser
+  B.colorBox(0.7, 0.9, 0.04, hx + 0.8, f2y + 1.5, hz - HD / 2 + 0.3, 0xaaccdd, 0.05, 0.8, false);
+  B.colorBox(0.8, 1.0, 0.06, hx + 0.8, f2y + 1.5, hz - HD / 2 + 0.28, trimColor, 0.85, 0.02, false);
 
-  // Photo frames
+  // --- MISC ITEMS ---
+  // Potted plant on balcony
+  B.colorBox(0.3, 0.3, 0.3, hx - 1.8, F + 0.58, hz + HD / 2 + 1.2, 0x774433, 0.9, 0.02, false);
+  B.cyl(0.2, 0.15, 0.4, hx - 1.8, F + 0.93, hz + HD / 2 + 1.2, "woodDark");
+  // Indoor plant near stair exit
+  B.colorBox(0.25, 0.25, 0.25, hx - HW / 2 + 1.0, f2y + 0.12, hz + 1.5, 0x774433, 0.9, 0.02, false);
+  B.cyl(0.15, 0.1, 0.3, hx - HW / 2 + 1.0, f2y + 0.4, hz + 1.5, "woodDark");
+  // Laundry basket
+  B.colorBox(0.5, 0.5, 0.4, hx - HW / 2 + 0.7, f2y + 0.25, hz - HD / 2 + 0.6, 0xddcc99, 0.95, 0, false);
+  // Ceiling light 2F
+  B.colorBox(0.5, 0.08, 0.5, hx + 1.5, f2y + F - 0.1, hz, 0xffeecc, 0.7, 0.1, false);
+  // Ceiling light 1F
+  B.colorBox(0.6, 0.08, 0.6, hx + 1.0, baseY1 + F - 0.1, hz, 0xffeecc, 0.7, 0.1, false);
+
+  // Photo frames (on back wall, left of chimney)
   const houseFrameColor = getCustomMaterial(0xaa8855, 0.8, 0.1);
   const housePhotoTex = new THREE.TextureLoader().load('/assets/photos/thinhdeptrai.jpg');
   housePhotoTex.colorSpace = THREE.SRGBColorSpace;
   const housePhotoMat = new THREE.MeshStandardMaterial({ map: housePhotoTex, roughness: 0.3, metalness: 0.02 });
-  // 1F photos
+  // 1F photo (on left portion of back wall)
   const frame1a = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.7, 0.06), houseFrameColor);
-  frame1a.position.set(hx - 1, 2.4, hz - HD / 2 + 0.28);
+  frame1a.position.set(hx - 2, 2.4, hz - HD / 2 + 0.28);
   scene.add(frame1a);
   const photo1a = new THREE.Mesh(new THREE.PlaneGeometry(0.75, 0.55), housePhotoMat);
-  photo1a.position.set(hx - 1, 2.4, hz - HD / 2 + 0.32);
+  photo1a.position.set(hx - 2, 2.4, hz - HD / 2 + 0.32);
   scene.add(photo1a);
-  // 2F photo
+  // 2F photo (on left side of back wall, away from chimney)
   const frame2f = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.8, 0.06), houseFrameColor);
-  frame2f.position.set(hx + 2, F + 2.4, hz - HD / 2 + 0.28);
+  frame2f.position.set(hx - 1, F + 2.4, hz - HD / 2 + 0.28);
   scene.add(frame2f);
   const photo2f = new THREE.Mesh(new THREE.PlaneGeometry(0.85, 0.65), housePhotoMat);
-  photo2f.position.set(hx + 2, F + 2.4, hz - HD / 2 + 0.32);
+  photo2f.position.set(hx - 1, F + 2.4, hz - HD / 2 + 0.32);
   scene.add(photo2f);
 
   // === PORCH ===
   B.colorBox(HW + 1.5, 0.12, 2.5, hx, 0.24, hz + HD / 2 + 1.25, PALETTE.woodWarm, 0.82, 0.02, false);
   B.addCollider(hx - HW / 2 - 0.75, 0.15, hz + HD / 2, hx + HW / 2 + 0.75, 0.35, hz + HD / 2 + 2.5);
-  // Porch columns
-  B.colorBox(0.25, 2.5, 0.25, hx - 4.5, 1.5, hz + HD / 2 + 2.2, 0xffffff, 0.85, 0.02, true);
-  B.colorBox(0.25, 2.5, 0.25, hx + 4.5, 1.5, hz + HD / 2 + 2.2, 0xffffff, 0.85, 0.02, true);
-  B.colorBox(0.25, 2.5, 0.25, hx, 1.5, hz + HD / 2 + 2.2, 0xffffff, 0.85, 0.02, true);
-  // Porch roof
-  B.colorBox(HW + 2, 0.1, 2.8, hx, 2.8, hz + HD / 2 + 1.4, trimColor, 0.85, 0.02, false);
+  // Porch columns (match door lintel height ~3.3)
+  const porchRoofY = 3.3;
+  B.colorBox(0.25, porchRoofY, 0.25, hx - 4.5, porchRoofY / 2, hz + HD / 2 + 2.2, 0xffffff, 0.85, 0.02, true);
+  B.colorBox(0.25, porchRoofY, 0.25, hx + 4.5, porchRoofY / 2, hz + HD / 2 + 2.2, 0xffffff, 0.85, 0.02, true);
+  B.colorBox(0.25, porchRoofY, 0.25, hx, porchRoofY / 2, hz + HD / 2 + 2.2, 0xffffff, 0.85, 0.02, true);
+  // Porch roof (at door lintel height, with collider)
+  B.colorBox(HW + 2, 0.15, 2.8, hx, porchRoofY + 0.08, hz + HD / 2 + 1.4, trimColor, 0.85, 0.02, false);
+  B.addCollider(hx - HW / 2 - 1, porchRoofY, hz + HD / 2, hx + HW / 2 + 1, porchRoofY + 0.2, hz + HD / 2 + 2.8);
   // Porch steps
   B.colorBox(3, 0.15, 0.5, hx, 0.15, hz + HD / 2 + 2.75, PALETTE.concreteDark, 0.9, 0.03, true);
 
-  // Chimney
-  B.colorBox(0.9, 3.5, 0.9, hx - 3.5, F * 2 + 1.2, hz - HD / 2 + 1.2, 0x884433, 0.85, 0.02, true);
-  B.colorBox(1.1, 0.2, 1.1, hx - 3.5, F * 2 + 3.0, hz - HD / 2 + 1.2, 0x663322, 0.85, 0.02, false);
+  // === CHIMNEY (full-height hollow tube from cap to 1F fireplace) ===
+  const chW = 1.2, chT = 0.15;
+  const chTop = roofTopY + 2.5;
+  const chBottom = 0.35;
+  const chFullH = chTop - chBottom;
+  const chCenterY = (chBottom + chTop) / 2;
+  const brickColor = 0x884433;
+
+  // Chimney exterior walls (full height from ground to top)
+  // Back wall (against house back wall)
+  B.colorBox(chW + 0.4, chFullH, chT, chX, chCenterY, chZ - chW / 2, brickColor, 0.85, 0.02, false);
+  B.addCollider(chX - chW / 2 - 0.2, chBottom, chZ - chW / 2 - chT / 2, chX + chW / 2 + 0.2, chTop, chZ - chW / 2 + chT / 2);
+  // Left side
+  B.colorBox(chT, chFullH, chW, chX - chW / 2, chCenterY, chZ, brickColor, 0.85, 0.02, false);
+  B.addCollider(chX - chW / 2 - chT / 2, chBottom, chZ - chW / 2, chX - chW / 2 + chT / 2, chTop, chZ + chW / 2);
+  // Right side
+  B.colorBox(chT, chFullH, chW, chX + chW / 2, chCenterY, chZ, brickColor, 0.85, 0.02, false);
+  B.addCollider(chX + chW / 2 - chT / 2, chBottom, chZ - chW / 2, chX + chW / 2 + chT / 2, chTop, chZ + chW / 2);
+  // Front wall (above fireplace opening, from mantel height to top)
+  const mantelY = chBottom + 2.0;
+  B.colorBox(chW + 0.4, chTop - mantelY, chT, chX, (mantelY + chTop) / 2, chZ + chW / 2, brickColor, 0.85, 0.02, false);
+  B.addCollider(chX - chW / 2 - 0.2, mantelY, chZ + chW / 2 - chT / 2, chX + chW / 2 + 0.2, chTop, chZ + chW / 2 + chT / 2);
+
+  // Dark interior lining (visible looking up from 1F fireplace)
+  const liningH = chTop - chBottom;
+  B.colorBox(chW - 0.1, liningH, 0.03, chX, chCenterY, chZ - chW / 2 + chT / 2 + 0.02, 0x1a1a1a, 0.95, 0, false);
+  B.colorBox(0.03, liningH, chW - 0.1, chX - chW / 2 + chT / 2 + 0.02, chCenterY, chZ, 0x1a1a1a, 0.95, 0, false);
+  B.colorBox(0.03, liningH, chW - 0.1, chX + chW / 2 - chT / 2 - 0.02, chCenterY, chZ, 0x1a1a1a, 0.95, 0, false);
+  B.colorBox(chW - 0.1, chTop - mantelY, 0.03, chX, (mantelY + chTop) / 2, chZ + chW / 2 - chT / 2 - 0.02, 0x1a1a1a, 0.95, 0, false);
+
+  // Chimney top rim (open to sky - no cap, just a thin decorative rim)
+  B.colorBox(chW + 0.3, 0.12, 0.08, chX, chTop + 0.06, chZ - chW / 2 - 0.04, 0x663322, 0.85, 0.02, false);
+  B.colorBox(chW + 0.3, 0.12, 0.08, chX, chTop + 0.06, chZ + chW / 2 + 0.04, 0x663322, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.12, chW + 0.3, chX - chW / 2 - 0.04, chTop + 0.06, chZ, 0x663322, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.12, chW + 0.3, chX + chW / 2 + 0.04, chTop + 0.06, chZ, 0x663322, 0.85, 0.02, false);
+
+  // === FIREPLACE (1F, open front niche facing into room) ===
+  const fpFront = chZ + chW / 2 + 0.12;
+  const fpOpenH = mantelY - chBottom;
+  // Surround frame (border only - left pillar, right pillar, top beam)
+  B.colorBox(0.15, fpOpenH, 0.15, chX - chW / 2 - 0.15, chBottom + fpOpenH / 2, fpFront, brickColor, 0.85, 0.02, false);
+  B.colorBox(0.15, fpOpenH, 0.15, chX + chW / 2 + 0.15, chBottom + fpOpenH / 2, fpFront, brickColor, 0.85, 0.02, false);
+  B.colorBox(chW + 0.6, 0.2, 0.15, chX, mantelY - 0.1, fpFront, brickColor, 0.85, 0.02, false);
+  // Interior floor (raised hearth)
+  B.colorBox(chW, 0.08, chW, chX, chBottom + 0.04, chZ, 0x555050, 0.9, 0.05, false);
+  // Interior dark back wall (visible through niche)
+  B.colorBox(chW - 0.05, fpOpenH - 0.1, 0.04, chX, chBottom + fpOpenH / 2, chZ - chW / 2 + chT / 2 + 0.03, 0x1a1a1a, 0.95, 0, false);
+  // Interior side linings (dark)
+  B.colorBox(0.04, fpOpenH - 0.1, chW, chX - chW / 2 + chT / 2 + 0.03, chBottom + fpOpenH / 2, chZ, 0x222222, 0.95, 0, false);
+  B.colorBox(0.04, fpOpenH - 0.1, chW, chX + chW / 2 - chT / 2 - 0.03, chBottom + fpOpenH / 2, chZ, 0x222222, 0.95, 0, false);
+  // Mantel shelf
+  B.colorBox(chW + 0.7, 0.12, 0.45, chX, mantelY, fpFront + 0.1, PALETTE.woodDark, 0.85, 0.02, true);
+  // Hearth stone (in front)
+  B.colorBox(chW + 0.8, 0.06, 0.5, chX, chBottom + 0.03, fpFront + 0.3, 0x7a7360, 0.9, 0.05, false);
+  // Fire glow
+  const fireMat = new THREE.MeshStandardMaterial({ color: 0xff6600, emissive: 0xff4400, emissiveIntensity: 0.6, roughness: 0.9 });
+  const fire = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.3, 0.15), fireMat);
+  fire.position.set(chX, chBottom + 0.3, chZ);
+  scene.add(fire);
+  // Logs on grate
+  B.cyl(0.06, 0.06, 0.55, chX - 0.05, chBottom + 0.12, chZ + 0.1, "woodDark");
+  B.cyl(0.05, 0.05, 0.5, chX + 0.1, chBottom + 0.18, chZ - 0.05, "woodOld");
+  B.cyl(0.04, 0.04, 0.45, chX - 0.08, chBottom + 0.22, chZ, "wood");
+
+  // === TV on left wall (1F, facing into room) ===
+  const tvY = baseY1 + 2.0;
+  B.colorBox(1.4, 0.8, 0.06, hx - HW / 2 + 0.06, tvY, hz + 0.5, 0x111111, 0.9, 0.5, false);
+  B.colorBox(0.15, 0.3, 0.06, hx - HW / 2 + 0.06, tvY - 0.55, hz + 0.5, 0x222222, 0.5, 0.5, false);
+  // TV stand shelf
+  B.colorBox(1.0, 0.4, 0.35, hx - HW / 2 + 0.5, 0.55, hz + 0.5, trimColor, 0.85, 0.02, true);
 }
 
 // ========== BACKYARD KOI POND & GARDEN ==========
 function buildBackyardGarden(B: MapBoxHelper, scene: THREE.Scene) {
   const gx = -48, gz = 38;
 
-  // Stone border path around the garden
-  B.colorBox(12, 0.08, 12, gx, 0.04, gz, 0x5a8a3c, 0.95, 0, false);
+  // Garden ground (with collider to prevent sinking)
+  B.colorBox(14, 0.15, 14, gx, 0.075, gz, 0x4a7a2c, 0.95, 0, false);
+  B.addCollider(gx - 7, 0, gz - 7, gx + 7, 0.18, gz + 7);
+  // Stone paving
+  B.colorBox(10, 0.08, 10, gx, 0.04, gz, 0x99917a, 0.92, 0.03, false);
 
-  // Koi pond (recessed pool)
-  const pondW = 6, pondD = 4;
-  // Pond rim (stone border - walkable)
-  B.colorBox(pondW + 1.2, 0.3, pondD + 1.2, gx, 0.15, gz, 0x888877, 0.9, 0.05, false);
-  B.addCollider(gx - pondW / 2 - 0.6, 0, gz - pondD / 2 - 0.6, gx + pondW / 2 + 0.6, 0.35, gz + pondD / 2 + 0.6);
-  // Pond water surface
-  const waterMat = getCustomMaterial(0x3388bb, 0.15, 0.3);
-  const water = new THREE.Mesh(new THREE.BoxGeometry(pondW, 0.06, pondD), waterMat);
-  water.position.set(gx, 0.12, gz);
+  // === KOI POND (round) ===
+  const pondR = 3.0;
+  const rimMat = getCustomMaterial(0x6b6355, 0.88, 0.05);
+  const rimMesh = new THREE.Mesh(new THREE.CylinderGeometry(pondR + 0.4, pondR + 0.5, 0.35, 12), rimMat);
+  rimMesh.position.set(gx, 0.18, gz);
+  rimMesh.castShadow = true;
+  scene.add(rimMesh);
+  B.addCollider(gx - pondR - 0.5, 0, gz - pondR - 0.5, gx + pondR + 0.5, 0.4, gz + pondR + 0.5);
+  const water = new THREE.Mesh(new THREE.CylinderGeometry(pondR, pondR, 0.05, 16), getCustomMaterial(0x2277aa, 0.1, 0.4));
+  water.position.set(gx, 0.15, gz);
   scene.add(water);
 
-  // Decorative rocks around pond
-  const rockPositions: [number, number, number, number][] = [
-    [gx - 3.5, 0.25, gz - 2.2, 0.35],
-    [gx + 3.2, 0.2, gz + 2.0, 0.25],
-    [gx - 3.0, 0.3, gz + 2.5, 0.4],
-    [gx + 3.5, 0.25, gz - 1.8, 0.3],
-    [gx + 0.5, 0.2, gz - 2.8, 0.25],
-  ];
-  const rockMat = getCustomMaterial(0x777766, 0.95, 0.02);
-  for (const [rx, ry, rz, rs] of rockPositions) {
-    const rock = new THREE.Mesh(new THREE.SphereGeometry(rs, 6, 5), rockMat);
-    rock.position.set(rx, ry, rz);
-    rock.scale.set(1, 0.6, 1);
-    rock.castShadow = true;
-    scene.add(rock);
-    B.addCollider(rx - rs, 0, rz - rs, rx + rs, ry + rs * 0.4, rz + rs);
+  // Lily pads + flowers
+  const lilyMat = getCustomMaterial(0x2d8c2d, 0.85, 0);
+  for (const la of [0.3, 1.5, 2.8, 4.2, 5.5]) {
+    const lr = pondR * 0.5 + Math.sin(la * 2) * 0.4;
+    const lily = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.02, 8), lilyMat);
+    lily.position.set(gx + Math.cos(la) * lr, 0.18, gz + Math.sin(la) * lr);
+    scene.add(lily);
+  }
+  // Pink lotus flowers
+  for (const la of [1.0, 3.5]) {
+    const fl = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 4), getCustomMaterial(0xff88aa, 0.7, 0));
+    fl.position.set(gx + Math.cos(la) * 1.5, 0.24, gz + Math.sin(la) * 1.5);
+    fl.scale.set(1, 0.6, 1);
+    scene.add(fl);
   }
 
-  // Miniature mountain (hon non bo) on one side
-  const mountainX = gx + 1, mountainZ = gz;
-  const mtnMat = getCustomMaterial(0x665544, 0.9, 0.02);
-  const mtnBase = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.6, 0.8, 6), mtnMat);
-  mtnBase.position.set(mountainX, 0.55, mountainZ);
-  scene.add(mtnBase);
-  const mtnPeak = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.3, 0.6, 5), mtnMat);
-  mtnPeak.position.set(mountainX, 1.15, mountainZ);
-  scene.add(mtnPeak);
-  // Mini tree on mountain
-  const miniTree = new THREE.Mesh(new THREE.SphereGeometry(0.15, 6, 6), getCustomMaterial(0x227722, 0.85, 0));
-  miniTree.position.set(mountainX + 0.1, 1.5, mountainZ);
-  scene.add(miniTree);
-
-  // Koi fish (small orange/white/red dots in water)
-  const fishColors = [0xff6633, 0xffffff, 0xcc2222, 0xff9900, 0xffcc66];
-  for (let i = 0; i < 5; i++) {
-    const fishMat = getCustomMaterial(fishColors[i], 0.5, 0.1);
-    const fish = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.04, 0.08), fishMat);
-    const angle = (i / 5) * Math.PI * 2;
-    fish.position.set(gx + Math.cos(angle) * 1.5, 0.16, gz + Math.sin(angle) * 1.0);
-    fish.rotation.y = angle;
+  // Koi fish
+  for (let i = 0; i < 7; i++) {
+    const fc = [0xff6633, 0xffffff, 0xcc2222, 0xff9900, 0xffcc66, 0xff4444, 0xffaa33][i];
+    const fish = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.04, 0.07), getCustomMaterial(fc, 0.5, 0.1));
+    const a = (i / 7) * Math.PI * 2 + 0.3;
+    fish.position.set(gx + Math.cos(a) * (1.0 + (i % 3) * 0.3), 0.16, gz + Math.sin(a) * (1.0 + (i % 3) * 0.3));
+    fish.rotation.y = a + Math.PI / 2;
     scene.add(fish);
   }
 
-  // Stone lantern
-  const lanX = gx - 4.5, lanZ = gz + 1;
-  B.colorBox(0.3, 0.5, 0.3, lanX, 0.25, lanZ, 0x888877, 0.9, 0.05, true);
-  B.colorBox(0.15, 0.8, 0.15, lanX, 0.9, lanZ, 0x888877, 0.9, 0.05, false);
-  B.colorBox(0.5, 0.1, 0.5, lanX, 1.35, lanZ, 0x888877, 0.9, 0.05, false);
-  B.colorBox(0.35, 0.35, 0.35, lanX, 1.55, lanZ, 0xffffcc, 0.3, 0, false);
-  B.colorBox(0.55, 0.08, 0.55, lanX, 1.78, lanZ, 0x888877, 0.9, 0.05, false);
+  // === HON NON BO (stylized miniature mountain landscape) ===
+  const hnbX = gx + 0.5, hnbZ = gz;
+  const rockMat1 = getCustomMaterial(0x6a7a8a, 0.85, 0.05);
+  const rockMat2 = getCustomMaterial(0x5a6a7a, 0.88, 0.04);
+  const rockMat3 = getCustomMaterial(0x7a8a95, 0.82, 0.06);
+  // Island platform (with collider)
+  const islandBase = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1.2, 0.4, 8), rockMat1);
+  islandBase.position.set(hnbX, 0.35, hnbZ);
+  islandBase.castShadow = true;
+  scene.add(islandBase);
+  B.addCollider(hnbX - 1.2, 0.1, hnbZ - 1.2, hnbX + 1.2, 0.6, hnbZ + 1.2);
+  // Main mountain peak (with collider)
+  const mainPeak = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.5, 1.8, 7), rockMat2);
+  mainPeak.position.set(hnbX, 1.45, hnbZ - 0.1);
+  mainPeak.castShadow = true;
+  scene.add(mainPeak);
+  B.addCollider(hnbX - 0.5, 0.5, hnbZ - 0.6, hnbX + 0.5, 2.4, hnbZ + 0.4);
+  // Second peak (with collider)
+  const peak2 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.4, 1.3, 6), rockMat3);
+  peak2.position.set(hnbX + 0.4, 1.2, hnbZ + 0.25);
+  peak2.castShadow = true;
+  scene.add(peak2);
+  B.addCollider(hnbX + 0.0, 0.5, hnbZ - 0.15, hnbX + 0.8, 1.9, hnbZ + 0.65);
+  // Third peak (with collider)
+  const peak3 = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.3, 0.9, 5), rockMat1);
+  peak3.position.set(hnbX - 0.35, 1.0, hnbZ + 0.15);
+  peak3.castShadow = true;
+  scene.add(peak3);
+  B.addCollider(hnbX - 0.65, 0.5, hnbZ - 0.15, hnbX - 0.05, 1.5, hnbZ + 0.45);
+  // Layered rocks
+  for (const [rx, ry, rz, rs] of [[0.3, 0.4, 0.4, 0.25], [-0.4, 0.35, -0.3, 0.2], [0.1, 0.38, -0.5, 0.18], [-0.2, 0.42, 0.5, 0.22]] as [number, number, number, number][]) {
+    const rock = new THREE.Mesh(new THREE.SphereGeometry(rs, 6, 5), rockMat2);
+    rock.position.set(hnbX + rx, ry, hnbZ + rz);
+    rock.scale.set(1.3, 0.6, 1.1);
+    rock.castShadow = true;
+    scene.add(rock);
+  }
+  // Moss
+  const mossMat = getCustomMaterial(0x3a8a3a, 0.9, 0);
+  for (const [mx, my, mz] of [[0.15, 0.6, -0.05], [-0.1, 0.55, 0.2], [0.35, 0.55, 0.15]] as [number, number, number][]) {
+    const moss = new THREE.Mesh(new THREE.SphereGeometry(0.12, 5, 4), mossMat);
+    moss.position.set(hnbX + mx, my, hnbZ + mz);
+    moss.scale.set(1.5, 0.3, 1.5);
+    scene.add(moss);
+  }
+  // Bonsai trees
+  const bonsaiTrunkMat = getCustomMaterial(0x5a4030, 0.85, 0.02);
+  const bonsaiLeafMat = getCustomMaterial(0x1a6b1a, 0.82, 0);
+  for (const [tx, ty, tz, th, cr] of [[0.08, 2.35, -0.1, 0.3, 0.18], [0.42, 1.85, 0.25, 0.25, 0.14], [-0.3, 0.6, -0.35, 0.2, 0.1]] as [number, number, number, number, number][]) {
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.04, th, 4), bonsaiTrunkMat);
+    trunk.position.set(hnbX + tx, ty + th / 2, hnbZ + tz);
+    scene.add(trunk);
+    const canopy = new THREE.Mesh(new THREE.SphereGeometry(cr, 6, 5), bonsaiLeafMat);
+    canopy.position.set(hnbX + tx, ty + th + cr * 0.5, hnbZ + tz);
+    canopy.scale.set(1.2, 0.7, 1.2);
+    scene.add(canopy);
+  }
+  // Waterfall
+  const waterfallMat = new THREE.MeshStandardMaterial({ color: 0x44ccdd, transparent: true, opacity: 0.6, roughness: 0.2, metalness: 0.1 });
+  const waterfall = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.8), waterfallMat);
+  waterfall.position.set(hnbX + 0.15, 1.0, hnbZ - 0.35);
+  waterfall.rotation.y = -0.3;
+  scene.add(waterfall);
+  // Mini pond at waterfall base
+  const miniPond = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.03, 8), getCustomMaterial(0x33aabb, 0.1, 0.3));
+  miniPond.position.set(hnbX + 0.15, 0.57, hnbZ - 0.35);
+  scene.add(miniPond);
 
-  // Small wooden bridge over pond
-  B.colorBox(1.2, 0.1, pondD + 0.5, gx - 1.5, 0.4, gz, PALETTE.woodWarm, 0.82, 0.02, false);
-  B.addCollider(gx - 2.1, 0.3, gz - pondD / 2 - 0.25, gx - 0.9, 0.5, gz + pondD / 2 + 0.25);
-  // Bridge railing
-  B.colorBox(0.04, 0.5, pondD + 0.5, gx - 2.05, 0.7, gz, PALETTE.woodDark, 0.85, 0.02, false);
-  B.colorBox(0.04, 0.5, pondD + 0.5, gx - 0.95, 0.7, gz, PALETTE.woodDark, 0.85, 0.02, false);
+  // === FLAT KOI POND (separate small pond near garden edge) ===
+  const kpX = gx + 4.5, kpZ = gz - 1.5;
+  const kpR = 1.8;
+  // Stone border
+  const kpRimMesh = new THREE.Mesh(new THREE.CylinderGeometry(kpR + 0.25, kpR + 0.35, 0.25, 10), getCustomMaterial(0x6b6355, 0.88, 0.05));
+  kpRimMesh.position.set(kpX, 0.13, kpZ);
+  kpRimMesh.castShadow = true;
+  scene.add(kpRimMesh);
+  B.addCollider(kpX - kpR - 0.35, 0, kpZ - kpR - 0.35, kpX + kpR + 0.35, 0.3, kpZ + kpR + 0.35);
+  // Water surface
+  const kpWater = new THREE.Mesh(new THREE.CylinderGeometry(kpR, kpR, 0.04, 12), getCustomMaterial(0x1a6699, 0.08, 0.35));
+  kpWater.position.set(kpX, 0.1, kpZ);
+  scene.add(kpWater);
+  // Lily pads
+  for (const la of [0.5, 2.0, 3.8, 5.0]) {
+    const lr = kpR * 0.5 + Math.sin(la) * 0.3;
+    const lily = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.02, 8), getCustomMaterial(0x2d8c2d, 0.85, 0));
+    lily.position.set(kpX + Math.cos(la) * lr, 0.13, kpZ + Math.sin(la) * lr);
+    scene.add(lily);
+  }
+  // Colorful koi fish (big, visible, eye-catching)
+  const koiColors = [0xff4422, 0xffffff, 0xffaa00, 0xff6688, 0xffcc44, 0xcc2200, 0xff8844, 0xffeecc];
+  for (let i = 0; i < koiColors.length; i++) {
+    const kMat = getCustomMaterial(koiColors[i], 0.35, 0.15);
+    const angle = (i / koiColors.length) * Math.PI * 2 + i * 0.2;
+    const r = 0.4 + (i % 3) * 0.35;
+    const fx = kpX + Math.cos(angle) * r;
+    const fz = kpZ + Math.sin(angle) * r;
+    // Fish body (elongated)
+    const body = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.05, 0.1), kMat);
+    body.position.set(fx, 0.12, fz);
+    body.rotation.y = angle + Math.PI / 2;
+    scene.add(body);
+    // Tail fin (wider)
+    const tail = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.04, 0.14), kMat);
+    tail.position.set(fx - Math.cos(angle + Math.PI / 2) * 0.15, 0.12, fz - Math.sin(angle + Math.PI / 2) * 0.15);
+    tail.rotation.y = angle + Math.PI / 2;
+    scene.add(tail);
+    // White spot on some fish
+    if (i % 3 === 0) {
+      const spot = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.055, 0.06), getCustomMaterial(0xffffff, 0.4, 0.1));
+      spot.position.set(fx + Math.cos(angle + Math.PI / 2) * 0.05, 0.125, fz + Math.sin(angle + Math.PI / 2) * 0.05);
+      spot.rotation.y = angle + Math.PI / 2;
+      scene.add(spot);
+    }
+  }
 
-  // Bamboo plants around the edge
-  const bambooPositions: [number, number][] = [
-    [gx + 5, gz - 4], [gx + 5.3, gz - 3.5], [gx + 4.8, gz - 3],
-    [gx - 5, gz + 4], [gx - 5.3, gz + 3.5], [gx - 4.8, gz + 3],
-  ];
-  for (const [bx, bz] of bambooPositions) {
-    B.cyl(0.04, 0.04, 3, bx, 1.5, bz, "woodDark");
-    const leaves = new THREE.Mesh(new THREE.SphereGeometry(0.3, 5, 5), getCustomMaterial(0x338833, 0.85, 0));
-    leaves.position.set(bx, 3.2, bz);
-    leaves.scale.set(1, 1.5, 1);
+  // === WOODEN BRIDGE over main pond ===
+  const bridgeLen = pondR * 2 + 0.5;
+  B.colorBox(1.2, 0.12, bridgeLen, gx - 1.6, 0.42, gz, PALETTE.woodWarm, 0.82, 0.02, false);
+  B.addCollider(gx - 2.2, 0.3, gz - bridgeLen / 2, gx - 1.0, 0.55, gz + bridgeLen / 2);
+  for (let i = 0; i < 6; i++) {
+    const bz = gz - bridgeLen / 2 + 0.4 + i * (bridgeLen - 0.8) / 5;
+    B.colorBox(0.04, 0.55, 0.04, gx - 2.15, 0.73, bz, PALETTE.woodDark, 0.85, 0.02, false);
+    B.colorBox(0.04, 0.55, 0.04, gx - 1.05, 0.73, bz, PALETTE.woodDark, 0.85, 0.02, false);
+  }
+  B.colorBox(0.04, 0.04, bridgeLen - 0.3, gx - 2.15, 1.03, gz, PALETTE.woodDark, 0.85, 0.02, false);
+  B.colorBox(0.04, 0.04, bridgeLen - 0.3, gx - 1.05, 1.03, gz, PALETTE.woodDark, 0.85, 0.02, false);
+
+  // === STONE LANTERNS ===
+  for (const [lx, lz] of [[gx + 4.0, gz - 3.5], [gx - 4.5, gz + 3.5]] as [number, number][]) {
+    B.colorBox(0.4, 0.2, 0.4, lx, 0.1, lz, 0x7a7360, 0.9, 0.05, true);
+    B.colorBox(0.18, 0.8, 0.18, lx, 0.6, lz, 0x7a7360, 0.9, 0.05, false);
+    B.colorBox(0.45, 0.35, 0.45, lx, 1.2, lz, 0x7a7360, 0.9, 0.05, false);
+    B.colorBox(0.3, 0.2, 0.3, lx, 1.2, lz, 0xffeecc, 0.3, 0, false);
+    B.colorBox(0.55, 0.1, 0.55, lx, 1.45, lz, 0x6b6355, 0.9, 0.05, false);
+    B.colorBox(0.35, 0.12, 0.35, lx, 1.55, lz, 0x6b6355, 0.9, 0.05, false);
+  }
+
+  // Bamboo clusters
+  for (const [bx, bz, bh] of [[gx + 5.5, gz - 2, 3.5], [gx + 5.8, gz - 1.5, 4.0], [gx + 5.3, gz - 1, 3.2], [gx - 5.5, gz + 2, 3.0], [gx - 5.2, gz + 2.5, 3.5]] as [number, number, number][]) {
+    B.cyl(0.04, 0.05, bh, bx, bh / 2, bz, "woodDark");
+    const leaves = new THREE.Mesh(new THREE.SphereGeometry(0.3, 5, 4), getCustomMaterial(0x2a7a2a, 0.85, 0));
+    leaves.position.set(bx, bh + 0.15, bz);
+    leaves.scale.set(0.8, 1.2, 0.8);
     scene.add(leaves);
   }
 
+  // Stepping stones
+  for (let i = 0; i < 5; i++) {
+    B.colorBox(0.7, 0.06, 0.7, gx + 6.5 - i * 2.5, 0.03, gz + 5.5, 0x88816a, 0.92, 0.03, false);
+  }
+
   // Stone bench
-  B.colorBox(1.8, 0.12, 0.5, gx + 4, 0.45, gz + 3.5, 0x888877, 0.9, 0.05, true);
-  B.colorBox(0.3, 0.4, 0.5, gx + 3.2, 0.2, gz + 3.5, 0x888877, 0.9, 0.05, false);
-  B.colorBox(0.3, 0.4, 0.5, gx + 4.8, 0.2, gz + 3.5, 0x888877, 0.9, 0.05, false);
+  B.colorBox(2.0, 0.12, 0.55, gx + 4, 0.5, gz + 4, 0x7a7360, 0.9, 0.05, true);
+  B.colorBox(0.35, 0.45, 0.55, gx + 3.1, 0.22, gz + 4, 0x7a7360, 0.9, 0.05, false);
+  B.colorBox(0.35, 0.45, 0.55, gx + 4.9, 0.22, gz + 4, 0x7a7360, 0.9, 0.05, false);
+
+  // Decorative edge rocks
+  const dRockMat = getCustomMaterial(0x6b6355, 0.95, 0.02);
+  for (const [rx, ry, rz, rs] of [[gx + 3.8, 0.15, gz - 4.0, 0.3], [gx - 3.5, 0.2, gz - 3.8, 0.35], [gx + 2.0, 0.12, gz + 4.5, 0.25]] as [number, number, number, number][]) {
+    const rock = new THREE.Mesh(new THREE.SphereGeometry(rs, 6, 5), dRockMat);
+    rock.position.set(rx, ry, rz);
+    rock.scale.set(1.2, 0.5, 1);
+    rock.castShadow = true;
+    scene.add(rock);
+  }
+
 }
 
+
 // ========== FERRIS WHEEL ==========
+// Hierarchy: ferrisRoot -> wheelPivot -> [rings, spokes, cabinMounts -> hinge -> cabin]
+// Cabins are mounted OUTSIDE the ring with CLEARANCE so they never intersect the blue ring.
+// Hinge groups counter-rotate so cabins stay upright during wheel rotation.
 function buildFerrisWheel(scene: THREE.Scene, colliders: THREE.Box3[]): THREE.Group {
-  const group = new THREE.Group();
-  const R = 7;
-  const frameMat = getCustomMaterial(0x2266aa, 0.4, 0.5); // Blue frame like reference
-  const spokeMat = getCustomMaterial(0xdddddd, 0.4, 0.5); // White spokes
-  const hubMat = getCustomMaterial(0xcc2222, 0.4, 0.5); // Red hub accent
-  const cabinColors = [0xff3333, 0xffcc00, 0x33aa33, 0x3366ff, 0xff66aa, 0xff8800, 0x9933ff, 0x33cccc, 0xffff33, 0xcc6633, 0x66ff66, 0xff3399];
+  const wheelPivot = new THREE.Group();
+  const fwX = -10, fwZ = 34;
+  const RING_R = 8;
+  const CLEARANCE = 0.5;
+  const MOUNT_R = RING_R + CLEARANCE;
+  const numCabins = 8;
+  const hubY = RING_R + 4;
+
+  const frameMat = getCustomMaterial(0x2255bb, 0.35, 0.5);
+  const supportMat = getCustomMaterial(0xddaa22, 0.4, 0.4);
+  const spokeMat = getCustomMaterial(0xcccccc, 0.3, 0.5);
+  const hubMat = getCustomMaterial(0xcc2222, 0.4, 0.5);
+  const cabinColors = [0xff3333, 0x33bb33, 0xffcc00, 0x3366ff, 0xff66aa, 0xff8800, 0x33cccc, 0x9933ff];
+
+  // === GROUND PLATFORM ===
+  const platW = 14, platD = 10;
+  const plat = new THREE.Mesh(new THREE.BoxGeometry(platW, 0.3, platD), getCustomMaterial(PALETTE.concreteDark, 0.85, 0.03));
+  plat.position.set(fwX, 0.15, fwZ);
+  plat.castShadow = true;
+  scene.add(plat);
+  colliders.push(new THREE.Box3(new THREE.Vector3(fwX - platW / 2, 0, fwZ - platD / 2), new THREE.Vector3(fwX + platW / 2, 0.35, fwZ + platD / 2)));
+
+  // === A-FRAME SUPPORTS ===
+  const legSpread = 4.0;
+  const legThick = 0.4;
+  for (const zOff of [-2.2, 2.2]) {
+    for (const side of [-1, 1]) {
+      const leg = new THREE.Mesh(new THREE.BoxGeometry(legThick, hubY + 2, legThick), supportMat);
+      leg.position.set(fwX + side * legSpread * 0.5, hubY / 2, fwZ + zOff);
+      leg.rotation.z = side * -0.17;
+      leg.castShadow = true;
+      scene.add(leg);
+    }
+    const brace = new THREE.Mesh(new THREE.BoxGeometry(legSpread + 1, 0.2, 0.2), supportMat);
+    brace.position.set(fwX, hubY * 0.35, fwZ + zOff);
+    scene.add(brace);
+  }
+  // Connecting bars (visual only)
+  for (const h of [hubY * 0.35, hubY * 0.65]) {
+    const hbar = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 4.8), supportMat);
+    hbar.position.set(fwX, h, fwZ);
+    scene.add(hbar);
+  }
+
+  // === WHEEL PIVOT (rotates around Z axis) ===
+  wheelPivot.position.set(fwX, hubY, fwZ);
+  scene.add(wheelPivot);
 
   // Hub
-  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.8, 16), hubMat);
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 4.8, 12), hubMat);
   hub.rotation.x = Math.PI / 2;
-  group.add(hub);
+  hub.castShadow = true;
+  wheelPivot.add(hub);
 
-  // Outer rim
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(R, 0.07, 8, 48), spokeMat);
-  group.add(rim);
-  // Inner rim
-  const rim2 = new THREE.Mesh(new THREE.TorusGeometry(R * 0.7, 0.05, 6, 36), spokeMat);
-  group.add(rim2);
+  // Two rings (left/right, separated along Z so cabins sit between them)
+  const ringThick = 0.12;
+  for (const zOff of [-1.8, 1.8]) {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(RING_R, ringThick, 8, 48), frameMat);
+    ring.position.set(0, 0, zOff);
+    ring.castShadow = true;
+    wheelPivot.add(ring);
+  }
 
-  // Spokes from hub to rim
-  const numCabins = 12;
+  // Spokes (from hub to ring)
+  for (let i = 0; i < numCabins * 2; i++) {
+    const angle = (i / (numCabins * 2)) * Math.PI * 2;
+    const spoke = new THREE.Mesh(new THREE.BoxGeometry(0.08, RING_R * 2, 0.08), spokeMat);
+    spoke.rotation.z = angle;
+    wheelPivot.add(spoke);
+  }
+
+  // === CABIN MOUNTS (positioned OUTSIDE the ring by CLEARANCE) ===
+  const cabW = 1.8, cabH = 2.2, cabD = 1.4;
   for (let i = 0; i < numCabins; i++) {
     const angle = (i / numCabins) * Math.PI * 2;
-    const spoke = new THREE.Mesh(new THREE.BoxGeometry(0.04, R * 2, 0.04), spokeMat);
-    spoke.rotation.z = angle;
-    group.add(spoke);
 
-    // Gondola/cabin hanging from rim
-    const cabinG = new THREE.Group();
+    // Mount point: on the ring, rotates with wheel
+    const mount = new THREE.Group();
+    mount.position.set(Math.cos(angle) * MOUNT_R, Math.sin(angle) * MOUNT_R, 0);
+    wheelPivot.add(mount);
+
+    // Hinge arm (visual connector from ring to cabin)
+    const hingeArm = new THREE.Mesh(new THREE.BoxGeometry(0.06, CLEARANCE + 0.3, 0.06), hubMat);
+    hingeArm.position.set(0, 0.15, 0);
+    mount.add(hingeArm);
+
+    // Hinge pivot (counter-rotates to keep cabin upright)
+    const hinge = new THREE.Group();
+    hinge.position.set(0, -CLEARANCE * 0.5, 0);
+    mount.add(hinge);
+
     const color = cabinColors[i % cabinColors.length];
-    // Hanging rod
-    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.6, 4), hubMat);
-    rod.position.y = 0.3;
-    cabinG.add(rod);
-    // Cabin seat (open gondola style)
-    const seat = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.08, 0.5), getCustomMaterial(color, 0.6, 0.3));
-    seat.castShadow = true;
-    cabinG.add(seat);
-    // Back rest
-    const back = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.5, 0.06), getCustomMaterial(color, 0.6, 0.3));
-    back.position.set(0, 0.25, -0.22);
-    cabinG.add(back);
-    // Side panels
-    const sideMat = getCustomMaterial(color, 0.7, 0.2);
-    const sideL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.35, 0.5), sideMat);
-    sideL.position.set(-0.37, 0.18, 0);
-    cabinG.add(sideL);
-    const sideR = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.35, 0.5), sideMat);
-    sideR.position.set(0.37, 0.18, 0);
-    cabinG.add(sideR);
+    const cMat = getCustomMaterial(color, 0.5, 0.3);
 
-    cabinG.position.set(Math.cos(angle) * R, Math.sin(angle) * R, 0);
-    group.add(cabinG);
+    // Cabin body
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(cabW, 0.12, cabD), cMat);
+    floor.position.set(0, -cabH / 2, 0);
+    floor.castShadow = true;
+    hinge.add(floor);
+
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(cabW + 0.15, 0.1, cabD + 0.15), cMat);
+    roof.position.set(0, cabH / 2, 0);
+    hinge.add(roof);
+
+    const backWall = new THREE.Mesh(new THREE.BoxGeometry(cabW, cabH, 0.08), cMat);
+    backWall.position.set(0, 0, -cabD / 2);
+    hinge.add(backWall);
+
+    for (const s of [-1, 1]) {
+      const sideWall = new THREE.Mesh(new THREE.BoxGeometry(0.08, cabH * 0.5, cabD), cMat);
+      sideWall.position.set(s * cabW / 2, -cabH * 0.25, 0);
+      hinge.add(sideWall);
+    }
+
+    const light = new THREE.Mesh(new THREE.SphereGeometry(0.08, 6, 4), new THREE.MeshStandardMaterial({ color: 0xffffaa, emissive: 0xffeeaa, emissiveIntensity: 0.5 }));
+    light.position.set(0, cabH / 2 - 0.1, cabD / 2 - 0.05);
+    hinge.add(light);
   }
 
-  // A-frame support (like real ferris wheel - tall triangle)
-  const legH = R + 2;
-  // Two A-frames (front and back)
-  for (const zOff of [-1.5, 1.5]) {
-    const leg1 = new THREE.Mesh(new THREE.BoxGeometry(0.2, legH * 1.1, 0.2), frameMat);
-    leg1.position.set(-1.5, -legH * 0.35 + R * 0.3, zOff);
-    leg1.rotation.z = 0.15;
-    group.add(leg1);
-    const leg2 = new THREE.Mesh(new THREE.BoxGeometry(0.2, legH * 1.1, 0.2), frameMat);
-    leg2.position.set(1.5, -legH * 0.35 + R * 0.3, zOff);
-    leg2.rotation.z = -0.15;
-    group.add(leg2);
-    // Cross brace
-    const brace = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.1, 0.1), frameMat);
-    brace.position.set(0, -R * 0.4, zOff);
-    group.add(brace);
+  // Dynamic cabin colliders (floor + roof, updated each frame in GameManager)
+  for (let i = 0; i < numCabins; i++) {
+    const a = (i / numCabins) * Math.PI * 2;
+    const cx = fwX + Math.cos(a) * MOUNT_R;
+    const cy = hubY + Math.sin(a) * MOUNT_R;
+    colliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2, cy - cabH / 2 - 0.15, fwZ - cabD / 2), new THREE.Vector3(cx + cabW / 2, cy - cabH / 2 + 0.08, fwZ + cabD / 2)));
+    colliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2 - 0.1, cy + cabH / 2 - 0.1, fwZ - cabD / 2 - 0.1), new THREE.Vector3(cx + cabW / 2 + 0.1, cy + cabH / 2 + 0.1, fwZ + cabD / 2 + 0.1)));
   }
-  // Horizontal connecting bars between frames
-  const hbar1 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 3.5), frameMat);
-  hbar1.position.set(0, -R * 0.4, 0);
-  group.add(hbar1);
-  const hbar2 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 3.5), frameMat);
-  hbar2.position.set(0, R * 0.3, 0);
-  group.add(hbar2);
 
-  // Position in world
-  const fwX = -10, fwZ = 34;
-  const fwBaseY = R + 2.5;
-  group.position.set(fwX, fwBaseY, fwZ);
-  scene.add(group);
-
-  // Ground platform for viewing/access
-  const platMat = getCustomMaterial(PALETTE.concreteDark, 0.85, 0.03);
-  const platform = new THREE.Mesh(new THREE.BoxGeometry(8, 0.25, 6), platMat);
-  platform.position.set(fwX, 0.125, fwZ);
-  scene.add(platform);
-  colliders.push(new THREE.Box3(
-    new THREE.Vector3(fwX - 4, 0, fwZ - 3),
-    new THREE.Vector3(fwX + 4, 0.3, fwZ + 3)
-  ));
-
-  // Safety barrier around the wheel base (prevents players from entering rotation zone)
-  const fenceMat = getCustomMaterial(PALETTE.steel, 0.5, 0.5);
-  const barrierH = 1.2;
-  // Front fence
-  const fenceF = new THREE.Mesh(new THREE.BoxGeometry(8, barrierH, 0.1), fenceMat);
-  fenceF.position.set(fwX, barrierH / 2, fwZ - 3);
-  scene.add(fenceF);
-  colliders.push(new THREE.Box3(new THREE.Vector3(fwX - 4, 0, fwZ - 3.1), new THREE.Vector3(fwX + 4, barrierH, fwZ - 2.9)));
-  // Left fence
-  const fenceL = new THREE.Mesh(new THREE.BoxGeometry(0.1, barrierH, 6), fenceMat);
-  fenceL.position.set(fwX - 4, barrierH / 2, fwZ);
-  scene.add(fenceL);
-  colliders.push(new THREE.Box3(new THREE.Vector3(fwX - 4.1, 0, fwZ - 3), new THREE.Vector3(fwX - 3.9, barrierH, fwZ + 3)));
-  // Right fence
-  const fenceR = new THREE.Mesh(new THREE.BoxGeometry(0.1, barrierH, 6), fenceMat);
-  fenceR.position.set(fwX + 4, barrierH / 2, fwZ);
-  scene.add(fenceR);
-  colliders.push(new THREE.Box3(new THREE.Vector3(fwX + 3.9, 0, fwZ - 3), new THREE.Vector3(fwX + 4.1, barrierH, fwZ + 3)));
-  // No back fence to allow approach, but add partial back fences
-  const fenceBL = new THREE.Mesh(new THREE.BoxGeometry(2.5, barrierH, 0.1), fenceMat);
-  fenceBL.position.set(fwX - 2.75, barrierH / 2, fwZ + 3);
-  scene.add(fenceBL);
-  colliders.push(new THREE.Box3(new THREE.Vector3(fwX - 4, 0, fwZ + 2.9), new THREE.Vector3(fwX - 1.5, barrierH, fwZ + 3.1)));
-  const fenceBR = new THREE.Mesh(new THREE.BoxGeometry(2.5, barrierH, 0.1), fenceMat);
-  fenceBR.position.set(fwX + 2.75, barrierH / 2, fwZ + 3);
-  scene.add(fenceBR);
-  colliders.push(new THREE.Box3(new THREE.Vector3(fwX + 1.5, 0, fwZ + 2.9), new THREE.Vector3(fwX + 4, barrierH, fwZ + 3.1)));
-
-  // A-frame leg colliders (walkable near base)
-  colliders.push(new THREE.Box3(new THREE.Vector3(fwX - 2.2, 0, fwZ - 1.8), new THREE.Vector3(fwX - 1.0, 4, fwZ + 1.8)));
-  colliders.push(new THREE.Box3(new THREE.Vector3(fwX + 1.0, 0, fwZ - 1.8), new THREE.Vector3(fwX + 2.2, 4, fwZ + 1.8)));
-
-  // Cross bar walkable platform between the A-frames
-  const crossBarMat = getCustomMaterial(PALETTE.steel, 0.5, 0.5);
-  const crossBar = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.2, 4), crossBarMat);
-  crossBar.position.set(fwX, 2.8, fwZ);
-  scene.add(crossBar);
-  colliders.push(new THREE.Box3(new THREE.Vector3(fwX - 1.75, 2.7, fwZ - 2), new THREE.Vector3(fwX + 1.75, 2.95, fwZ + 2)));
-
-  // Ladder up to cross bar from back
-  const railMat = getCustomMaterial(PALETTE.steelLight, 0.5, 0.5);
-  for (let i = 0; i < 7; i++) {
-    const ladY = i * 0.4;
-    const ladMesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.05, 0.05), railMat);
-    ladMesh.position.set(fwX, ladY + 0.2, fwZ + 2.1);
-    scene.add(ladMesh);
-    colliders.push(new THREE.Box3(new THREE.Vector3(fwX - 0.3, ladY, fwZ + 1.9), new THREE.Vector3(fwX + 0.3, ladY + 0.4, fwZ + 2.3)));
+  // === STAIRWAY (straight, behind the wheel, goes up to mid-platform) ===
+  // Positioned at fwZ + 4 (behind wheel), going along Z axis toward wheel
+  const stairW = 1.6;
+  const midY = hubY * 0.65;
+  const stairStartZ = fwZ + platD / 2 - 0.5;
+  const stairEndZ = fwZ + 2.5;
+  const stairLen = stairStartZ - stairEndZ;
+  const numStairSteps = Math.round(midY / 0.4);
+  const stepRise = midY / numStairSteps;
+  const stepRun = stairLen / numStairSteps;
+  const stairMat = getCustomMaterial(PALETTE.steel, 0.5, 0.5);
+  for (let i = 0; i < numStairSteps; i++) {
+    const sy = 0.35 + (i + 1) * stepRise;
+    const sz = stairStartZ - i * stepRun;
+    const stepMesh = new THREE.Mesh(new THREE.BoxGeometry(stairW, 0.1, stepRun + 0.02), stairMat);
+    stepMesh.position.set(fwX, sy - 0.05, sz);
+    stepMesh.castShadow = true;
+    scene.add(stepMesh);
+    colliders.push(new THREE.Box3(
+      new THREE.Vector3(fwX - stairW / 2, sy - 0.12, sz - stepRun / 2 - 0.02),
+      new THREE.Vector3(fwX + stairW / 2, sy, sz + stepRun / 2 + 0.02)
+    ));
   }
-  // Ladder rails
-  const ladRailL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.8, 0.04), railMat);
-  ladRailL.position.set(fwX - 0.28, 1.4, fwZ + 2.1);
-  scene.add(ladRailL);
-  const ladRailR = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.8, 0.04), railMat);
-  ladRailR.position.set(fwX + 0.28, 1.4, fwZ + 2.1);
-  scene.add(ladRailR);
+  // Mid-level platform (connects stairway top to wheel area)
+  const midPlat = new THREE.Mesh(new THREE.BoxGeometry(4, 0.15, 5), getCustomMaterial(PALETTE.steel, 0.5, 0.5));
+  midPlat.position.set(fwX, midY, fwZ);
+  midPlat.castShadow = true;
+  scene.add(midPlat);
+  colliders.push(new THREE.Box3(new THREE.Vector3(fwX - 2, midY - 0.1, fwZ - 2.5), new THREE.Vector3(fwX + 2, midY + 0.1, fwZ + 2.5)));
+  for (const side of [-2, 2]) {
+    const mRail = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.0, 5), getCustomMaterial(PALETTE.steelLight, 0.5, 0.5));
+    mRail.position.set(fwX + side, midY + 0.5, fwZ);
+    scene.add(mRail);
+  }
 
-  return group;
+  // Ground shadow
+  const shadowMesh = new THREE.Mesh(new THREE.PlaneGeometry(platW + 2, platD + 2), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.15 }));
+  shadowMesh.rotation.x = -Math.PI / 2;
+  shadowMesh.position.set(fwX, 0.02, fwZ);
+  scene.add(shadowMesh);
+
+  return wheelPivot;
 }
 
 function buildBackgroundVista(B: MapBoxHelper, scene: THREE.Scene) {

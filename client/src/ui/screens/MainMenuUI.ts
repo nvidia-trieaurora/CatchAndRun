@@ -1,7 +1,7 @@
 export interface MainMenuCallbacks {
-  onQuickJoin: (nickname: string) => void;
-  onCreate: (nickname: string, roomName: string, isPrivate: boolean) => void;
-  onJoinCode: (nickname: string, code: string) => void;
+  onQuickJoin: (nickname: string) => Promise<void>;
+  onCreate: (nickname: string, roomName: string, isPrivate: boolean) => Promise<void>;
+  onJoinCode: (nickname: string, code: string) => Promise<void>;
 }
 
 export class MainMenuUI {
@@ -10,6 +10,8 @@ export class MainMenuUI {
   private roomNameInput!: HTMLInputElement;
   private codeInput!: HTMLInputElement;
   private privateCheckbox!: HTMLInputElement;
+  private allButtons: HTMLButtonElement[] = [];
+  private busy = false;
 
   constructor(callbacks: MainMenuCallbacks) {
     this.element = document.createElement("div");
@@ -56,17 +58,19 @@ export class MainMenuUI {
       const saved = localStorage.getItem("catchandrun_nickname");
       if (saved) this.nicknameInput.value = saved;
 
+      this.allButtons = Array.from(this.element.querySelectorAll("button")) as HTMLButtonElement[];
+
       this.element.querySelector("#btn-quick-join")!.addEventListener("click", () => {
         const nick = this.getNickname();
         if (!nick) return;
-        callbacks.onQuickJoin(nick);
+        void this.runAction(() => callbacks.onQuickJoin(nick));
       });
 
       this.element.querySelector("#btn-create")!.addEventListener("click", () => {
         const nick = this.getNickname();
         if (!nick) return;
         const roomName = this.roomNameInput.value.trim() || "Game Room";
-        callbacks.onCreate(nick, roomName, this.privateCheckbox.checked);
+        void this.runAction(() => callbacks.onCreate(nick, roomName, this.privateCheckbox.checked));
       });
 
       this.element.querySelector("#btn-join-code")!.addEventListener("click", () => {
@@ -74,7 +78,7 @@ export class MainMenuUI {
         if (!nick) return;
         const code = this.codeInput.value.trim().toUpperCase();
         if (code.length !== 6) return;
-        callbacks.onJoinCode(nick, code);
+        void this.runAction(() => callbacks.onJoinCode(nick, code));
       });
     }, 0);
   }
@@ -88,5 +92,25 @@ export class MainMenuUI {
     }
     localStorage.setItem("catchandrun_nickname", nick);
     return nick;
+  }
+
+  private async runAction(action: () => Promise<void>) {
+    if (this.busy) return;
+    this.busy = true;
+    this.setButtonsDisabled(true);
+    try {
+      await action();
+    } finally {
+      this.busy = false;
+      this.setButtonsDisabled(false);
+    }
+  }
+
+  private setButtonsDisabled(disabled: boolean) {
+    for (const btn of this.allButtons) {
+      btn.disabled = disabled;
+      btn.style.opacity = disabled ? "0.5" : "1";
+      btn.style.pointerEvents = disabled ? "none" : "auto";
+    }
   }
 }

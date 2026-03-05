@@ -12,6 +12,7 @@ export interface InputState {
   ability: boolean;
   ability2: boolean;
   scoreboard: boolean;
+  soulMode: boolean;
 }
 
 export class InputManager {
@@ -22,11 +23,19 @@ export class InputManager {
   private locked = false;
   private canvas: HTMLCanvasElement;
   private enabled = true;
+  private chatActive = false;
+  private onTabToggle: (() => void) | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
 
     document.addEventListener("keydown", (e) => {
+      if (e.code === "Tab") {
+        e.preventDefault();
+        if (this.onTabToggle) this.onTabToggle();
+        return;
+      }
+      if (this.chatActive) return;
       if (!this.enabled) return;
       this.keys.add(e.code);
     });
@@ -83,8 +92,21 @@ export class InputManager {
       lockPose: this.keys.has("KeyF"),
       ability: this.keys.has("KeyQ"),
       ability2: this.keys.has("KeyR"),
-      scoreboard: this.keys.has("Tab"),
+      scoreboard: false,
+      soulMode: this.keys.has("Digit1"),
     };
+  }
+
+  setChatActive(active: boolean) {
+    this.chatActive = active;
+    if (active) {
+      this.keys.clear();
+      this.mouseDown = false;
+    }
+  }
+
+  setTabToggleHandler(handler: () => void) {
+    this.onTabToggle = handler;
   }
 
   consumeMouseDelta(): { x: number; y: number } {

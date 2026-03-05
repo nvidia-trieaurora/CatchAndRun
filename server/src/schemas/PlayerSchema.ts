@@ -1,4 +1,5 @@
 import { Schema, type } from "@colyseus/schema";
+import { WEAPON_MAX_AMMO } from "@catch-and-run/shared";
 
 export class PlayerSchema extends Schema {
   @type("string") sessionId: string = "";
@@ -15,7 +16,7 @@ export class PlayerSchema extends Schema {
   @type("boolean") isReady: boolean = false;
   @type("boolean") isAlive: boolean = true;
   @type("number") score: number = 0;
-  @type("number") ammo: number = 12;
+  @type("number") ammo: number = WEAPON_MAX_AMMO;
   @type("number") kills: number = 0;
   @type("boolean") isHost: boolean = false;
   @type("string") memeId: string = "default";

@@ -3,6 +3,8 @@ const MAP_MIN_Z = -43, MAP_MAX_Z = 47;
 const MAP_W = MAP_MAX_X - MAP_MIN_X;
 const MAP_D = MAP_MAX_Z - MAP_MIN_Z;
 const CANVAS_SIZE = 170;
+const MAP_CX = (MAP_MIN_X + MAP_MAX_X) / 2;
+const MAP_CZ = (MAP_MIN_Z + MAP_MAX_Z) / 2;
 
 interface DetectedProp {
   x: number;
@@ -24,7 +26,7 @@ export class Minimap {
     this.element = document.createElement("div");
     this.element.className = "minimap-container";
     this.element.style.cssText = `
-      position: fixed; bottom: 16px; right: 16px;
+      position: fixed; top: 16px; right: 16px;
       width: ${CANVAS_SIZE}px; height: ${CANVAS_SIZE}px;
       border-radius: 8px; overflow: hidden;
       border: 2px solid rgba(255,255,255,0.3);
@@ -65,9 +67,9 @@ export class Minimap {
   }
 
   private worldToCanvas(wx: number, wz: number): [number, number] {
-    const nx = (wx - MAP_MIN_X) / MAP_W;
-    const nz = (wz - MAP_MIN_Z) / MAP_D;
-    return [nx * CANVAS_SIZE, nz * CANVAS_SIZE];
+    const cx = ((wx - MAP_MIN_X) / MAP_W) * CANVAS_SIZE;
+    const cy = ((wz - MAP_MIN_Z) / MAP_D) * CANVAS_SIZE;
+    return [cx, cy];
   }
 
   private draw() {
@@ -75,7 +77,6 @@ export class Minimap {
     const S = CANVAS_SIZE;
     ctx.clearRect(0, 0, S, S);
 
-    // Background (grass)
     ctx.fillStyle = "rgba(60, 90, 40, 0.8)";
     ctx.fillRect(0, 0, S, S);
 
@@ -85,7 +86,7 @@ export class Minimap {
     ctx.fillStyle = "rgba(140, 135, 120, 0.7)";
     ctx.fillRect(wfx, wfz, wfx2 - wfx, wfz2 - wfz);
 
-    // Container yard asphalt
+    // Container yard
     const [cx1, cz1] = this.worldToCanvas(24, -25);
     const [cx2, cz2] = this.worldToCanvas(56, 5);
     ctx.fillStyle = "rgba(70, 70, 70, 0.6)";
@@ -103,7 +104,29 @@ export class Minimap {
     ctx.fillStyle = "rgba(100, 90, 80, 0.6)";
     ctx.fillRect(hx1, hz1, hx2 - hx1, hz2 - hz1);
 
-    // Detected props (red blinking dots)
+    // Zone divider lines
+    const [midX] = this.worldToCanvas(MAP_CX, 0);
+    const [, midZ] = this.worldToCanvas(0, MAP_CZ);
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(midX, 0); ctx.lineTo(midX, S);
+    ctx.moveTo(0, midZ); ctx.lineTo(S, midZ);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Zone labels A B C D
+    ctx.font = "bold 16px sans-serif";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("A", midX / 2, midZ / 2);
+    ctx.fillText("B", midX + (S - midX) / 2, midZ / 2);
+    ctx.fillText("C", midX / 2, midZ + (S - midZ) / 2);
+    ctx.fillText("D", midX + (S - midX) / 2, midZ + (S - midZ) / 2);
+
+    // Detected props
     const now = Date.now();
     this.detectedProps = this.detectedProps.filter((p) => p.expireTime > now);
     for (const prop of this.detectedProps) {
@@ -122,13 +145,17 @@ export class Minimap {
       }
     }
 
-    // Player (green triangle pointing in look direction)
+    // Player triangle
+    // In THREE.js: yaw=0 => looking -Z (up on map), yaw increases CW when turning right
+    // Canvas: 0 angle = right (+X), need triangle pointing up at yaw=0
+    // Map: +Z = down on canvas. So -Z (forward at yaw=0) = up on canvas
+    // rotation = yaw maps correctly: yaw=0 -> up, yaw=PI/2 -> right
     const [plx, plz] = this.worldToCanvas(this.playerX, this.playerZ);
     ctx.save();
     ctx.translate(plx, plz);
-    ctx.rotate(-this.playerYaw + Math.PI);
+    ctx.rotate(this.playerYaw + Math.PI);
     ctx.beginPath();
-    ctx.moveTo(0, -6);
+    ctx.moveTo(0, -7);
     ctx.lineTo(-4, 5);
     ctx.lineTo(4, 5);
     ctx.closePath();
@@ -139,7 +166,7 @@ export class Minimap {
     ctx.stroke();
     ctx.restore();
 
-    // Scan radius circle
+    // Scan radius
     const scanR = (10 / MAP_W) * S;
     ctx.beginPath();
     ctx.arc(plx, plz, scanR, 0, Math.PI * 2);

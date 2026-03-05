@@ -42,6 +42,13 @@ export class PropController {
   // Camera mode
   private thirdPerson = true;
 
+  // Soul mode (out-of-body)
+  private inSoulMode = false;
+  private soulPosition = new THREE.Vector3();
+  private soulEuler = new THREE.Euler(0, 0, 0, "YXZ");
+  private soulSpeed = 12;
+  private soulTogglePressed = false;
+
   constructor(camera: THREE.PerspectiveCamera, input: InputManager, config: ClientConfig) {
     this.camera = camera;
     this.input = input;
@@ -54,9 +61,44 @@ export class PropController {
     this.colliders = colliders;
     if (!this.input.isPointerLocked()) return this.position.clone();
 
-    // Mouse look always works (even when locked pose)
     const sens = this.config.get().sensitivity;
     const mouseDelta = this.input.consumeMouseDelta();
+
+    // Handle soul mode toggle (Digit1, only when locked)
+    const inputState = this.input.getState();
+    if (inputState.soulMode && !this.soulTogglePressed && this.isLocked) {
+      this.soulTogglePressed = true;
+      this.inSoulMode = !this.inSoulMode;
+      if (this.inSoulMode) {
+        this.soulPosition.copy(this.position).add(new THREE.Vector3(0, 2, 0));
+        this.soulEuler.set(this.currentPitch, this.currentYaw, 0);
+      }
+    }
+    if (!inputState.soulMode) this.soulTogglePressed = false;
+
+    // If in soul mode, use free-camera movement (no collision)
+    if (this.inSoulMode && this.isLocked) {
+      this.soulEuler.y -= mouseDelta.x * sens;
+      this.soulEuler.x -= mouseDelta.y * sens;
+      this.soulEuler.x = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, this.soulEuler.x));
+      this.camera.quaternion.setFromEuler(this.soulEuler);
+
+      const dir = new THREE.Vector3();
+      if (inputState.forward) dir.z -= 1;
+      if (inputState.backward) dir.z += 1;
+      if (inputState.left) dir.x -= 1;
+      if (inputState.right) dir.x += 1;
+      if (inputState.jump) dir.y += 1;
+      if (inputState.crouch) dir.y -= 1;
+      if (dir.lengthSq() > 0) {
+        dir.normalize().applyQuaternion(this.camera.quaternion);
+        this.soulPosition.addScaledVector(dir, this.soulSpeed * dt);
+      }
+      this.camera.position.copy(this.soulPosition);
+      return this.position.clone();
+    }
+
+    // Normal mouse look
     this.targetYaw -= mouseDelta.x * sens;
     this.targetPitch -= mouseDelta.y * sens;
     this.targetPitch = THREE.MathUtils.clamp(this.targetPitch, PITCH_MIN, PITCH_MAX);
@@ -67,7 +109,6 @@ export class PropController {
     this.currentPitch += (this.targetPitch - this.currentPitch) * smoothFactor;
 
     if (this.isLocked) {
-      // Locked: camera orbits but prop doesn't move
       this.updateCamera();
       return this.position.clone();
     }
@@ -339,8 +380,25 @@ export class PropController {
   }
 
   setPropMesh(mesh: THREE.Mesh | null) { this.propMesh = mesh; }
-  setLocked(locked: boolean) { this.isLocked = locked; }
+  setLocked(locked: boolean) {
+    this.isLocked = locked;
+    if (!locked) this.exitSoulMode();
+  }
   getIsLocked(): boolean { return this.isLocked; }
   getPosition(): THREE.Vector3 { return this.position.clone(); }
   getRotation(): { x: number; y: number } { return { x: this.currentPitch, y: this.currentYaw }; }
+
+  translatePosition(dx: number, dy: number) {
+    this.position.x += dx;
+    this.position.y += dy;
+    this.smoothY += dy;
+    if (this.propMesh) this.propMesh.position.copy(this.position);
+  }
+
+  isInSoulMode(): boolean { return this.inSoulMode; }
+  exitSoulMode() {
+    if (!this.inSoulMode) return;
+    this.inSoulMode = false;
+    this.updateCamera();
+  }
 }

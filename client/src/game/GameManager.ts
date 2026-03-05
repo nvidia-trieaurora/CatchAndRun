@@ -71,7 +71,7 @@ export class GameManager {
 
   private localRole: string = PlayerRole.PROP;
   private localHealth = 100;
-  private localAmmo = 12;
+  private localAmmo = WEAPON_MAX_AMMO;
   private localIsAlive = true;
   private localPropId = "";
   private localIsLocked = false;
@@ -93,6 +93,15 @@ export class GameManager {
   private lastSendTime = 0;
   private sendInterval = 1000 / CLIENT_SEND_RATE;
   private ferrisWheel: THREE.Group | null = null;
+  private ferrisCabinColliders: THREE.Box3[] = [];
+  private ferrisR = 8.5;
+  private ferrisHubY = 12;
+  private ferrisX = -10;
+  private ferrisZ = 34;
+  private ferrisNumCabins = 8;
+  private ferrisCabW = 1.8;
+  private ferrisCabH = 2.2;
+  private ferrisCabD = 1.4;
   private minimap: Minimap;
 
   constructor(canvas: HTMLCanvasElement) {
@@ -123,6 +132,7 @@ export class GameManager {
     void loadMemeManifest().then((memes) => preloadMemeTextures(memes));
 
     this.setupUI();
+    this.setupChat();
 
     window.addEventListener("resize", () => this.onResize());
 
@@ -148,9 +158,9 @@ export class GameManager {
 
   private setupUI() {
     this.mainMenu = new MainMenuUI({
-      onQuickJoin: (nickname) => void this.quickJoin(nickname),
-      onCreate: (nickname, roomName, isPrivate) => void this.createRoom(nickname, roomName, isPrivate),
-      onJoinCode: (nickname, code) => void this.joinByCode(nickname, code),
+      onQuickJoin: (nickname) => this.quickJoin(nickname),
+      onCreate: (nickname, roomName, isPrivate) => this.createRoom(nickname, roomName, isPrivate),
+      onJoinCode: (nickname, code) => this.joinByCode(nickname, code),
     });
 
     this.roomLobby = new RoomLobbyUI({
@@ -184,13 +194,7 @@ export class GameManager {
   private handleRoomStateMessage(data: any) {
     this.latestRoomState = data;
 
-    const newPhase = data.phase as string;
-    if (newPhase && newPhase !== this.currentPhase) {
-      this.onPhaseChange(this.currentPhase, newPhase);
-      this.currentPhase = newPhase;
-    }
-
-    // Update local player data
+    // Update local player data BEFORE phase change so role is correct for notifications
     const selfData = data.players?.find((p: any) => p.sessionId === this.network.getSessionId());
     if (selfData) {
       this.localRole = selfData.role;
@@ -198,6 +202,15 @@ export class GameManager {
       this.localAmmo = selfData.ammo;
       this.localIsAlive = selfData.isAlive;
       this.localIsLocked = selfData.isLocked;
+    }
+
+    const newPhase = data.phase as string;
+    if (newPhase && newPhase !== this.currentPhase) {
+      this.onPhaseChange(this.currentPhase, newPhase);
+      this.currentPhase = newPhase;
+    }
+
+    if (selfData) {
 
       if (selfData.currentPropId && selfData.currentPropId !== this.localPropId && this.propTransformSystem) {
         this.localPropId = selfData.currentPropId;
@@ -291,7 +304,7 @@ export class GameManager {
           this.speak("You are a prop! Hide quickly!");
           setTimeout(() => this.input.requestPointerLock(), 500);
         } else {
-          this.uiManager.showNotification("You are a HUNTER! Waiting...");
+          this.uiManager.showNotification("You are a HUNTER! Controls: LMB Shoot | R Reload | Q Grenade | E Scanner");
           this.speak("You are a hunter. Wait for the hunt to begin.");
           setTimeout(() => this.input.requestPointerLock(), 500);
         }
@@ -319,7 +332,7 @@ export class GameManager {
           } else {
             this.hunterController.setPosition(-36, 0.1, 0);
           }
-          this.uiManager.showNotification("HUNT! Find and eliminate all props!");
+          this.uiManager.showNotification("HUNT! LMB:Shoot | R:Reload | Q:Grenade | E:Scanner (full map)");
           this.speak("Gate open! Hunt them down!");
         } else {
           this.speak("Hunters released! Stay hidden!");
@@ -353,6 +366,17 @@ export class GameManager {
     this.gateCollider = this.colliders[this.gateColliderIndex] || null;
     this.gateMesh = mapResult.gateMesh;
     this.ferrisWheel = mapResult.ferrisWheel;
+
+    // Store cabin collider references for dynamic updates
+    this.ferrisCabinColliders = [];
+    const fwNumCabs = this.ferrisNumCabins;
+    const collidersLen = this.colliders.length;
+    for (let i = 0; i < fwNumCabs * 2; i++) {
+      const idx = collidersLen - fwNumCabs * 2 + i;
+      if (idx >= 0 && idx < this.colliders.length) {
+        this.ferrisCabinColliders.push(this.colliders[idx]);
+      }
+    }
 
     this.weaponSystem = new WeaponSystem(this.scene);
     this.propTransformSystem = new PropTransformSystem(this.scene, this.propRegistry);
@@ -525,19 +549,34 @@ export class GameManager {
       this.localHealth = data.remainingHealth;
       this.audioSystem?.playSound("hit");
       this.gameHUD.flashDamage();
+      if (this.propController?.isInSoulMode()) {
+        this.propController.exitSoulMode();
+      }
     });
 
     room.onMessage(ServerMessage.PLAYER_KILLED, (data: any) => {
       this.gameHUD.addKillfeed(data.killerNickname, data.victimNickname);
       if (data.victimSessionId === this.network.getSessionId()) {
+        // Get position before changing role
+        const wasHunter = this.localRole === PlayerRole.HUNTER;
+        const pos = wasHunter
+          ? this.hunterController.getPosition()
+          : this.propController.getPosition();
+
+        if (this.propController?.isInSoulMode()) {
+          this.propController.exitSoulMode();
+        }
+        this.gameHUD.setSoulModeVisible(false);
+
         this.localIsAlive = false;
         this.localRole = PlayerRole.SPECTATOR;
-        this.input.exitPointerLock();
         this.exitGrenadeMode();
         if (this.fpGun) {
           this.camera.remove(this.fpGun);
           this.fpGun = null;
         }
+        this.gameHUD.updateRole("ghost");
+        this.spectatorController.setPosition(pos.x, pos.y + 2, pos.z);
       }
     });
 
@@ -622,10 +661,15 @@ export class GameManager {
     });
 
     room.onMessage(ServerMessage.SCAN_RESULT, (data: any) => {
+      if (data.warning) {
+        this.uiManager.showNotification(`WARNING: Hunter ${data.hunterName} used FULL MAP SCAN!`);
+        this.audioSystem?.playSound("radar");
+        return;
+      }
       if (data.count === 0) {
-        this.uiManager.showNotification("Scanner: No props detected nearby");
+        this.uiManager.showNotification("Scanner: No props found on the map");
       } else {
-        this.uiManager.showNotification(`Scanner: ${data.count} prop(s) detected!`);
+        this.uiManager.showNotification(`Scanner: ${data.count} prop(s) detected on map!`);
         if (data.detected) {
           this.minimap.addDetectedProps(data.detected);
           for (const d of data.detected) {
@@ -729,6 +773,21 @@ export class GameManager {
       this.uiManager.showScreen("results");
       this.input.exitPointerLock();
     });
+
+    room.onMessage(ServerMessage.CHAT_MESSAGE, (data: any) => {
+      this.gameHUD.addChatMessage(data.sender, data.message);
+    });
+  }
+
+  private setupChat() {
+    this.input.setTabToggleHandler(() => {
+      const isOpen = this.gameHUD.toggleChat();
+      this.input.setChatActive(isOpen);
+    });
+
+    this.gameHUD.setChatSendHandler((message: string) => {
+      this.network.send(ClientMessage.CHAT, { message });
+    });
   }
 
   private leaveRoom() {
@@ -755,6 +814,11 @@ export class GameManager {
 
     const dt = Math.min(this.clock.getDelta(), 0.05);
 
+    // Update ferris wheel BEFORE gameplay so colliders are current for physics
+    if (this.ferrisWheel) {
+      this.updateFerrisWheel(dt);
+    }
+
     if (this.isGameActive()) {
       this.updateGameplay(dt);
     }
@@ -765,16 +829,71 @@ export class GameManager {
     this.particleSystem?.update(dt);
     this.updateGunViewmodel(dt);
 
-    if (this.ferrisWheel) {
-      this.ferrisWheel.rotation.z += dt * 0.15;
-      this.ferrisWheel.children.forEach((child) => {
-        if (child instanceof THREE.Group) {
-          child.rotation.z -= dt * 0.15;
-        }
-      });
-    }
-
     this.renderer.render(this.scene, this.camera);
+  }
+
+  private prevCabinPositions: { x: number; y: number }[] = [];
+
+  private updateFerrisWheel(dt: number) {
+    if (!this.ferrisWheel) return;
+
+    this.ferrisWheel.rotation.z += dt * 0.08;
+    // Counter-rotate hinge groups inside mount groups so cabins stay upright
+    // Hierarchy: wheelPivot -> mount (Group) -> hinge (Group, child[1]) -> cabin meshes
+    this.ferrisWheel.children.forEach((child) => {
+      if (child instanceof THREE.Group) {
+        child.children.forEach((sub) => {
+          if (sub instanceof THREE.Group) {
+            sub.rotation.z = -this.ferrisWheel!.rotation.z;
+          }
+        });
+      }
+    });
+
+    const angle = this.ferrisWheel.rotation.z;
+    const playerPos = this.localIsAlive
+      ? (this.localRole === PlayerRole.HUNTER ? this.hunterController?.getPosition() : this.propController?.getPosition())
+      : null;
+
+    for (let i = 0; i < this.ferrisNumCabins; i++) {
+      const cabAngle = (i / this.ferrisNumCabins) * Math.PI * 2 + angle;
+      const cx = this.ferrisX + Math.cos(cabAngle) * this.ferrisR;
+      const cy = this.ferrisHubY + Math.sin(cabAngle) * this.ferrisR;
+
+      const prevPos = this.prevCabinPositions[i];
+      const floorIdx = i * 2;
+
+      // Update floor collider
+      if (this.ferrisCabinColliders[floorIdx]) {
+        this.ferrisCabinColliders[floorIdx].min.set(cx - this.ferrisCabW / 2, cy - this.ferrisCabH / 2 - 0.15, this.ferrisZ - this.ferrisCabD / 2);
+        this.ferrisCabinColliders[floorIdx].max.set(cx + this.ferrisCabW / 2, cy - this.ferrisCabH / 2 + 0.08, this.ferrisZ + this.ferrisCabD / 2);
+      }
+      // Update roof collider
+      if (this.ferrisCabinColliders[floorIdx + 1]) {
+        this.ferrisCabinColliders[floorIdx + 1].min.set(cx - this.ferrisCabW / 2 - 0.1, cy + this.ferrisCabH / 2 - 0.1, this.ferrisZ - this.ferrisCabD / 2 - 0.1);
+        this.ferrisCabinColliders[floorIdx + 1].max.set(cx + this.ferrisCabW / 2 + 0.1, cy + this.ferrisCabH / 2 + 0.1, this.ferrisZ + this.ferrisCabD / 2 + 0.1);
+      }
+
+      // Platform carry: if player is standing on this cabin floor, move them with it
+      if (prevPos && playerPos && this.ferrisCabinColliders[floorIdx]) {
+        const floorBox = this.ferrisCabinColliders[floorIdx];
+        const px = playerPos.x, pz = playerPos.z;
+        const py = playerPos.y - (this.localRole === PlayerRole.HUNTER ? 1.6 : 0);
+        if (px > floorBox.min.x && px < floorBox.max.x &&
+            pz > floorBox.min.z && pz < floorBox.max.z &&
+            Math.abs(py - floorBox.max.y) < 0.3) {
+          const dx = cx - prevPos.x;
+          const dy = cy - prevPos.y;
+          if (this.localRole === PlayerRole.HUNTER) {
+            this.hunterController.translatePosition(dx, dy);
+          } else {
+            this.propController.translatePosition(dx, dy);
+          }
+        }
+      }
+
+      this.prevCabinPositions[i] = { x: cx, y: cy };
+    }
   }
 
 
@@ -791,11 +910,23 @@ export class GameManager {
       return;
     }
 
+    // Build collider list with other player bodies so they can't walk through each other
+    const allColliders = [...this.colliders];
+    const myId = this.network.getSessionId();
+    this.playerEntities.forEach((entity, sid) => {
+      if (sid === myId) return;
+      if (!entity.group.visible) return;
+      const ep = entity.group.position;
+      allColliders.push(new THREE.Box3(
+        new THREE.Vector3(ep.x - 0.35, ep.y, ep.z - 0.35),
+        new THREE.Vector3(ep.x + 0.35, ep.y + 1.6, ep.z + 0.35)
+      ));
+    });
+
     let pos: THREE.Vector3;
 
     if (this.localRole === PlayerRole.HUNTER) {
-      // Hunter can move during HIDING (inside cage) AND ACTIVE (free roam)
-      pos = this.hunterController.update(dt, this.colliders);
+      pos = this.hunterController.update(dt, allColliders);
       this.handleHunterActions(dt);
       this.updateHunterHUD();
     } else {
@@ -812,7 +943,7 @@ export class GameManager {
       } else {
         (this.propController as any).speed = 9;
       }
-      pos = this.propController.update(dt, this.colliders);
+      pos = this.propController.update(dt, allColliders);
       this.handlePropActions();
       this.updatePropHUD();
     }
@@ -977,6 +1108,8 @@ export class GameManager {
     const cdScan = Math.max(0, HUNTER_SCAN_COOLDOWN_MS - (Date.now() - this.lastScanTime));
     this.gameHUD.updateHunterAbilities(cdGrenade, cdScan, this.grenadeMode);
     this.gameHUD.updateDamageOverlay(this.localHealth, HUNTER_MAX_HEALTH, true);
+    this.gameHUD.updatePropInfo("", false);
+    this.gameHUD.setSoulModeVisible(false);
 
     this.minimap.show();
     const pos = this.hunterController.getPosition();
@@ -999,6 +1132,7 @@ export class GameManager {
       this.gameHUD.updateAbility("Q:INVIS E:TRANS R:SPEED", "", 0);
     }
     this.gameHUD.updateDamageOverlay(this.localHealth, PROP_MAX_HEALTH, false);
+    this.gameHUD.setSoulModeVisible(this.propController.isInSoulMode());
   }
 
   private sendInputToServer(position: THREE.Vector3) {

@@ -16,9 +16,19 @@ export class NetworkManager {
   private room: Room | null = null;
   private stateChangeCallbacks: ((state: RoomState) => void)[] = [];
   private messageCallbacks = new Map<string, ((data: any) => void)[]>();
+  private _connecting = false;
 
   constructor() {
     this.client = new Client(getServerUrl());
+  }
+
+  get connecting(): boolean { return this._connecting; }
+
+  private async cleanupExistingRoom() {
+    if (this.room) {
+      try { await this.room.leave(); } catch (_) { /* already left */ }
+      this.room = null;
+    }
   }
 
   async createRoom(options: {
@@ -27,28 +37,58 @@ export class NetworkManager {
     isPrivate?: boolean;
     maxPlayers?: number;
   }): Promise<Room> {
-    this.room = await this.client.create("game_room", options);
-    this.setupRoomListeners();
-    return this.room;
+    if (this._connecting) throw new Error("Already connecting");
+    this._connecting = true;
+    try {
+      await this.cleanupExistingRoom();
+      this.room = await this.client.create("game_room", options);
+      this.setupRoomListeners();
+      return this.room;
+    } finally {
+      this._connecting = false;
+    }
   }
 
   async joinRoom(roomId: string, nickname: string): Promise<Room> {
-    this.room = await this.client.joinById(roomId, { nickname });
-    this.setupRoomListeners();
-    return this.room;
+    if (this._connecting) throw new Error("Already connecting");
+    this._connecting = true;
+    try {
+      await this.cleanupExistingRoom();
+      this.room = await this.client.joinById(roomId, { nickname });
+      this.setupRoomListeners();
+      return this.room;
+    } finally {
+      this._connecting = false;
+    }
   }
 
   async joinByCode(code: string, nickname: string): Promise<Room> {
-    const rooms = await this.getAvailableRooms();
-    const match = rooms.find((r: any) => r.metadata?.roomCode === code);
-    if (!match) throw new Error("Room not found with that code");
-    return this.joinRoom(match.roomId, nickname);
+    if (this._connecting) throw new Error("Already connecting");
+    this._connecting = true;
+    try {
+      await this.cleanupExistingRoom();
+      const rooms = await this.getAvailableRooms();
+      const match = rooms.find((r: any) => r.metadata?.roomCode === code);
+      if (!match) throw new Error("Room not found with that code");
+      this.room = await this.client.joinById(match.roomId, { nickname });
+      this.setupRoomListeners();
+      return this.room;
+    } finally {
+      this._connecting = false;
+    }
   }
 
   async quickJoin(nickname: string): Promise<Room> {
-    this.room = await this.client.joinOrCreate("game_room", { nickname });
-    this.setupRoomListeners();
-    return this.room;
+    if (this._connecting) throw new Error("Already connecting");
+    this._connecting = true;
+    try {
+      await this.cleanupExistingRoom();
+      this.room = await this.client.joinOrCreate("game_room", { nickname });
+      this.setupRoomListeners();
+      return this.room;
+    } finally {
+      this._connecting = false;
+    }
   }
 
   async getAvailableRooms(): Promise<any[]> {

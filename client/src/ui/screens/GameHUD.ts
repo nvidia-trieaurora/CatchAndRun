@@ -11,7 +11,15 @@ export class GameHUD {
   private crosshairEl!: HTMLElement;
   private vignetteEl!: HTMLElement;
   private flashEl!: HTMLElement;
+  private chatContainerEl!: HTMLElement;
+  private chatMessagesEl!: HTMLElement;
+  private chatInputEl!: HTMLInputElement;
+  private chatToastEl!: HTMLElement;
+  private soulModeEl!: HTMLElement;
+  private controlsHintEl!: HTMLElement;
   private killfeedEntries: { el: HTMLElement; time: number }[] = [];
+  private chatOpen = false;
+  private onChatSend: ((message: string) => void) | null = null;
 
   constructor() {
     this.element = document.createElement("div");
@@ -42,6 +50,19 @@ export class GameHUD {
 
       <div class="damage-vignette" id="damage-vignette"></div>
       <div class="damage-flash" id="damage-flash"></div>
+
+      <div class="hud-chat-container" id="hud-chat-container" style="display:none;">
+        <div class="hud-chat-messages" id="hud-chat-messages"></div>
+        <input class="hud-chat-input" id="hud-chat-input" type="text" placeholder="Type a message... (Tab to close)" maxlength="120" autocomplete="off" />
+      </div>
+
+      <div class="hud-chat-toast" id="hud-chat-toast"></div>
+
+      <div class="hud-soul-mode" id="hud-soul-mode" style="display:none;">
+        SOUL MODE - Press 1 to return
+      </div>
+
+      <div class="hud-controls-hint" id="hud-controls-hint" style="display:none;"></div>
     `;
 
     setTimeout(() => {
@@ -56,7 +77,77 @@ export class GameHUD {
       this.crosshairEl = this.element.querySelector("#hud-crosshair")!;
       this.vignetteEl = this.element.querySelector("#damage-vignette")!;
       this.flashEl = this.element.querySelector("#damage-flash")!;
+      this.chatContainerEl = this.element.querySelector("#hud-chat-container")!;
+      this.chatMessagesEl = this.element.querySelector("#hud-chat-messages")!;
+      this.chatInputEl = this.element.querySelector("#hud-chat-input")! as HTMLInputElement;
+      this.chatToastEl = this.element.querySelector("#hud-chat-toast")!;
+      this.soulModeEl = this.element.querySelector("#hud-soul-mode")!;
+      this.controlsHintEl = this.element.querySelector("#hud-controls-hint")!;
+
+      this.chatInputEl.addEventListener("keydown", (e) => {
+        e.stopPropagation();
+        if (e.key === "Enter") {
+          const msg = this.chatInputEl.value.trim();
+          if (msg && this.onChatSend) {
+            this.onChatSend(msg);
+          }
+          this.chatInputEl.value = "";
+        }
+      });
     }, 0);
+  }
+
+  setChatSendHandler(handler: (message: string) => void) {
+    this.onChatSend = handler;
+  }
+
+  toggleChat(): boolean {
+    this.chatOpen = !this.chatOpen;
+    if (this.chatContainerEl) {
+      this.chatContainerEl.style.display = this.chatOpen ? "flex" : "none";
+      if (this.chatOpen) {
+        this.chatInputEl.focus();
+      } else {
+        this.chatInputEl.blur();
+      }
+    }
+    return this.chatOpen;
+  }
+
+  isChatOpen(): boolean {
+    return this.chatOpen;
+  }
+
+  addChatMessage(sender: string, message: string) {
+    if (!this.chatMessagesEl) return;
+    const el = document.createElement("div");
+    el.className = "hud-chat-msg";
+    el.innerHTML = `<strong>${sender}:</strong> ${message}`;
+    this.chatMessagesEl.appendChild(el);
+    this.chatMessagesEl.scrollTop = this.chatMessagesEl.scrollHeight;
+    while (this.chatMessagesEl.children.length > 50) {
+      this.chatMessagesEl.removeChild(this.chatMessagesEl.firstChild!);
+    }
+
+    if (!this.chatOpen && this.chatToastEl) {
+      const toast = document.createElement("div");
+      toast.className = "hud-chat-toast-msg";
+      toast.innerHTML = `<strong>${sender}:</strong> ${message}`;
+      this.chatToastEl.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add("hud-chat-toast-fade");
+        setTimeout(() => toast.remove(), 600);
+      }, 3000);
+      while (this.chatToastEl.children.length > 5) {
+        this.chatToastEl.removeChild(this.chatToastEl.firstChild!);
+      }
+    }
+  }
+
+  setSoulModeVisible(visible: boolean) {
+    if (this.soulModeEl) {
+      this.soulModeEl.style.display = visible ? "block" : "none";
+    }
   }
 
   updateDamageOverlay(currentHp: number, maxHp: number, isHunter: boolean) {
@@ -102,10 +193,26 @@ export class GameHUD {
 
   updateRole(role: string) {
     if (!this.roleEl || !role) return;
-    this.roleEl.textContent = role.toUpperCase();
-    this.roleEl.className = `hud-role ${role}`;
+    if (role === "ghost") {
+      this.roleEl.textContent = "GHOST";
+      this.roleEl.className = "hud-role ghost";
+    } else {
+      this.roleEl.textContent = role.toUpperCase();
+      this.roleEl.className = `hud-role ${role}`;
+    }
     this.crosshairEl.style.display = role === "hunter" ? "block" : "none";
     this.ammoEl.style.display = role === "hunter" ? "block" : "none";
+    if (this.controlsHintEl) {
+      if (role === "hunter") {
+        this.controlsHintEl.style.display = "block";
+        this.controlsHintEl.innerHTML = `<b>LMB</b> Shoot &nbsp; <b>R</b> Reload &nbsp; <b>Q</b> Grenade &nbsp; <b>E</b> Scanner &nbsp; <b>WASD</b> Move &nbsp; <b>Space</b> Jump &nbsp; <b>Shift</b> Crouch &nbsp; <b>Tab</b> Chat`;
+      } else if (role === "prop") {
+        this.controlsHintEl.style.display = "block";
+        this.controlsHintEl.innerHTML = `<b>WASD</b> Move &nbsp; <b>Space</b> Jump &nbsp; <b>E</b> Transform &nbsp; <b>F</b> Lock &nbsp; <b>Q</b> Invisible &nbsp; <b>R</b> Speed &nbsp; <b>1</b> Soul Mode &nbsp; <b>Tab</b> Chat`;
+      } else {
+        this.controlsHintEl.style.display = "none";
+      }
+    }
   }
 
   updateHealth(current: number, max: number) {
@@ -184,13 +291,15 @@ export class GameHUD {
   updatePropInfo(propName: string, isLocked: boolean) {
     if (!this.propInfoEl) return;
     if (propName) {
+      this.propInfoEl.style.display = "block";
       this.propInfoEl.innerHTML = `
         Disguised as: <strong>${propName}</strong>
         ${isLocked ? " | <span style='color:#4caf50'>LOCKED</span>" : " | Press F to Lock"}
         <br>Press E near objects to transform
       `;
     } else {
-      this.propInfoEl.textContent = "Press E near objects to transform";
+      this.propInfoEl.style.display = "none";
+      this.propInfoEl.textContent = "";
     }
   }
 

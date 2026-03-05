@@ -285,4 +285,11 @@ export class HunterController {
   }
 
   getPosition(): THREE.Vector3 { return this.position.clone(); }
+
+  translatePosition(dx: number, dy: number) {
+    this.position.x += dx;
+    this.position.y += dy;
+    this.feetY += dy;
+    this.smoothFeetY += dy;
+  }
 }

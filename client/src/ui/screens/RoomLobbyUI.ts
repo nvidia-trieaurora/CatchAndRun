@@ -75,7 +75,18 @@ export class RoomLobbyUI {
       });
 
       this.element.querySelector("#btn-start")!.addEventListener("click", () => {
+        if (this.startBtnEl.disabled) return;
+        this.startBtnEl.disabled = true;
+        this.startBtnEl.textContent = "Starting...";
+        this.startBtnEl.style.opacity = "0.5";
         callbacks.onStart();
+        setTimeout(() => {
+          if (this.startBtnEl) {
+            this.startBtnEl.disabled = false;
+            this.startBtnEl.textContent = "Start Game";
+            this.startBtnEl.style.opacity = "1";
+          }
+        }, 3000);
       });
 
       this.element.querySelector("#btn-leave")!.addEventListener("click", () => {

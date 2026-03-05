@@ -20,7 +20,7 @@ export const PROP_SPEED = 9.0;
 
 export const WEAPON_DAMAGE = 25;
 export const WEAPON_FIRE_RATE_MS = 200;
-export const WEAPON_MAX_AMMO = 12;
+export const WEAPON_MAX_AMMO = 20;
 export const WEAPON_RELOAD_TIME_MS = 2000;
 export const WEAPON_RANGE = 100;
 
@@ -34,8 +34,8 @@ export const HUNTER_RADAR_RANGE = 25;
 export const PROP_DECOY_COOLDOWN_MS = 25000;
 export const PROP_DECOY_RANGE = 30;
 
-export const HUNTER_SCAN_COOLDOWN_MS = 30000;
-export const HUNTER_SCAN_RADIUS = 10;
+export const HUNTER_SCAN_COOLDOWN_MS = 40000;
+export const HUNTER_SCAN_RADIUS = 200;
 export const HUNTER_GRENADE_COOLDOWN_MS = 30000;
 export const HUNTER_GRENADE_RADIUS = 5;
 export const HUNTER_GRENADE_STUN_MS = 2000;
