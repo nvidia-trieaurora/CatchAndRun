@@ -219,6 +219,14 @@ function buildBuoy(group: THREE.Group, _def: PropDefinition) {
   addPart(group, new THREE.CylinderGeometry(0.04, 0.04, 0.15, 6), mat(0x333333), 0, 0.45, 0);
 }
 
+function buildTree(group: THREE.Group, _def: PropDefinition) {
+  const trunkMat = mat(0x5a3a1a, 0.9, 0);
+  const leafMat = mat(0x3a7a2a, 0.85, 0);
+
+  addPart(group, new THREE.CylinderGeometry(0.08, 0.14, 2.0, 8), trunkMat, 0, 1.0, 0);
+  addPart(group, new THREE.SphereGeometry(0.8, 8, 6), leafMat, 0, 2.5, 0);
+}
+
 const PROP_BUILDERS: Record<string, (group: THREE.Group, def: PropDefinition) => void> = {
   crate: buildCrate,
   crate_small: buildCrate,
@@ -235,4 +243,5 @@ const PROP_BUILDERS: Record<string, (group: THREE.Group, def: PropDefinition) =>
   tire: buildTire,
   hardhat: buildHardhat,
   buoy: buildBuoy,
+  tree: buildTree,
 };

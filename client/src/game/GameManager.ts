@@ -9,6 +9,7 @@ import { GameHUD } from "../ui/screens/GameHUD";
 import { ResultsUI } from "../ui/screens/ResultsUI";
 import { SettingsPanel } from "../ui/components/SettingsPanel";
 import { Minimap } from "../ui/components/Minimap";
+import { SoundMemePanel } from "../ui/components/SoundMemePanel";
 import { buildOldHarborFortniteMap } from "./world/maps/oldHarborFortnite";
 import { createFortniteLighting } from "./world/lighting/fortniteLighting";
 import { PropRegistry } from "./world/PropRegistry";
@@ -59,6 +60,9 @@ export class GameManager {
   private audioSystem!: AudioSystem;
   private particleSystem!: ParticleSystem;
   private musicBtn: HTMLButtonElement | null = null;
+  private soundMemePanel!: SoundMemePanel;
+  private memeAudioCache = new Map<string, AudioBuffer>();
+  private currentMemeAudio: HTMLAudioElement | null = null;
 
   private hunterController!: HunterController;
   private propController!: PropController;
@@ -135,6 +139,7 @@ export class GameManager {
     this.setupUI();
     this.setupChat();
     this.setupMusicToggle();
+    this.setupSoundMemePanel();
 
     window.addEventListener("resize", () => this.onResize());
 
@@ -147,9 +152,7 @@ export class GameManager {
     });
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && this.settingsPanel.isVisible()) {
-        this.settingsPanel.toggle();
-      } else if (e.key === "Escape" && this.input.isPointerLocked()) {
+      if (e.key === "Escape" && this.input.isPointerLocked()) {
         this.input.exitPointerLock();
       }
     });
@@ -297,6 +300,7 @@ export class GameManager {
 
       case GamePhase.HIDING:
         this.invisibleProps.clear();
+        this.localTransformCount = 0;
         this.buildMapIfNeeded();
         this.initControllers();
         this.uiManager.showScreen("gameHUD");
@@ -369,12 +373,13 @@ export class GameManager {
     this.gateMesh = mapResult.gateMesh;
     this.ferrisWheel = mapResult.ferrisWheel;
 
-    // Store cabin collider references for dynamic updates
+    // Store cabin collider references for dynamic updates (5 per cabin)
     this.ferrisCabinColliders = [];
     const fwNumCabs = this.ferrisNumCabins;
+    const collidersPerCabin = 5;
     const collidersLen = this.colliders.length;
-    for (let i = 0; i < fwNumCabs * 2; i++) {
-      const idx = collidersLen - fwNumCabs * 2 + i;
+    for (let i = 0; i < fwNumCabs * collidersPerCabin; i++) {
+      const idx = collidersLen - fwNumCabs * collidersPerCabin + i;
       if (idx >= 0 && idx < this.colliders.length) {
         this.ferrisCabinColliders.push(this.colliders[idx]);
       }
@@ -484,6 +489,25 @@ export class GameManager {
     muzzle.position.set(0, 0.02, -0.42);
     g.add(muzzle);
 
+    // Muzzle flash group (hidden by default, shown on fire)
+    const mFlashGroup = new THREE.Group();
+    mFlashGroup.position.set(0, 0.02, -0.46);
+    mFlashGroup.visible = false;
+    const flashGeo = new THREE.PlaneGeometry(0.15, 0.15);
+    const flashMat2 = new THREE.MeshBasicMaterial({
+      color: 0xffaa22, transparent: true, opacity: 0.9, side: THREE.DoubleSide,
+      depthTest: false, depthWrite: false,
+    });
+    const mf1 = new THREE.Mesh(flashGeo, flashMat2);
+    mf1.renderOrder = 1000;
+    mFlashGroup.add(mf1);
+    const mf2 = new THREE.Mesh(flashGeo.clone(), flashMat2.clone());
+    mf2.rotation.z = Math.PI / 2;
+    mf2.renderOrder = 1000;
+    mFlashGroup.add(mf2);
+    g.add(mFlashGroup);
+    this.fpMuzzleFlash = mFlashGroup as unknown as THREE.Mesh;
+
     // Position: bottom-right of screen, angled slightly
     g.position.set(0.32, -0.28, -0.55);
     g.rotation.set(0, 0.05, 0);
@@ -587,11 +611,16 @@ export class GameManager {
     room.onMessage(ServerMessage.TRANSFORM_RESULT, (data: any) => {
       if (data.success && data.propId) {
         this.localPropId = data.propId;
+        this.localTransformCount++;
         this.audioSystem?.playSound("ability");
         if (this.propTransformSystem && this.propController) {
           const pos = this.propController.getPosition();
           const mesh = this.propTransformSystem.transform(this.localPropId, pos);
           this.propController.setPropMesh(mesh);
+        }
+        const propDef = this.propRegistry.get(this.localPropId);
+        if (propDef) {
+          this.uiManager.showNotification(`Transformed into ${propDef.name}! (${this.localTransformCount}/2)`);
         }
       } else if (!data.success) {
         this.uiManager.showNotification(data.reason || "Transform failed");
@@ -781,6 +810,10 @@ export class GameManager {
     room.onMessage(ServerMessage.CHAT_MESSAGE, (data: any) => {
       this.gameHUD.addChatMessage(data.sender, data.message);
     });
+
+    room.onMessage(ServerMessage.SOUND_MEME_PLAYED, (data: any) => {
+      this.handleSoundMemePlayed(data);
+    });
   }
 
   private setupChat() {
@@ -794,27 +827,140 @@ export class GameManager {
     });
   }
 
+  private infoPanel: HTMLElement | null = null;
+
   private setupMusicToggle() {
     const btn = document.createElement("button");
     btn.id = "music-toggle";
-    btn.textContent = "♪ OFF";
+    btn.textContent = "[M] ♪ OFF";
     btn.style.cssText = `
       position: fixed; top: 16px; left: 16px; z-index: 100;
       background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 6px; padding: 6px 12px; font-size: 0.8rem; cursor: pointer;
-      font-family: inherit; backdrop-filter: blur(4px); transition: background 0.2s;
+      border-radius: 6px; padding: 6px 10px; font-size: 0.75rem; cursor: pointer;
+      font-family: inherit; backdrop-filter: blur(4px); pointer-events: none;
     `;
-    btn.addEventListener("mouseenter", () => { btn.style.background = "rgba(0,0,0,0.7)"; });
-    btn.addEventListener("mouseleave", () => { btn.style.background = "rgba(0,0,0,0.5)"; });
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (this.audioSystem) {
-        const playing = this.audioSystem.toggleBGM();
-        btn.textContent = playing ? "♪ ON" : "♪ OFF";
-      }
-    });
     document.body.appendChild(btn);
     this.musicBtn = btn;
+
+    const infoBtn = document.createElement("button");
+    infoBtn.id = "info-toggle";
+    infoBtn.textContent = "[I] ?";
+    infoBtn.style.cssText = `
+      position: fixed; top: 16px; left: 110px; z-index: 100;
+      background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px; padding: 6px 10px; font-size: 0.75rem;
+      font-family: inherit; backdrop-filter: blur(4px); pointer-events: none;
+    `;
+    document.body.appendChild(infoBtn);
+
+    const panel = document.createElement("div");
+    panel.style.cssText = `
+      position: fixed; top: 50px; left: 16px; z-index: 100;
+      background: rgba(0,0,0,0.88); color: #ddd; border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px; padding: 14px 18px; font-size: 0.78rem; line-height: 1.7;
+      max-width: 330px; display: none; backdrop-filter: blur(6px);
+    `;
+    panel.innerHTML = `
+      <div style="color:#fff;font-weight:bold;margin-bottom:8px;font-size:0.9rem;">Controls</div>
+      <div style="color:#4fc3f7;font-weight:bold;margin-bottom:4px;">Hunter</div>
+      <b>LMB</b> Shoot &bull; <b>R</b> Reload &bull; <b>Q</b> Grenade<br>
+      <b>E</b> Scanner &bull; <b>WASD</b> Move &bull; <b>Space</b> Jump<br>
+      <b>Shift</b> Crouch<br>
+      <div style="color:#66bb6a;font-weight:bold;margin:6px 0 4px;">Prop</div>
+      <b>WASD</b> Move &bull; <b>Space</b> Jump &bull; <b>E</b> Transform (2x max)<br>
+      <b>F</b> Lock &bull; <b>Q</b> Invisible &bull; <b>R</b> Speed<br>
+      <b>1</b> Soul Mode<br>
+      <div style="color:#fff;font-weight:bold;margin:6px 0 4px;">General</div>
+      <b>Tab</b> Open/Close Chat<br>
+      <b>2</b> Open Sound Meme &rarr; <b>2</b> cycle &rarr; <b>Enter</b> play<br>
+      <b>M</b> Toggle Music &bull; <b>I</b> Toggle Help<br>
+      <b>Esc</b> Release mouse
+    `;
+    document.body.appendChild(panel);
+    this.infoPanel = panel;
+
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "KeyM") {
+        e.preventDefault();
+        if (this.audioSystem) {
+          const playing = this.audioSystem.toggleBGM();
+          if (this.musicBtn) this.musicBtn.textContent = playing ? "[M] ♪ ON" : "[M] ♪ OFF";
+        }
+      }
+      if (e.code === "KeyI") {
+        e.preventDefault();
+        if (this.infoPanel) {
+          this.infoPanel.style.display = this.infoPanel.style.display === "none" ? "block" : "none";
+        }
+      }
+    });
+  }
+
+  private handleSoundMemePlayed(data: { soundId: string; x: number; z: number; zone: string; senderSessionId: string }) {
+    const filePath = this.soundMemePanel.getSoundFile(data.soundId);
+    if (!filePath) return;
+
+    const myPos = this.localRole === PlayerRole.HUNTER
+      ? this.hunterController?.getPosition()
+      : this.propController?.getPosition();
+
+    let volume = 1.0;
+    if (myPos && data.senderSessionId !== this.network.getSessionId()) {
+      const dx = data.x - myPos.x;
+      const dz = data.z - myPos.z;
+      const dist = Math.sqrt(dx * dx + dz * dz);
+      volume = Math.max(0, 1 - dist / 50);
+    }
+
+    if (volume > 0.01) {
+      if (this.currentMemeAudio) {
+        this.currentMemeAudio.pause();
+        this.currentMemeAudio.currentTime = 0;
+        this.currentMemeAudio = null;
+      }
+      const audio = new Audio(filePath);
+      audio.volume = Math.min(1, volume * 0.7);
+      audio.play().catch(() => {});
+      this.currentMemeAudio = audio;
+      audio.addEventListener("ended", () => {
+        if (this.currentMemeAudio === audio) this.currentMemeAudio = null;
+      });
+    }
+
+    if (this.localRole === PlayerRole.HUNTER) {
+      this.minimap.addSoundPing(data.x, data.z, data.zone);
+    }
+  }
+
+  private setupSoundMemePanel() {
+    this.soundMemePanel = new SoundMemePanel();
+    document.getElementById("ui-root")!.appendChild(this.soundMemePanel.element);
+
+    this.soundMemePanel.setOnSelect((soundId) => {
+      const pos = this.localRole === PlayerRole.HUNTER
+        ? this.hunterController?.getPosition()
+        : this.propController?.getPosition();
+      if (!pos) return;
+      this.network.send(ClientMessage.PLAY_SOUND_MEME, { soundId, x: pos.x, z: pos.z });
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (this.currentPhase !== GamePhase.ACTIVE && this.currentPhase !== GamePhase.HIDING) return;
+
+      if (e.code === "Digit2") {
+        e.preventDefault();
+        if (this.soundMemePanel.isVisible()) {
+          this.soundMemePanel.cycleNext();
+        } else {
+          this.soundMemePanel.show();
+        }
+      }
+
+      if (e.code === "Enter" && this.soundMemePanel.isVisible()) {
+        e.preventDefault();
+        this.soundMemePanel.confirmSelection();
+      }
+    });
   }
 
   private leaveRoom() {
@@ -888,22 +1034,38 @@ export class GameManager {
       const cy = this.ferrisHubY + Math.sin(cabAngle) * this.ferrisR;
 
       const prevPos = this.prevCabinPositions[i];
-      const floorIdx = i * 2;
+      const base = i * 5;
+      const hw = this.ferrisCabW / 2, hh = this.ferrisCabH / 2, hd = this.ferrisCabD / 2;
 
-      // Update floor collider
-      if (this.ferrisCabinColliders[floorIdx]) {
-        this.ferrisCabinColliders[floorIdx].min.set(cx - this.ferrisCabW / 2, cy - this.ferrisCabH / 2 - 0.15, this.ferrisZ - this.ferrisCabD / 2);
-        this.ferrisCabinColliders[floorIdx].max.set(cx + this.ferrisCabW / 2, cy - this.ferrisCabH / 2 + 0.08, this.ferrisZ + this.ferrisCabD / 2);
+      // Floor (thick)
+      if (this.ferrisCabinColliders[base]) {
+        this.ferrisCabinColliders[base].min.set(cx - hw, cy - hh - 0.2, this.ferrisZ - hd);
+        this.ferrisCabinColliders[base].max.set(cx + hw, cy - hh + 0.15, this.ferrisZ + hd);
       }
-      // Update roof collider
-      if (this.ferrisCabinColliders[floorIdx + 1]) {
-        this.ferrisCabinColliders[floorIdx + 1].min.set(cx - this.ferrisCabW / 2 - 0.1, cy + this.ferrisCabH / 2 - 0.1, this.ferrisZ - this.ferrisCabD / 2 - 0.1);
-        this.ferrisCabinColliders[floorIdx + 1].max.set(cx + this.ferrisCabW / 2 + 0.1, cy + this.ferrisCabH / 2 + 0.1, this.ferrisZ + this.ferrisCabD / 2 + 0.1);
+      // Roof (thick slab so jumping can't skip through)
+      if (this.ferrisCabinColliders[base + 1]) {
+        this.ferrisCabinColliders[base + 1].min.set(cx - hw - 0.15, cy + hh - 0.15, this.ferrisZ - hd - 0.15);
+        this.ferrisCabinColliders[base + 1].max.set(cx + hw + 0.15, cy + hh + 0.5, this.ferrisZ + hd + 0.15);
+      }
+      // Back wall (thicker to prevent pass-through)
+      if (this.ferrisCabinColliders[base + 2]) {
+        this.ferrisCabinColliders[base + 2].min.set(cx - hw - 0.1, cy - hh, this.ferrisZ - hd - 0.3);
+        this.ferrisCabinColliders[base + 2].max.set(cx + hw + 0.1, cy + hh, this.ferrisZ - hd + 0.15);
+      }
+      // Left wall
+      if (this.ferrisCabinColliders[base + 3]) {
+        this.ferrisCabinColliders[base + 3].min.set(cx - hw - 0.3, cy - hh, this.ferrisZ - hd);
+        this.ferrisCabinColliders[base + 3].max.set(cx - hw + 0.15, cy + hh, this.ferrisZ + hd);
+      }
+      // Right wall
+      if (this.ferrisCabinColliders[base + 4]) {
+        this.ferrisCabinColliders[base + 4].min.set(cx + hw - 0.15, cy - hh, this.ferrisZ - hd);
+        this.ferrisCabinColliders[base + 4].max.set(cx + hw + 0.3, cy + hh, this.ferrisZ + hd);
       }
 
       // Platform carry: if player is standing on this cabin floor, move them with it
-      if (prevPos && playerPos && this.ferrisCabinColliders[floorIdx]) {
-        const floorBox = this.ferrisCabinColliders[floorIdx];
+      if (prevPos && playerPos && this.ferrisCabinColliders[base]) {
+        const floorBox = this.ferrisCabinColliders[base];
         const px = playerPos.x, pz = playerPos.z;
         const py = playerPos.y - (this.localRole === PlayerRole.HUNTER ? 1.6 : 0);
         if (px > floorBox.min.x && px < floorBox.max.x &&
@@ -1026,6 +1188,7 @@ export class GameManager {
       this.weaponSystem.startReload();
       this.audioSystem?.playSound("reload");
       this.network.send(ClientMessage.RELOAD);
+      this.startReloadAnimation();
     }
 
     // Q = Equip grenade
@@ -1099,12 +1262,18 @@ export class GameManager {
     if (this.fpGun) this.fpGun.visible = true;
   }
 
+  private localTransformCount = 0;
+
   private handlePropActions() {
-    // E = Transform into random prop
+    // E = Transform into random prop (max 2 times)
     if (this.input.consumeKey("KeyE")) {
-      const allProps = this.propRegistry.getAll();
-      const randomProp = allProps[Math.floor(Math.random() * allProps.length)];
-      this.network.send(ClientMessage.TRANSFORM_REQUEST, { propId: randomProp.id });
+      if (this.localTransformCount >= 2) {
+        this.uiManager.showNotification("Max transforms reached (2/2)!");
+      } else {
+        const allProps = this.propRegistry.getAll();
+        const randomProp = allProps[Math.floor(Math.random() * allProps.length)];
+        this.network.send(ClientMessage.TRANSFORM_REQUEST, { propId: randomProp.id });
+      }
     }
 
     // R = Speed Boost
@@ -1146,8 +1315,9 @@ export class GameManager {
 
   private updatePropHUD() {
     this.minimap.hide();
-    this.gameHUD.updateHealth(this.localHealth, PROP_MAX_HEALTH);
     const propDef = this.propRegistry.get(this.localPropId);
+    const maxHp = (propDef as any)?.hp || PROP_MAX_HEALTH;
+    this.gameHUD.updateHealth(this.localHealth, maxHp);
     this.gameHUD.updatePropInfo(propDef?.name || "", this.localIsLocked);
     const cdInvis = Math.max(0, 120000 - (Date.now() - this.lastAbilityTime));
     const cdSpeed = Math.max(0, 30000 - (Date.now() - this.lastAbility2Time));
@@ -1158,7 +1328,7 @@ export class GameManager {
     } else {
       this.gameHUD.updateAbility("Q:INVIS E:TRANS R:SPEED", "", 0);
     }
-    this.gameHUD.updateDamageOverlay(this.localHealth, PROP_MAX_HEALTH, false);
+    this.gameHUD.updateDamageOverlay(this.localHealth, maxHp, false);
     this.gameHUD.setSoulModeVisible(this.propController.isInSoulMode());
   }
 
@@ -1203,10 +1373,26 @@ export class GameManager {
   private recoilBack = 0;
   private recoilPitchVel = 0;
   private recoilBackVel = 0;
+  private reloadAnim = 0;
+  private isReloadingAnim = false;
+  private muzzleFlashTimer = 0;
+  private fpMuzzleFlash: THREE.Mesh | null = null;
 
   triggerGunRecoil() {
     this.recoilPitchVel += 8;
     this.recoilBackVel += 1.5;
+    this.muzzleFlashTimer = 0.05;
+    if (this.fpMuzzleFlash) {
+      this.fpMuzzleFlash.visible = true;
+      const s = 0.7 + Math.random() * 0.6;
+      this.fpMuzzleFlash.rotation.z = Math.random() * Math.PI;
+      this.fpMuzzleFlash.scale.set(s, s, s);
+    }
+  }
+
+  startReloadAnimation() {
+    this.isReloadingAnim = true;
+    this.reloadAnim = 0;
   }
 
   private updateGunViewmodel(dt: number) {
@@ -1217,7 +1403,7 @@ export class GameManager {
     const isMoving = this.input.isPointerLocked() &&
       (state.forward || state.backward || state.left || state.right);
 
-    // Spring-damper recoil (Minecraft-style kick + smooth return)
+    // Spring-damper recoil
     const springK = 80;
     const dampK = 12;
     this.recoilPitchVel += (-this.recoilPitch * springK - this.recoilPitchVel * dampK) * dt;
@@ -1225,7 +1411,16 @@ export class GameManager {
     this.recoilBackVel += (-this.recoilBack * springK - this.recoilBackVel * dampK) * dt;
     this.recoilBack += this.recoilBackVel * dt;
 
+    // Muzzle flash timer
+    if (this.muzzleFlashTimer > 0) {
+      this.muzzleFlashTimer -= dt;
+      if (this.muzzleFlashTimer <= 0 && this.fpMuzzleFlash) {
+        this.fpMuzzleFlash.visible = false;
+      }
+    }
+
     let bobX = 0, bobY = 0, bobRotZ = 0;
+    let reloadOffsetY = 0, reloadOffsetZ = 0, reloadRotX = 0;
 
     if (isMoving) {
       this.gunBobTime += dt * 9;
@@ -1240,13 +1435,39 @@ export class GameManager {
       bobRotZ = Math.sin(idle) * 0.005;
     }
 
+    // Reload animation (2s total: drop down -> pull mag -> push mag -> raise up)
+    if (this.isReloadingAnim) {
+      this.reloadAnim += dt;
+      const t = this.reloadAnim / 2.0;
+      if (t < 0.25) {
+        const p = t / 0.25;
+        reloadOffsetY = -0.2 * p;
+        reloadRotX = 0.4 * p;
+      } else if (t < 0.5) {
+        reloadOffsetY = -0.2;
+        reloadRotX = 0.4;
+        reloadOffsetZ = 0.05 * Math.sin((t - 0.25) / 0.25 * Math.PI);
+      } else if (t < 0.75) {
+        reloadOffsetY = -0.2;
+        reloadRotX = 0.4;
+        reloadOffsetZ = -0.03 * Math.sin((t - 0.5) / 0.25 * Math.PI);
+      } else if (t < 1.0) {
+        const p = 1 - (t - 0.75) / 0.25;
+        reloadOffsetY = -0.2 * p;
+        reloadRotX = 0.4 * p;
+      } else {
+        this.isReloadingAnim = false;
+        this.reloadAnim = 0;
+      }
+    }
+
     this.fpGun.position.set(
       baseX + bobX,
-      baseY + bobY,
-      baseZ + this.recoilBack * 0.08
+      baseY + bobY + reloadOffsetY,
+      baseZ + this.recoilBack * 0.08 + reloadOffsetZ
     );
     this.fpGun.rotation.set(
-      -this.recoilPitch * 0.03,
+      -this.recoilPitch * 0.03 + reloadRotX,
       0.05,
       bobRotZ
     );

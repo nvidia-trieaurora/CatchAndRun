@@ -27,4 +27,5 @@ export class PlayerSchema extends Schema {
   lastScanTime: number = 0;
   lastInputSeq: number = 0;
   lastPositionTime: number = 0;
+  transformCount: number = 0;
 }

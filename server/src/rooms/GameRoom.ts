@@ -22,6 +22,7 @@ import {
   type ChatData,
   type SetConfigData,
   type ThrowGrenadeData,
+  type PlaySoundMemeData,
   MAX_PLAYERS_PER_ROOM,
   HUNTER_MAX_HEALTH,
   PROP_MAX_HEALTH,
@@ -145,6 +146,10 @@ export class GameRoom extends Room<GameState> {
 
     this.onMessage(ClientMessage.SCAN_AREA, (client) => {
       this.handleScanArea(client);
+    });
+
+    this.onMessage(ClientMessage.PLAY_SOUND_MEME, (client, data: PlaySoundMemeData) => {
+      this.handleSoundMeme(client, data);
     });
   }
 
@@ -373,6 +378,11 @@ export class GameRoom extends Room<GameState> {
     if (result.success) {
       player.currentPropId = data.propId;
       player.lastTransformTime = Date.now();
+      player.transformCount++;
+      const propDef = (mapData as any).props.find((p: any) => p.id === data.propId);
+      if (propDef?.hp) {
+        player.health = propDef.hp;
+      }
     }
   }
 
@@ -612,6 +622,34 @@ export class GameRoom extends Room<GameState> {
     }
   }
 
+  private lastSoundMemeTime = new Map<string, number>();
+
+  private handleSoundMeme(client: Client, data: PlaySoundMemeData) {
+    const player = this.state.players.get(client.sessionId);
+    if (!player?.isAlive) return;
+    if (this.state.phase !== GamePhase.ACTIVE && this.state.phase !== GamePhase.HIDING) return;
+
+    const now = Date.now();
+    const lastTime = this.lastSoundMemeTime.get(client.sessionId) || 0;
+    if (now - lastTime < 3000) return;
+    this.lastSoundMemeTime.set(client.sessionId, now);
+
+    const mapCX = ((-55) + 63) / 2;
+    const mapCZ = ((-43) + 47) / 2;
+    let zone = "A";
+    if (player.x >= mapCX && player.z < mapCZ) zone = "B";
+    else if (player.x < mapCX && player.z >= mapCZ) zone = "C";
+    else if (player.x >= mapCX && player.z >= mapCZ) zone = "D";
+
+    this.broadcast(ServerMessage.SOUND_MEME_PLAYED, {
+      soundId: data.soundId,
+      x: player.x,
+      z: player.z,
+      zone,
+      senderSessionId: client.sessionId,
+    });
+  }
+
   public initRound() {
     const playerIds = Array.from(this.state.players.keys());
     const roles = this.roleAssigner.assignRoles(
@@ -638,9 +676,11 @@ export class GameRoom extends Room<GameState> {
         player.z = spawn.position.z;
         player.rotY = spawn.rotation;
       } else {
-        player.health = PROP_MAX_HEALTH;
+        const randomProp = (mapData as any).props[Math.floor(Math.random() * (mapData as any).props.length)];
+        player.health = randomProp.hp || PROP_MAX_HEALTH;
         player.ammo = 0;
-        player.currentPropId = "crate";
+        player.currentPropId = randomProp.id;
+        player.transformCount = 0;
         const spawn = this.spawnManager.getPropSpawn();
         player.x = spawn.position.x;
         player.y = spawn.position.y;

@@ -203,21 +203,16 @@ export class GameHUD {
     this.crosshairEl.style.display = role === "hunter" ? "block" : "none";
     this.ammoEl.style.display = role === "hunter" ? "block" : "none";
     if (this.controlsHintEl) {
-      if (role === "hunter") {
-        this.controlsHintEl.style.display = "block";
-        this.controlsHintEl.innerHTML = `<b>LMB</b> Shoot &nbsp; <b>R</b> Reload &nbsp; <b>Q</b> Grenade &nbsp; <b>E</b> Scanner &nbsp; <b>WASD</b> Move &nbsp; <b>Space</b> Jump &nbsp; <b>Shift</b> Crouch &nbsp; <b>Tab</b> Chat`;
-      } else if (role === "prop") {
-        this.controlsHintEl.style.display = "block";
-        this.controlsHintEl.innerHTML = `<b>WASD</b> Move &nbsp; <b>Space</b> Jump &nbsp; <b>E</b> Transform &nbsp; <b>F</b> Lock &nbsp; <b>Q</b> Invisible &nbsp; <b>R</b> Speed &nbsp; <b>1</b> Soul Mode &nbsp; <b>Tab</b> Chat`;
-      } else {
-        this.controlsHintEl.style.display = "none";
-      }
+      this.controlsHintEl.style.display = "none";
     }
   }
 
   updateHealth(current: number, max: number) {
     if (!this.healthFillEl) return;
     const pct = Math.max(0, Math.min(100, (current / max) * 100));
+
+    this.healthFillEl.style.width = `${pct}%`;
+    this.healthFillEl.style.transition = "width 0.2s ease-out";
 
     if (pct < 30) {
       this.healthFillEl.style.background = "linear-gradient(90deg, #f44336, #ff5722)";

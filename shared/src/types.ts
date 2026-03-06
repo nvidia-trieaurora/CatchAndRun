@@ -28,6 +28,7 @@ export interface PropDefinition {
   rarity: "common" | "uncommon" | "rare";
   minScale: number;
   maxScale: number;
+  hp?: number;
 }
 
 export interface SpawnPoint {

@@ -2,6 +2,12 @@ import { PlayerRole, WEAPON_DAMAGE, WEAPON_RANGE } from "@catch-and-run/shared";
 import type { GameRoom } from "../rooms/GameRoom";
 import type { SnapshotBuffer } from "../utils/SnapshotBuffer";
 import type { ShootData } from "@catch-and-run/shared";
+import mapData from "../data/maps/harbor-warehouse.json";
+
+interface AABB {
+  minX: number; minY: number; minZ: number;
+  maxX: number; maxY: number; maxZ: number;
+}
 
 interface HitResult {
   hitPlayerSessionId: string | null;
@@ -12,10 +18,36 @@ interface HitResult {
 export class HitValidation {
   private room: GameRoom;
   private snapshotBuffer: SnapshotBuffer;
+  private wallBoxes: AABB[] = [];
 
   constructor(room: GameRoom, snapshotBuffer: SnapshotBuffer) {
     this.room = room;
     this.snapshotBuffer = snapshotBuffer;
+    this.loadWallOcclusion();
+  }
+
+  private loadWallOcclusion() {
+    const occlusion = (mapData as any).wallOcclusion;
+    if (!Array.isArray(occlusion)) return;
+    for (const w of occlusion) {
+      this.wallBoxes.push({
+        minX: w.min.x, minY: w.min.y, minZ: w.min.z,
+        maxX: w.max.x, maxY: w.max.y, maxZ: w.max.z,
+      });
+    }
+  }
+
+  private closestWallHit(
+    origin: { x: number; y: number; z: number },
+    dir: { x: number; y: number; z: number },
+    maxDist: number
+  ): number {
+    let best = maxDist;
+    for (const wall of this.wallBoxes) {
+      const t = this.rayVsAABB(origin, dir, wall);
+      if (t !== null && t < best) best = t;
+    }
+    return best;
   }
 
   processShot(shooterSessionId: string, data: ShootData): HitResult {
@@ -31,8 +63,10 @@ export class HitValidation {
     dir.y /= len;
     dir.z /= len;
 
+    const wallDist = this.closestWallHit(origin, dir, WEAPON_RANGE);
+
     let closestHit: string | null = null;
-    let closestDist = WEAPON_RANGE;
+    let closestDist = wallDist;
 
     const positions = snapshot?.positions || new Map();
 
@@ -74,7 +108,7 @@ export class HitValidation {
 
     return {
       hitPlayerSessionId: null,
-      hitEnvironment: true,
+      hitEnvironment: wallDist < WEAPON_RANGE,
       damage: 0,
     };
   }
@@ -82,7 +116,7 @@ export class HitValidation {
   private rayVsAABB(
     origin: { x: number; y: number; z: number },
     dir: { x: number; y: number; z: number },
-    box: { minX: number; minY: number; minZ: number; maxX: number; maxY: number; maxZ: number }
+    box: AABB
   ): number | null {
     let tmin = -Infinity;
     let tmax = Infinity;

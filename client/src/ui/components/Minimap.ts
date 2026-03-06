@@ -12,6 +12,14 @@ interface DetectedProp {
   expireTime: number;
 }
 
+interface SoundPing {
+  x: number;
+  z: number;
+  zone: string;
+  expireTime: number;
+  startTime: number;
+}
+
 export class Minimap {
   readonly element: HTMLElement;
   private canvas: HTMLCanvasElement;
@@ -20,6 +28,7 @@ export class Minimap {
   private playerZ = 0;
   private playerYaw = 0;
   private detectedProps: DetectedProp[] = [];
+  private soundPings: SoundPing[] = [];
   private visible = false;
 
   constructor() {
@@ -64,6 +73,11 @@ export class Minimap {
     for (const d of detected) {
       this.detectedProps.push({ x: d.x, z: d.z, expireTime: expire });
     }
+  }
+
+  addSoundPing(x: number, z: number, zone: string) {
+    const now = Date.now();
+    this.soundPings.push({ x, z, zone, expireTime: now + 3000, startTime: now });
   }
 
   private worldToCanvas(wx: number, wz: number): [number, number] {
@@ -178,6 +192,30 @@ export class Minimap {
     ctx.fillStyle = "rgba(68, 255, 68, 0.06)";
     ctx.fill();
     ctx.restore();
+
+    // Sound pings (orange pulsing circles with zone label)
+    this.soundPings = this.soundPings.filter((p) => p.expireTime > now);
+    for (const ping of this.soundPings) {
+      const [sx, sz] = this.worldToCanvas(ping.x, ping.z);
+      const age = (now - ping.startTime) / 1000;
+      const alpha = Math.max(0, 1 - age / 3);
+      const pulse = 1 + Math.sin(age * 8) * 0.3;
+      const r = 6 * pulse;
+
+      ctx.beginPath();
+      ctx.arc(sx, sz, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 160, 30, ${alpha * 0.5})`;
+      ctx.fill();
+      ctx.strokeStyle = `rgba(255, 200, 50, ${alpha})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.font = "bold 10px sans-serif";
+      ctx.fillStyle = `rgba(255, 200, 50, ${alpha})`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.fillText(ping.zone, sx, sz - r - 2);
+    }
 
     // Scan radius
     const scanR = (10 / MAP_W) * S;

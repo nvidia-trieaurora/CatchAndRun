@@ -23,6 +23,10 @@ export class PropTransformValidator {
       return { success: false, reason: "Invalid prop ID" };
     }
 
+    if (player.transformCount >= 2) {
+      return { success: false, reason: "Max transforms reached (2/2)" };
+    }
+
     const now = Date.now();
     if (now - player.lastTransformTime < PROP_TRANSFORM_COOLDOWN_MS) {
       const remaining = Math.ceil(

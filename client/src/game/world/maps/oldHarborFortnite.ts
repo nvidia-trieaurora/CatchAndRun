@@ -99,8 +99,8 @@ function buildGround(B: MapBoxHelper) {
   // Dock planks (with collider)
   B.box(70, 0.15, 8, 15, 0.07, 38, "dockWood", false);
   B.addCollider(-20, 0, 34, 50, 0.18, 42);
-  // Construction zone ground
-  B.box(20, 0.1, 20, -35, 0.04, -22, "concreteDark", false);
+  // Construction zone ground (expanded for redesigned zone)
+  B.box(24, 0.1, 24, -35, 0.04, -22, "concreteDark", false);
   // Backyard grass ground collider (prevents sinking in the yard area)
   B.addCollider(-56, -0.1, 18, -16, 0.05, 48);
 
@@ -355,43 +355,381 @@ function buildHarborEdge(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(0.6, 0.8, 0.15, 15, 0.4, 39, PALETTE.steelDark, 0.5, 0.5, false);
 }
 
-// ========== ZONE 5: CONSTRUCTION ZONE ==========
+// ========== ZONE 5: CONSTRUCTION ZONE (Stylized Fortnite) ==========
 function buildConstructionZone(B: MapBoxHelper) {
   const cx = -35, cz = -22;
+  const scene = (B as any).scene as THREE.Scene;
 
-  // Scaffolding towers
-  for (let i = 0; i < 2; i++) {
-    const sx = cx - 5 + i * 10;
-    // Uprights
-    B.cyl(0.04, 0.04, 5, sx - 1, 2.5, cz - 3, "scaffold");
-    B.cyl(0.04, 0.04, 5, sx + 1, 2.5, cz - 3, "scaffold");
-    B.cyl(0.04, 0.04, 5, sx - 1, 2.5, cz + 3, "scaffold");
-    B.cyl(0.04, 0.04, 5, sx + 1, 2.5, cz + 3, "scaffold");
-    // Platforms
-    B.box(2.5, 0.08, 6.5, sx, 2.5, cz, "woodPlank", true);
-    B.box(2.5, 0.08, 6.5, sx, 4.5, cz, "woodPlank", true);
-    // Cross braces
-    B.colorBox(3.0, 0.04, 0.04, sx, 1.5, cz - 3, PALETTE.scaffoldYellow, 0.6, 0.3, false);
-    B.colorBox(3.0, 0.04, 0.04, sx, 3.5, cz + 3, PALETTE.scaffoldYellow, 0.6, 0.3, false);
+  const CZ = {
+    yellow:   PALETTE.scaffoldYellow,
+    steel:    PALETTE.steelDark,
+    concrete: 0x9a9590,
+    wood:     0xa08a60,
+    woodDark: PALETTE.woodDark,
+    orange:   PALETTE.accentOrange,
+    tarp:     PALETTE.tarpBlue,
+    tarpGrn:  PALETTE.tarpGreen,
+    cement:   PALETTE.cementBag,
+    hazard:   0xe8c820,
+    barrel:   0x4a6a3a,
+    dirt:     0x8a7a60,
+    red:      0xcc3333,
+    white:    0xeeeeee,
+  };
+
+  // ===== GROUND SLAB (concrete, with cracks/stains) =====
+  B.colorBox(22, 0.15, 22, cx, 0.07, cz, CZ.concrete, 0.92, 0.03, false);
+  B.addCollider(cx - 11, -0.1, cz - 11, cx + 11, 0.2, cz + 11);
+  // Dirty patches on ground
+  B.colorBox(4, 0.01, 3, cx - 3, 0.16, cz + 2, CZ.dirt, 0.98, 0, false);
+  B.colorBox(3, 0.01, 2, cx + 4, 0.16, cz - 4, CZ.dirt, 0.98, 0, false);
+
+  // ========================================================
+  // 1) MAIN SCAFFOLD TOWER (3 stories, climbable)
+  // ========================================================
+  const tX = cx - 4, tZ = cz - 3;
+  const tW = 4.0, tD = 3.0;
+  const floorH = [0, 2.5, 5.0, 7.2];
+  const uprightR = 0.06;
+
+  // Vertical uprights (yellow tubes at 4 corners, full height)
+  for (const dx of [-tW / 2, tW / 2]) {
+    for (const dz of [-tD / 2, tD / 2]) {
+      B.cyl(uprightR, uprightR, floorH[3], tX + dx, floorH[3] / 2, tZ + dz, "scaffold");
+      B.addCollider(tX + dx - 0.12, 0, tZ + dz - 0.12, tX + dx + 0.12, floorH[3], tZ + dz + 0.12);
+    }
   }
 
-  // Cement bag pile
+  // Platforms + cross braces per floor
+  for (let f = 1; f < floorH.length; f++) {
+    const fy = floorH[f];
+    // Platform (walkable)
+    B.colorBox(tW + 0.3, 0.12, tD + 0.3, tX, fy, tZ, CZ.wood, 0.85, 0.02, false);
+    B.addCollider(tX - tW / 2 - 0.15, fy - 0.12, tZ - tD / 2 - 0.15, tX + tW / 2 + 0.15, fy + 0.05, tZ + tD / 2 + 0.15);
+    // Cross braces (front + back)
+    const braceY = (floorH[f - 1] + fy) / 2;
+    B.colorBox(tW, 0.05, 0.05, tX, braceY, tZ - tD / 2, CZ.yellow, 0.6, 0.3, false);
+    B.colorBox(tW, 0.05, 0.05, tX, braceY, tZ + tD / 2, CZ.yellow, 0.6, 0.3, false);
+    // Horizontal rails (left + right)
+    B.colorBox(0.05, 0.05, tD, tX - tW / 2, braceY, tZ, CZ.yellow, 0.6, 0.3, false);
+    B.colorBox(0.05, 0.05, tD, tX + tW / 2, braceY, tZ, CZ.yellow, 0.6, 0.3, false);
+    // Guardrails on platform edges
+    B.colorBox(tW + 0.3, 0.05, 0.05, tX, fy + 0.9, tZ - tD / 2, CZ.yellow, 0.6, 0.3, false);
+    B.addCollider(tX - tW / 2, fy, tZ - tD / 2 - 0.1, tX + tW / 2, fy + 1.0, tZ - tD / 2 + 0.1);
+    B.colorBox(tW + 0.3, 0.05, 0.05, tX, fy + 0.9, tZ + tD / 2, CZ.yellow, 0.6, 0.3, false);
+    B.addCollider(tX - tW / 2, fy, tZ + tD / 2 - 0.1, tX + tW / 2, fy + 1.0, tZ + tD / 2 + 0.1);
+  }
+
+  // Ramp stairs along right side (step colliders)
+  const stairW = 1.0;
+  for (let f = 0; f < 3; f++) {
+    const startY = floorH[f];
+    const endY = floorH[f + 1];
+    const numSteps = 8;
+    const stepRise = (endY - startY) / numSteps;
+    const stairZ = (f % 2 === 0) ? tZ + tD / 2 + 0.5 : tZ - tD / 2 - 0.5;
+    const stairDir = (f % 2 === 0) ? 1 : -1;
+    for (let s = 0; s < numSteps; s++) {
+      const sy = startY + (s + 1) * stepRise;
+      const sx = tX - tW / 2 + (s / numSteps) * tW;
+      B.colorBox(tW / numSteps + 0.05, 0.08, stairW, sx, sy, stairZ, CZ.wood, 0.85, 0.02, false);
+      B.addCollider(sx - tW / (numSteps * 2) - 0.05, sy - 0.1, stairZ - stairW / 2, sx + tW / (numSteps * 2) + 0.05, sy + 0.05, stairZ + stairDir * stairW / 2 + stairDir * 0.1);
+    }
+  }
+
+  // ========================================================
+  // 2) SECONDARY SCAFFOLD (lower, 2-story, connected bridge)
+  // ========================================================
+  const s2X = cx + 4, s2Z = cz - 4;
+  const s2W = 3.5, s2D = 2.5;
+  // Uprights
+  for (const dx of [-s2W / 2, s2W / 2]) {
+    for (const dz of [-s2D / 2, s2D / 2]) {
+      B.cyl(uprightR, uprightR, 5.0, s2X + dx, 2.5, s2Z + dz, "scaffold");
+      B.addCollider(s2X + dx - 0.12, 0, s2Z + dz - 0.12, s2X + dx + 0.12, 5.0, s2Z + dz + 0.12);
+    }
+  }
+  // Floors
+  B.colorBox(s2W + 0.3, 0.12, s2D + 0.3, s2X, 2.5, s2Z, CZ.wood, 0.85, 0.02, false);
+  B.addCollider(s2X - s2W / 2 - 0.15, 2.38, s2Z - s2D / 2 - 0.15, s2X + s2W / 2 + 0.15, 2.55, s2Z + s2D / 2 + 0.15);
+  B.colorBox(s2W + 0.3, 0.12, s2D + 0.3, s2X, 5.0, s2Z, CZ.wood, 0.85, 0.02, false);
+  B.addCollider(s2X - s2W / 2 - 0.15, 4.88, s2Z - s2D / 2 - 0.15, s2X + s2W / 2 + 0.15, 5.05, s2Z + s2D / 2 + 0.15);
+  // Cross braces
+  B.colorBox(s2W, 0.05, 0.05, s2X, 1.3, s2Z - s2D / 2, CZ.yellow, 0.6, 0.3, false);
+  B.colorBox(s2W, 0.05, 0.05, s2X, 3.8, s2Z + s2D / 2, CZ.yellow, 0.6, 0.3, false);
+  // Guardrails
+  B.colorBox(s2W + 0.3, 0.05, 0.05, s2X, 5.9, s2Z - s2D / 2, CZ.yellow, 0.6, 0.3, false);
+  B.addCollider(s2X - s2W / 2, 5.0, s2Z - s2D / 2 - 0.1, s2X + s2W / 2, 6.0, s2Z - s2D / 2 + 0.1);
+  B.colorBox(s2W + 0.3, 0.05, 0.05, s2X, 5.9, s2Z + s2D / 2, CZ.yellow, 0.6, 0.3, false);
+  B.addCollider(s2X - s2W / 2, 5.0, s2Z + s2D / 2 - 0.1, s2X + s2W / 2, 6.0, s2Z + s2D / 2 + 0.1);
+
+  // Bridge connecting two scaffolds at 5m
+  const bridgeZ = (tZ + s2Z) / 2;
+  B.colorBox(s2X - tX - tW / 2 - s2W / 2 + 2, 0.1, 1.2, (tX + s2X) / 2, 5.0, bridgeZ, CZ.wood, 0.85, 0.02, false);
+  B.addCollider(tX + tW / 2, 4.9, bridgeZ - 0.6, s2X - s2W / 2, 5.1, bridgeZ + 0.6);
+  // Bridge guardrails
+  B.colorBox(s2X - tX, 0.05, 0.05, (tX + s2X) / 2, 5.9, bridgeZ - 0.6, CZ.yellow, 0.6, 0.3, false);
+  B.colorBox(s2X - tX, 0.05, 0.05, (tX + s2X) / 2, 5.9, bridgeZ + 0.6, CZ.yellow, 0.6, 0.3, false);
+
+  // Ladder on secondary scaffold (front face)
+  for (let i = 0; i < 12; i++) {
+    const ladY = i * 0.42;
+    B.colorBox(0.5, 0.04, 0.04, s2X, ladY + 0.2, s2Z + s2D / 2 + 0.15, CZ.yellow, 0.6, 0.3, false);
+    B.addCollider(s2X - 0.3, ladY, s2Z + s2D / 2, s2X + 0.3, ladY + 0.42, s2Z + s2D / 2 + 0.3);
+  }
+  B.cyl(0.03, 0.03, 5, s2X - 0.25, 2.5, s2Z + s2D / 2 + 0.15, "scaffold");
+  B.cyl(0.03, 0.03, 5, s2X + 0.25, 2.5, s2Z + s2D / 2 + 0.15, "scaffold");
+
+  // ========================================================
+  // 3) BUILDING FRAME (unfinished structure, landmark)
+  // ========================================================
+  const bfX = cx - 2, bfZ = cz + 5;
+  const bfW = 6, bfD = 5, bfH = 6;
+  const beamT = 0.25;
+  const beamColor = CZ.steel;
+
+  // Steel column frame (4 corners + beams)
+  for (const dx of [-bfW / 2, bfW / 2]) {
+    for (const dz of [-bfD / 2, bfD / 2]) {
+      B.colorBox(beamT, bfH, beamT, bfX + dx, bfH / 2, bfZ + dz, beamColor, 0.4, 0.6, true);
+    }
+  }
+  // Top beams
+  B.colorBox(bfW + beamT, beamT, beamT, bfX, bfH, bfZ - bfD / 2, beamColor, 0.4, 0.6, false);
+  B.colorBox(bfW + beamT, beamT, beamT, bfX, bfH, bfZ + bfD / 2, beamColor, 0.4, 0.6, false);
+  B.colorBox(beamT, beamT, bfD + beamT, bfX - bfW / 2, bfH, bfZ, beamColor, 0.4, 0.6, false);
+  B.colorBox(beamT, beamT, bfD + beamT, bfX + bfW / 2, bfH, bfZ, beamColor, 0.4, 0.6, false);
+  // Mid beams (at 3m)
+  B.colorBox(bfW + beamT, beamT, beamT, bfX, 3, bfZ - bfD / 2, beamColor, 0.4, 0.6, false);
+  B.colorBox(bfW + beamT, beamT, beamT, bfX, 3, bfZ + bfD / 2, beamColor, 0.4, 0.6, false);
+  // Partial 2F floor (plywood, walkable - only half covered)
+  B.colorBox(bfW - 0.5, 0.1, bfD / 2, bfX, 3.05, bfZ - bfD / 4, CZ.wood, 0.88, 0.02, false);
+  B.addCollider(bfX - bfW / 2 + 0.25, 2.95, bfZ - bfD / 2, bfX + bfW / 2 - 0.25, 3.15, bfZ);
+  // Rebar poking out of columns
+  for (const dx of [-bfW / 2, bfW / 2]) {
+    for (const dz of [-bfD / 2, bfD / 2]) {
+      B.cyl(0.02, 0.02, 1.5, bfX + dx, bfH + 0.75, bfZ + dz, "steelDark");
+    }
+  }
+  // Tarp partially covering one side
+  B.colorBox(bfW * 0.6, 0.04, bfD + 0.3, bfX + bfW * 0.15, bfH + 0.1, bfZ, CZ.tarp, 0.92, 0, false);
+  // Construction sign on front
+  B.colorBox(1.5, 1.0, 0.06, bfX, 4.5, bfZ + bfD / 2 + 0.05, CZ.white, 0.8, 0.02, false);
+  B.colorBox(1.6, 1.1, 0.04, bfX, 4.5, bfZ + bfD / 2 + 0.03, CZ.orange, 0.7, 0.1, false);
+
+  // ========================================================
+  // 4) CRANE (large landmark, background element)
+  // ========================================================
+  const crX = cx + 8, crZ = cz - 8;
+  const crBaseH = 10, crArmLen = 12;
+  // Crane mast (lattice tower)
+  B.colorBox(0.6, crBaseH, 0.6, crX, crBaseH / 2, crZ, CZ.yellow, 0.6, 0.3, true);
+  // Cross details on mast
+  for (let h = 1; h < crBaseH; h += 2) {
+    B.colorBox(0.8, 0.06, 0.06, crX, h, crZ, CZ.yellow, 0.6, 0.3, false);
+    B.colorBox(0.06, 0.06, 0.8, crX, h + 1, crZ, CZ.yellow, 0.6, 0.3, false);
+  }
+  // Crane cabin
+  B.colorBox(1.2, 1.0, 1.2, crX, crBaseH + 0.5, crZ, CZ.orange, 0.7, 0.1, false);
+  // Crane arm (horizontal jib)
+  B.colorBox(crArmLen, 0.3, 0.3, crX - crArmLen / 2 + 2, crBaseH + 1.2, crZ, CZ.yellow, 0.6, 0.3, false);
+  // Counter-weight arm (shorter, opposite direction)
+  B.colorBox(3, 0.25, 0.25, crX + 4, crBaseH + 1.2, crZ, CZ.yellow, 0.6, 0.3, false);
+  // Counterweight block
+  B.colorBox(1.0, 0.8, 0.8, crX + 5.5, crBaseH + 0.6, crZ, CZ.concrete, 0.9, 0.03, false);
+  // Cable (vertical from arm tip to ground)
+  B.cyl(0.02, 0.02, crBaseH + 1, crX - crArmLen / 2 + 2, (crBaseH + 1) / 2, crZ, "steelDark");
+  // Hook at bottom of cable
+  B.colorBox(0.15, 0.2, 0.15, crX - crArmLen / 2 + 2, 0.5, crZ, CZ.steel, 0.3, 0.7, false);
+
+  // ========================================================
+  // 5) MATERIAL STORAGE AREA
+  // ========================================================
+  // Cement bags (stacked pile)
+  const bagX = cx + 5, bagZ = cz + 6;
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 4 - row; col++) {
+      B.colorBox(0.7, 0.2, 0.4, bagX + col * 0.75, 0.1 + row * 0.2, bagZ, CZ.cement, 0.95, 0, false);
+    }
+  }
+  B.addCollider(bagX - 0.35, 0, bagZ - 0.2, bagX + 2.6, 0.7, bagZ + 0.2);
+
+  // Wooden pallets (stacked)
+  const palX = cx - 8, palZ = cz + 7;
+  B.colorBox(1.2, 0.12, 0.8, palX, 0.06, palZ, CZ.wood, 0.9, 0.02, true);
+  B.colorBox(1.2, 0.12, 0.8, palX, 0.18, palZ, CZ.wood, 0.88, 0.02, false);
+  B.colorBox(1.2, 0.12, 0.8, palX + 1.4, 0.06, palZ, CZ.wood, 0.88, 0.02, true);
+
+  // Steel pipes (horizontal bundle)
+  const pipeX = cx + 7, pipeZ = cz + 2;
   for (let i = 0; i < 4; i++) {
-    B.box(0.6, 0.25, 0.4, cx + 3 + (i % 2) * 0.7, 0.13 + Math.floor(i / 2) * 0.25, cz + 5, "cement", false);
+    B.cyl(0.08, 0.08, 3.5, pipeX, 0.1 + i * 0.17, pipeZ + (i % 2) * 0.1, "steelLight");
+  }
+  B.addCollider(pipeX - 1.75, 0, pipeZ - 0.15, pipeX + 1.75, 0.8, pipeZ + 0.25);
+
+  // Oil/paint drums
+  const drumX = cx - 8, drumZ = cz - 5;
+  B.cyl(0.25, 0.25, 0.9, drumX, 0.45, drumZ, "steelDark", true);
+  B.cyl(0.25, 0.25, 0.9, drumX + 0.6, 0.45, drumZ - 0.1, "steelDark", true);
+  B.cyl(0.25, 0.25, 0.9, drumX + 0.3, 0.45, drumZ + 0.55, "steelDark", true);
+  // Colored drum lids
+  B.colorBox(0.35, 0.03, 0.35, drumX, 0.92, drumZ, CZ.red, 0.7, 0.2, false);
+  B.colorBox(0.35, 0.03, 0.35, drumX + 0.6, 0.92, drumZ - 0.1, CZ.hazard, 0.7, 0.2, false);
+  B.colorBox(0.35, 0.03, 0.35, drumX + 0.3, 0.92, drumZ + 0.55, 0x2266aa, 0.7, 0.2, false);
+
+  // Large tarp-covered pile (hiding spot)
+  B.colorBox(3.2, 1.0, 2.0, cx + 2, 0.5, cz + 8, CZ.tarpGrn, 0.92, 0, true);
+  // Rope over tarp
+  B.colorBox(0.03, 0.03, 2.2, cx + 2 - 0.8, 1.05, cz + 8, PALETTE.ropeBeige, 0.92, 0, false);
+  B.colorBox(0.03, 0.03, 2.2, cx + 2 + 0.8, 1.05, cz + 8, PALETTE.ropeBeige, 0.92, 0, false);
+
+  // ========================================================
+  // 6) MACHINERY AREA
+  // ========================================================
+  // Concrete mixer (stylized)
+  const mixX = cx - 7, mixZ = cz + 2;
+  // Base frame
+  B.colorBox(1.2, 0.4, 0.8, mixX, 0.35, mixZ, CZ.steel, 0.5, 0.5, true);
+  // Drum (using a box approximation rotated)
+  B.colorBox(1.0, 0.9, 0.9, mixX, 0.95, mixZ, CZ.concrete, 0.7, 0.3, true);
+  // Drum opening
+  B.colorBox(0.4, 0.4, 0.05, mixX + 0.5, 1.1, mixZ, 0x444444, 0.8, 0.3, false);
+  // Wheels
+  B.cyl(0.2, 0.2, 0.1, mixX - 0.5, 0.2, mixZ - 0.5, "steelDark");
+  B.cyl(0.2, 0.2, 0.1, mixX - 0.5, 0.2, mixZ + 0.5, "steelDark");
+  // Handle
+  B.colorBox(0.04, 0.04, 1.5, mixX + 0.7, 0.9, mixZ, CZ.yellow, 0.6, 0.3, false);
+
+  // Generator
+  const genX = cx + 6, genZ = cz - 6;
+  B.colorBox(1.0, 0.8, 0.7, genX, 0.55, genZ, CZ.orange, 0.7, 0.1, true);
+  // Exhaust pipe
+  B.cyl(0.04, 0.04, 0.5, genX - 0.3, 1.2, genZ, "steelDark");
+  // Control panel
+  B.colorBox(0.3, 0.3, 0.05, genX + 0.5, 0.75, genZ, 0x333333, 0.8, 0.3, false);
+
+  // Small forklift
+  const fkX = cx + 3, fkZ = cz - 7;
+  // Body
+  B.colorBox(1.2, 0.6, 0.8, fkX, 0.45, fkZ, CZ.yellow, 0.6, 0.3, true);
+  // Roof
+  B.colorBox(1.0, 0.06, 0.7, fkX, 1.5, fkZ, CZ.yellow, 0.6, 0.3, false);
+  // Mast
+  B.colorBox(0.08, 1.1, 0.08, fkX + 0.5, 0.9, fkZ - 0.3, CZ.steel, 0.4, 0.6, false);
+  B.colorBox(0.08, 1.1, 0.08, fkX + 0.5, 0.9, fkZ + 0.3, CZ.steel, 0.4, 0.6, false);
+  // Forks
+  B.colorBox(0.8, 0.04, 0.06, fkX + 0.9, 0.2, fkZ - 0.2, CZ.steel, 0.4, 0.6, false);
+  B.colorBox(0.8, 0.04, 0.06, fkX + 0.9, 0.2, fkZ + 0.2, CZ.steel, 0.4, 0.6, false);
+  // Wheels
+  B.cyl(0.15, 0.15, 0.12, fkX - 0.4, 0.15, fkZ - 0.45, "steelDark");
+  B.cyl(0.15, 0.15, 0.12, fkX - 0.4, 0.15, fkZ + 0.45, "steelDark");
+  B.cyl(0.12, 0.12, 0.1, fkX + 0.4, 0.12, fkZ - 0.4, "steelDark");
+  B.cyl(0.12, 0.12, 0.1, fkX + 0.4, 0.12, fkZ + 0.4, "steelDark");
+  // Seat
+  B.colorBox(0.3, 0.25, 0.3, fkX - 0.2, 0.85, fkZ, 0x222222, 0.9, 0.02, false);
+
+  // ========================================================
+  // 7) CLUTTER & DETAILS
+  // ========================================================
+  // Safety cones
+  const conePositions = [
+    [cx - 9, cz - 8], [cx - 7, cz - 9], [cx + 9, cz + 3],
+    [cx + 7, cz - 2], [cx - 3, cz - 9], [cx + 1, cz + 9],
+  ];
+  for (const [cpx, cpz] of conePositions) {
+    B.cyl(0.02, 0.14, 0.55, cpx, 0.28, cpz, "accentOrange");
+    B.colorBox(0.3, 0.03, 0.3, cpx, 0.02, cpz, CZ.orange, 0.8, 0.05, false);
   }
 
-  // Rebar bundle
-  for (let i = 0; i < 5; i++) {
-    B.cyl(0.02, 0.02, 3, cx + 6 + i * 0.06, 0.1, cz - 5, "steelDark");
+  // Hard hats (scattered)
+  const hatMat = getCustomMaterial(CZ.hazard, 0.7, 0.1);
+  for (const [hx, hz] of [[cx - 6, cz + 8], [cx + 8, cz - 3], [cx - 2, cz + 4]] as [number, number][]) {
+    const hat = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 4, 0, Math.PI * 2, 0, Math.PI / 2), hatMat);
+    hat.position.set(hx, 0.15, hz);
+    hat.scale.set(1, 0.5, 1);
+    hat.castShadow = true;
+    scene.add(hat);
   }
 
-  // Tarp cover
-  B.colorBox(3, 0.8, 2, cx, 0.4, cz + 8, PALETTE.tarpGreen, 0.92, 0, true);
+  // Rebar bundles (stacked on ground)
+  for (let i = 0; i < 8; i++) {
+    B.cyl(0.015, 0.015, 4, cx - 9, 0.08 + i * 0.04, cz + 0.5 + (i % 3) * 0.04, "steelDark");
+  }
+  B.addCollider(cx - 11, 0, cz + 0.3, cx - 7, 0.4, cz + 0.7);
 
-  // Warning tape stripes (hazard)
-  B.colorBox(0.3, 0.8, 0.04, cx - 6, 0.4, cz - 8, PALETTE.accentYellow, 0.7, 0.1, false);
-  B.colorBox(0.3, 0.8, 0.04, cx + 6, 0.4, cz - 8, PALETTE.accentYellow, 0.7, 0.1, false);
-  B.colorBox(12, 0.04, 0.04, cx, 0.8, cz - 8, PALETTE.accentYellow, 0.7, 0.1, false);
+  // Wooden planks leaning against wall
+  const plankMat = getCustomMaterial(CZ.wood, 0.9, 0.02);
+  const plank = new THREE.Mesh(new THREE.BoxGeometry(0.15, 3.0, 0.04), plankMat);
+  plank.position.set(cx - 10.5, 1.2, cz - 3);
+  plank.rotation.z = 0.2;
+  plank.castShadow = true;
+  scene.add(plank);
+  const plank2 = new THREE.Mesh(new THREE.BoxGeometry(0.15, 2.8, 0.04), plankMat);
+  plank2.position.set(cx - 10.3, 1.1, cz - 2.7);
+  plank2.rotation.z = 0.25;
+  plank2.castShadow = true;
+  scene.add(plank2);
+
+  // Warning signs
+  B.colorBox(0.6, 0.5, 0.04, cx - 4, 1.8, cz - 10.5, CZ.hazard, 0.7, 0.1, false);
+  B.colorBox(0.5, 0.4, 0.02, cx - 4, 1.8, cz - 10.48, CZ.white, 0.8, 0.02, false);
+  B.cyl(0.03, 0.03, 1.8, cx - 4, 0.9, cz - 10.5, "steelDark");
+
+  B.colorBox(0.6, 0.5, 0.04, cx + 8, 1.8, cz + 9.5, CZ.hazard, 0.7, 0.1, false);
+  B.colorBox(0.5, 0.4, 0.02, cx + 8, 1.8, cz + 9.52, CZ.white, 0.8, 0.02, false);
+  B.cyl(0.03, 0.03, 1.8, cx + 8, 0.9, cz + 9.5, "steelDark");
+
+  // Hazard tape barriers
+  for (const [tx, tz1, tz2] of [[cx - 10, cz - 8, cz - 2], [cx + 10, cz - 5, cz + 5]] as [number, number, number][]) {
+    B.cyl(0.03, 0.03, 0.9, tx, 0.45, tz1, "steelDark");
+    B.cyl(0.03, 0.03, 0.9, tx, 0.45, tz2, "steelDark");
+    B.colorBox(0.03, 0.06, Math.abs(tz2 - tz1), tx, 0.75, (tz1 + tz2) / 2, CZ.hazard, 0.7, 0.1, false);
+    B.colorBox(0.03, 0.06, Math.abs(tz2 - tz1), tx, 0.55, (tz1 + tz2) / 2, CZ.hazard, 0.7, 0.1, false);
+  }
+
+  // Tire stack
+  B.cyl(0.35, 0.35, 0.15, cx + 8, 0.08, cz + 7, "steelDark", true);
+  B.cyl(0.35, 0.35, 0.15, cx + 8, 0.23, cz + 7, "steelDark", false);
+  B.cyl(0.35, 0.35, 0.15, cx + 8.1, 0.38, cz + 7, "steelDark", false);
+
+  // Wheelbarrow
+  const wbX = cx + 1, wbZ = cz - 3;
+  B.colorBox(0.7, 0.3, 0.5, wbX, 0.4, wbZ, CZ.steel, 0.6, 0.4, true);
+  B.cyl(0.15, 0.15, 0.08, wbX + 0.5, 0.15, wbZ, "steelDark");
+  B.colorBox(0.04, 0.04, 1.0, wbX - 0.35, 0.35, wbZ - 0.3, CZ.wood, 0.9, 0.02, false);
+  B.colorBox(0.04, 0.04, 1.0, wbX - 0.35, 0.35, wbZ + 0.3, CZ.wood, 0.9, 0.02, false);
+
+  // Toolbox on ground
+  B.colorBox(0.5, 0.25, 0.25, cx - 5, 0.22, cz + 3, CZ.red, 0.7, 0.2, true);
+  // Open lid
+  B.colorBox(0.5, 0.02, 0.2, cx - 5, 0.46, cz + 3.1, CZ.red, 0.7, 0.2, false);
+
+  // Bucket (loose)
+  B.cyl(0.12, 0.15, 0.3, cx + 0.5, 0.15, cz + 5, "accentOrange");
+
+  // Puddle (flat reflective plane)
+  const puddleMat = getCustomMaterial(0x5588aa, 0.1, 0.6);
+  const puddle = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 1.5), puddleMat);
+  puddle.rotation.x = -Math.PI / 2;
+  puddle.position.set(cx + 2, 0.17, cz - 1);
+  puddle.receiveShadow = true;
+  scene.add(puddle);
+
+  // ========================================================
+  // 8) CONSTRUCTION SITE LIGHTS
+  // ========================================================
+  const lightMat = getEmissiveMaterial(0xffffdd, 0xffeeaa, 0.6);
+  for (const [lx, lz] of [[cx - 9, cz - 6], [cx + 9, cz - 6], [cx - 9, cz + 8], [cx + 9, cz + 8]] as [number, number][]) {
+    // Tripod legs
+    B.cyl(0.025, 0.04, 2.0, lx, 1.0, lz, "steelDark");
+    B.cyl(0.02, 0.02, 1.3, lx - 0.15, 0.5, lz - 0.15, "steelDark");
+    B.cyl(0.02, 0.02, 1.3, lx + 0.15, 0.5, lz + 0.15, "steelDark");
+    // Light head
+    B.colorBox(0.4, 0.25, 0.15, lx, 2.1, lz, 0x333333, 0.5, 0.5, false);
+    const bulb = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.15, 0.04), lightMat);
+    bulb.position.set(lx, 2.1, lz + 0.1);
+    scene.add(bulb);
+  }
 }
 
 // ========== ZONE 6: CATWALK NETWORK ==========
@@ -772,11 +1110,17 @@ function buildParkourStructures(B: MapBoxHelper, scene: THREE.Scene) {
 
   // ===== BRICK ARCHWAY (decorative entrance to construction zone) =====
   const archX = -28, archZ = -15;
-  B.colorBox(0.5, 4, 1, archX - 2, 2, archZ, 0x8a4030, 0.85, 0.02, true);
-  B.colorBox(0.5, 4, 1, archX + 2, 2, archZ, 0x8a4030, 0.85, 0.02, true);
-  B.colorBox(4.5, 0.6, 1, archX, 4.3, archZ, 0x8a4030, 0.85, 0.02, false);
+  // Left pillar (thicker visual + generous collider)
+  B.colorBox(0.8, 4, 1.2, archX - 2, 2, archZ, 0x8a4030, 0.85, 0.02, false);
+  B.addCollider(archX - 2 - 0.6, 0, archZ - 0.8, archX - 2 + 0.6, 4.0, archZ + 0.8);
+  // Right pillar
+  B.colorBox(0.8, 4, 1.2, archX + 2, 2, archZ, 0x8a4030, 0.85, 0.02, false);
+  B.addCollider(archX + 2 - 0.6, 0, archZ - 0.8, archX + 2 + 0.6, 4.0, archZ + 0.8);
+  // Top crossbar (thick collider so jumping doesn't clip through)
+  B.colorBox(4.8, 0.8, 1.2, archX, 4.2, archZ, 0x8a4030, 0.85, 0.02, false);
+  B.addCollider(archX - 2.4, 3.8, archZ - 0.8, archX + 2.4, 5.0, archZ + 0.8);
   // Keystone accent
-  B.colorBox(0.4, 0.7, 1.02, archX, 4.65, archZ, PALETTE.concreteDark, 0.9, 0.03, false);
+  B.colorBox(0.5, 0.8, 1.22, archX, 4.65, archZ, PALETTE.concreteDark, 0.9, 0.03, false);
 
   // ===== GAZEBO / REST AREA near dock =====
   const gzX = 5, gzZ = 30;
@@ -958,8 +1302,19 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   const stairOpenX1 = hx - HW / 2;
   const stairOpenX2 = hx - HW / 2 + stairOpenW;
   const chHoleR = 0.7;
-  // Visual floor panels (with holes cut for stair and chimney)
-  B.colorBox(HW - stairOpenW, 0.2, HD, hx - HW / 2 + stairOpenW + (HW - stairOpenW) / 2, F + 0.45, hz, PALETTE.woodWarm, 0.82, 0.02, false);
+  // Visual floor panels (split around stair opening AND chimney hole)
+  const fhL = chX - chHoleR, fhR = chX + chHoleR, fhB = chZ - chHoleR, fhF = chZ + chHoleR;
+  const floorLeft = stairOpenX2, floorRight = hx + HW / 2;
+  const floorBack = hz - HD / 2, floorFront = hz + HD / 2;
+  // Left of chimney hole
+  B.colorBox(fhL - floorLeft, 0.2, HD, (floorLeft + fhL) / 2, F + 0.45, hz, PALETTE.woodWarm, 0.82, 0.02, false);
+  // Right of chimney hole
+  B.colorBox(floorRight - fhR, 0.2, HD, (fhR + floorRight) / 2, F + 0.45, hz, PALETTE.woodWarm, 0.82, 0.02, false);
+  // Back of chimney hole (strip between left and right)
+  B.colorBox(fhR - fhL, 0.2, fhB - floorBack, (fhL + fhR) / 2, F + 0.45, (floorBack + fhB) / 2, PALETTE.woodWarm, 0.82, 0.02, false);
+  // Front of chimney hole
+  B.colorBox(fhR - fhL, 0.2, floorFront - fhF, (fhL + fhR) / 2, F + 0.45, (fhF + floorFront) / 2, PALETTE.woodWarm, 0.82, 0.02, false);
+  // Stair landing (front part of left strip)
   B.colorBox(stairOpenW, 0.2, HD / 2 - 0.5, stairOpenX1 + stairOpenW / 2, F + 0.45, hz + HD / 4 + 0.25, PALETTE.woodWarm, 0.82, 0.02, false);
   // Floor colliders split around stair opening AND chimney hole
   // Left of chimney (from stair opening edge to chimney hole)
@@ -1069,40 +1424,37 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   }
   // === INTERIOR DETAILS 1F ===
 
-  // --- LIVING ROOM (center of room, facing fireplace on right-back wall) ---
-  // Sofa (center of room, facing back-right where fireplace is)
-  const sofaX = hx, sofaZ = hz - 0.5;
+  // --- LIVING ROOM ---
+  // Sofa against back wall (facing front/toward door)
+  const sofaX = hx - 1.5, sofaZ = hz - HD / 2 + 1.5;
   B.colorBox(2.5, 0.45, 0.9, sofaX, 0.58, sofaZ, 0x3355aa, 0.85, 0.02, true);
-  B.colorBox(2.5, 0.6, 0.12, sofaX, 0.95, sofaZ + 0.42, 0x2244aa, 0.85, 0.02, false);
-  B.colorBox(0.12, 0.4, 0.9, sofaX - 1.25, 0.75, sofaZ, 0x2244aa, 0.85, 0.02, false);
-  B.colorBox(0.12, 0.4, 0.9, sofaX + 1.25, 0.75, sofaZ, 0x2244aa, 0.85, 0.02, false);
+  B.colorBox(2.5, 0.6, 0.12, sofaX, 0.95, sofaZ - 0.42, 0x2244aa, 0.85, 0.02, true);
+  B.colorBox(0.12, 0.4, 0.9, sofaX - 1.25, 0.75, sofaZ, 0x2244aa, 0.85, 0.02, true);
+  B.colorBox(0.12, 0.4, 0.9, sofaX + 1.25, 0.75, sofaZ, 0x2244aa, 0.85, 0.02, true);
   // Throw pillows
-  B.colorBox(0.3, 0.25, 0.25, sofaX - 0.8, 0.92, sofaZ - 0.15, 0xcc8844, 0.9, 0, false);
-  B.colorBox(0.3, 0.25, 0.25, sofaX + 0.8, 0.92, sofaZ - 0.15, 0x44aa88, 0.9, 0, false);
+  B.colorBox(0.3, 0.25, 0.25, sofaX - 0.8, 0.92, sofaZ + 0.15, 0xcc8844, 0.9, 0, false);
+  B.colorBox(0.3, 0.25, 0.25, sofaX + 0.8, 0.92, sofaZ + 0.15, 0x44aa88, 0.9, 0, false);
   // Coffee table in front of sofa
-  B.colorBox(1.0, 0.06, 0.5, sofaX, 0.58, sofaZ - 1.0, PALETTE.woodWarm, 0.82, 0.02, true);
-  B.colorBox(0.06, 0.2, 0.06, sofaX - 0.4, 0.45, sofaZ - 1.2, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.06, 0.2, 0.06, sofaX + 0.4, 0.45, sofaZ - 1.2, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.06, 0.2, 0.06, sofaX - 0.4, 0.45, sofaZ - 0.8, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.06, 0.2, 0.06, sofaX + 0.4, 0.45, sofaZ - 0.8, trimColor, 0.85, 0.02, false);
-  // Vase on coffee table
-  B.cyl(0.08, 0.06, 0.2, sofaX + 0.2, 0.72, sofaZ - 1.0, "steelDark");
+  B.colorBox(1.0, 0.06, 0.5, sofaX, 0.58, sofaZ + 1.2, PALETTE.woodWarm, 0.82, 0.02, true);
+  B.colorBox(0.06, 0.2, 0.06, sofaX - 0.4, 0.45, sofaZ + 1.0, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.06, 0.2, 0.06, sofaX + 0.4, 0.45, sofaZ + 1.0, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.06, 0.2, 0.06, sofaX - 0.4, 0.45, sofaZ + 1.4, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.06, 0.2, 0.06, sofaX + 0.4, 0.45, sofaZ + 1.4, trimColor, 0.85, 0.02, false);
   // Rug under seating area
-  B.colorBox(3.0, 0.02, 2.5, sofaX, 0.37, sofaZ - 0.3, 0x885544, 0.95, 0, false);
-  // Armchair (left side, near left wall)
-  B.colorBox(0.8, 0.4, 0.8, hx - HW / 2 + 1.5, 0.55, hz - 0.5, 0x556633, 0.9, 0.02, true);
-  B.colorBox(0.8, 0.5, 0.1, hx - HW / 2 + 1.5, 0.85, hz - 0.9, 0x445522, 0.9, 0.02, false);
-  // Bookshelf against left wall (near back, below staircase)
+  B.colorBox(3.0, 0.02, 3.0, sofaX, 0.37, sofaZ + 0.8, 0x885544, 0.95, 0, false);
+  // TV stand + TV (facing sofa, on opposite side of coffee table)
+  const tvStandZ = sofaZ + 2.8;
+  B.colorBox(1.5, 0.5, 0.4, sofaX, 0.6, tvStandZ, trimColor, 0.85, 0.02, true);
+  B.colorBox(1.4, 0.8, 0.06, sofaX, 1.55, tvStandZ - 0.1, 0x111111, 0.9, 0.5, true);
+  B.colorBox(0.15, 0.2, 0.1, sofaX, 1.1, tvStandZ - 0.05, 0x222222, 0.5, 0.5, false);
+  // Bookshelf against left wall
   B.colorBox(1.2, 1.8, 0.4, hx - HW / 2 + 0.7, 1.25, hz - HD / 2 + 3.0, trimColor, 0.85, 0.02, true);
-  B.colorBox(1.0, 0.04, 0.35, hx - HW / 2 + 0.7, 0.9, hz - HD / 2 + 3.0, PALETTE.woodWarm, 0.82, 0.02, false);
-  B.colorBox(1.0, 0.04, 0.35, hx - HW / 2 + 0.7, 1.5, hz - HD / 2 + 3.0, PALETTE.woodWarm, 0.82, 0.02, false);
-  // Books
   B.colorBox(0.3, 0.25, 0.18, hx - HW / 2 + 0.5, 1.0, hz - HD / 2 + 2.95, 0xaa2222, 0.9, 0, false);
   B.colorBox(0.25, 0.3, 0.18, hx - HW / 2 + 0.9, 1.02, hz - HD / 2 + 2.95, 0x2255aa, 0.9, 0, false);
   B.colorBox(0.35, 0.25, 0.18, hx - HW / 2 + 0.6, 1.6, hz - HD / 2 + 2.95, 0x885500, 0.9, 0, false);
-  // Floor lamp near armchair
-  B.cyl(0.04, 0.06, 1.6, hx - HW / 2 + 1.5, 1.15, hz + 0.5, "steelDark");
-  B.colorBox(0.35, 0.25, 0.35, hx - HW / 2 + 1.5, 2.0, hz + 0.5, 0xffeecc, 0.8, 0, false);
+  // Floor lamp (corner near sofa)
+  B.cyl(0.04, 0.06, 1.6, sofaX + 1.6, 1.15, sofaZ - 0.2, "steelDark");
+  B.colorBox(0.35, 0.25, 0.35, sofaX + 1.6, 2.0, sofaZ - 0.2, 0xffeecc, 0.8, 0, false);
 
   // --- KITCHEN AREA (left-front side, near staircase) ---
   const kitX = hx - HW / 2 + 2.5, kitZ = hz + 1.5;
@@ -1143,12 +1495,12 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(0.06, 0.72, 0.06, dtX - 0.7, 0.72, dtZ + 0.35, trimColor, 0.85, 0.02, false);
   B.colorBox(0.06, 0.72, 0.06, dtX + 0.7, 0.72, dtZ + 0.35, trimColor, 0.85, 0.02, false);
   // Chairs (2 sides)
-  B.colorBox(0.4, 0.06, 0.4, dtX - 0.4, 0.8, dtZ - 0.7, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.4, 0.06, 0.4, dtX - 0.4, 0.8, dtZ - 0.7, trimColor, 0.85, 0.02, true);
   B.colorBox(0.4, 0.8, 0.06, dtX - 0.4, 1.1, dtZ - 0.9, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.4, 0.06, 0.4, dtX + 0.4, 0.8, dtZ - 0.7, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.4, 0.06, 0.4, dtX + 0.4, 0.8, dtZ - 0.7, trimColor, 0.85, 0.02, true);
   B.colorBox(0.4, 0.8, 0.06, dtX + 0.4, 1.1, dtZ - 0.9, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.4, 0.06, 0.4, dtX - 0.4, 0.8, dtZ + 0.7, trimColor, 0.85, 0.02, false);
-  B.colorBox(0.4, 0.06, 0.4, dtX + 0.4, 0.8, dtZ + 0.7, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.4, 0.06, 0.4, dtX - 0.4, 0.8, dtZ + 0.7, trimColor, 0.85, 0.02, true);
+  B.colorBox(0.4, 0.06, 0.4, dtX + 0.4, 0.8, dtZ + 0.7, trimColor, 0.85, 0.02, true);
   // Plates on table
   B.cyl(0.12, 0.12, 0.02, dtX - 0.3, 1.15, dtZ, "offWhite");
   B.cyl(0.12, 0.12, 0.02, dtX + 0.3, 1.15, dtZ, "offWhite");
@@ -1162,11 +1514,9 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   B.cyl(0.04, 0.06, 1.8, hx - 1.2, 1.25, hz + HD / 2 - 0.5, "steelDark");
   B.colorBox(0.5, 0.04, 0.04, hx - 1.2, 2.15, hz + HD / 2 - 0.5, 0x333333, 0.5, 0.5, false);
   // Shoe rack (low)
-  B.colorBox(0.8, 0.3, 0.3, hx + 1.0, 0.5, hz + HD / 2 - 0.5, trimColor, 0.85, 0.02, false);
+  B.colorBox(0.8, 0.3, 0.3, hx + 1.0, 0.5, hz + HD / 2 - 0.5, trimColor, 0.85, 0.02, true);
   // Welcome mat
   B.colorBox(1.2, 0.02, 0.6, hx, 0.37, hz + HD / 2 - 0.1, 0x665533, 0.95, 0, false);
-  // Umbrella stand
-  B.cyl(0.1, 0.12, 0.5, hx + 1.3, 0.6, hz + HD / 2 - 0.4, "steelDark");
   // Wall clock (on right wall near door)
   B.cyl(0.2, 0.2, 0.04, hx + HW / 2 - 0.03, 2.8, hz + 2.0, "woodDark");
   B.cyl(0.17, 0.17, 0.02, hx + HW / 2 - 0.01, 2.8, hz + 2.0, "offWhite");
@@ -1182,7 +1532,7 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(0.45, 0.08, 0.3, bedX + 0.6, f2y + 0.45, hz - 1.6, 0xeeeeee, 0.9, 0, false);
   B.colorBox(2.0, 0.06, 1.3, bedX, f2y + 0.45, hz - 0.7, 0x7788aa, 0.9, 0.02, false);
   // Bed footboard
-  B.colorBox(2.2, 0.4, 0.1, bedX, f2y + 0.2, hz - 0.1, trimColor, 0.85, 0.02, false);
+  B.colorBox(2.2, 0.4, 0.1, bedX, f2y + 0.2, hz - 0.1, trimColor, 0.85, 0.02, true);
 
   // Bedside table left + lamp
   B.colorBox(0.45, 0.45, 0.45, bedX + 1.5, f2y + 0.22, hz - 1.0, PALETTE.woodWarm, 0.82, 0.02, true);
@@ -1227,9 +1577,6 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(0.8, 1.0, 0.06, hx + 0.8, f2y + 1.5, hz - HD / 2 + 0.28, trimColor, 0.85, 0.02, false);
 
   // --- MISC ITEMS ---
-  // Potted plant on balcony
-  B.colorBox(0.3, 0.3, 0.3, hx - 1.8, F + 0.58, hz + HD / 2 + 1.2, 0x774433, 0.9, 0.02, false);
-  B.cyl(0.2, 0.15, 0.4, hx - 1.8, F + 0.93, hz + HD / 2 + 1.2, "woodDark");
   // Indoor plant near stair exit
   B.colorBox(0.25, 0.25, 0.25, hx - HW / 2 + 1.0, f2y + 0.12, hz + 1.5, 0x774433, 0.9, 0.02, false);
   B.cyl(0.15, 0.1, 0.3, hx - HW / 2 + 1.0, f2y + 0.4, hz + 1.5, "woodDark");
@@ -1282,20 +1629,20 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   const chCenterY = (chBottom + chTop) / 2;
   const brickColor = 0x884433;
 
-  // Chimney exterior walls (full height from ground to top)
-  // Back wall (against house back wall)
-  B.colorBox(chW + 0.4, chFullH, chT, chX, chCenterY, chZ - chW / 2, brickColor, 0.85, 0.02, false);
-  B.addCollider(chX - chW / 2 - 0.2, chBottom, chZ - chW / 2 - chT / 2, chX + chW / 2 + 0.2, chTop, chZ - chW / 2 + chT / 2);
+  // Chimney exterior walls (full height, sized exactly to not block interior)
+  // Back wall
+  B.colorBox(chW + chT, chFullH, chT, chX, chCenterY, chZ - chW / 2, brickColor, 0.85, 0.02, false);
+  B.addCollider(chX - chW / 2 - chT, chBottom, chZ - chW / 2 - chT / 2, chX + chW / 2 + chT, chTop, chZ - chW / 2 + chT / 2);
   // Left side
-  B.colorBox(chT, chFullH, chW, chX - chW / 2, chCenterY, chZ, brickColor, 0.85, 0.02, false);
+  B.colorBox(chT, chFullH, chW + chT, chX - chW / 2, chCenterY, chZ, brickColor, 0.85, 0.02, false);
   B.addCollider(chX - chW / 2 - chT / 2, chBottom, chZ - chW / 2, chX - chW / 2 + chT / 2, chTop, chZ + chW / 2);
   // Right side
-  B.colorBox(chT, chFullH, chW, chX + chW / 2, chCenterY, chZ, brickColor, 0.85, 0.02, false);
+  B.colorBox(chT, chFullH, chW + chT, chX + chW / 2, chCenterY, chZ, brickColor, 0.85, 0.02, false);
   B.addCollider(chX + chW / 2 - chT / 2, chBottom, chZ - chW / 2, chX + chW / 2 + chT / 2, chTop, chZ + chW / 2);
   // Front wall (above fireplace opening, from mantel height to top)
   const mantelY = chBottom + 2.0;
-  B.colorBox(chW + 0.4, chTop - mantelY, chT, chX, (mantelY + chTop) / 2, chZ + chW / 2, brickColor, 0.85, 0.02, false);
-  B.addCollider(chX - chW / 2 - 0.2, mantelY, chZ + chW / 2 - chT / 2, chX + chW / 2 + 0.2, chTop, chZ + chW / 2 + chT / 2);
+  B.colorBox(chW + chT, chTop - mantelY, chT, chX, (mantelY + chTop) / 2, chZ + chW / 2, brickColor, 0.85, 0.02, false);
+  B.addCollider(chX - chW / 2 - chT, mantelY, chZ + chW / 2 - chT / 2, chX + chW / 2 + chT, chTop, chZ + chW / 2 + chT / 2);
 
   // (interior is hollow - no lining, so you can see sky from below and fire from above)
 
@@ -1331,12 +1678,6 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   B.cyl(0.05, 0.05, 0.5, chX + 0.1, chBottom + 0.18, chZ - 0.05, "woodOld");
   B.cyl(0.04, 0.04, 0.45, chX - 0.08, chBottom + 0.22, chZ, "wood");
 
-  // === TV on left wall (1F, facing into room) ===
-  const tvY = baseY1 + 2.0;
-  B.colorBox(1.4, 0.8, 0.06, hx - HW / 2 + 0.06, tvY, hz + 0.5, 0x111111, 0.9, 0.5, false);
-  B.colorBox(0.15, 0.3, 0.06, hx - HW / 2 + 0.06, tvY - 0.55, hz + 0.5, 0x222222, 0.5, 0.5, false);
-  // TV stand shelf
-  B.colorBox(1.0, 0.4, 0.35, hx - HW / 2 + 0.5, 0.55, hz + 0.5, trimColor, 0.85, 0.02, true);
 }
 
 // ========== BACKYARD KOI POND & GARDEN ==========
@@ -1583,16 +1924,22 @@ function buildFerrisWheel(scene: THREE.Scene, colliders: THREE.Box3[]): THREE.Gr
   scene.add(plat);
   colliders.push(new THREE.Box3(new THREE.Vector3(fwX - platW / 2, 0, fwZ - platD / 2), new THREE.Vector3(fwX + platW / 2, 0.35, fwZ + platD / 2)));
 
-  // === A-FRAME SUPPORTS (legs only, no cross braces blocking cabins) ===
+  // === A-FRAME SUPPORTS (with colliders) ===
   const legSpread = 4.0;
   const legThick = 0.4;
   for (const zOff of [-2.2, 2.2]) {
     for (const side of [-1, 1]) {
+      const legX = fwX + side * legSpread * 0.5;
       const leg = new THREE.Mesh(new THREE.BoxGeometry(legThick, hubY + 2, legThick), supportMat);
-      leg.position.set(fwX + side * legSpread * 0.5, hubY / 2, fwZ + zOff);
+      leg.position.set(legX, hubY / 2, fwZ + zOff);
       leg.rotation.z = side * -0.17;
       leg.castShadow = true;
       scene.add(leg);
+      // Use the rotated mesh bounds so the collider matches the slanted visual support.
+      // Expand slightly to avoid tiny slip-through gaps for small props.
+      const legBox = new THREE.Box3().setFromObject(leg);
+      legBox.expandByScalar(0.06);
+      colliders.push(legBox);
     }
   }
 
@@ -1689,13 +2036,21 @@ function buildFerrisWheel(scene: THREE.Scene, colliders: THREE.Box3[]): THREE.Gr
     hinge.add(light);
   }
 
-  // Dynamic cabin colliders (floor + roof, updated each frame in GameManager)
+  // Dynamic cabin colliders (5 per cabin: floor, roof, back, left, right)
   for (let i = 0; i < numCabins; i++) {
     const a = (i / numCabins) * Math.PI * 2;
     const cx = fwX + Math.cos(a) * MOUNT_R;
     const cy = hubY + Math.sin(a) * MOUNT_R;
-    colliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2, cy - cabH / 2 - 0.15, fwZ - cabD / 2), new THREE.Vector3(cx + cabW / 2, cy - cabH / 2 + 0.08, fwZ + cabD / 2)));
+    // Floor (thick to prevent sinking)
+    colliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2, cy - cabH / 2 - 0.2, fwZ - cabD / 2), new THREE.Vector3(cx + cabW / 2, cy - cabH / 2 + 0.15, fwZ + cabD / 2)));
+    // Roof
     colliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2 - 0.1, cy + cabH / 2 - 0.1, fwZ - cabD / 2 - 0.1), new THREE.Vector3(cx + cabW / 2 + 0.1, cy + cabH / 2 + 0.1, fwZ + cabD / 2 + 0.1)));
+    // Back wall
+    colliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2, cy - cabH / 2, fwZ - cabD / 2 - 0.15), new THREE.Vector3(cx + cabW / 2, cy + cabH / 2, fwZ - cabD / 2 + 0.15)));
+    // Left wall
+    colliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2 - 0.15, cy - cabH / 2, fwZ - cabD / 2), new THREE.Vector3(cx - cabW / 2 + 0.15, cy + cabH / 2, fwZ + cabD / 2)));
+    // Right wall
+    colliders.push(new THREE.Box3(new THREE.Vector3(cx + cabW / 2 - 0.15, cy - cabH / 2, fwZ - cabD / 2), new THREE.Vector3(cx + cabW / 2 + 0.15, cy + cabH / 2, fwZ + cabD / 2)));
   }
 
   // Ground shadow

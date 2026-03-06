@@ -217,9 +217,10 @@ export class HunterController {
 
   private findCeiling(colliders: THREE.Box3[], bodyH: number): number | null {
     const headY = this.feetY + bodyH;
+    const vUp = Math.max(1.0, this.verticalVelocity * 0.12);
     const probe = new THREE.Box3(
       new THREE.Vector3(this.position.x - RADIUS * 0.6, headY, this.position.z - RADIUS * 0.6),
-      new THREE.Vector3(this.position.x + RADIUS * 0.6, headY + 1.0, this.position.z + RADIUS * 0.6)
+      new THREE.Vector3(this.position.x + RADIUS * 0.6, headY + vUp, this.position.z + RADIUS * 0.6)
     );
     let lowestCeiling: number | null = null;
     for (const c of colliders) {
