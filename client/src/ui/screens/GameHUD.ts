@@ -247,7 +247,7 @@ export class GameHUD {
     }
   }
 
-  updateHunterAbilities(grenadeCd: number, scanCd: number, grenadeMode: boolean) {
+  updateHunterAbilities(grenadeCd: number, scanCd: number, grenadeMode: boolean, boostCd = 0) {
     if (!this.abilityEl) return;
     if (grenadeMode) {
       this.abilityEl.innerHTML = `
@@ -257,14 +257,19 @@ export class GameHUD {
     }
     let html = "";
     if (grenadeCd > 0) {
-      html += `<div class="hud-ability-name">Grenade [Q] <span style="color:#ff9800">${Math.ceil(grenadeCd / 1000)}s</span></div>`;
+      html += `<div class="hud-ability-name">GRENADE <span style="color:#ff9800">[Q] ${Math.ceil(grenadeCd / 1000)}s</span></div>`;
     } else {
-      html += `<div class="hud-ability-name">Grenade <span style="color:#4caf50">[Q]</span></div>`;
+      html += `<div class="hud-ability-name">GRENADE <span style="color:#4caf50">[Q]</span></div>`;
     }
     if (scanCd > 0) {
-      html += `<div class="hud-ability-name">Scanner [E] <span style="color:#ff9800">${Math.ceil(scanCd / 1000)}s</span></div>`;
+      html += `<div class="hud-ability-name">SCANNER <span style="color:#ff9800">[E] ${Math.ceil(scanCd / 1000)}s</span></div>`;
     } else {
-      html += `<div class="hud-ability-name">Scanner <span style="color:#00d4ff">[E]</span></div>`;
+      html += `<div class="hud-ability-name">SCANNER <span style="color:#00d4ff">[E]</span></div>`;
+    }
+    if (boostCd > 0) {
+      html += `<div class="hud-ability-name">BOOST <span style="color:#ff9800">[T] ${Math.ceil(boostCd / 1000)}s</span></div>`;
+    } else {
+      html += `<div class="hud-ability-name">BOOST <span style="color:#ffdd44">[T]</span></div>`;
     }
     this.abilityEl.innerHTML = html;
   }

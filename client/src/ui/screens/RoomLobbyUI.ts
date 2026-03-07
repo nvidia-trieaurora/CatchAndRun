@@ -193,6 +193,19 @@ export class RoomLobbyUI {
     this.startBtnEl.style.display = isHost ? "block" : "none";
   }
 
+  updateStartButton(allReady: boolean, playerCount: number) {
+    if (!this.startBtnEl) return;
+    if (!allReady || playerCount < 1) {
+      this.startBtnEl.disabled = true;
+      this.startBtnEl.style.opacity = "0.4";
+      this.startBtnEl.title = "All players must be ready";
+    } else {
+      this.startBtnEl.disabled = false;
+      this.startBtnEl.style.opacity = "1";
+      this.startBtnEl.title = "";
+    }
+  }
+
   setReadyState(isReady: boolean) {
     if (!this.readyBtnEl) return;
     this.readyBtnEl.textContent = isReady ? "Unready" : "Ready";

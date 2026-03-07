@@ -86,6 +86,8 @@ export class GameManager {
   private speedBoostSmoke = 0;
   private invisibleEnd = 0;
   private lastAbility2Time = 0;
+  private hunterBoostEnd = 0;
+  private lastHunterBoostTime = 0;
   private currentPhase: string = GamePhase.WAITING;
   private mapBuilt = false;
   private invisibleProps = new Set<string>();
@@ -277,6 +279,9 @@ export class GameManager {
       }));
       this.roomLobby.updatePlayerList(lobbyPlayers, this.network.getSessionId());
 
+      const allReady = lobbyPlayers.length > 0 && lobbyPlayers.every((p: any) => p.isReady);
+      this.roomLobby.updateStartButton(allReady, lobbyPlayers.length);
+
       if (selfData) {
         this.roomLobby.setIsHost(selfData.isHost);
         this.roomLobby.setReadyState(selfData.isReady);
@@ -347,10 +352,12 @@ export class GameManager {
         break;
 
       case GamePhase.ROUND_END:
+        this.minimap.hide();
         break;
 
       case GamePhase.MATCH_END:
         this.input.exitPointerLock();
+        this.minimap.hide();
         break;
 
       case GamePhase.WAITING:
@@ -405,9 +412,9 @@ export class GameManager {
       (p: any) => p.sessionId === this.network.getSessionId()
     );
 
-    const spawnX = selfData?.x ?? 5;
-    const spawnY = selfData?.y ?? 0;
-    const spawnZ = selfData?.z ?? 5;
+    const spawnX = selfData?.x ?? -42;
+    const spawnY = selfData?.y ?? 0.5;
+    const spawnZ = selfData?.z ?? 0;
 
     // Always remove old gun first
     if (this.fpGun) {
@@ -1115,6 +1122,14 @@ export class GameManager {
     let pos: THREE.Vector3;
 
     if (this.localRole === PlayerRole.HUNTER) {
+      const hunterBoosted = Date.now() < this.hunterBoostEnd;
+      if (hunterBoosted) {
+        (this.hunterController as any).speed = 20;
+        (this.hunterController as any).jumpSpeed = 18;
+      } else {
+        (this.hunterController as any).speed = 10;
+        (this.hunterController as any).jumpSpeed = 13;
+      }
       pos = this.hunterController.update(dt, allColliders);
       this.handleHunterActions(dt);
       this.updateHunterHUD();
@@ -1196,6 +1211,17 @@ export class GameManager {
       const cdGrenade = Date.now() - this.lastGrenadeTime;
       if (cdGrenade >= HUNTER_GRENADE_COOLDOWN_MS) {
         this.enterGrenadeMode();
+      }
+    }
+
+    // T = Hunter Speed Boost + High Jump (60s cooldown, 5s duration)
+    if (this.input.consumeKey("KeyT")) {
+      const cdBoost = Date.now() - this.lastHunterBoostTime;
+      if (cdBoost >= 60000) {
+        this.lastHunterBoostTime = Date.now();
+        this.hunterBoostEnd = Date.now() + 5000;
+        this.audioSystem?.playSound("ability");
+        this.uiManager.showNotification("HUNTER BOOST! Speed + Jump [5s]");
       }
     }
 
@@ -1302,7 +1328,8 @@ export class GameManager {
     this.gameHUD.updateAmmo(this.localAmmo, WEAPON_MAX_AMMO, this.weaponSystem?.getIsReloading() || false);
     const cdGrenade = Math.max(0, HUNTER_GRENADE_COOLDOWN_MS - (Date.now() - this.lastGrenadeTime));
     const cdScan = Math.max(0, HUNTER_SCAN_COOLDOWN_MS - (Date.now() - this.lastScanTime));
-    this.gameHUD.updateHunterAbilities(cdGrenade, cdScan, this.grenadeMode);
+    const cdBoost = Math.max(0, 60000 - (Date.now() - this.lastHunterBoostTime));
+    this.gameHUD.updateHunterAbilities(cdGrenade, cdScan, this.grenadeMode, cdBoost);
     this.gameHUD.updateDamageOverlay(this.localHealth, HUNTER_MAX_HEALTH, true);
     this.gameHUD.updatePropInfo("", false);
     this.gameHUD.setSoulModeVisible(false);

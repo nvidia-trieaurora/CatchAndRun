@@ -30,6 +30,8 @@ export function buildOldHarborFortniteMap(scene: THREE.Scene, _mapData: MapData)
   buildParkourStructures(B, scene);
   buildBackyardHouse(B, scene);
   buildBackyardGarden(B, scene);
+  buildDocksideMiniMart(B, scene);
+  buildDocksideCafeBar(B, scene);
 
   const clutterColliders = spawnClutterProps(scene, MAP_SEED);
   colliders.push(...clutterColliders);
@@ -265,19 +267,6 @@ function buildContainerYard(B: MapBoxHelper) {
   buildContainer(B, 46, 0, -3, PALETTE.containerYlow, Math.PI / 2);
   buildContainer(B, 32, 0, -18, PALETTE.containerRed, 0.15);
 
-  // Metal staircase up to stacked container top
-  const csH = 5.1;
-  const csSteps = 14;
-  const csRise = csH / csSteps;
-  const csRun = 0.5;
-  const csStartX = 32;
-  const csZ = -8;
-  for (let i = 0; i < csSteps; i++) {
-    const sx = csStartX + i * csRun + csRun / 2;
-    const sy = csRise * (i + 1);
-    B.colorBox(1.6, 0.06, csRun - 0.04, sx, sy, csZ, PALETTE.steel, 0.5, 0.5, false);
-    B.addCollider(sx - 0.8, sy - 0.06, csZ - 0.8, sx + 0.8, sy, csZ + 0.8);
-  }
   // Platform on top of stacked container
   B.addCollider(36.9, 5.1, -10.2, 43.1, 5.2, -5.8);
 
@@ -759,47 +748,6 @@ function buildCatwalkNetwork(B: MapBoxHelper) {
   B.colorBox(0.04, 4.0, 0.04, -14.2, 2.0, -16.3, PALETTE.steelLight, 0.5, 0.5, false);
   B.colorBox(0.04, 4.0, 0.04, -13.8, 2.0, -16.7, PALETTE.steelLight, 0.5, 0.5, false);
 
-  // Office staircase (wide wooden deck stairs)
-  buildStairs(B, 26, 6, 3.2);
-}
-
-function buildStairs(B: MapBoxHelper, ox: number, oz: number, oy: number) {
-  // ===== PARKOUR PLATFORM STAIRCASE (Office removed) =====
-  // 3 large platforms in zigzag pattern -- simple, no getting stuck
-  const platW = 5.0;
-  const platD = 3.0;
-  const baseZ = oz - 6;
-
-  // Platform 1: ground level to 1m
-  const p1y = oy * 0.33;
-  B.box(platW, 0.2, platD, ox - 6, p1y, baseZ, "woodPlank", true);
-  // Railing visual
-  B.colorBox(platW, 0.06, 0.06, ox - 6, p1y + 0.9, baseZ - platD / 2, PALETTE.steelLight, 0.5, 0.5, false);
-  // Support legs
-  B.colorBox(0.15, p1y, 0.15, ox - 8, p1y / 2, baseZ - 1, PALETTE.woodDark, 0.85, 0.02, false);
-  B.colorBox(0.15, p1y, 0.15, ox - 4, p1y / 2, baseZ + 1, PALETTE.woodDark, 0.85, 0.02, false);
-  // Hazard edge stripe
-  B.colorBox(platW, 0.03, 0.15, ox - 6, p1y + 0.11, baseZ + platD / 2, PALETTE.accentYellow, 0.7, 0.1, false);
-
-  // Platform 2: mid height
-  const p2y = oy * 0.66;
-  B.box(platW, 0.2, platD, ox - 2, p2y, baseZ + 1, "woodPlank", true);
-  B.colorBox(platW, 0.06, 0.06, ox - 2, p2y + 0.9, baseZ + 1 - platD / 2, PALETTE.steelLight, 0.5, 0.5, false);
-  B.colorBox(0.15, p2y, 0.15, ox - 4, p2y / 2, baseZ, PALETTE.woodDark, 0.85, 0.02, false);
-  B.colorBox(0.15, p2y, 0.15, ox, p2y / 2, baseZ + 2, PALETTE.woodDark, 0.85, 0.02, false);
-  B.colorBox(platW, 0.03, 0.15, ox - 2, p2y + 0.11, baseZ + 1 + platD / 2, PALETTE.accentYellow, 0.7, 0.1, false);
-
-  // Platform 3: landing level (connects to office floor)
-  B.box(platW, 0.2, platD + 1, ox + 2, oy - 0.1, baseZ + 2, "woodPlank", true);
-  B.colorBox(platW, 0.06, 0.06, ox + 2, oy + 0.8, baseZ + 2 - platD / 2, PALETTE.steelLight, 0.5, 0.5, false);
-  B.colorBox(0.15, oy, 0.15, ox, oy / 2, baseZ + 1, PALETTE.woodDark, 0.85, 0.02, false);
-  B.colorBox(0.15, oy, 0.15, ox + 4, oy / 2, baseZ + 3, PALETTE.woodDark, 0.85, 0.02, false);
-
-  // Visual connecting ramps between platforms (no collider, just decoration)
-  const ramp1 = B.colorBox(3.5, 0.1, 1.5, ox - 4, (p1y + p2y) / 2, baseZ, PALETTE.woodWarm, 0.82, 0.02, false);
-  ramp1.rotation.z = -Math.atan2(p2y - p1y, 4);
-  const ramp2 = B.colorBox(3.5, 0.1, 1.5, ox, (p2y + oy) / 2, baseZ + 1.5, PALETTE.woodWarm, 0.82, 0.02, false);
-  ramp2.rotation.z = -Math.atan2(oy - p2y, 4);
 }
 
 // ========== HUNTER SPAWN ==========
@@ -1045,21 +993,7 @@ function buildParkour(B: MapBoxHelper) {
   B.colorBox(0.06, 0.06, 36, -23, ROOF_Y + 1.0, 0, PALETTE.steelLight, 0.5, 0.5, false);
   B.colorBox(0.06, 0.06, 36, 23, ROOF_Y + 1.0, 0, PALETTE.steelLight, 0.5, 0.5, false);
 
-  // ===== CONTAINER YARD JUMP COURSE =====
-  B.colorBox(3, 0.2, 2, 30, 1.5, -2, PALETTE.accentYellow, 0.7, 0.1, true);
-  B.colorBox(2.5, 0.2, 2, 34, 2.8, 0, PALETTE.accentYellow, 0.7, 0.1, true);
-  B.colorBox(2, 0.2, 2, 38, 4.0, -2, PALETTE.accentYellow, 0.7, 0.1, true);
-  B.colorBox(3, 0.03, 0.15, 30, 1.62, -1, PALETTE.hazardStripe, 0.8, 0.05, false);
-  B.colorBox(2.5, 0.03, 0.15, 34, 2.92, 1, PALETTE.hazardStripe, 0.8, 0.05, false);
-
-  // ===== HARBOR DOCK PLATFORMS =====
-  B.box(2, 0.2, 2, 0, 1.0, 30, "dockWood", true);
-  B.box(1.8, 0.2, 1.8, 5, 2.0, 32, "dockWood", true);
-  B.box(1.5, 0.2, 1.5, 10, 3.0, 30, "dockWood", true);
-
-  // ===== CONSTRUCTION ZONE PLATFORMS =====
-  B.colorBox(3, 0.15, 3, -38, 1.8, -28, PALETTE.scaffoldYellow, 0.6, 0.3, true);
-  B.colorBox(2, 0.15, 2, -34, 3.2, -30, PALETTE.scaffoldYellow, 0.6, 0.3, true);
+  // (Extra containers removed to clear area near Mini Mart)
 
   // ===== WAREHOUSE INTERIOR BEAM TOPS =====
   B.colorBox(1.5, 0.15, 1.5, -8, 5.0, -12, PALETTE.steel, 0.5, 0.5, true);
@@ -1100,13 +1034,7 @@ function buildParkourStructures(B: MapBoxHelper, scene: THREE.Scene) {
 
   // (pipe bridge removed)
 
-  // ===== SHIPPING CRATE PARKOUR near container yard =====
-  // Staggered crates at different heights for jumping
-  B.colorBox(2, 0.8, 2, 52, 0.4, -30, PALETTE.containerBlue, 0.7, 0.2, true);
-  B.colorBox(1.8, 0.8, 1.8, 55, 1.2, -28, PALETTE.containerRed, 0.7, 0.2, true);
-  B.colorBox(1.5, 0.8, 1.5, 52, 2.0, -26, PALETTE.containerGreen, 0.7, 0.2, true);
-  B.colorBox(2, 0.8, 2, 56, 2.8, -24, PALETTE.containerYlow, 0.7, 0.2, true);
-  B.colorBox(1.5, 0.8, 1.5, 53, 3.6, -22, PALETTE.containerBlue, 0.7, 0.2, true);
+  // (Shipping containers removed to clear area near Mini Mart)
 
   // ===== BRICK ARCHWAY (decorative entrance to construction zone) =====
   const archX = -28, archZ = -15;
@@ -1211,18 +1139,34 @@ function buildParkourStructures(B: MapBoxHelper, scene: THREE.Scene) {
     B.colorBox(2.5, 0.02, 0.12, sx, sy + 0.07, sz - 1.2, PALETTE.accentYellow, 0.7, 0.1, false);
   }
 
-  // ===== TIRE WALL (parkour obstacle in yard) =====
+  // ===== TIRE STACK (inside container yard) =====
   const tireMat = getCustomMaterial(0x1a1a1a, 0.92, 0);
-  for (let row = 0; row < 3; row++) {
-    for (let col = 0; col < 5; col++) {
+  for (let row = 0; row < 2; row++) {
+    for (let col = 0; col < 3; col++) {
       const t = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.12, 8, 12), tireMat);
-      t.position.set(28 + col * 0.7, 0.35 + row * 0.65, -30);
+      t.position.set(42 + col * 0.7, 0.35 + row * 0.65, -10);
       t.rotation.x = Math.PI / 2;
       t.castShadow = true;
       scene.add(t);
     }
   }
-  B.addCollider(27.5, 0, -30.3, 31.5, 2.3, -29.7);
+  B.addCollider(41.5, 0, -10.5, 44.2, 1.6, -9.5);
+
+  // ===== OUTDOOR CLUTTER (cardboard boxes + trash bins near Mini Mart area) =====
+  // Cardboard boxes scattered
+  B.colorBox(0.6, 0.5, 0.5, 38, 0.45, -32, 0xc4953d, 0.9, 0, true);
+  B.colorBox(0.5, 0.4, 0.4, 38.8, 0.4, -32.3, 0xb8883a, 0.9, 0, true);
+  B.colorBox(0.7, 0.55, 0.5, 40, 0.47, -31.5, 0xc4953d, 0.9, 0, true);
+  B.colorBox(0.5, 0.4, 0.5, 38.3, 0.9, -32, 0xb8883a, 0.9, 0, false);
+  // Trash bins
+  B.cyl(0.25, 0.25, 0.8, 42, 0.4, -32, "steelDark", true);
+  B.colorBox(0.4, 0.03, 0.4, 42, 0.82, -32, 0x444444, 0.8, 0.3, false);
+  B.cyl(0.25, 0.25, 0.8, 50, 0.4, -34, "steelDark", true);
+  B.colorBox(0.4, 0.03, 0.4, 50, 0.82, -34, 0x444444, 0.8, 0.3, false);
+  // Loose crate near fence
+  B.colorBox(1.0, 0.8, 0.8, 55, 0.6, -36, PALETTE.woodWarm, 0.85, 0.02, true);
+  // Pallet on ground
+  B.colorBox(1.2, 0.12, 0.8, 48, 0.06, -30, PALETTE.woodDark, 0.88, 0.02, true);
 }
 
 // ========== BACKYARD 2-STORY HOUSE ==========
@@ -1249,18 +1193,18 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(HW + W, F, W, hx, baseY1 + F / 2, hz - HD / 2, wallColor, 0.85, 0.02, false);
   B.addCollider(hx - HW / 2 - W / 2, baseY1, hz - HD / 2 - W / 2, hx + HW / 2 + W / 2, baseY1 + F, hz - HD / 2 + W / 2);
 
-  // Left wall 1F - open window (can see through and jump in)
-  // Below window
+  // Left wall 1F - open window (colliders pushed outward to not block staircase)
+  // Below window (visual covers full HD, but collider is thin on the exterior side only)
   B.colorBox(W, winSill1, HD, hx - HW / 2, baseY1 + winSill1 / 2, hz, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - HW / 2 - W / 2, baseY1, hz - HD / 2, hx - HW / 2 + W / 2, baseY1 + winSill1, hz + HD / 2);
+  B.addCollider(hx - HW / 2 - W / 2, baseY1, hz - HD / 2, hx - HW / 2 - 0.05, baseY1 + winSill1, hz + HD / 2);
   // Above window
   B.colorBox(W, F - winSill1 - winH1, HD, hx - HW / 2, baseY1 + winSill1 + winH1 + (F - winSill1 - winH1) / 2, hz, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - HW / 2 - W / 2, baseY1 + winSill1 + winH1, hz - HD / 2, hx - HW / 2 + W / 2, baseY1 + F, hz + HD / 2);
-  // Side pillars around window
+  B.addCollider(hx - HW / 2 - W / 2, baseY1 + winSill1 + winH1, hz - HD / 2, hx - HW / 2 - 0.05, baseY1 + F, hz + HD / 2);
+  // Side pillars around window (colliders only on exterior face)
   B.colorBox(W, winH1, 1.5, hx - HW / 2, baseY1 + winSill1 + winH1 / 2, hz - HD / 2 + 0.75, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - HW / 2 - W / 2, baseY1 + winSill1, hz - HD / 2, hx - HW / 2 + W / 2, baseY1 + winSill1 + winH1, hz - HD / 2 + 1.5);
+  B.addCollider(hx - HW / 2 - W / 2, baseY1 + winSill1, hz - HD / 2, hx - HW / 2 - 0.05, baseY1 + winSill1 + winH1, hz - HD / 2 + 1.5);
   B.colorBox(W, winH1, 1.5, hx - HW / 2, baseY1 + winSill1 + winH1 / 2, hz + HD / 2 - 0.75, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - HW / 2 - W / 2, baseY1 + winSill1, hz + HD / 2 - 1.5, hx - HW / 2 + W / 2, baseY1 + winSill1 + winH1, hz + HD / 2);
+  B.addCollider(hx - HW / 2 - W / 2, baseY1 + winSill1, hz + HD / 2 - 1.5, hx - HW / 2 - 0.05, baseY1 + winSill1 + winH1, hz + HD / 2);
   // Window frame
   B.colorBox(0.08, winH1 + 0.1, 0.08, hx - HW / 2, baseY1 + winSill1 + winH1 / 2, hz - HD / 2 + 1.5, trimColor, 0.85, 0.02, false);
   B.colorBox(0.08, winH1 + 0.1, 0.08, hx - HW / 2, baseY1 + winSill1 + winH1 / 2, hz + HD / 2 - 1.5, trimColor, 0.85, 0.02, false);
@@ -1325,8 +1269,8 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   B.addCollider(chX - chHoleR, F + 0.35, chZ + chHoleR, chX + chHoleR, F + 0.55, hz + HD / 2);
   // Back of chimney hole (chimney to back wall)
   B.addCollider(chX - chHoleR, F + 0.35, hz - HD / 2, chX + chHoleR, F + 0.55, chZ - chHoleR);
-  // Stair exit landing
-  B.addCollider(stairOpenX1, F + 0.35, stairOpenZ2, stairOpenX2, F + 0.55, hz + HD / 2);
+  // Stair exit landing (extended back to overlap with top steps for smooth transition)
+  B.addCollider(stairOpenX1, F + 0.35, hz - HD / 2 + 0.8 + 15 * 0.3 - 0.3, stairOpenX2, F + 0.55, hz + HD / 2);
 
   // === 2F WALLS ===
   const baseY2 = F + 0.35;
@@ -1378,7 +1322,9 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
     B.colorBox(0.05, 0.9, 0.05, hx - 2.3 + i * 0.92, F + 0.88, hz + HD / 2 + balD, trimColor, 0.85, 0.02, false);
   }
   B.colorBox(0.08, 0.9, balD, hx - 2.5, F + 0.88, hz + HD / 2 + balD / 2, trimColor, 0.85, 0.02, false);
+  B.addCollider(hx - 2.6, F + 0.35, hz + HD / 2, hx - 2.4, F + 1.4, hz + HD / 2 + balD);
   B.colorBox(0.08, 0.9, balD, hx + 2.5, F + 0.88, hz + HD / 2 + balD / 2, trimColor, 0.85, 0.02, false);
+  B.addCollider(hx + 2.4, F + 0.35, hz + HD / 2, hx + 2.6, F + 1.4, hz + HD / 2 + balD);
 
   // === ROOF (flat horizontal - walkable, with chimney hole) ===
   const roofOverhang = 1.0;
@@ -1420,8 +1366,14 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
     const sy = 0.35 + (i + 1) * stepRise;
     const sz = stairStartZ + i * stepRun;
     B.colorBox(stairW, 0.1, stepRun + 0.02, stairX, sy - 0.05, sz, PALETTE.woodWarm, 0.82, 0.02, false);
-    B.addCollider(stairX - stairW / 2 - 0.05, sy - 0.1, sz - stepRun / 2 - 0.02, stairX + stairW / 2 + 0.05, sy, sz + stepRun / 2 + 0.02);
+    B.addCollider(stairX - stairW / 2 - 0.1, sy - stepRise, sz - stepRun / 2 - 0.05, stairX + stairW / 2 + 0.1, sy + 0.05, sz + stepRun / 2 + 0.05);
   }
+  // Transition ramp from last step to 2F floor (fills the height gap smoothly)
+  const lastStepY = 0.35 + numSteps * stepRise;
+  const lastStepZ = stairStartZ + (numSteps - 1) * stepRun;
+  const landingY = F + 0.35;
+  B.colorBox(stairW + 0.2, 0.15, stepRun * 2, stairX, (lastStepY + landingY) / 2, lastStepZ + stepRun, PALETTE.woodWarm, 0.82, 0.02, false);
+  B.addCollider(stairX - stairW / 2 - 0.15, lastStepY - 0.1, lastStepZ + stepRun / 2, stairX + stairW / 2 + 0.15, landingY + 0.1, lastStepZ + stepRun * 2.5);
   // === INTERIOR DETAILS 1F ===
 
   // --- LIVING ROOM ---
@@ -1447,11 +1399,11 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(1.5, 0.5, 0.4, sofaX, 0.6, tvStandZ, trimColor, 0.85, 0.02, true);
   B.colorBox(1.4, 0.8, 0.06, sofaX, 1.55, tvStandZ - 0.1, 0x111111, 0.9, 0.5, true);
   B.colorBox(0.15, 0.2, 0.1, sofaX, 1.1, tvStandZ - 0.05, 0x222222, 0.5, 0.5, false);
-  // Bookshelf against left wall
-  B.colorBox(1.2, 1.8, 0.4, hx - HW / 2 + 0.7, 1.25, hz - HD / 2 + 3.0, trimColor, 0.85, 0.02, true);
-  B.colorBox(0.3, 0.25, 0.18, hx - HW / 2 + 0.5, 1.0, hz - HD / 2 + 2.95, 0xaa2222, 0.9, 0, false);
-  B.colorBox(0.25, 0.3, 0.18, hx - HW / 2 + 0.9, 1.02, hz - HD / 2 + 2.95, 0x2255aa, 0.9, 0, false);
-  B.colorBox(0.35, 0.25, 0.18, hx - HW / 2 + 0.6, 1.6, hz - HD / 2 + 2.95, 0x885500, 0.9, 0, false);
+  // Bookshelf against right wall (moved away from staircase)
+  B.colorBox(1.2, 1.8, 0.4, hx + HW / 2 - 0.7, 1.25, hz - HD / 2 + 1.0, trimColor, 0.85, 0.02, true);
+  B.colorBox(0.3, 0.25, 0.18, hx + HW / 2 - 0.9, 1.0, hz - HD / 2 + 0.95, 0xaa2222, 0.9, 0, false);
+  B.colorBox(0.25, 0.3, 0.18, hx + HW / 2 - 0.5, 1.02, hz - HD / 2 + 0.95, 0x2255aa, 0.9, 0, false);
+  B.colorBox(0.35, 0.25, 0.18, hx + HW / 2 - 0.7, 1.6, hz - HD / 2 + 0.95, 0x885500, 0.9, 0, false);
   // Floor lamp (corner near sofa)
   B.cyl(0.04, 0.06, 1.6, sofaX + 1.6, 1.15, sofaZ - 0.2, "steelDark");
   B.colorBox(0.35, 0.25, 0.35, sofaX + 1.6, 2.0, sofaZ - 0.2, 0xffeecc, 0.8, 0, false);
@@ -1520,6 +1472,17 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   // Wall clock (on right wall near door)
   B.cyl(0.2, 0.2, 0.04, hx + HW / 2 - 0.03, 2.8, hz + 2.0, "woodDark");
   B.cyl(0.17, 0.17, 0.02, hx + HW / 2 - 0.01, 2.8, hz + 2.0, "offWhite");
+
+  // --- INTERIOR DECORATIONS 1F ---
+  // AC unit on right wall (high up)
+  B.colorBox(1.0, 0.35, 0.25, hx + HW / 2 - 0.15, 3.8, hz - 1.0, 0xeeeeee, 0.3, 0.3, false);
+  B.colorBox(0.9, 0.04, 0.2, hx + HW / 2 - 0.15, 3.6, hz - 1.0, 0xdddddd, 0.4, 0.2, false);
+  // Potted plant by left window (1F, replacing stair corner clutter)
+  B.colorBox(0.3, 0.3, 0.3, hx - HW / 2 + 0.5, 0.5, hz + 1.0, 0x774433, 0.9, 0.02, true);
+  B.cyl(0.18, 0.12, 0.5, hx - HW / 2 + 0.5, 0.9, hz + 1.0, "woodDark");
+  // Small potted cactus on kitchen counter
+  B.colorBox(0.1, 0.1, 0.1, kitX + 0.5, 1.35, kitZ + 1.5, 0x774433, 0.9, 0.02, false);
+  B.cyl(0.04, 0.04, 0.15, kitX + 0.5, 1.47, kitZ + 1.5, "woodDark");
 
   // === INTERIOR DETAILS 2F ===
   const f2y = F + 0.35;
@@ -2060,6 +2023,426 @@ function buildFerrisWheel(scene: THREE.Scene, colliders: THREE.Box3[]): THREE.Gr
   scene.add(shadowMesh);
 
   return wheelPivot;
+}
+
+// ========== DOCKSIDE CAFE & BAR ==========
+function buildDocksideCafeBar(B: MapBoxHelper, scene: THREE.Scene) {
+  const bx = 0, bz = -35;
+  const BW = 18, BD = 12, BH = 7;
+  const wt = 0.4;
+  const navy = 0x0f1c2e;
+  const warmWhite = 0xf5f5f5;
+  const woodBrown = 0x8b5a2b;
+  const orange = 0xff8c32;
+
+  // === FOUNDATION + FLOOR ===
+  B.colorBox(BW + 2, 0.2, BD + 2, bx, 0.1, bz, PALETTE.concreteDark, 0.9, 0.03, false);
+  B.addCollider(bx - BW / 2 - 1, 0, bz - BD / 2 - 1, bx + BW / 2 + 1, 0.25, bz + BD / 2 + 1);
+  B.colorBox(BW - wt * 2, 0.08, BD - wt * 2, bx, 0.24, bz, woodBrown, 0.85, 0.02, false);
+
+  // === WALLS ===
+  // Back wall (solid)
+  B.colorBox(BW, BH, wt, bx, BH / 2, bz - BD / 2, warmWhite, 0.85, 0.02, false);
+  B.addCollider(bx - BW / 2, 0, bz - BD / 2 - wt / 2, bx + BW / 2, BH, bz - BD / 2 + wt / 2);
+
+  // Left wall (with back door opening)
+  B.colorBox(wt, BH, 4, bx - BW / 2, BH / 2, bz - BD / 2 + 2, warmWhite, 0.85, 0.02, false);
+  B.addCollider(bx - BW / 2 - wt / 2, 0, bz - BD / 2, bx - BW / 2 + wt / 2, BH, bz - BD / 2 + 4);
+  B.colorBox(wt, BH, 5, bx - BW / 2, BH / 2, bz + BD / 2 - 2.5, warmWhite, 0.85, 0.02, false);
+  B.addCollider(bx - BW / 2 - wt / 2, 0, bz, bx - BW / 2 + wt / 2, BH, bz + BD / 2);
+  // Above back door
+  B.colorBox(wt, 3.5, 3, bx - BW / 2, BH - 1.75, bz - 1.5, warmWhite, 0.85, 0.02, false);
+  B.addCollider(bx - BW / 2 - wt / 2, 3.5, bz - BD / 2 + 4, bx - BW / 2 + wt / 2, BH, bz);
+
+  // Right wall (solid)
+  B.colorBox(wt, BH, BD, bx + BW / 2, BH / 2, bz, warmWhite, 0.85, 0.02, false);
+  B.addCollider(bx + BW / 2 - wt / 2, 0, bz - BD / 2, bx + BW / 2 + wt / 2, BH, bz + BD / 2);
+
+  // Front wall (glass with 2 door openings)
+  // Left glass
+  B.colorBox(4, BH, 0.1, bx - 7, BH / 2, bz + BD / 2, 0x88aacc, 0.1, 0.5, false);
+  B.addCollider(bx - BW / 2, 0, bz + BD / 2 - 0.15, bx - 5, BH, bz + BD / 2 + 0.15);
+  // Center glass
+  B.colorBox(4, BH, 0.1, bx, BH / 2, bz + BD / 2, 0x88aacc, 0.1, 0.5, false);
+  B.addCollider(bx - 2, 0, bz + BD / 2 - 0.15, bx + 2, BH, bz + BD / 2 + 0.15);
+  // Right glass
+  B.colorBox(4, BH, 0.1, bx + 7, BH / 2, bz + BD / 2, 0x88aacc, 0.1, 0.5, false);
+  B.addCollider(bx + 5, 0, bz + BD / 2 - 0.15, bx + BW / 2, BH, bz + BD / 2 + 0.15);
+  // Above doors
+  B.colorBox(3, 2, 0.1, bx - 3.5, BH - 1, bz + BD / 2, 0x88aacc, 0.1, 0.5, false);
+  B.addCollider(bx - 5, BH - 2, bz + BD / 2 - 0.15, bx - 2, BH, bz + BD / 2 + 0.15);
+  B.colorBox(3, 2, 0.1, bx + 3.5, BH - 1, bz + BD / 2, 0x88aacc, 0.1, 0.5, false);
+  B.addCollider(bx + 2, BH - 2, bz + BD / 2 - 0.15, bx + 5, BH, bz + BD / 2 + 0.15);
+
+  // === ROOF (1F ceiling / 2F floor, partial rooftop) ===
+  B.colorBox(BW + 1, 0.25, BD + 1, bx, BH + 0.12, bz, navy, 0.9, 0.03, false);
+  B.addCollider(bx - BW / 2 - 0.5, BH, bz - BD / 2 - 0.5, bx + BW / 2 + 0.5, BH + 0.3, bz + BD / 2 + 0.5);
+
+  // === L-SHAPED BAR COUNTER ===
+  const barX = bx + 4, barZ = bz - 2;
+  // Long side (along z)
+  B.colorBox(1.0, 1.1, 5, barX, 0.75, barZ, woodBrown, 0.85, 0.02, false);
+  B.addCollider(barX - 0.55, 0.2, barZ - 2.55, barX + 0.55, 1.3, barZ + 2.55);
+  // Short side (along x)
+  B.colorBox(3, 1.1, 1.0, barX - 2, 0.75, barZ + 2.5, woodBrown, 0.85, 0.02, false);
+  B.addCollider(barX - 3.55, 0.2, barZ + 2, barX - 0.45, 1.3, barZ + 3.05);
+  // Counter tops
+  B.colorBox(1.2, 0.06, 5.2, barX, 1.33, barZ, 0x333333, 0.3, 0.5, false);
+  B.colorBox(3.2, 0.06, 1.2, barX - 2, 1.33, barZ + 2.5, 0x333333, 0.3, 0.5, false);
+  // Bar stools (3 along the long side)
+  for (let i = 0; i < 3; i++) {
+    const sz = barZ - 1.5 + i * 1.5;
+    B.cyl(0.04, 0.06, 0.6, barX - 1.2, 0.3, sz, "steelDark");
+    B.colorBox(0.3, 0.06, 0.3, barX - 1.2, 0.63, sz, 0x333333, 0.9, 0.02, false);
+  }
+
+  // === BOTTLE SHELF (behind bar, against back wall) ===
+  B.colorBox(4, 2.0, 0.35, barX + 2, 1.4, bz - BD / 2 + 0.5, woodBrown, 0.85, 0.02, false);
+  B.addCollider(barX + 0, 0.2, bz - BD / 2 + 0.25, barX + 4, 2.5, bz - BD / 2 + 0.75);
+  // Shelf planks
+  for (let s = 0; s < 3; s++) {
+    B.colorBox(3.8, 0.04, 0.3, barX + 2, 0.7 + s * 0.65, bz - BD / 2 + 0.5, PALETTE.woodWarm, 0.82, 0.02, false);
+  }
+  // Bottles (decorative)
+  for (let s = 0; s < 3; s++) {
+    for (let b = 0; b < 6; b++) {
+      const bc = [0x33aa33, 0xaa2222, 0x2255aa, 0xccaa22, 0x884422, 0xcc6600][b];
+      B.cyl(0.03, 0.03, 0.2, barX + 0.5 + b * 0.6, 0.82 + s * 0.65, bz - BD / 2 + 0.5, "steelDark");
+      B.colorBox(0.05, 0.15, 0.05, barX + 0.5 + b * 0.6, 0.78 + s * 0.65, bz - BD / 2 + 0.5, bc, 0.5, 0.3, false);
+    }
+  }
+
+  // === TABLES + CHAIRS (2 rows) ===
+  for (let row = 0; row < 2; row++) {
+    for (let col = 0; col < 2; col++) {
+      const tx = bx - 4 + col * 4;
+      const tz = bz - 2.5 + row * 4;
+      // Table
+      B.colorBox(1.2, 0.06, 0.8, tx, 0.95, tz, woodBrown, 0.82, 0.02, false);
+      B.addCollider(tx - 0.65, 0.2, tz - 0.45, tx + 0.65, 1.0, tz + 0.45);
+      // Table leg
+      B.cyl(0.05, 0.06, 0.6, tx, 0.6, tz, "steelDark");
+      // 2 chairs per table
+      B.colorBox(0.35, 0.06, 0.35, tx - 0.8, 0.6, tz, navy, 0.9, 0.02, true);
+      B.colorBox(0.35, 0.5, 0.06, tx - 0.8, 0.85, tz - 0.15, navy, 0.9, 0.02, false);
+      B.colorBox(0.35, 0.06, 0.35, tx + 0.8, 0.6, tz, navy, 0.9, 0.02, true);
+      B.colorBox(0.35, 0.5, 0.06, tx + 0.8, 0.85, tz - 0.15, navy, 0.9, 0.02, false);
+    }
+  }
+
+  // === DJ CORNER (back-left) ===
+  const djX = bx - 6, djZ = bz - 3;
+  // DJ booth
+  B.colorBox(2.0, 1.0, 0.8, djX, 0.7, djZ, navy, 0.85, 0.02, false);
+  B.addCollider(djX - 1.05, 0.2, djZ - 0.45, djX + 1.05, 1.2, djZ + 0.45);
+  // DJ equipment on top
+  B.colorBox(0.8, 0.1, 0.5, djX - 0.3, 1.25, djZ, 0x222222, 0.8, 0.3, false);
+  B.colorBox(0.4, 0.15, 0.3, djX + 0.5, 1.28, djZ, 0x333333, 0.7, 0.4, false);
+  // Speakers (2)
+  B.colorBox(0.5, 0.8, 0.4, djX - 1.5, 0.6, djZ, 0x222222, 0.9, 0.05, true);
+  B.colorBox(0.5, 0.8, 0.4, djX + 1.5, 0.6, djZ, 0x222222, 0.9, 0.05, true);
+  // Speaker cones
+  B.cyl(0.15, 0.15, 0.04, djX - 1.5, 0.7, djZ + 0.22, "steelDark");
+  B.cyl(0.15, 0.15, 0.04, djX + 1.5, 0.7, djZ + 0.22, "steelDark");
+  // Light beam on stage (emissive)
+  const beamMat = getEmissiveMaterial(orange, orange, 0.4);
+  const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.5, 4, 8), beamMat);
+  beam.position.set(djX, BH - 2, djZ);
+  beam.material.transparent = true;
+  beam.material.opacity = 0.15;
+  scene.add(beam);
+
+  // === ROOFTOP ACCESS (ramp stairs on right side, exterior) ===
+  const rampX = bx + BW / 2 + 1;
+  const rampSteps = 12;
+  for (let i = 0; i < rampSteps; i++) {
+    const ry = 0.2 + (i + 0.5) * (BH / rampSteps);
+    const rz = bz - BD / 2 + 1 + i * (BD / rampSteps);
+    B.colorBox(1.5, 0.1, BD / rampSteps, rampX, ry, rz, PALETTE.steelLight, 0.5, 0.5, false);
+    B.addCollider(rampX - 0.8, ry - BH / rampSteps / 2, rz - BD / rampSteps / 2 - 0.05, rampX + 0.8, ry + 0.1, rz + BD / rampSteps / 2 + 0.05);
+  }
+
+  // === ROOFTOP ===
+  // Railings (all 4 sides)
+  B.colorBox(BW, 0.06, 0.06, bx, BH + 1, bz - BD / 2, navy, 0.85, 0.02, false);
+  B.addCollider(bx - BW / 2, BH, bz - BD / 2 - 0.15, bx + BW / 2, BH + 1.1, bz - BD / 2 + 0.15);
+  B.colorBox(BW, 0.06, 0.06, bx, BH + 1, bz + BD / 2, navy, 0.85, 0.02, false);
+  B.addCollider(bx - BW / 2, BH, bz + BD / 2 - 0.15, bx + BW / 2, BH + 1.1, bz + BD / 2 + 0.15);
+  B.colorBox(0.06, 0.06, BD, bx - BW / 2, BH + 1, bz, navy, 0.85, 0.02, false);
+  B.addCollider(bx - BW / 2 - 0.15, BH, bz - BD / 2, bx - BW / 2 + 0.15, BH + 1.1, bz + BD / 2);
+  B.colorBox(0.06, 0.06, BD, bx + BW / 2, BH + 1, bz, navy, 0.85, 0.02, false);
+  B.addCollider(bx + BW / 2 - 0.15, BH, bz - BD / 2, bx + BW / 2 + 0.15, BH + 1.1, bz + BD / 2);
+  // Railing posts
+  for (let i = 0; i < 8; i++) {
+    const px = bx - BW / 2 + 1 + i * (BW / 7);
+    B.colorBox(0.05, 0.9, 0.05, px, BH + 0.55, bz - BD / 2, navy, 0.85, 0.02, false);
+    B.colorBox(0.05, 0.9, 0.05, px, BH + 0.55, bz + BD / 2, navy, 0.85, 0.02, false);
+  }
+  // Rooftop tables (3)
+  for (let i = 0; i < 3; i++) {
+    const rtx = bx - 5 + i * 5;
+    B.colorBox(0.8, 0.06, 0.8, rtx, BH + 0.95, bz, woodBrown, 0.82, 0.02, false);
+    B.addCollider(rtx - 0.45, BH + 0.3, bz - 0.45, rtx + 0.45, BH + 1.0, bz + 0.45);
+    B.cyl(0.04, 0.05, 0.6, rtx, BH + 0.6, bz, "steelDark");
+  }
+
+  // === NEON SIGN "DOCKSIDE BAR" ===
+  const signMat = getEmissiveMaterial(orange, orange, 0.9);
+  const sign = new THREE.Mesh(new THREE.BoxGeometry(6, 0.8, 0.1), signMat);
+  sign.position.set(bx, BH + 1.5, bz + BD / 2 + 0.1);
+  scene.add(sign);
+  B.colorBox(6.4, 1.0, 0.15, bx, BH + 1.5, bz + BD / 2 + 0.05, navy, 0.85, 0.02, false);
+
+  // === TERRACE (outdoor area, front) ===
+  const tZ = bz + BD / 2 + 3;
+  // Terrace floor
+  B.colorBox(BW, 0.1, 4, bx, 0.15, tZ, PALETTE.woodWarm, 0.85, 0.02, false);
+  B.addCollider(bx - BW / 2, 0, tZ - 2, bx + BW / 2, 0.22, tZ + 2);
+  // Outdoor tables with umbrellas (4)
+  for (let i = 0; i < 4; i++) {
+    const otx = bx - 6 + i * 4;
+    // Table
+    B.colorBox(0.8, 0.06, 0.8, otx, 0.85, tZ, PALETTE.woodWarm, 0.82, 0.02, false);
+    B.addCollider(otx - 0.45, 0.2, tZ - 0.45, otx + 0.45, 0.9, tZ + 0.45);
+    B.cyl(0.04, 0.05, 0.55, otx, 0.55, tZ, "steelDark");
+    // Umbrella pole + canopy
+    B.cyl(0.03, 0.03, 2.5, otx, 1.4, tZ, "steelDark");
+    const umbColor = [0xff4444, 0x4488ff, 0xffaa22, 0x44cc44][i];
+    B.colorBox(1.6, 0.04, 1.6, otx, 2.65, tZ, umbColor, 0.8, 0.05, false);
+    // 2 chairs
+    B.colorBox(0.3, 0.06, 0.3, otx - 0.7, 0.55, tZ, navy, 0.9, 0.02, true);
+    B.colorBox(0.3, 0.06, 0.3, otx + 0.7, 0.55, tZ, navy, 0.9, 0.02, true);
+  }
+
+  // String lights over terrace
+  const lightMat2 = getEmissiveMaterial(0xffeeaa, 0xffeeaa, 0.5);
+  for (let i = 0; i < 10; i++) {
+    const lx = bx - BW / 2 + 1 + i * (BW / 9);
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 4), lightMat2);
+    bulb.position.set(lx, 2.8, tZ);
+    scene.add(bulb);
+  }
+  B.colorBox(BW - 1, 0.02, 0.02, bx, 2.82, tZ, navy, 0.9, 0.05, false);
+
+  // Planters (decorative)
+  B.colorBox(0.5, 0.5, 0.5, bx - BW / 2 + 0.5, 0.35, tZ + 1.5, 0x774433, 0.9, 0.02, true);
+  B.cyl(0.2, 0.15, 0.6, bx - BW / 2 + 0.5, 0.9, tZ + 1.5, "woodDark");
+  B.colorBox(0.5, 0.5, 0.5, bx + BW / 2 - 0.5, 0.35, tZ + 1.5, 0x774433, 0.9, 0.02, true);
+  B.cyl(0.2, 0.15, 0.6, bx + BW / 2 - 0.5, 0.9, tZ + 1.5, "woodDark");
+
+  // Trash bin
+  B.cyl(0.2, 0.2, 0.6, bx + 3, 0.3, tZ + 1.8, "steelDark", true);
+
+  // === INTERIOR DETAILS ===
+  // Ceiling lights
+  const ceilMat = getEmissiveMaterial(0xffffdd, 0xffeeaa, 0.4);
+  for (const [clx, clz] of [[bx - 4, bz - 2], [bx + 2, bz - 2], [bx - 4, bz + 2], [bx + 2, bz + 2]] as [number, number][]) {
+    const cl = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.06, 0.3), ceilMat);
+    cl.position.set(clx, BH - 0.1, clz);
+    scene.add(cl);
+  }
+
+  // Coffee machine on bar
+  B.colorBox(0.3, 0.4, 0.25, barX, 1.5, barZ - 0.5, 0x333333, 0.7, 0.4, false);
+  // Beer tap
+  B.cyl(0.04, 0.04, 0.3, barX, 1.5, barZ + 0.5, "steelDark");
+  B.colorBox(0.1, 0.06, 0.08, barX, 1.65, barZ + 0.55, 0xccaa22, 0.5, 0.5, false);
+}
+
+// ========== DOCKSIDE MINI MART (24h convenience store) ==========
+function buildDocksideMiniMart(B: MapBoxHelper, scene: THREE.Scene) {
+  const mx = 45, mz = -38;
+  const MW = 14, MD = 10, MH = 5.5;
+  const wallT = 0.4;
+  const wallColor = 0xf5f5f5;
+  const navyTrim = 0x0f1c2e;
+  const accentOrange = 0xff8c32;
+
+  // === FOUNDATION + FLOOR ===
+  B.colorBox(MW + 1, 0.2, MD + 1, mx, 0.1, mz, PALETTE.concreteDark, 0.9, 0.03, false);
+  B.addCollider(mx - MW / 2 - 0.5, 0, mz - MD / 2 - 0.5, mx + MW / 2 + 0.5, 0.25, mz + MD / 2 + 0.5);
+  // Interior floor (tiled look)
+  B.colorBox(MW - wallT * 2, 0.08, MD - wallT * 2, mx, 0.24, mz, 0xddddcc, 0.85, 0.03, false);
+
+  // === WALLS ===
+  // Back wall (solid)
+  B.colorBox(MW, MH, wallT, mx, MH / 2, mz - MD / 2, wallColor, 0.85, 0.02, false);
+  B.addCollider(mx - MW / 2, 0, mz - MD / 2 - wallT / 2, mx + MW / 2, MH, mz - MD / 2 + wallT / 2);
+  // Left wall (solid)
+  B.colorBox(wallT, MH, MD, mx - MW / 2, MH / 2, mz, wallColor, 0.85, 0.02, false);
+  B.addCollider(mx - MW / 2 - wallT / 2, 0, mz - MD / 2, mx - MW / 2 + wallT / 2, MH, mz + MD / 2);
+  // Right wall (solid)
+  B.colorBox(wallT, MH, MD, mx + MW / 2, MH / 2, mz, wallColor, 0.85, 0.02, false);
+  B.addCollider(mx + MW / 2 - wallT / 2, 0, mz - MD / 2, mx + MW / 2 + wallT / 2, MH, mz + MD / 2);
+
+  // Front wall (glass with door opening in center)
+  // Left glass panel
+  B.colorBox(4, MH, 0.1, mx - 5, MH / 2, mz + MD / 2, 0x88aacc, 0.1, 0.5, false);
+  B.addCollider(mx - MW / 2, 0, mz + MD / 2 - 0.15, mx - 3, MH, mz + MD / 2 + 0.15);
+  // Right glass panel
+  B.colorBox(4, MH, 0.1, mx + 5, MH / 2, mz + MD / 2, 0x88aacc, 0.1, 0.5, false);
+  B.addCollider(mx + 3, 0, mz + MD / 2 - 0.15, mx + MW / 2, MH, mz + MD / 2 + 0.15);
+  // Above door
+  B.colorBox(6, 1.5, 0.1, mx, MH - 0.75, mz + MD / 2, 0x88aacc, 0.1, 0.5, false);
+  B.addCollider(mx - 3, MH - 1.5, mz + MD / 2 - 0.15, mx + 3, MH, mz + MD / 2 + 0.15);
+  // Door frame
+  B.colorBox(0.12, MH - 1.5, 0.15, mx - 3, (MH - 1.5) / 2, mz + MD / 2, navyTrim, 0.85, 0.02, false);
+  B.colorBox(0.12, MH - 1.5, 0.15, mx + 3, (MH - 1.5) / 2, mz + MD / 2, navyTrim, 0.85, 0.02, false);
+
+  // === ROOF ===
+  B.colorBox(MW + 2, 0.25, MD + 2, mx, MH + 0.12, mz, PALETTE.concreteDark, 0.9, 0.03, false);
+  B.addCollider(mx - MW / 2 - 1, MH, mz - MD / 2 - 1, mx + MW / 2 + 1, MH + 0.3, mz + MD / 2 + 1);
+  // Roof overhang front (canopy)
+  B.colorBox(MW + 2, 0.15, 2, mx, MH + 0.05, mz + MD / 2 + 1, navyTrim, 0.85, 0.02, false);
+  B.addCollider(mx - MW / 2 - 1, MH - 0.1, mz + MD / 2, mx + MW / 2 + 1, MH + 0.15, mz + MD / 2 + 2);
+  // Navy trim band around top
+  B.colorBox(MW + 2, 0.4, 0.08, mx, MH - 0.2, mz - MD / 2 - 1, navyTrim, 0.85, 0.02, false);
+  B.colorBox(MW + 2, 0.4, 0.08, mx, MH - 0.2, mz + MD / 2 + 2, navyTrim, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.4, MD + 4, mx - MW / 2 - 1, MH - 0.2, mz + 0.5, navyTrim, 0.85, 0.02, false);
+  B.colorBox(0.08, 0.4, MD + 4, mx + MW / 2 + 1, MH - 0.2, mz + 0.5, navyTrim, 0.85, 0.02, false);
+
+  // === SIGNAGE "NEON MART" (emissive) ===
+  const signMat = getEmissiveMaterial(accentOrange, accentOrange, 0.8);
+  const sign = new THREE.Mesh(new THREE.BoxGeometry(5, 0.8, 0.1), signMat);
+  sign.position.set(mx, MH + 0.6, mz + MD / 2 + 2.05);
+  sign.castShadow = false;
+  scene.add(sign);
+  // Sign backing
+  B.colorBox(5.4, 1.0, 0.15, mx, MH + 0.6, mz + MD / 2 + 2, navyTrim, 0.85, 0.02, false);
+
+  // === INTERIOR: 2 SHELF AISLES ===
+  for (let aisle = 0; aisle < 2; aisle++) {
+    const ax = mx - 3.5 + aisle * 5;
+    const az = mz - 1;
+    // Shelf unit (double-sided, with collider)
+    B.colorBox(0.3, 1.6, 4.5, ax, 1.0, az, PALETTE.steelLight, 0.5, 0.5, false);
+    B.addCollider(ax - 0.2, 0.2, az - 2.3, ax + 0.2, 1.8, az + 2.3);
+    // Shelf planks (3 levels)
+    for (let s = 0; s < 3; s++) {
+      B.colorBox(0.6, 0.04, 4.5, ax - 0.15, 0.5 + s * 0.55, az, PALETTE.woodWarm, 0.82, 0.02, false);
+      B.colorBox(0.6, 0.04, 4.5, ax + 0.15, 0.5 + s * 0.55, az, PALETTE.woodWarm, 0.82, 0.02, false);
+    }
+    // Products on shelves (colorful boxes)
+    const colors = [0xff3333, 0x33aa33, 0x3366ff, 0xffcc00, 0xff6600, 0xaa33cc];
+    for (let s = 0; s < 3; s++) {
+      for (let p = 0; p < 6; p++) {
+        const py = 0.55 + s * 0.55;
+        const pz = az - 2 + p * 0.7;
+        const side = p % 2 === 0 ? -1 : 1;
+        B.colorBox(0.15, 0.2, 0.12, ax + side * 0.3, py, pz, colors[(s + p) % colors.length], 0.8, 0.02, false);
+      }
+    }
+  }
+
+  // === CHECKOUT COUNTER (front-left) ===
+  const ccX = mx + 4, ccZ = mz + 3;
+  B.colorBox(2.5, 1.0, 0.8, ccX, 0.7, ccZ, navyTrim, 0.85, 0.02, false);
+  B.addCollider(ccX - 1.3, 0.2, ccZ - 0.45, ccX + 1.3, 1.2, ccZ + 0.45);
+  // Counter top
+  B.colorBox(2.6, 0.06, 0.85, ccX, 1.23, ccZ, PALETTE.woodWarm, 0.82, 0.02, false);
+  // Cash register
+  B.colorBox(0.3, 0.25, 0.25, ccX - 0.5, 1.38, ccZ, 0x333333, 0.8, 0.3, false);
+  // Monitor
+  B.colorBox(0.4, 0.3, 0.04, ccX + 0.3, 1.5, ccZ - 0.15, 0x111111, 0.9, 0.5, false);
+  // Stool behind counter
+  B.colorBox(0.35, 0.06, 0.35, ccX + 0.5, 0.7, ccZ - 0.8, 0x333333, 0.9, 0.02, false);
+  B.cyl(0.03, 0.04, 0.35, ccX + 0.5, 0.5, ccZ - 0.8, "steelDark");
+
+  // === GLASS FRIDGE (back-right wall) ===
+  const frX = mx + 5, frZ = mz - 4;
+  B.colorBox(2.5, 2.2, 0.7, frX, 1.3, frZ, 0xdddddd, 0.3, 0.4, false);
+  B.addCollider(frX - 1.3, 0.2, frZ - 0.4, frX + 1.3, 2.4, frZ + 0.4);
+  // Glass door
+  B.colorBox(2.3, 2.0, 0.05, frX, 1.2, frZ + 0.35, 0x88ccdd, 0.05, 0.6, false);
+  // Interior shelves with drinks
+  for (let s = 0; s < 3; s++) {
+    B.colorBox(2.3, 0.03, 0.5, frX, 0.5 + s * 0.7, frZ, 0xcccccc, 0.3, 0.5, false);
+  }
+  // Drink bottles (colorful)
+  for (let s = 0; s < 3; s++) {
+    for (let d = 0; d < 5; d++) {
+      const dc = [0x33cc33, 0xff3333, 0x3366ff, 0xffaa00, 0xcc33cc][d];
+      B.cyl(0.04, 0.04, 0.2, frX - 0.8 + d * 0.4, 0.63 + s * 0.7, frZ, "steelDark");
+      B.colorBox(0.06, 0.15, 0.06, frX - 0.8 + d * 0.4, 0.6 + s * 0.7, frZ, dc, 0.7, 0.1, false);
+    }
+  }
+
+  // === ARCADE CORNER (back-left) ===
+  const arcX = mx - 5, arcZ = mz - 3.5;
+  // Arcade cabinet
+  B.colorBox(0.8, 1.8, 0.7, arcX, 1.1, arcZ, navyTrim, 0.85, 0.02, false);
+  B.addCollider(arcX - 0.45, 0.2, arcZ - 0.4, arcX + 0.45, 2.0, arcZ + 0.4);
+  // Screen
+  B.colorBox(0.6, 0.5, 0.04, arcX, 1.5, arcZ + 0.36, 0x222222, 0.9, 0.5, false);
+  const screenGlow = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.4, 0.02), getEmissiveMaterial(0x44ff88, 0x44ff88, 0.4));
+  screenGlow.position.set(arcX, 1.5, arcZ + 0.38);
+  scene.add(screenGlow);
+  // Joystick panel
+  B.colorBox(0.6, 0.04, 0.25, arcX, 1.1, arcZ + 0.35, 0x444444, 0.8, 0.3, false);
+  // Second arcade cabinet
+  B.colorBox(0.8, 1.8, 0.7, arcX + 1.2, 1.1, arcZ, 0x2244aa, 0.85, 0.02, false);
+  B.addCollider(arcX + 1.2 - 0.45, 0.2, arcZ - 0.4, arcX + 1.2 + 0.45, 2.0, arcZ + 0.4);
+  const screenGlow2 = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.4, 0.02), getEmissiveMaterial(0xff4488, 0xff4488, 0.4));
+  screenGlow2.position.set(arcX + 1.2, 1.5, arcZ + 0.38);
+  scene.add(screenGlow2);
+
+  // === EXTERIOR: VENDING MACHINES ===
+  const vmX = mx + MW / 2 + 0.8, vmZ = mz + 2;
+  // Soda vending machine
+  B.colorBox(0.8, 1.8, 0.7, vmX, 1.1, vmZ, 0xcc2222, 0.7, 0.2, false);
+  B.addCollider(vmX - 0.45, 0, vmZ - 0.4, vmX + 0.45, 2.0, vmZ + 0.4);
+  const vmScreen = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.8, 0.04), getEmissiveMaterial(0xffffff, 0xffeecc, 0.3));
+  vmScreen.position.set(vmX - 0.38, 1.2, vmZ);
+  vmScreen.rotation.y = Math.PI / 2;
+  scene.add(vmScreen);
+  // Snack vending machine
+  B.colorBox(0.8, 1.8, 0.7, vmX, 1.1, vmZ - 1.2, 0x2255aa, 0.7, 0.2, false);
+  B.addCollider(vmX - 0.45, 0, vmZ - 1.6, vmX + 0.45, 2.0, vmZ - 0.8);
+
+  // === EXTERIOR: CRATES ===
+  B.colorBox(1.0, 0.8, 0.8, mx - MW / 2 - 1, 0.4, mz - 3, PALETTE.woodWarm, 0.85, 0.02, true);
+  B.colorBox(0.8, 0.6, 0.8, mx - MW / 2 - 1, 1.1, mz - 3, PALETTE.woodDark, 0.85, 0.02, true);
+  B.colorBox(1.0, 0.8, 0.8, mx - MW / 2 - 1, 0.4, mz - 1.5, PALETTE.woodWarm, 0.85, 0.02, true);
+
+  // === ROOF ACCESS (ramp from crates on back side) ===
+  // Stacked crates forming steps up to roof
+  B.colorBox(1.5, 1.2, 1.2, mx - MW / 2 - 1.5, 0.6, mz - MD / 2 + 1, PALETTE.woodWarm, 0.85, 0.02, true);
+  B.colorBox(1.5, 1.0, 1.2, mx - MW / 2 - 1.5, 1.7, mz - MD / 2 + 1, PALETTE.woodDark, 0.85, 0.02, true);
+  B.colorBox(1.5, 0.8, 1.2, mx - MW / 2 - 1.5, 2.6, mz - MD / 2 + 1, PALETTE.woodWarm, 0.85, 0.02, true);
+  // Ramp from crate top to roof edge
+  const rampSteps = 6;
+  const rampStartY = 3.0;
+  const rampEndY = MH;
+  for (let r = 0; r < rampSteps; r++) {
+    const ry = rampStartY + (r + 0.5) * (rampEndY - rampStartY) / rampSteps;
+    const rz = mz - MD / 2 + 1 + 0.6 + r * 0.4;
+    B.colorBox(1.5, 0.1, 0.4, mx - MW / 2 - 0.5, ry, rz, PALETTE.steelLight, 0.5, 0.5, false);
+    B.addCollider(mx - MW / 2 - 1.3, ry - 0.15, rz - 0.25, mx - MW / 2 + 0.3, ry + 0.1, rz + 0.25);
+  }
+
+  // === AC UNIT ON ROOF ===
+  B.colorBox(1.5, 0.8, 1.0, mx + 3, MH + 0.7, mz - 2, 0xdddddd, 0.4, 0.4, false);
+  B.addCollider(mx + 3 - 0.8, MH + 0.25, mz - 2 - 0.55, mx + 3 + 0.8, MH + 1.1, mz - 2 + 0.55);
+  // AC fan
+  B.cyl(0.3, 0.3, 0.06, mx + 3, MH + 1.15, mz - 2, "steelDark");
+
+  // === INTERIOR LIGHTING (ceiling lights) ===
+  const lightMat = getEmissiveMaterial(0xffffdd, 0xffeeaa, 0.5);
+  for (const [lx, lz] of [[mx - 3, mz - 1], [mx + 3, mz - 1], [mx, mz + 2]] as [number, number][]) {
+    const light = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.06, 0.3), lightMat);
+    light.position.set(lx, MH - 0.1, lz);
+    scene.add(light);
+  }
+
+  // === TRASH BIN (outside near door) ===
+  B.cyl(0.2, 0.2, 0.6, mx + 2.5, 0.3, mz + MD / 2 + 1, "steelDark", true);
+  B.cyl(0.22, 0.22, 0.04, mx + 2.5, 0.62, mz + MD / 2 + 1, "steelDark");
+
+  // === WELCOME MAT ===
+  B.colorBox(1.5, 0.02, 0.8, mx, 0.26, mz + MD / 2 + 0.3, 0x665533, 0.95, 0, false);
+
+  // === INTERIOR: FLOOR MAT ===
+  B.colorBox(5, 0.02, 1, mx, 0.26, mz + MD / 2 - 0.8, 0x445566, 0.9, 0.02, false);
 }
 
 function buildBackgroundVista(B: MapBoxHelper, scene: THREE.Scene) {

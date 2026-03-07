@@ -545,7 +545,7 @@ export class GameRoom extends Room<GameState> {
   private handleUseAbility2(client: Client) {
     const player = this.state.players.get(client.sessionId);
     if (!player?.isAlive) return;
-    if (this.state.phase !== GamePhase.ACTIVE) return;
+    if (this.state.phase !== GamePhase.ACTIVE && this.state.phase !== GamePhase.HIDING) return;
     if (player.role !== PlayerRole.PROP) return;
 
     const now = Date.now();
