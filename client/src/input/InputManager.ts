@@ -25,6 +25,7 @@ export class InputManager {
   private enabled = true;
   private chatActive = false;
   private onTabToggle: (() => void) | null = null;
+  isMobileMode = false;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -75,6 +76,7 @@ export class InputManager {
   }
 
   isPointerLocked(): boolean {
+    if (this.isMobileMode) return true;
     return this.locked;
   }
 
@@ -130,5 +132,22 @@ export class InputManager {
       this.keys.clear();
       this.mouseDown = false;
     }
+  }
+
+  injectKeyDown(code: string) {
+    this.keys.add(code);
+  }
+
+  injectKeyUp(code: string) {
+    this.keys.delete(code);
+  }
+
+  injectMouseDelta(dx: number, dy: number) {
+    this.mouseDeltaX += dx;
+    this.mouseDeltaY += dy;
+  }
+
+  setMouseDown(down: boolean) {
+    this.mouseDown = down;
   }
 }

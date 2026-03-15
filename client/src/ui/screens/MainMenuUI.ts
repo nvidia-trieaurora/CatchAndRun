@@ -23,7 +23,7 @@ export class MainMenuUI {
 
         <div class="input-group">
           <label>Nickname</label>
-          <input type="text" id="nickname-input" placeholder="Enter your nickname..." maxlength="20" />
+          <input type="text" id="nickname-input" placeholder="Enter your nickname..." maxlength="20" inputmode="text" />
         </div>
 
         <button class="btn btn-primary" id="btn-quick-join">Quick Join</button>

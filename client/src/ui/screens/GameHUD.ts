@@ -24,6 +24,9 @@ export class GameHUD {
   constructor() {
     this.element = document.createElement("div");
     this.element.className = "game-hud";
+    if (document.body.classList.contains("is-mobile")) {
+      this.element.classList.add("mobile");
+    }
     this.element.innerHTML = `
       <div class="hud-top">
         <div class="hud-timer" id="hud-timer">5:00</div>

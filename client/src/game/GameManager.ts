@@ -22,6 +22,8 @@ import { AudioSystem } from "./systems/AudioSystem";
 import { ParticleSystem } from "./systems/ParticleSystem";
 import { PlayerEntity } from "./entities/PlayerEntity";
 import { loadMemeManifest, preloadMemeTextures } from "./entities/MemeTextureLoader";
+import { isMobile } from "../input/MobileDetect";
+import { TouchInputProvider } from "../input/TouchInputProvider";
 import {
   GamePhase,
   PlayerRole,
@@ -110,6 +112,8 @@ export class GameManager {
   private ferrisCabH = 2.2;
   private ferrisCabD = 1.4;
   private minimap: Minimap;
+  private touchInput: TouchInputProvider | null = null;
+  private mobile: boolean;
 
   constructor(canvas: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
@@ -136,6 +140,19 @@ export class GameManager {
     this.propRegistry = new PropRegistry();
     this.propRegistry.loadFromMapData(mapDataJson.props as any);
 
+    this.mobile = isMobile();
+    if (this.mobile) {
+      this.input.isMobileMode = true;
+      this.touchInput = new TouchInputProvider(this.input);
+      document.body.classList.add("is-mobile");
+      // Request fullscreen on first touch for better mobile UX
+      document.addEventListener("touchstart", () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen?.().catch(() => {});
+        }
+      }, { once: true });
+    }
+
     void loadMemeManifest().then((memes) => preloadMemeTextures(memes));
 
     this.setupUI();
@@ -145,19 +162,21 @@ export class GameManager {
 
     window.addEventListener("resize", () => this.onResize());
 
-    document.addEventListener("click", () => {
-      if (this.currentPhase === GamePhase.ACTIVE || this.currentPhase === GamePhase.HIDING) {
-        if (!this.input.isPointerLocked() && this.localIsAlive) {
-          this.input.requestPointerLock();
+    if (!this.mobile) {
+      document.addEventListener("click", () => {
+        if (this.currentPhase === GamePhase.ACTIVE || this.currentPhase === GamePhase.HIDING) {
+          if (!this.input.isPointerLocked() && this.localIsAlive) {
+            this.input.requestPointerLock();
+          }
         }
-      }
-    });
+      });
 
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && this.input.isPointerLocked()) {
-        this.input.exitPointerLock();
-      }
-    });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && this.input.isPointerLocked()) {
+          this.input.exitPointerLock();
+        }
+      });
+    }
 
     this.uiManager.showScreen("mainMenu");
     this.animate();
@@ -308,21 +327,33 @@ export class GameManager {
         this.localTransformCount = 0;
         this.buildMapIfNeeded();
         this.initControllers();
+        this.setHudButtonsVisible(true);
         this.uiManager.showScreen("gameHUD");
         this.gameHUD.updateRole(this.localRole);
+        if (this.touchInput) {
+          this.touchInput.show();
+          this.touchInput.setRole(this.localRole === PlayerRole.HUNTER ? "hunter" : "prop");
+        }
         if (this.localRole === PlayerRole.PROP) {
           this.uiManager.showNotification("You are a PROP! HIDE NOW!");
           this.speak("You are a prop! Hide quickly!");
-          setTimeout(() => this.input.requestPointerLock(), 500);
+          if (!this.mobile) setTimeout(() => this.input.requestPointerLock(), 500);
         } else {
-          this.uiManager.showNotification("You are a HUNTER! Controls: LMB Shoot | R Reload | Q Grenade | E Scanner");
+          if (this.mobile) {
+            this.uiManager.showNotification("You are a HUNTER! Tap buttons to Shoot/Reload/Grenade/Scanner");
+          } else {
+            this.uiManager.showNotification("You are a HUNTER! Controls: LMB Shoot | R Reload | Q Grenade | E Scanner");
+          }
           this.speak("You are a hunter. Wait for the hunt to begin.");
-          setTimeout(() => this.input.requestPointerLock(), 500);
+          if (!this.mobile) setTimeout(() => this.input.requestPointerLock(), 500);
         }
         break;
 
       case GamePhase.ACTIVE:
         this.gameHUD.updateRole(this.localRole);
+        if (this.touchInput) {
+          this.touchInput.setRole(this.localRole === PlayerRole.HUNTER ? "hunter" : "prop");
+        }
         // Open the gate -- remove gate collider so hunters can leave
         if (this.gateCollider && this.gateColliderIndex >= 0) {
           const idx = this.colliders.indexOf(this.gateCollider);
@@ -334,7 +365,6 @@ export class GameManager {
           this.gateMesh = null;
         }
         if (this.localRole === PlayerRole.HUNTER) {
-          // Sync hunter position from server when released from jail
           const selfNow = this.latestRoomState?.players?.find(
             (p: any) => p.sessionId === this.network.getSessionId()
           );
@@ -343,12 +373,16 @@ export class GameManager {
           } else {
             this.hunterController.setPosition(-36, 0.1, 0);
           }
-          this.uiManager.showNotification("HUNT! LMB:Shoot | R:Reload | Q:Grenade | E:Scanner (full map)");
+          if (this.mobile) {
+            this.uiManager.showNotification("HUNT! Use buttons to Shoot/Grenade/Scanner");
+          } else {
+            this.uiManager.showNotification("HUNT! LMB:Shoot | R:Reload | Q:Grenade | E:Scanner (full map)");
+          }
           this.speak("Gate open! Hunt them down!");
         } else {
           this.speak("Hunters released! Stay hidden!");
         }
-        setTimeout(() => this.input.requestPointerLock(), 500);
+        if (!this.mobile) setTimeout(() => this.input.requestPointerLock(), 500);
         break;
 
       case GamePhase.ROUND_END:
@@ -356,14 +390,17 @@ export class GameManager {
         break;
 
       case GamePhase.MATCH_END:
-        this.input.exitPointerLock();
+        if (!this.mobile) this.input.exitPointerLock();
         this.minimap.hide();
+        this.touchInput?.hide();
         break;
 
       case GamePhase.WAITING:
         this.uiManager.showScreen("roomLobby");
-        this.input.exitPointerLock();
+        if (!this.mobile) this.input.exitPointerLock();
+        this.setHudButtonsVisible(false);
         this.clearGameEntities();
+        this.touchInput?.hide();
         break;
     }
   }
@@ -611,6 +648,7 @@ export class GameManager {
           this.fpGun = null;
         }
         this.gameHUD.updateRole("ghost");
+        this.touchInput?.setRole("spectator");
         this.spectatorController.setPosition(pos.x, pos.y + 2, pos.z);
       }
     });
@@ -811,7 +849,8 @@ export class GameManager {
     room.onMessage(ServerMessage.MATCH_RESULTS, (data: any) => {
       this.resultsUI.showResults("Match Results", data.scores);
       this.uiManager.showScreen("results");
-      this.input.exitPointerLock();
+      if (!this.mobile) this.input.exitPointerLock();
+      this.touchInput?.hide();
     });
 
     room.onMessage(ServerMessage.CHAT_MESSAGE, (data: any) => {
@@ -835,6 +874,21 @@ export class GameManager {
   }
 
   private infoPanel: HTMLElement | null = null;
+  private infoBtn: HTMLButtonElement | null = null;
+
+  private isInGamePhase(): boolean {
+    return this.currentPhase === GamePhase.HIDING
+      || this.currentPhase === GamePhase.ACTIVE
+      || this.currentPhase === GamePhase.ROUND_END
+      || this.currentPhase === GamePhase.MATCH_END;
+  }
+
+  setHudButtonsVisible(visible: boolean) {
+    const display = visible ? "block" : "none";
+    if (this.musicBtn) this.musicBtn.style.display = display;
+    if (this.infoBtn) this.infoBtn.style.display = display;
+    if (!visible && this.infoPanel) this.infoPanel.style.display = "none";
+  }
 
   private setupMusicToggle() {
     const btn = document.createElement("button");
@@ -845,6 +899,7 @@ export class GameManager {
       background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2);
       border-radius: 6px; padding: 6px 10px; font-size: 0.75rem; cursor: pointer;
       font-family: inherit; backdrop-filter: blur(4px); pointer-events: none;
+      display: none;
     `;
     document.body.appendChild(btn);
     this.musicBtn = btn;
@@ -857,8 +912,10 @@ export class GameManager {
       background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2);
       border-radius: 6px; padding: 6px 10px; font-size: 0.75rem;
       font-family: inherit; backdrop-filter: blur(4px); pointer-events: none;
+      display: none;
     `;
     document.body.appendChild(infoBtn);
+    this.infoBtn = infoBtn;
 
     const panel = document.createElement("div");
     panel.style.cssText = `
@@ -887,6 +944,8 @@ export class GameManager {
     this.infoPanel = panel;
 
     document.addEventListener("keydown", (e) => {
+      if (!this.isInGamePhase()) return;
+
       if (e.code === "KeyM") {
         e.preventDefault();
         if (this.audioSystem) {
@@ -973,8 +1032,9 @@ export class GameManager {
   private leaveRoom() {
     this.network.leaveRoom();
     this.uiManager.showScreen("mainMenu");
-    this.input.exitPointerLock();
+    if (!this.mobile) this.input.exitPointerLock();
     this.minimap.hide();
+    this.touchInput?.hide();
     this.clearGameEntities();
     this.currentPhase = GamePhase.WAITING;
     this.latestRoomState = null;
@@ -1137,7 +1197,7 @@ export class GameManager {
       // Apply speed boost if active
       const boosted = Date.now() < this.speedBoostEnd;
       if (boosted) {
-        (this.propController as any).speed = 18;
+        (this.propController as any).speed = 14;
         this.speedBoostSmoke += dt;
         if (this.speedBoostSmoke > 0.08) {
           this.speedBoostSmoke = 0;

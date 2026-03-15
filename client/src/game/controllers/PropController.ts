@@ -34,7 +34,7 @@ export class PropController {
   // Movement
   private verticalVelocity = 0;
   private gravity = -28;
-  private jumpSpeed = 12;
+  private jumpSpeed = 11;
   private onGround = true;
   private moveDir = new THREE.Vector3();
   private smoothY = 0;

@@ -10,6 +10,36 @@ interface MapBuildResult {
   ferrisWheel: THREE.Group | null;
 }
 
+function makeSignTextMesh(
+  text: string, width: number, height: number,
+  fontSize: number, textColor: string, bgColor: string | null,
+  fontWeight = "bold", fontFamily = "sans-serif"
+): THREE.Mesh {
+  const res = 4;
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(width * 100 * res);
+  canvas.height = Math.round(height * 100 * res);
+  const ctx = canvas.getContext("2d")!;
+
+  if (bgColor) {
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  ctx.fillStyle = textColor;
+  ctx.font = `${fontWeight} ${fontSize * res}px ${fontFamily}`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: !bgColor });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(width, height), mat);
+  mesh.castShadow = false;
+  return mesh;
+}
+
 export function buildOldHarborFortniteMap(scene: THREE.Scene, _mapData: MapData): MapBuildResult {
   const colliders: THREE.Box3[] = [];
   const B = new MapBoxHelper(scene, colliders);
@@ -796,6 +826,9 @@ function buildLandmark(B: MapBoxHelper, scene: THREE.Scene) {
   // "OLD HARBOR" sign on warehouse facade
   B.colorBox(8, 1.2, 0.12, 0, 7.0, 18.3, PALETTE.steelDark, 0.5, 0.5, false);
   B.colorBox(7.5, 0.8, 0.06, 0, 7.0, 18.4, PALETTE.offWhite, 0.8, 0.02, false);
+  const harborText = makeSignTextMesh("OLD HARBOR", 7.0, 0.7, 42, "#1a1a2e", null);
+  harborText.position.set(0, 7.0, 18.47);
+  scene.add(harborText);
 }
 
 // ========== VEGETATION ==========
@@ -2041,9 +2074,10 @@ function buildDocksideCafeBar(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(BW - wt * 2, 0.08, BD - wt * 2, bx, 0.24, bz, woodBrown, 0.85, 0.02, false);
 
   // === WALLS ===
-  // Back wall (solid)
-  B.colorBox(BW, BH, wt, bx, BH / 2, bz - BD / 2, warmWhite, 0.85, 0.02, false);
-  B.addCollider(bx - BW / 2, 0, bz - BD / 2 - wt / 2, bx + BW / 2, BH, bz - BD / 2 + wt / 2);
+  // Back wall (solid) — extended thick to fill gap to map boundary (z = -43)
+  const backGap = 2.0;
+  B.colorBox(BW, BH, wt + backGap, bx, BH / 2, bz - BD / 2 - backGap / 2, warmWhite, 0.85, 0.02, false);
+  B.addCollider(bx - BW / 2, 0, bz - BD / 2 - backGap, bx + BW / 2, BH, bz - BD / 2 + wt / 2);
 
   // Left wall (with back door opening)
   B.colorBox(wt, BH, 4, bx - BW / 2, BH / 2, bz - BD / 2 + 2, warmWhite, 0.85, 0.02, false);
@@ -2054,9 +2088,9 @@ function buildDocksideCafeBar(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(wt, 3.5, 3, bx - BW / 2, BH - 1.75, bz - 1.5, warmWhite, 0.85, 0.02, false);
   B.addCollider(bx - BW / 2 - wt / 2, 3.5, bz - BD / 2 + 4, bx - BW / 2 + wt / 2, BH, bz);
 
-  // Right wall (solid)
-  B.colorBox(wt, BH, BD, bx + BW / 2, BH / 2, bz, warmWhite, 0.85, 0.02, false);
-  B.addCollider(bx + BW / 2 - wt / 2, 0, bz - BD / 2, bx + BW / 2 + wt / 2, BH, bz + BD / 2);
+  // Right wall (solid, extended back to fill gap to boundary)
+  B.colorBox(wt, BH, BD + backGap, bx + BW / 2, BH / 2, bz - backGap / 2, warmWhite, 0.85, 0.02, false);
+  B.addCollider(bx + BW / 2 - wt / 2, 0, bz - BD / 2 - backGap, bx + BW / 2 + wt / 2, BH, bz + BD / 2);
 
   // Front wall (glass with 2 door openings)
   // Left glass
@@ -2074,9 +2108,7 @@ function buildDocksideCafeBar(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(3, 2, 0.1, bx + 3.5, BH - 1, bz + BD / 2, 0x88aacc, 0.1, 0.5, false);
   B.addCollider(bx + 2, BH - 2, bz + BD / 2 - 0.15, bx + 5, BH, bz + BD / 2 + 0.15);
 
-  // === ROOF (1F ceiling / 2F floor, partial rooftop) ===
-  B.colorBox(BW + 1, 0.25, BD + 1, bx, BH + 0.12, bz, navy, 0.9, 0.03, false);
-  B.addCollider(bx - BW / 2 - 0.5, BH, bz - BD / 2 - 0.5, bx + BW / 2 + 0.5, BH + 0.3, bz + BD / 2 + 0.5);
+  // (Roof is built later, after spiral staircase, with a hole for rooftop access)
 
   // === L-SHAPED BAR COUNTER ===
   const barX = bx + 4, barZ = bz - 2;
@@ -2152,31 +2184,153 @@ function buildDocksideCafeBar(B: MapBoxHelper, scene: THREE.Scene) {
   beam.material.opacity = 0.15;
   scene.add(beam);
 
-  // === ROOFTOP ACCESS (ramp stairs on right side, exterior) ===
-  const rampX = bx + BW / 2 + 1;
-  const rampSteps = 12;
-  for (let i = 0; i < rampSteps; i++) {
-    const ry = 0.2 + (i + 0.5) * (BH / rampSteps);
-    const rz = bz - BD / 2 + 1 + i * (BD / rampSteps);
-    B.colorBox(1.5, 0.1, BD / rampSteps, rampX, ry, rz, PALETTE.steelLight, 0.5, 0.5, false);
-    B.addCollider(rampX - 0.8, ry - BH / rampSteps / 2, rz - BD / rampSteps / 2 - 0.05, rampX + 0.8, ry + 0.1, rz + BD / rampSteps / 2 + 0.05);
+  // === INTERIOR SPIRAL STAIRCASE (back-right corner, leads to rooftop) ===
+  const spiralX = bx + 6, spiralZ = bz - 3;
+  const spiralR = 1.8;
+  const spiralSteps = 18;
+  const spiralTotalAngle = Math.PI * 2.2;
+  const stepRise = BH / spiralSteps;
+  const steelMat = PALETTE.steelLight;
+  const stepColor = 0x333333;
+
+  // Central pole
+  B.cyl(0.1, 0.1, BH + 0.5, spiralX, BH / 2 + 0.1, spiralZ, "steelDark", false);
+
+  // Spiral steps
+  for (let i = 0; i < spiralSteps; i++) {
+    const angle = (i / spiralSteps) * spiralTotalAngle - Math.PI / 2;
+    const sy = 0.3 + (i + 1) * stepRise;
+    const sx = spiralX + Math.cos(angle) * spiralR * 0.5;
+    const sz = spiralZ + Math.sin(angle) * spiralR * 0.5;
+
+    // Wedge-shaped step (approximated with box, rotated)
+    const stepMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(spiralR, 0.08, 0.7),
+      getCustomMaterial(stepColor, 0.5, 0.5)
+    );
+    stepMesh.position.set(sx, sy, sz);
+    stepMesh.rotation.y = -angle;
+    stepMesh.castShadow = true;
+    stepMesh.receiveShadow = true;
+    scene.add(stepMesh);
+
+    // Step collider (AABB around step position)
+    const cr = spiralR * 0.55;
+    B.addCollider(
+      spiralX + Math.cos(angle) * cr - 0.7, sy - stepRise * 0.6,
+      spiralZ + Math.sin(angle) * cr - 0.7,
+      spiralX + Math.cos(angle) * cr + 0.7, sy + 0.08,
+      spiralZ + Math.sin(angle) * cr + 0.7
+    );
+
+    // Handrail post (outer edge)
+    const postX = spiralX + Math.cos(angle) * (spiralR + 0.1);
+    const postZ = spiralZ + Math.sin(angle) * (spiralR + 0.1);
+    B.cyl(0.025, 0.025, 0.9, postX, sy + 0.45, postZ, "steelDark", false);
+  }
+
+  // Handrail (outer ring, approximated with thin curved segments)
+  for (let i = 0; i < spiralSteps - 1; i++) {
+    const a1 = (i / spiralSteps) * spiralTotalAngle - Math.PI / 2;
+    const a2 = ((i + 1) / spiralSteps) * spiralTotalAngle - Math.PI / 2;
+    const y1 = 0.3 + (i + 1) * stepRise + 0.9;
+    const y2 = 0.3 + (i + 2) * stepRise + 0.9;
+    const hx1 = spiralX + Math.cos(a1) * (spiralR + 0.1);
+    const hz1 = spiralZ + Math.sin(a1) * (spiralR + 0.1);
+    const hx2 = spiralX + Math.cos(a2) * (spiralR + 0.1);
+    const hz2 = spiralZ + Math.sin(a2) * (spiralR + 0.1);
+    const railLen = Math.sqrt((hx2 - hx1) ** 2 + (y2 - y1) ** 2 + (hz2 - hz1) ** 2);
+    const railMesh = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.02, 0.02, railLen, 6),
+      getMaterial("steelDark")
+    );
+    railMesh.position.set((hx1 + hx2) / 2, (y1 + y2) / 2, (hz1 + hz2) / 2);
+    railMesh.lookAt(hx2, y2, hz2);
+    railMesh.rotateX(Math.PI / 2);
+    scene.add(railMesh);
+  }
+
+  // Roof opening above spiral staircase (hole in ceiling)
+  // The main roof is rebuilt as panels around this opening
+  const holeR = spiralR + 0.5;
+
+  // Roof railing around staircase opening
+  const holeSegments = 12;
+  for (let i = 0; i < holeSegments; i++) {
+    const a = (i / holeSegments) * Math.PI * 2;
+    const rx = spiralX + Math.cos(a) * (holeR + 0.1);
+    const rz = spiralZ + Math.sin(a) * (holeR + 0.1);
+    B.cyl(0.03, 0.03, 1.0, rx, BH + 0.5, rz, "steelDark", false);
+  }
+  // Circular rail at top of opening
+  for (let i = 0; i < holeSegments; i++) {
+    const a1 = (i / holeSegments) * Math.PI * 2;
+    const a2 = ((i + 1) / holeSegments) * Math.PI * 2;
+    const rx1 = spiralX + Math.cos(a1) * (holeR + 0.1);
+    const rz1 = spiralZ + Math.sin(a1) * (holeR + 0.1);
+    const rx2 = spiralX + Math.cos(a2) * (holeR + 0.1);
+    const rz2 = spiralZ + Math.sin(a2) * (holeR + 0.1);
+    const segLen = Math.sqrt((rx2 - rx1) ** 2 + (rz2 - rz1) ** 2);
+    const seg = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.025, 0.025, segLen, 4),
+      getMaterial("steelDark")
+    );
+    seg.position.set((rx1 + rx2) / 2, BH + 1.0, (rz1 + rz2) / 2);
+    seg.rotation.z = Math.PI / 2;
+    seg.rotation.y = Math.atan2(rz2 - rz1, rx2 - rx1);
+    scene.add(seg);
+  }
+
+  // === ROOF (rebuilt with hole for spiral staircase) ===
+  // Left section (from left edge to spiral hole)
+  const roofLeftW = (spiralX - holeR) - (bx - BW / 2 - 0.5);
+  if (roofLeftW > 0) {
+    const rlx = (bx - BW / 2 - 0.5 + spiralX - holeR) / 2;
+    B.colorBox(roofLeftW, 0.25, BD + 1, rlx, BH + 0.12, bz, navy, 0.9, 0.03, false);
+    B.addCollider(bx - BW / 2 - 0.5, BH, bz - BD / 2 - 0.5, spiralX - holeR, BH + 0.3, bz + BD / 2 + 0.5);
+  }
+  // Right section (from spiral hole to right edge)
+  const roofRightW = (bx + BW / 2 + 0.5) - (spiralX + holeR);
+  if (roofRightW > 0) {
+    const rrx = (spiralX + holeR + bx + BW / 2 + 0.5) / 2;
+    B.colorBox(roofRightW, 0.25, BD + 1, rrx, BH + 0.12, bz, navy, 0.9, 0.03, false);
+    B.addCollider(spiralX + holeR, BH, bz - BD / 2 - 0.5, bx + BW / 2 + 0.5, BH + 0.3, bz + BD / 2 + 0.5);
+  }
+  // Front strip (in front of hole)
+  const roofFrontD = (spiralZ - holeR) - (bz - BD / 2 - 0.5);
+  if (roofFrontD > 0) {
+    const rfz = (bz - BD / 2 - 0.5 + spiralZ - holeR) / 2;
+    B.colorBox(holeR * 2, 0.25, roofFrontD, spiralX, BH + 0.12, rfz, navy, 0.9, 0.03, false);
+    B.addCollider(spiralX - holeR, BH, bz - BD / 2 - 0.5, spiralX + holeR, BH + 0.3, spiralZ - holeR);
+  }
+  // Back strip (behind hole)
+  const roofBackD = (bz + BD / 2 + 0.5) - (spiralZ + holeR);
+  if (roofBackD > 0) {
+    const rbz = (spiralZ + holeR + bz + BD / 2 + 0.5) / 2;
+    B.colorBox(holeR * 2, 0.25, roofBackD, spiralX, BH + 0.12, rbz, navy, 0.9, 0.03, false);
+    B.addCollider(spiralX - holeR, BH, spiralZ + holeR, spiralX + holeR, BH + 0.3, bz + BD / 2 + 0.5);
   }
 
   // === ROOFTOP ===
-  // Railings (all 4 sides)
-  B.colorBox(BW, 0.06, 0.06, bx, BH + 1, bz - BD / 2, navy, 0.85, 0.02, false);
-  B.addCollider(bx - BW / 2, BH, bz - BD / 2 - 0.15, bx + BW / 2, BH + 1.1, bz - BD / 2 + 0.15);
+  // Railings (3 sides — back side has NO railing so players can fall off)
+  // Front railing
   B.colorBox(BW, 0.06, 0.06, bx, BH + 1, bz + BD / 2, navy, 0.85, 0.02, false);
   B.addCollider(bx - BW / 2, BH, bz + BD / 2 - 0.15, bx + BW / 2, BH + 1.1, bz + BD / 2 + 0.15);
+  // Left railing
   B.colorBox(0.06, 0.06, BD, bx - BW / 2, BH + 1, bz, navy, 0.85, 0.02, false);
   B.addCollider(bx - BW / 2 - 0.15, BH, bz - BD / 2, bx - BW / 2 + 0.15, BH + 1.1, bz + BD / 2);
+  // Right railing
   B.colorBox(0.06, 0.06, BD, bx + BW / 2, BH + 1, bz, navy, 0.85, 0.02, false);
   B.addCollider(bx + BW / 2 - 0.15, BH, bz - BD / 2, bx + BW / 2 + 0.15, BH + 1.1, bz + BD / 2);
-  // Railing posts
+  // Railing posts (front, left, right only)
   for (let i = 0; i < 8; i++) {
     const px = bx - BW / 2 + 1 + i * (BW / 7);
-    B.colorBox(0.05, 0.9, 0.05, px, BH + 0.55, bz - BD / 2, navy, 0.85, 0.02, false);
     B.colorBox(0.05, 0.9, 0.05, px, BH + 0.55, bz + BD / 2, navy, 0.85, 0.02, false);
+  }
+  for (let i = 0; i < 5; i++) {
+    const pz = bz - BD / 2 + 1 + i * (BD / 4);
+    B.colorBox(0.05, 0.9, 0.05, bx - BW / 2, BH + 0.55, pz, navy, 0.85, 0.02, false);
+    B.colorBox(0.05, 0.9, 0.05, bx + BW / 2, BH + 0.55, pz, navy, 0.85, 0.02, false);
   }
   // Rooftop tables (3)
   for (let i = 0; i < 3; i++) {
@@ -2192,6 +2346,9 @@ function buildDocksideCafeBar(B: MapBoxHelper, scene: THREE.Scene) {
   sign.position.set(bx, BH + 1.5, bz + BD / 2 + 0.1);
   scene.add(sign);
   B.colorBox(6.4, 1.0, 0.15, bx, BH + 1.5, bz + BD / 2 + 0.05, navy, 0.85, 0.02, false);
+  const cafeText = makeSignTextMesh("DOCKSIDE BAR", 5.6, 0.7, 38, "#ffffff", null);
+  cafeText.position.set(bx, BH + 1.5, bz + BD / 2 + 0.17);
+  scene.add(cafeText);
 
   // === TERRACE (outdoor area, front) ===
   const tZ = bz + BD / 2 + 3;
@@ -2309,6 +2466,9 @@ function buildDocksideMiniMart(B: MapBoxHelper, scene: THREE.Scene) {
   scene.add(sign);
   // Sign backing
   B.colorBox(5.4, 1.0, 0.15, mx, MH + 0.6, mz + MD / 2 + 2, navyTrim, 0.85, 0.02, false);
+  const martText = makeSignTextMesh("NEON MART 24h", 4.6, 0.7, 38, "#ffffff", null);
+  martText.position.set(mx, MH + 0.6, mz + MD / 2 + 2.12);
+  scene.add(martText);
 
   // === INTERIOR: 2 SHELF AISLES ===
   for (let aisle = 0; aisle < 2; aisle++) {
