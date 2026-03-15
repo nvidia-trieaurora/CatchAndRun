@@ -25,7 +25,7 @@ export class HunterController {
 
   private speed = HUNTER_SPEED;
   private gravity = -28;
-  private jumpSpeed = 13;
+  private jumpSpeed = 11.5;
   private onGround = true;
   private verticalVelocity = 0;
   private isCrouching = false;
@@ -124,7 +124,7 @@ export class HunterController {
       const heightDiff = targetFeetY - this.smoothFeetY;
       
       if (heightDiff > 0.05 && heightDiff < STEP_UP + 0.2) {
-        this.smoothFeetY += heightDiff * Math.min(1, dt * 20);
+        this.smoothFeetY += heightDiff * Math.min(1, dt * 35);
       } else {
         this.smoothFeetY = targetFeetY;
       }
@@ -137,6 +137,7 @@ export class HunterController {
 
     // Unstuck - only push horizontally, skip vertical to avoid roof jitter
     this.pushOutHorizontal(colliders, bodyH);
+    this.clampToBounds();
 
     // Head bob
     const isMoving = this.direction.lengthSq() > 0 && this.onGround;
@@ -217,14 +218,17 @@ export class HunterController {
 
   private findCeiling(colliders: THREE.Box3[], bodyH: number): number | null {
     const headY = this.feetY + bodyH;
-    const vUp = Math.max(1.0, this.verticalVelocity * 0.12);
+    const vUp = Math.max(2.5, this.verticalVelocity * 0.3);
     const probe = new THREE.Box3(
-      new THREE.Vector3(this.position.x - RADIUS * 0.6, headY, this.position.z - RADIUS * 0.6),
-      new THREE.Vector3(this.position.x + RADIUS * 0.6, headY + vUp, this.position.z + RADIUS * 0.6)
+      new THREE.Vector3(this.position.x - RADIUS, headY - 0.1, this.position.z - RADIUS),
+      new THREE.Vector3(this.position.x + RADIUS, headY + vUp, this.position.z + RADIUS)
     );
     let lowestCeiling: number | null = null;
     for (const c of colliders) {
-      if (probe.intersectsBox(c) && c.min.y >= headY - 0.1) {
+      if (!probe.intersectsBox(c)) continue;
+      const slabThickness = c.max.y - c.min.y;
+      if (slabThickness < 0.08) continue;
+      if (c.min.y >= headY - 0.3) {
         if (lowestCeiling === null || c.min.y < lowestCeiling) {
           lowestCeiling = c.min.y;
         }
@@ -265,6 +269,12 @@ export class HunterController {
   }
 
   getIsCrouching(): boolean { return this.isCrouching; }
+
+  private clampToBounds() {
+    const MIN_X = -54, MAX_X = 62, MIN_Z = -42, MAX_Z = 46;
+    this.position.x = Math.max(MIN_X, Math.min(MAX_X, this.position.x));
+    this.position.z = Math.max(MIN_Z, Math.min(MAX_Z, this.position.z));
+  }
 
   setPosition(x: number, y: number, z: number) {
     this.position.set(x, y + EYE_H, z);

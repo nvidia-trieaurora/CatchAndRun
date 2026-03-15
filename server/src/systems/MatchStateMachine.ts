@@ -131,6 +131,15 @@ export class MatchStateMachine {
       player.ammo = 0;
       player.currentPropId = "";
       player.isLocked = false;
+      player.isSpectator = false;
+    });
+
+    void this.room.setMetadata({
+      roomName: state.roomName,
+      roomCode: state.roomCode,
+      mapId: state.config.mapId,
+      phase: "waiting",
+      isPrivate: state.isPrivate,
     });
   }
 

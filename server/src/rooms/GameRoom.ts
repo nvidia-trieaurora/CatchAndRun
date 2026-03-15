@@ -1,4 +1,4 @@
-import { Room, Client } from "colyseus";
+import { Room, Client, matchMaker } from "colyseus";
 import { GameState } from "../schemas/GameState";
 import { PlayerSchema } from "../schemas/PlayerSchema";
 import { ChatMessage } from "../schemas/ChatMessage";
@@ -24,6 +24,7 @@ import {
   type ThrowGrenadeData,
   type PlaySoundMemeData,
   MAX_PLAYERS_PER_ROOM,
+  MAX_ROOMS,
   HUNTER_MAX_HEALTH,
   PROP_MAX_HEALTH,
   WEAPON_MAX_AMMO,
@@ -41,6 +42,7 @@ import mapData from "../data/maps/harbor-warehouse.json";
 interface RoomCreateOptions {
   roomName?: string;
   isPrivate?: boolean;
+  passcode?: string;
   nickname?: string;
   maxPlayers?: number;
 }
@@ -54,24 +56,36 @@ export class GameRoom extends Room<GameState> {
   private roleAssigner!: RoleAssigner;
   private spawnManager!: SpawnManager;
   private snapshotBuffer!: SnapshotBuffer;
+  private passcode: string = "";
 
-  onCreate(options: RoomCreateOptions) {
+  async onCreate(options: RoomCreateOptions) {
+    const existingRooms = await matchMaker.query({ name: "game_room" });
+    if (existingRooms.length >= MAX_ROOMS) {
+      throw new Error(`Server full: max ${MAX_ROOMS} rooms allowed`);
+    }
+
     const state = new GameState();
     state.roomName = options.roomName || "Game Room";
     state.isPrivate = options.isPrivate || false;
-    state.roomCode = generateRoomCode();
     state.config.maxPlayers = options.maxPlayers || MAX_PLAYERS_PER_ROOM;
+
+    if (state.isPrivate && options.passcode) {
+      this.passcode = options.passcode.toUpperCase();
+      state.roomCode = this.passcode;
+    } else {
+      state.roomCode = generateRoomCode();
+    }
 
     this.setState(state);
     this.maxClients = state.config.maxPlayers;
 
-    if (!state.isPrivate) {
-      void this.setMetadata({
-        roomName: state.roomName,
-        roomCode: state.roomCode,
-        mapId: state.config.mapId,
-      });
-    }
+    void this.setMetadata({
+      roomName: state.roomName,
+      roomCode: state.roomCode,
+      mapId: state.config.mapId,
+      phase: "waiting",
+      isPrivate: state.isPrivate,
+    });
 
     this.snapshotBuffer = new SnapshotBuffer();
     this.matchSM = new MatchStateMachine(this);
@@ -153,7 +167,16 @@ export class GameRoom extends Room<GameState> {
     });
   }
 
-  onJoin(client: Client, options: { nickname?: string }) {
+  onAuth(_client: Client, options: { nickname?: string; passcode?: string }) {
+    if (this.state.isPrivate && this.passcode) {
+      if (!options.passcode || options.passcode !== this.passcode) {
+        throw new Error("Invalid passcode");
+      }
+    }
+    return true;
+  }
+
+  onJoin(client: Client, options: { nickname?: string; passcode?: string }) {
     const player = new PlayerSchema();
     player.sessionId = client.sessionId;
     player.nickname = options.nickname || `Player${Math.floor(Math.random() * 1000)}`;
@@ -163,11 +186,21 @@ export class GameRoom extends Room<GameState> {
       this.state.hostSessionId = client.sessionId;
     }
 
+    const isGameRunning = this.state.phase !== GamePhase.WAITING && this.state.phase !== GamePhase.COUNTDOWN;
+    if (isGameRunning) {
+      player.isSpectator = true;
+      player.role = PlayerRole.SPECTATOR;
+      player.isAlive = false;
+      player.isReady = true;
+    }
+
     this.state.players.set(client.sessionId, player);
 
     const sysMsg = new ChatMessage();
     sysMsg.sender = "System";
-    sysMsg.message = `${player.nickname} joined the room`;
+    sysMsg.message = isGameRunning
+      ? `${player.nickname} joined as spectator (will play next round)`
+      : `${player.nickname} joined the room`;
     sysMsg.timestamp = Date.now();
     this.state.chat.push(sysMsg);
 
@@ -235,6 +268,7 @@ export class GameRoom extends Room<GameState> {
         kills: p.kills,
         isHost: p.isHost,
         memeId: p.memeId,
+        isSpectator: p.isSpectator,
       });
     });
 
@@ -600,6 +634,13 @@ export class GameRoom extends Room<GameState> {
     if (this.state.phase !== GamePhase.WAITING) return;
     if (this.state.players.size < 2) return;
 
+    void this.setMetadata({
+      roomName: this.state.roomName,
+      roomCode: this.state.roomCode,
+      mapId: this.state.config.mapId,
+      phase: "active",
+      isPrivate: this.state.isPrivate,
+    });
     this.matchSM.startMatch();
   }
 
@@ -608,7 +649,7 @@ export class GameRoom extends Room<GameState> {
     if (this.state.phase !== GamePhase.WAITING) return;
 
     if (data.maxPlayers !== undefined) {
-      this.state.config.maxPlayers = Math.min(Math.max(data.maxPlayers, 2), 10);
+      this.state.config.maxPlayers = Math.min(Math.max(data.maxPlayers, 2), MAX_PLAYERS_PER_ROOM);
       this.maxClients = this.state.config.maxPlayers;
     }
     if (data.roundTime !== undefined) {
@@ -651,6 +692,11 @@ export class GameRoom extends Room<GameState> {
   }
 
   public initRound() {
+    // Clear spectator flag so mid-game joiners participate in this round
+    this.state.players.forEach((player) => {
+      player.isSpectator = false;
+    });
+
     const playerIds = Array.from(this.state.players.keys());
     const roles = this.roleAssigner.assignRoles(
       playerIds,

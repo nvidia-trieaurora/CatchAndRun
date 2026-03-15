@@ -122,8 +122,7 @@ export class TouchInputProvider {
 
     this.joystickCanvas.addEventListener("touchmove", (e) => {
       e.preventDefault();
-      for (let i = 0; i < e.changedTouches.length; i++) {
-        const t = e.changedTouches[i];
+      for (const t of Array.from(e.changedTouches)) {
         if (t.identifier === this.joystickTouchId) {
           const rect = this.joystickCanvas.getBoundingClientRect();
           let dx = (t.clientX - rect.left) - this.joystickOrigin.x;
@@ -142,8 +141,8 @@ export class TouchInputProvider {
     }, { passive: false });
 
     const endJoystick = (e: TouchEvent) => {
-      for (let i = 0; i < e.changedTouches.length; i++) {
-        if (e.changedTouches[i].identifier === this.joystickTouchId) {
+      for (const t of Array.from(e.changedTouches)) {
+        if (t.identifier === this.joystickTouchId) {
           this.resetJoystick();
         }
       }
@@ -221,8 +220,7 @@ export class TouchInputProvider {
 
     this.lookZone.addEventListener("touchmove", (e) => {
       e.preventDefault();
-      for (let i = 0; i < e.changedTouches.length; i++) {
-        const t = e.changedTouches[i];
+      for (const t of Array.from(e.changedTouches)) {
         if (t.identifier === this.lookTouchId) {
           // movementX/Y aren't available on touch, so we track manually
           // Use a private prev position stored per frame
@@ -238,8 +236,8 @@ export class TouchInputProvider {
     }, { passive: false });
 
     const endLook = (e: TouchEvent) => {
-      for (let i = 0; i < e.changedTouches.length; i++) {
-        if (e.changedTouches[i].identifier === this.lookTouchId) {
+      for (const t of Array.from(e.changedTouches)) {
+        if (t.identifier === this.lookTouchId) {
           this.lookTouchId = null;
           this._prevLookX = null;
           this._prevLookY = null;
@@ -302,8 +300,8 @@ export class TouchInputProvider {
       e.stopPropagation();
       btn.classList.remove("active");
 
-      for (let i = 0; i < e.changedTouches.length; i++) {
-        const tid = e.changedTouches[i].identifier;
+      for (const touch of Array.from(e.changedTouches)) {
+        const tid = touch.identifier;
         const key = this.activeButtons.get(tid);
         if (key) {
           if (key === "__mouseDown__") {
@@ -318,8 +316,8 @@ export class TouchInputProvider {
 
     btn.addEventListener("touchcancel", (e) => {
       btn.classList.remove("active");
-      for (let i = 0; i < e.changedTouches.length; i++) {
-        const tid = e.changedTouches[i].identifier;
+      for (const touch of Array.from(e.changedTouches)) {
+        const tid = touch.identifier;
         const key = this.activeButtons.get(tid);
         if (key) {
           if (key === "__mouseDown__") this.input.setMouseDown(false);

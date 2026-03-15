@@ -185,8 +185,10 @@ export class GameManager {
   private setupUI() {
     this.mainMenu = new MainMenuUI({
       onQuickJoin: (nickname) => this.quickJoin(nickname),
-      onCreate: (nickname, roomName, isPrivate) => this.createRoom(nickname, roomName, isPrivate),
+      onCreate: (nickname, roomName, isPrivate, passcode) => this.createRoom(nickname, roomName, isPrivate, passcode),
       onJoinCode: (nickname, code) => this.joinByCode(nickname, code),
+      onBrowseRooms: () => this.network.getAvailableRooms(),
+      onJoinRoom: (nickname, roomId, passcode) => this.joinRoomById(nickname, roomId, passcode),
     });
 
     this.roomLobby = new RoomLobbyUI({
@@ -228,6 +230,11 @@ export class GameManager {
       this.localAmmo = selfData.ammo;
       this.localIsAlive = selfData.isAlive;
       this.localIsLocked = selfData.isLocked;
+    }
+
+    // Detect mid-game spectator join (first state received while game active)
+    if (selfData?.isSpectator && !this.mapBuilt) {
+      this.enterMidGameSpectator(data);
     }
 
     const newPhase = data.phase as string;
@@ -402,6 +409,28 @@ export class GameManager {
         this.clearGameEntities();
         this.touchInput?.hide();
         break;
+    }
+  }
+
+  private enterMidGameSpectator(data: any) {
+    this.buildMapIfNeeded();
+    this.initControllers();
+    this.currentPhase = data.phase;
+    this.localRole = PlayerRole.SPECTATOR;
+    this.localIsAlive = false;
+
+    this.spectatorController.setPosition(0, 15, 20);
+    this.uiManager.showScreen("gameHUD");
+    this.gameHUD.updateRole("ghost");
+    this.gameHUD.updatePhase(data.phase);
+    this.uiManager.showNotification("Spectating — you will play next round!");
+
+    if (this.touchInput) {
+      this.touchInput.show();
+      this.touchInput.setRole("spectator");
+    }
+    if (!this.mobile) {
+      setTimeout(() => this.input.requestPointerLock(), 500);
     }
   }
 
@@ -584,9 +613,9 @@ export class GameManager {
     }
   }
 
-  private async createRoom(nickname: string, roomName: string, isPrivate: boolean) {
+  private async createRoom(nickname: string, roomName: string, isPrivate: boolean, passcode?: string) {
     try {
-      await this.network.createRoom({ nickname, roomName, isPrivate });
+      await this.network.createRoom({ nickname, roomName, isPrivate, passcode });
       this.attachToRoom();
       this.uiManager.showScreen("roomLobby");
     } catch (e: any) {
@@ -597,6 +626,16 @@ export class GameManager {
   private async joinByCode(nickname: string, code: string) {
     try {
       await this.network.joinByCode(code, nickname);
+      this.attachToRoom();
+      this.uiManager.showScreen("roomLobby");
+    } catch (e: any) {
+      this.uiManager.showNotification(`Failed: ${e.message}`);
+    }
+  }
+
+  private async joinRoomById(nickname: string, roomId: string, passcode?: string) {
+    try {
+      await this.network.joinRoom(roomId, nickname, passcode);
       this.attachToRoom();
       this.uiManager.showScreen("roomLobby");
     } catch (e: any) {
@@ -1351,14 +1390,15 @@ export class GameManager {
   private localTransformCount = 0;
 
   private handlePropActions() {
-    // E = Transform into random prop (max 2 times)
+    // E = Transform into random prop (max 2 times), weighted by rarity
     if (this.input.consumeKey("KeyE")) {
       if (this.localTransformCount >= 2) {
         this.uiManager.showNotification("Max transforms reached (2/2)!");
       } else {
-        const allProps = this.propRegistry.getAll();
-        const randomProp = allProps[Math.floor(Math.random() * allProps.length)];
-        this.network.send(ClientMessage.TRANSFORM_REQUEST, { propId: randomProp.id });
+        const picked = this.pickWeightedProp();
+        if (picked) {
+          this.network.send(ClientMessage.TRANSFORM_REQUEST, { propId: picked.id });
+        }
       }
     }
 
@@ -1381,6 +1421,27 @@ export class GameManager {
       this.network.send(ClientMessage.USE_ABILITY);
       this.lastAbilityTime = Date.now();
     }
+  }
+
+  private static RARITY_WEIGHTS: Record<string, number> = {
+    common: 70,
+    uncommon: 25,
+    rare: 5,
+  };
+
+  private pickWeightedProp() {
+    const allProps = this.propRegistry.getAll();
+    const eligible = allProps.filter(p => p.id !== this.localPropId);
+    if (eligible.length === 0) return allProps[0];
+
+    const weights = eligible.map(p => GameManager.RARITY_WEIGHTS[p.rarity] ?? 70);
+    const totalWeight = weights.reduce((a, b) => a + b, 0);
+    let roll = Math.random() * totalWeight;
+    for (let i = 0; i < eligible.length; i++) {
+      roll -= weights[i];
+      if (roll <= 0) return eligible[i];
+    }
+    return eligible[eligible.length - 1];
   }
 
   private updateHunterHUD() {

@@ -34,7 +34,7 @@ export class PropController {
   // Movement
   private verticalVelocity = 0;
   private gravity = -28;
-  private jumpSpeed = 11;
+  private jumpSpeed = 11.5;
   private onGround = true;
   private moveDir = new THREE.Vector3();
   private smoothY = 0;
@@ -159,7 +159,7 @@ export class PropController {
       const heightDiff = targetY - this.smoothY;
       
       if (heightDiff > 0.05 && heightDiff < STEP_UP + 0.2) {
-        this.smoothY += heightDiff * Math.min(1, dt * 20);
+        this.smoothY += heightDiff * Math.min(1, dt * 35);
       } else {
         this.smoothY = targetY;
       }
@@ -170,6 +170,7 @@ export class PropController {
     }
 
     this.pushOutHorizontal(colliders);
+    this.clampToBounds();
 
     // Update prop mesh: only yaw rotation (no pitch/roll)
     if (this.propMesh) {
@@ -327,14 +328,17 @@ export class PropController {
 
   private findCeiling(colliders: THREE.Box3[]): number | null {
     const headY = this.position.y + HEIGHT;
-    const vUp = Math.max(1.0, this.verticalVelocity * 0.12);
+    const vUp = Math.max(2.5, this.verticalVelocity * 0.3);
     const probe = new THREE.Box3(
-      new THREE.Vector3(this.position.x - RADIUS * 0.6, headY, this.position.z - RADIUS * 0.6),
-      new THREE.Vector3(this.position.x + RADIUS * 0.6, headY + vUp, this.position.z + RADIUS * 0.6)
+      new THREE.Vector3(this.position.x - RADIUS, headY - 0.1, this.position.z - RADIUS),
+      new THREE.Vector3(this.position.x + RADIUS, headY + vUp, this.position.z + RADIUS)
     );
     let lowestCeiling: number | null = null;
     for (const c of colliders) {
-      if (probe.intersectsBox(c) && c.min.y >= headY - 0.1) {
+      if (!probe.intersectsBox(c)) continue;
+      const slabThickness = c.max.y - c.min.y;
+      if (slabThickness < 0.08) continue;
+      if (c.min.y >= headY - 0.3) {
         if (lowestCeiling === null || c.min.y < lowestCeiling) {
           lowestCeiling = c.min.y;
         }
@@ -370,6 +374,12 @@ export class PropController {
       box.min.set(this.position.x - RADIUS, this.position.y + STEP_UP + 0.05, this.position.z - RADIUS);
       box.max.set(this.position.x + RADIUS, this.position.y + HEIGHT, this.position.z + RADIUS);
     }
+  }
+
+  private clampToBounds() {
+    const MIN_X = -54, MAX_X = 62, MIN_Z = -42, MAX_Z = 46;
+    this.position.x = Math.max(MIN_X, Math.min(MAX_X, this.position.x));
+    this.position.z = Math.max(MIN_Z, Math.min(MAX_Z, this.position.z));
   }
 
   // --- Public API ---

@@ -82,7 +82,7 @@ export class GameHUD {
       this.flashEl = this.element.querySelector("#damage-flash")!;
       this.chatContainerEl = this.element.querySelector("#hud-chat-container")!;
       this.chatMessagesEl = this.element.querySelector("#hud-chat-messages")!;
-      this.chatInputEl = this.element.querySelector("#hud-chat-input")! as HTMLInputElement;
+      this.chatInputEl = this.element.querySelector("#hud-chat-input")!;
       this.chatToastEl = this.element.querySelector("#hud-chat-toast")!;
       this.soulModeEl = this.element.querySelector("#hud-soul-mode")!;
       this.controlsHintEl = this.element.querySelector("#hud-controls-hint")!;

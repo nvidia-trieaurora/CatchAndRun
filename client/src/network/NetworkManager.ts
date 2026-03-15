@@ -26,7 +26,7 @@ export class NetworkManager {
 
   private async cleanupExistingRoom() {
     if (this.room) {
-      try { await this.room.leave(); } catch (_) { /* already left */ }
+      try { await this.room.leave(); } catch { /* already left */ }
       this.room = null;
     }
   }
@@ -35,6 +35,7 @@ export class NetworkManager {
     nickname: string;
     roomName?: string;
     isPrivate?: boolean;
+    passcode?: string;
     maxPlayers?: number;
   }): Promise<Room> {
     if (this._connecting) throw new Error("Already connecting");
@@ -49,12 +50,12 @@ export class NetworkManager {
     }
   }
 
-  async joinRoom(roomId: string, nickname: string): Promise<Room> {
+  async joinRoom(roomId: string, nickname: string, passcode?: string): Promise<Room> {
     if (this._connecting) throw new Error("Already connecting");
     this._connecting = true;
     try {
       await this.cleanupExistingRoom();
-      this.room = await this.client.joinById(roomId, { nickname });
+      this.room = await this.client.joinById(roomId, { nickname, passcode });
       this.setupRoomListeners();
       return this.room;
     } finally {
@@ -70,7 +71,7 @@ export class NetworkManager {
       const rooms = await this.getAvailableRooms();
       const match = rooms.find((r: any) => r.metadata?.roomCode === code);
       if (!match) throw new Error("Room not found with that code");
-      this.room = await this.client.joinById(match.roomId, { nickname });
+      this.room = await this.client.joinById(match.roomId, { nickname, passcode: code });
       this.setupRoomListeners();
       return this.room;
     } finally {

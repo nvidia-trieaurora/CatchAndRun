@@ -4,6 +4,15 @@ import type { SnapshotBuffer } from "../utils/SnapshotBuffer";
 import type { ShootData } from "@catch-and-run/shared";
 import mapData from "../data/maps/harbor-warehouse.json";
 
+interface PropDimensions {
+  x: number; y: number; z: number;
+}
+
+interface PropDef {
+  id: string;
+  dimensions: PropDimensions;
+}
+
 interface Vec3 {
   x: number; y: number; z: number;
 }
@@ -28,11 +37,21 @@ export class HitValidation {
   private room: GameRoom;
   private snapshotBuffer: SnapshotBuffer;
   private wallBoxes: AABB[] = [];
+  private propDimensions: Map<string, PropDimensions> = new Map();
 
   constructor(room: GameRoom, snapshotBuffer: SnapshotBuffer) {
     this.room = room;
     this.snapshotBuffer = snapshotBuffer;
     this.loadWallOcclusion();
+    this.loadPropDimensions();
+  }
+
+  private loadPropDimensions() {
+    const props = (mapData as { props?: PropDef[] }).props;
+    if (!Array.isArray(props)) return;
+    for (const p of props) {
+      this.propDimensions.set(p.id, p.dimensions);
+    }
   }
 
   private loadWallOcclusion() {
@@ -86,18 +105,20 @@ export class HitValidation {
 
       const pos = positions.get(sessionId) ?? { x: player.x, y: player.y, z: player.z };
 
-      const hitboxRadius = 0.5;
-      const hitboxHeight = 1.8;
+      const dims = this.propDimensions.get(player.currentPropId);
+      const hitboxRadiusX = dims ? Math.max(dims.x / 2, 0.4) : 0.5;
+      const hitboxRadiusZ = dims ? Math.max(dims.z / 2, 0.4) : 0.5;
+      const hitboxHeight = dims ? Math.max(dims.y, 1.0) : 1.8;
 
       const dist = this.rayVsAABB(
         origin, dir,
         {
-          minX: pos.x - hitboxRadius,
-          minY: pos.y - hitboxHeight / 2,
-          minZ: pos.z - hitboxRadius,
-          maxX: pos.x + hitboxRadius,
-          maxY: pos.y + hitboxHeight / 2,
-          maxZ: pos.z + hitboxRadius,
+          minX: pos.x - hitboxRadiusX,
+          minY: pos.y,
+          minZ: pos.z - hitboxRadiusZ,
+          maxX: pos.x + hitboxRadiusX,
+          maxY: pos.y + hitboxHeight,
+          maxZ: pos.z + hitboxRadiusZ,
         }
       );
 

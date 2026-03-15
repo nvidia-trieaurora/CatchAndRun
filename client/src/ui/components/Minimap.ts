@@ -193,28 +193,53 @@ export class Minimap {
     ctx.fill();
     ctx.restore();
 
-    // Sound pings (orange pulsing circles with zone label)
+    // Sound pings (directional arrows pointing from hunter toward sound source)
     this.soundPings = this.soundPings.filter((p) => p.expireTime > now);
     for (const ping of this.soundPings) {
-      const [sx, sz] = this.worldToCanvas(ping.x, ping.z);
       const age = (now - ping.startTime) / 1000;
       const alpha = Math.max(0, 1 - age / 3);
       const pulse = 1 + Math.sin(age * 8) * 0.3;
-      const r = 6 * pulse;
 
+      // Calculate direction from hunter to sound source
+      const dx = ping.x - this.playerX;
+      const dz = ping.z - this.playerZ;
+      const dist = Math.sqrt(dx * dx + dz * dz);
+      if (dist < 0.1) continue;
+
+      // Angle from hunter to sound (in world space)
+      const angle = Math.atan2(dx, -dz);
+
+      // Arrow placed at fixed distance from player on minimap (edge of awareness ring)
+      const arrowDist = 22;
+      const arrowX = plx + Math.sin(angle) * arrowDist;
+      const arrowZ = plz - Math.cos(angle) * arrowDist;
+      const arrowLen = 10 * pulse;
+
+      // Draw arrow pointing in the direction of the sound
+      ctx.save();
+      ctx.translate(arrowX, arrowZ);
+      ctx.rotate(angle);
+
+      // Arrow head (triangle)
       ctx.beginPath();
-      ctx.arc(sx, sz, r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 160, 30, ${alpha * 0.5})`;
+      ctx.moveTo(0, -arrowLen);
+      ctx.lineTo(-5, arrowLen * 0.3);
+      ctx.lineTo(5, arrowLen * 0.3);
+      ctx.closePath();
+      ctx.fillStyle = `rgba(255, 160, 30, ${alpha * 0.8})`;
       ctx.fill();
-      ctx.strokeStyle = `rgba(255, 200, 50, ${alpha})`;
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = `rgba(255, 220, 80, ${alpha})`;
+      ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      ctx.font = "bold 10px sans-serif";
+      ctx.restore();
+
+      // Zone label near arrow
+      ctx.font = "bold 9px sans-serif";
       ctx.fillStyle = `rgba(255, 200, 50, ${alpha})`;
       ctx.textAlign = "center";
       ctx.textBaseline = "bottom";
-      ctx.fillText(ping.zone, sx, sz - r - 2);
+      ctx.fillText(ping.zone, arrowX, arrowZ - arrowLen - 3);
     }
 
     // Scan radius

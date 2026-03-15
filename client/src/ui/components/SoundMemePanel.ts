@@ -7,6 +7,8 @@ interface SoundMemeEntry {
 const SOUND_MEMES: SoundMemeEntry[] = [
   { id: "do_anh_bat", name: "Đố anh bắt được em", file: "Do_anh_bat_duoc_em_ban_goc_mp3-www_tiengdong_com.mp3" },
   { id: "ai_ep_may_met_thi_nghi_chi_phien", name: "Chị Phiến ai ép mày mệt", file: "ai_ep_may_met_thi_nghi_chi_phien_ban_goc-www_tiengdong_com.mp3" },
+  { id: "que_vl_do_mixi", name: "Quê vl Độ Mixi", file: "meme_que_vl_Do_mixi-www_tiengdong_com.mp3" },
+  { id: "ho_hao_2_3_do", name: "Hô hào 2 3 dô uống bia", file: "tieng_ho_hao_2_3_do_2_3_uong_khi_uong_bia_ruou-www_tiengdong_com.mp3" },
 ];
 
 export class SoundMemePanel {

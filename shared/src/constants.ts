@@ -1,4 +1,5 @@
-export const MAX_PLAYERS_PER_ROOM = 10;
+export const MAX_PLAYERS_PER_ROOM = 8;
+export const MAX_ROOMS = 2;
 export const MIN_PLAYERS_TO_START = 2;
 export const SERVER_TICK_RATE = 20;
 export const CLIENT_SEND_RATE = 30;

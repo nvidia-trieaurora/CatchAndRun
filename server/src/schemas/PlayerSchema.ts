@@ -20,6 +20,7 @@ export class PlayerSchema extends Schema {
   @type("number") kills: number = 0;
   @type("boolean") isHost: boolean = false;
   @type("string") memeId: string = "default";
+  @type("boolean") isSpectator: boolean = false;
 
   lastFireTime: number = 0;
   lastTransformTime: number = 0;

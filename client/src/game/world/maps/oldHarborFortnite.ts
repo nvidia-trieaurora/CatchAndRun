@@ -419,41 +419,49 @@ function buildConstructionZone(B: MapBoxHelper) {
     }
   }
 
-  // Platforms + cross braces per floor
+  // Platforms per floor (no cross braces blocking movement)
   for (let f = 1; f < floorH.length; f++) {
     const fy = floorH[f];
-    // Platform (walkable)
+    // Platform (walkable) - with staircase opening on alternating sides
+    const openSide = (f % 2 === 0) ? -1 : 1; // -1 = front open, 1 = back open
     B.colorBox(tW + 0.3, 0.12, tD + 0.3, tX, fy, tZ, CZ.wood, 0.85, 0.02, false);
     B.addCollider(tX - tW / 2 - 0.15, fy - 0.12, tZ - tD / 2 - 0.15, tX + tW / 2 + 0.15, fy + 0.05, tZ + tD / 2 + 0.15);
-    // Cross braces (front + back)
-    const braceY = (floorH[f - 1] + fy) / 2;
-    B.colorBox(tW, 0.05, 0.05, tX, braceY, tZ - tD / 2, CZ.yellow, 0.6, 0.3, false);
-    B.colorBox(tW, 0.05, 0.05, tX, braceY, tZ + tD / 2, CZ.yellow, 0.6, 0.3, false);
-    // Horizontal rails (left + right)
-    B.colorBox(0.05, 0.05, tD, tX - tW / 2, braceY, tZ, CZ.yellow, 0.6, 0.3, false);
-    B.colorBox(0.05, 0.05, tD, tX + tW / 2, braceY, tZ, CZ.yellow, 0.6, 0.3, false);
-    // Guardrails on platform edges
-    B.colorBox(tW + 0.3, 0.05, 0.05, tX, fy + 0.9, tZ - tD / 2, CZ.yellow, 0.6, 0.3, false);
-    B.addCollider(tX - tW / 2, fy, tZ - tD / 2 - 0.1, tX + tW / 2, fy + 1.0, tZ - tD / 2 + 0.1);
-    B.colorBox(tW + 0.3, 0.05, 0.05, tX, fy + 0.9, tZ + tD / 2, CZ.yellow, 0.6, 0.3, false);
-    B.addCollider(tX - tW / 2, fy, tZ + tD / 2 - 0.1, tX + tW / 2, fy + 1.0, tZ + tD / 2 + 0.1);
+    // Guardrails only on 3 sides (leave stair side open for entry)
+    if (openSide !== 1) {
+      B.colorBox(tW + 0.3, 0.05, 0.05, tX, fy + 0.9, tZ - tD / 2, CZ.yellow, 0.6, 0.3, false);
+      B.addCollider(tX - tW / 2, fy, tZ - tD / 2 - 0.1, tX + tW / 2, fy + 1.0, tZ - tD / 2 + 0.1);
+    }
+    if (openSide !== -1) {
+      B.colorBox(tW + 0.3, 0.05, 0.05, tX, fy + 0.9, tZ + tD / 2, CZ.yellow, 0.6, 0.3, false);
+      B.addCollider(tX - tW / 2, fy, tZ + tD / 2 - 0.1, tX + tW / 2, fy + 1.0, tZ + tD / 2 + 0.1);
+    }
+    // Side guardrails (always present)
+    B.colorBox(0.05, 0.05, tD, tX - tW / 2, fy + 0.9, tZ, CZ.yellow, 0.6, 0.3, false);
+    B.colorBox(0.05, 0.05, tD, tX + tW / 2, fy + 0.9, tZ, CZ.yellow, 0.6, 0.3, false);
   }
 
-  // Ramp stairs along right side (step colliders)
-  const stairW = 1.0;
+  // Wide staircase between floors (step-up friendly, stepH <= 0.4)
+  const stairW = 1.2;
   for (let f = 0; f < 3; f++) {
     const startY = floorH[f];
     const endY = floorH[f + 1];
-    const numSteps = 8;
+    const numSteps = 7;
     const stepRise = (endY - startY) / numSteps;
-    const stairZ = (f % 2 === 0) ? tZ + tD / 2 + 0.5 : tZ - tD / 2 - 0.5;
-    const stairDir = (f % 2 === 0) ? 1 : -1;
+    const stairZ = (f % 2 === 0) ? tZ + tD / 2 + 0.6 : tZ - tD / 2 - 0.6;
     for (let s = 0; s < numSteps; s++) {
       const sy = startY + (s + 1) * stepRise;
-      const sx = tX - tW / 2 + (s / numSteps) * tW;
-      B.colorBox(tW / numSteps + 0.05, 0.08, stairW, sx, sy, stairZ, CZ.wood, 0.85, 0.02, false);
-      B.addCollider(sx - tW / (numSteps * 2) - 0.05, sy - 0.1, stairZ - stairW / 2, sx + tW / (numSteps * 2) + 0.05, sy + 0.05, stairZ + stairDir * stairW / 2 + stairDir * 0.1);
+      const sx = tX - tW / 2 + 0.3 + (s / (numSteps - 1)) * (tW - 0.6);
+      const stepW = (tW - 0.6) / numSteps + 0.15;
+      // Visible step
+      B.colorBox(stepW, stepRise, stairW, sx, sy - stepRise / 2, stairZ, CZ.wood, 0.85, 0.02, false);
+      // Thick collider so player can walk up
+      B.addCollider(
+        sx - stepW / 2, startY, stairZ - stairW / 2,
+        sx + stepW / 2, sy, stairZ + stairW / 2
+      );
     }
+    // Stair handrail
+    B.colorBox(tW, 0.04, 0.04, tX, (startY + endY) / 2 + 0.5, stairZ + (f % 2 === 0 ? stairW / 2 + 0.1 : -stairW / 2 - 0.1), CZ.yellow, 0.6, 0.3, false);
   }
 
   // ========================================================
@@ -473,9 +481,6 @@ function buildConstructionZone(B: MapBoxHelper) {
   B.addCollider(s2X - s2W / 2 - 0.15, 2.38, s2Z - s2D / 2 - 0.15, s2X + s2W / 2 + 0.15, 2.55, s2Z + s2D / 2 + 0.15);
   B.colorBox(s2W + 0.3, 0.12, s2D + 0.3, s2X, 5.0, s2Z, CZ.wood, 0.85, 0.02, false);
   B.addCollider(s2X - s2W / 2 - 0.15, 4.88, s2Z - s2D / 2 - 0.15, s2X + s2W / 2 + 0.15, 5.05, s2Z + s2D / 2 + 0.15);
-  // Cross braces
-  B.colorBox(s2W, 0.05, 0.05, s2X, 1.3, s2Z - s2D / 2, CZ.yellow, 0.6, 0.3, false);
-  B.colorBox(s2W, 0.05, 0.05, s2X, 3.8, s2Z + s2D / 2, CZ.yellow, 0.6, 0.3, false);
   // Guardrails
   B.colorBox(s2W + 0.3, 0.05, 0.05, s2X, 5.9, s2Z - s2D / 2, CZ.yellow, 0.6, 0.3, false);
   B.addCollider(s2X - s2W / 2, 5.0, s2Z - s2D / 2 - 0.1, s2X + s2W / 2, 6.0, s2Z - s2D / 2 + 0.1);
@@ -490,14 +495,25 @@ function buildConstructionZone(B: MapBoxHelper) {
   B.colorBox(s2X - tX, 0.05, 0.05, (tX + s2X) / 2, 5.9, bridgeZ - 0.6, CZ.yellow, 0.6, 0.3, false);
   B.colorBox(s2X - tX, 0.05, 0.05, (tX + s2X) / 2, 5.9, bridgeZ + 0.6, CZ.yellow, 0.6, 0.3, false);
 
-  // Ladder on secondary scaffold (front face)
+  // Ladder on secondary scaffold (front face) — step-up climbable
+  // Visual ladder rungs
   for (let i = 0; i < 12; i++) {
     const ladY = i * 0.42;
     B.colorBox(0.5, 0.04, 0.04, s2X, ladY + 0.2, s2Z + s2D / 2 + 0.15, CZ.yellow, 0.6, 0.3, false);
-    B.addCollider(s2X - 0.3, ladY, s2Z + s2D / 2, s2X + 0.3, ladY + 0.42, s2Z + s2D / 2 + 0.3);
   }
+  // Side rails (visual)
   B.cyl(0.03, 0.03, 5, s2X - 0.25, 2.5, s2Z + s2D / 2 + 0.15, "scaffold");
   B.cyl(0.03, 0.03, 5, s2X + 0.25, 2.5, s2Z + s2D / 2 + 0.15, "scaffold");
+  // Invisible step-up colliders (each rung = thick step player walks up on)
+  const ladderSteps = 13;
+  const ladderStepH = 5.0 / ladderSteps;
+  for (let i = 0; i < ladderSteps; i++) {
+    const sy = (i + 1) * ladderStepH;
+    B.addCollider(
+      s2X - 0.35, 0, s2Z + s2D / 2 - 0.05,
+      s2X + 0.35, sy, s2Z + s2D / 2 + 0.4
+    );
+  }
 
   // ========================================================
   // 3) BUILDING FRAME (unfinished structure, landmark)
@@ -521,17 +537,36 @@ function buildConstructionZone(B: MapBoxHelper) {
   // Mid beams (at 3m)
   B.colorBox(bfW + beamT, beamT, beamT, bfX, 3, bfZ - bfD / 2, beamColor, 0.4, 0.6, false);
   B.colorBox(bfW + beamT, beamT, beamT, bfX, 3, bfZ + bfD / 2, beamColor, 0.4, 0.6, false);
-  // Partial 2F floor (plywood, walkable - only half covered)
-  B.colorBox(bfW - 0.5, 0.1, bfD / 2, bfX, 3.05, bfZ - bfD / 4, CZ.wood, 0.88, 0.02, false);
-  B.addCollider(bfX - bfW / 2 + 0.25, 2.95, bfZ - bfD / 2, bfX + bfW / 2 - 0.25, 3.15, bfZ);
+  // 2F floor (plywood, walkable - full coverage with stair opening)
+  // Left section (before stair opening)
+  B.colorBox(bfW / 2 - 0.8, 0.1, bfD - 0.5, bfX - bfW / 4 - 0.15, 3.05, bfZ, CZ.wood, 0.88, 0.02, false);
+  B.addCollider(bfX - bfW / 2 + 0.25, 2.95, bfZ - bfD / 2 + 0.25, bfX - 0.5, 3.15, bfZ + bfD / 2 - 0.25);
+  // Right section (after stair opening)
+  B.colorBox(bfW / 2 - 0.8, 0.1, bfD - 0.5, bfX + bfW / 4 + 0.15, 3.05, bfZ, CZ.wood, 0.88, 0.02, false);
+  B.addCollider(bfX + 0.5, 2.95, bfZ - bfD / 2 + 0.25, bfX + bfW / 2 - 0.25, 3.15, bfZ + bfD / 2 - 0.25);
+
+  // Staircase to 2F (along front wall, step-up friendly)
+  const bfStairW = 1.0;
+  const bfNumSteps = 8;
+  const bfStepRise = 3.0 / bfNumSteps;
+  for (let s = 0; s < bfNumSteps; s++) {
+    const sy = (s + 1) * bfStepRise;
+    const sz = bfZ + bfD / 2 - 0.5 - (s / (bfNumSteps - 1)) * (bfD - 1.0);
+    B.colorBox(bfStairW, bfStepRise, 0.5, bfX, sy - bfStepRise / 2, sz, CZ.wood, 0.85, 0.02, false);
+    B.addCollider(bfX - bfStairW / 2, 0, sz - 0.3, bfX + bfStairW / 2, sy, sz + 0.3);
+  }
+  // Stair handrail
+  B.colorBox(0.04, 0.04, bfD - 0.5, bfX + bfStairW / 2 + 0.1, 1.5 + 0.9, bfZ, CZ.steel, 0.4, 0.6, false);
+
   // Rebar poking out of columns
   for (const dx of [-bfW / 2, bfW / 2]) {
     for (const dz of [-bfD / 2, bfD / 2]) {
       B.cyl(0.02, 0.02, 1.5, bfX + dx, bfH + 0.75, bfZ + dz, "steelDark");
     }
   }
-  // Tarp partially covering one side
+  // Tarp roof (with collider so players can stand on it)
   B.colorBox(bfW * 0.6, 0.04, bfD + 0.3, bfX + bfW * 0.15, bfH + 0.1, bfZ, CZ.tarp, 0.92, 0, false);
+  B.addCollider(bfX - bfW * 0.15, bfH, bfZ - bfD / 2 - 0.15, bfX + bfW * 0.45 + 0.15, bfH + 0.15, bfZ + bfD / 2 + 0.15);
   // Construction sign on front
   B.colorBox(1.5, 1.0, 0.06, bfX, 4.5, bfZ + bfD / 2 + 0.05, CZ.white, 0.8, 0.02, false);
   B.colorBox(1.6, 1.1, 0.04, bfX, 4.5, bfZ + bfD / 2 + 0.03, CZ.orange, 0.7, 0.1, false);
@@ -1275,7 +1310,7 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
 
   // === 2F FLOOR - with staircase opening on left side + chimney hole ===
   const stairOpenW = 2.0;
-  const stairOpenZ2 = hz + 0.5;
+  const _stairOpenZ2 = hz + 0.5;
   const stairOpenX1 = hx - HW / 2;
   const stairOpenX2 = hx - HW / 2 + stairOpenW;
   const chHoleR = 0.7;
@@ -1305,44 +1340,45 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   // Stair exit landing (extended back to overlap with top steps for smooth transition)
   B.addCollider(stairOpenX1, F + 0.35, hz - HD / 2 + 0.8 + 15 * 0.3 - 0.3, stairOpenX2, F + 0.55, hz + HD / 2);
 
-  // === 2F WALLS ===
+  // === 2F WALLS (thicker colliders to prevent jump-through) ===
   const baseY2 = F + 0.35;
+  const W2 = 0.8;
   // Back wall 2F - solid
   B.colorBox(HW + W, F, W, hx, baseY2 + F / 2, hz - HD / 2, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - HW / 2 - W / 2, baseY2, hz - HD / 2 - W / 2, hx + HW / 2 + W / 2, baseY2 + F, hz - HD / 2 + W / 2);
+  B.addCollider(hx - HW / 2 - W2 / 2, baseY2, hz - HD / 2 - W2 / 2, hx + HW / 2 + W2 / 2, baseY2 + F, hz - HD / 2 + W2 / 2);
   // Left wall 2F - open window (same pattern as 1F)
   B.colorBox(W, winSill1, HD, hx - HW / 2, baseY2 + winSill1 / 2, hz, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - HW / 2 - W / 2, baseY2, hz - HD / 2, hx - HW / 2 + W / 2, baseY2 + winSill1, hz + HD / 2);
+  B.addCollider(hx - HW / 2 - W2 / 2, baseY2, hz - HD / 2, hx - HW / 2 + W2 / 2, baseY2 + winSill1, hz + HD / 2);
   B.colorBox(W, F - winSill1 - winH1, HD, hx - HW / 2, baseY2 + winSill1 + winH1 + (F - winSill1 - winH1) / 2, hz, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - HW / 2 - W / 2, baseY2 + winSill1 + winH1, hz - HD / 2, hx - HW / 2 + W / 2, baseY2 + F, hz + HD / 2);
+  B.addCollider(hx - HW / 2 - W2 / 2, baseY2 + winSill1 + winH1, hz - HD / 2, hx - HW / 2 + W2 / 2, baseY2 + F, hz + HD / 2);
   B.colorBox(W, winH1, 1.5, hx - HW / 2, baseY2 + winSill1 + winH1 / 2, hz - HD / 2 + 0.75, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - HW / 2 - W / 2, baseY2 + winSill1, hz - HD / 2, hx - HW / 2 + W / 2, baseY2 + winSill1 + winH1, hz - HD / 2 + 1.5);
+  B.addCollider(hx - HW / 2 - W2 / 2, baseY2 + winSill1, hz - HD / 2, hx - HW / 2 + W2 / 2, baseY2 + winSill1 + winH1, hz - HD / 2 + 1.5);
   B.colorBox(W, winH1, 1.5, hx - HW / 2, baseY2 + winSill1 + winH1 / 2, hz + HD / 2 - 0.75, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - HW / 2 - W / 2, baseY2 + winSill1, hz + HD / 2 - 1.5, hx - HW / 2 + W / 2, baseY2 + winSill1 + winH1, hz + HD / 2);
+  B.addCollider(hx - HW / 2 - W2 / 2, baseY2 + winSill1, hz + HD / 2 - 1.5, hx - HW / 2 + W2 / 2, baseY2 + winSill1 + winH1, hz + HD / 2);
   B.colorBox(0.08, winH1 + 0.1, 0.08, hx - HW / 2, baseY2 + winSill1 + winH1 / 2, hz - HD / 2 + 1.5, trimColor, 0.85, 0.02, false);
   B.colorBox(0.08, winH1 + 0.1, 0.08, hx - HW / 2, baseY2 + winSill1 + winH1 / 2, hz + HD / 2 - 1.5, trimColor, 0.85, 0.02, false);
   B.colorBox(0.08, 0.08, HD - 3, hx - HW / 2, baseY2 + winSill1, hz, trimColor, 0.85, 0.02, false);
   B.colorBox(0.08, 0.08, HD - 3, hx - HW / 2, baseY2 + winSill1 + winH1, hz, trimColor, 0.85, 0.02, false);
   // Right wall 2F - open window
   B.colorBox(W, winSill1, HD, hx + HW / 2, baseY2 + winSill1 / 2, hz, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx + HW / 2 - W / 2, baseY2, hz - HD / 2, hx + HW / 2 + W / 2, baseY2 + winSill1, hz + HD / 2);
+  B.addCollider(hx + HW / 2 - W2 / 2, baseY2, hz - HD / 2, hx + HW / 2 + W2 / 2, baseY2 + winSill1, hz + HD / 2);
   B.colorBox(W, F - winSill1 - winH1, HD, hx + HW / 2, baseY2 + winSill1 + winH1 + (F - winSill1 - winH1) / 2, hz, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx + HW / 2 - W / 2, baseY2 + winSill1 + winH1, hz - HD / 2, hx + HW / 2 + W / 2, baseY2 + F, hz + HD / 2);
+  B.addCollider(hx + HW / 2 - W2 / 2, baseY2 + winSill1 + winH1, hz - HD / 2, hx + HW / 2 + W2 / 2, baseY2 + F, hz + HD / 2);
   B.colorBox(W, winH1, 1.5, hx + HW / 2, baseY2 + winSill1 + winH1 / 2, hz - HD / 2 + 0.75, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx + HW / 2 - W / 2, baseY2 + winSill1, hz - HD / 2, hx + HW / 2 + W / 2, baseY2 + winSill1 + winH1, hz - HD / 2 + 1.5);
+  B.addCollider(hx + HW / 2 - W2 / 2, baseY2 + winSill1, hz - HD / 2, hx + HW / 2 + W2 / 2, baseY2 + winSill1 + winH1, hz - HD / 2 + 1.5);
   B.colorBox(W, winH1, 1.5, hx + HW / 2, baseY2 + winSill1 + winH1 / 2, hz + HD / 2 - 0.75, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx + HW / 2 - W / 2, baseY2 + winSill1, hz + HD / 2 - 1.5, hx + HW / 2 + W / 2, baseY2 + winSill1 + winH1, hz + HD / 2);
+  B.addCollider(hx + HW / 2 - W2 / 2, baseY2 + winSill1, hz + HD / 2 - 1.5, hx + HW / 2 + W2 / 2, baseY2 + winSill1 + winH1, hz + HD / 2);
   B.colorBox(0.08, winH1 + 0.1, 0.08, hx + HW / 2, baseY2 + winSill1 + winH1 / 2, hz - HD / 2 + 1.5, trimColor, 0.85, 0.02, false);
   B.colorBox(0.08, winH1 + 0.1, 0.08, hx + HW / 2, baseY2 + winSill1 + winH1 / 2, hz + HD / 2 - 1.5, trimColor, 0.85, 0.02, false);
   B.colorBox(0.08, 0.08, HD - 3, hx + HW / 2, baseY2 + winSill1, hz, trimColor, 0.85, 0.02, false);
   B.colorBox(0.08, 0.08, HD - 3, hx + HW / 2, baseY2 + winSill1 + winH1, hz, trimColor, 0.85, 0.02, false);
   // Front wall 2F - with balcony door
   B.colorBox(2.5, F, W, hx - 3.75, baseY2 + F / 2, hz + HD / 2, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - 5, baseY2, hz + HD / 2 - W / 2, hx - 2.5, baseY2 + F, hz + HD / 2 + W / 2);
+  B.addCollider(hx - 5, baseY2, hz + HD / 2 - W2 / 2, hx - 2.5, baseY2 + F, hz + HD / 2 + W2 / 2);
   B.colorBox(2.5, F, W, hx + 3.75, baseY2 + F / 2, hz + HD / 2, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx + 2.5, baseY2, hz + HD / 2 - W / 2, hx + 5, baseY2 + F, hz + HD / 2 + W / 2);
+  B.addCollider(hx + 2.5, baseY2, hz + HD / 2 - W2 / 2, hx + 5, baseY2 + F, hz + HD / 2 + W2 / 2);
   B.colorBox(5, 0.6, W, hx, F * 2 + 0.05, hz + HD / 2, wallColor, 0.85, 0.02, false);
-  B.addCollider(hx - 2.5, F * 2 - 0.3, hz + HD / 2 - W / 2, hx + 2.5, F * 2 + 0.35, hz + HD / 2 + W / 2);
+  B.addCollider(hx - 2.5, F * 2 - 0.3, hz + HD / 2 - W2 / 2, hx + 2.5, F * 2 + 0.35, hz + HD / 2 + W2 / 2);
 
   // === BALCONY ===
   const balD = 1.8;
@@ -2154,12 +2190,124 @@ function buildDocksideCafeBar(B: MapBoxHelper, scene: THREE.Scene) {
       B.addCollider(tx - 0.65, 0.2, tz - 0.45, tx + 0.65, 1.0, tz + 0.45);
       // Table leg
       B.cyl(0.05, 0.06, 0.6, tx, 0.6, tz, "steelDark");
-      // 2 chairs per table
-      B.colorBox(0.35, 0.06, 0.35, tx - 0.8, 0.6, tz, navy, 0.9, 0.02, true);
-      B.colorBox(0.35, 0.5, 0.06, tx - 0.8, 0.85, tz - 0.15, navy, 0.9, 0.02, false);
-      B.colorBox(0.35, 0.06, 0.35, tx + 0.8, 0.6, tz, navy, 0.9, 0.02, true);
-      B.colorBox(0.35, 0.5, 0.06, tx + 0.8, 0.85, tz - 0.15, navy, 0.9, 0.02, false);
+      // 2 chairs per table (with legs touching floor at Y=0.28)
+      const cSeatY = 0.58;
+      // Left chair: leg + seat + backrest
+      B.cyl(0.02, 0.02, 0.3, tx - 0.8, 0.43, tz, "steelDark");
+      B.colorBox(0.35, 0.06, 0.35, tx - 0.8, cSeatY, tz, navy, 0.9, 0.02, true);
+      B.colorBox(0.35, 0.45, 0.06, tx - 0.8, cSeatY + 0.25, tz - 0.15, navy, 0.9, 0.02, false);
+      // Right chair: leg + seat + backrest
+      B.cyl(0.02, 0.02, 0.3, tx + 0.8, 0.43, tz, "steelDark");
+      B.colorBox(0.35, 0.06, 0.35, tx + 0.8, cSeatY, tz, navy, 0.9, 0.02, true);
+      B.colorBox(0.35, 0.45, 0.06, tx + 0.8, cSeatY + 0.25, tz - 0.15, navy, 0.9, 0.02, false);
     }
+  }
+
+  // === STEP 1: BAR COUNTER PROPS ===
+  // Coffee machine (center of long counter, on top surface Y=1.36)
+  const counterTopY = 1.36;
+  B.colorBox(0.35, 0.4, 0.3, barX, counterTopY + 0.2, barZ - 0.5, 0x222222, 0.7, 0.4, false);
+  B.colorBox(0.15, 0.25, 0.15, barX + 0.05, counterTopY + 0.53, barZ - 0.5, 0x888888, 0.3, 0.6, false);
+  // Coffee cups stack (next to machine)
+  B.cyl(0.05, 0.04, 0.08, barX - 0.3, counterTopY + 0.04, barZ - 0.5, "steelLight");
+  B.cyl(0.05, 0.04, 0.08, barX - 0.3, counterTopY + 0.12, barZ - 0.5, "steelLight");
+  B.cyl(0.05, 0.04, 0.08, barX - 0.3, counterTopY + 0.04, barZ - 0.35, "steelLight");
+  // Tip jar (glass cylinder)
+  B.cyl(0.06, 0.06, 0.12, barX, counterTopY + 0.06, barZ + 0.3, "steelLight");
+  // Cash register
+  B.colorBox(0.3, 0.2, 0.25, barX, counterTopY + 0.1, barZ + 1.2, 0x333333, 0.8, 0.3, false);
+  B.colorBox(0.25, 0.15, 0.02, barX, counterTopY + 0.28, barZ + 1.08, 0x115511, 0.5, 0.3, false);
+  // Cutting board + knife (short counter side)
+  B.colorBox(0.35, 0.03, 0.25, barX - 2, counterTopY + 0.015, barZ + 2.5, 0xc4a672, 0.9, 0.02, false);
+  B.colorBox(0.02, 0.02, 0.2, barX - 1.75, counterTopY + 0.05, barZ + 2.5, 0xcccccc, 0.3, 0.7, false);
+  // Napkin holder on short counter
+  B.colorBox(0.12, 0.15, 0.06, barX - 2.5, counterTopY + 0.075, barZ + 2.5, 0x666666, 0.7, 0.3, false);
+
+  // === STEP 2: TABLE DECORATION ===
+  const tableTopY = 0.98;
+  for (let row = 0; row < 2; row++) {
+    for (let col = 0; col < 2; col++) {
+      const tx = bx - 4 + col * 4;
+      const tz = bz - 2.5 + row * 4;
+      // Small plant pot (center)
+      B.cyl(0.06, 0.05, 0.1, tx, tableTopY + 0.05, tz, "steelDark");
+      B.colorBox(0.04, 0.12, 0.04, tx, tableTopY + 0.16, tz, 0x228833, 0.85, 0.02, false);
+      // Salt & pepper
+      B.cyl(0.02, 0.02, 0.08, tx + 0.25, tableTopY + 0.04, tz + 0.15, "steelLight");
+      B.cyl(0.02, 0.02, 0.08, tx + 0.3, tableTopY + 0.04, tz + 0.15, "steelDark");
+      // Napkin holder
+      B.colorBox(0.1, 0.1, 0.04, tx - 0.3, tableTopY + 0.05, tz + 0.2, 0x666666, 0.7, 0.3, false);
+    }
+  }
+
+  // === STEP 3: FLOOR PROPS (good Prop Hunt hiding spots) ===
+  // Wooden crate near back-left wall
+  B.colorBox(0.7, 0.7, 0.7, bx - 7.5, 0.59, bz - BD / 2 + 1.0, 0x926e3a, 0.85, 0.02, true);
+  // Smaller crate stacked
+  B.colorBox(0.5, 0.5, 0.5, bx - 7.5, 1.19, bz - BD / 2 + 1.0, 0xa0784a, 0.85, 0.02, true);
+  // Coffee bean sack beside crates
+  B.colorBox(0.5, 0.4, 0.35, bx - 7.5, 0.44, bz - BD / 2 + 2.0, 0x8b7355, 0.95, 0.02, true);
+  // Trash bin near bar counter corner
+  B.cyl(0.2, 0.18, 0.45, barX - 0.5, 0.47, barZ + 3.5, "steelDark", true);
+  // Mop and bucket near back wall (right side, away from staircase)
+  B.cyl(0.15, 0.12, 0.25, barX + 2.5, 0.37, bz - BD / 2 + 1.2, "steelLight", true);
+  B.cyl(0.02, 0.02, 1.2, barX + 2.5, 0.85, bz - BD / 2 + 1.2, "steelDark");
+  // Umbrella stand near front entrance
+  B.cyl(0.12, 0.1, 0.4, bx - 4.5, 0.44, bz + BD / 2 - 0.6, "steelDark", true);
+  B.cyl(0.015, 0.015, 0.7, bx - 4.5, 0.64, bz + BD / 2 - 0.6, "steelDark");
+  // Wine barrel (decorative, near DJ area)
+  B.cyl(0.35, 0.3, 0.55, bx - 4.5, 0.52, bz - BD / 2 + 1.5, "steelDark");
+  B.colorBox(0.02, 0.55, 0.65, bx - 4.5, 0.52, bz - BD / 2 + 1.5, 0x665533, 0.85, 0.02, false);
+
+  // === STEP 4: WALL DECOR ===
+  // Menu chalkboard on back wall above bar shelf
+  B.colorBox(1.8, 1.0, 0.06, barX + 2, 3.2, bz - BD / 2 + 0.25, 0x1a1a1a, 0.95, 0.02, false);
+  B.colorBox(1.9, 1.1, 0.04, barX + 2, 3.2, bz - BD / 2 + 0.22, 0x8b5a2b, 0.85, 0.02, false);
+  // Wall lamps (warm orange glow) on back wall
+  const lampMat = getEmissiveMaterial(0xffaa44, 0xffaa44, 0.6);
+  const lamp1 = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), lampMat);
+  lamp1.position.set(barX + 0.5, 2.8, bz - BD / 2 + 0.3);
+  scene.add(lamp1);
+  const lamp2 = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), lampMat);
+  lamp2.position.set(barX + 3.5, 2.8, bz - BD / 2 + 0.3);
+  scene.add(lamp2);
+  // Lamp brackets
+  B.colorBox(0.04, 0.15, 0.1, barX + 0.5, 2.85, bz - BD / 2 + 0.25, 0x333333, 0.5, 0.5, false);
+  B.colorBox(0.04, 0.15, 0.1, barX + 3.5, 2.85, bz - BD / 2 + 0.25, 0x333333, 0.5, 0.5, false);
+  // Framed picture on back wall (inside, above bottle shelf)
+  const frameW = 0.8, frameH = 1.0;
+  B.colorBox(frameW + 0.1, frameH + 0.1, 0.06, bx - 3, 3.5, bz - BD / 2 + 0.25, 0x3a3a3a, 0.85, 0.02, false);
+  const picTexture = new THREE.TextureLoader().load("assets/photos/bad-girl.jpeg");
+  const picMat = new THREE.MeshBasicMaterial({ map: picTexture });
+  const picMesh = new THREE.Mesh(new THREE.PlaneGeometry(frameW, frameH), picMat);
+  picMesh.position.set(bx - 3, 3.5, bz - BD / 2 + 0.29);
+  scene.add(picMesh);
+
+  // === STEP 5: ATMOSPHERE PROPS ===
+  // Stack of books on table (0, -33.5)
+  B.colorBox(0.2, 0.06, 0.15, bx, tableTopY + 0.03, bz + 1.5, 0xaa2222, 0.9, 0.02, false);
+  B.colorBox(0.2, 0.06, 0.15, bx, tableTopY + 0.09, bz + 1.5, 0x2255aa, 0.9, 0.02, false);
+  B.colorBox(0.18, 0.06, 0.14, bx, tableTopY + 0.15, bz + 1.5, 0x885500, 0.9, 0.02, false);
+  // Bottle and glass on table (-4, -33.5)
+  B.cyl(0.03, 0.03, 0.22, bx - 4 + 0.2, tableTopY + 0.11, bz + 1.5 - 0.15, "steelDark");
+  B.colorBox(0.05, 0.18, 0.05, bx - 4 + 0.2, tableTopY + 0.09, bz + 1.5 - 0.15, 0x33aa33, 0.3, 0.5, false);
+  B.cyl(0.035, 0.03, 0.1, bx - 4 - 0.1, tableTopY + 0.05, bz + 1.5 - 0.1, "steelLight");
+  // Small stool near counter (extra hiding spot)
+  B.cyl(0.15, 0.15, 0.03, barX - 1.2, 0.42, barZ + 1.8, "steelDark");
+  B.cyl(0.04, 0.04, 0.4, barX - 1.2, 0.22, barZ + 1.8, "steelDark");
+  // Potted plant on floor near front entrance (right side)
+  B.cyl(0.15, 0.12, 0.2, bx + 4.5, 0.34, bz + BD / 2 - 0.8, "steelDark");
+  B.colorBox(0.06, 0.5, 0.06, bx + 4.5, 0.69, bz + BD / 2 - 0.8, 0x556633, 0.85, 0.02, false);
+  B.colorBox(0.35, 0.35, 0.35, bx + 4.5, 0.92, bz + BD / 2 - 0.8, 0x228833, 0.85, 0.02, false);
+  // Hanging light fixtures (3 pendant lamps over tables)
+  for (let li = 0; li < 3; li++) {
+    const lx = bx - 4 + li * 4;
+    B.cyl(0.005, 0.005, 1.5, lx, BH - 0.75, bz - 0.5, "steelDark");
+    const pendantMat = getEmissiveMaterial(0xffddaa, 0xffddaa, 0.3);
+    const pendant = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.25, 8), pendantMat);
+    pendant.position.set(lx, BH - 1.65, bz - 0.5);
+    pendant.rotation.x = Math.PI;
+    scene.add(pendant);
   }
 
   // === DJ CORNER (back-left) ===
@@ -2190,7 +2338,7 @@ function buildDocksideCafeBar(B: MapBoxHelper, scene: THREE.Scene) {
   const spiralSteps = 18;
   const spiralTotalAngle = Math.PI * 2.2;
   const stepRise = BH / spiralSteps;
-  const steelMat = PALETTE.steelLight;
+  const _steelMat = PALETTE.steelLight;
   const stepColor = 0x333333;
 
   // Central pole
@@ -2223,18 +2371,31 @@ function buildDocksideCafeBar(B: MapBoxHelper, scene: THREE.Scene) {
       spiralZ + Math.sin(angle) * cr + 0.7
     );
 
-    // Handrail post (outer edge)
+    // Handrail post (outer edge) - only below roof level to avoid clipping through ceiling
     const postX = spiralX + Math.cos(angle) * (spiralR + 0.1);
     const postZ = spiralZ + Math.sin(angle) * (spiralR + 0.1);
-    B.cyl(0.025, 0.025, 0.9, postX, sy + 0.45, postZ, "steelDark", false);
+    const postTopY = sy + 0.9;
+    if (postTopY <= BH + 0.1) {
+      const postHeight = Math.min(0.9, BH - sy + 0.05);
+      if (postHeight > 0.1) {
+        B.cyl(0.025, 0.025, postHeight, postX, sy + postHeight / 2, postZ, "steelDark", false);
+        // Railing collider to prevent props from clipping through
+        B.addCollider(
+          postX - 0.15, sy, postZ - 0.15,
+          postX + 0.15, sy + postHeight, postZ + 0.15
+        );
+      }
+    }
   }
 
   // Handrail (outer ring, approximated with thin curved segments)
+  // Only render segments that stay below roof level
   for (let i = 0; i < spiralSteps - 1; i++) {
     const a1 = (i / spiralSteps) * spiralTotalAngle - Math.PI / 2;
     const a2 = ((i + 1) / spiralSteps) * spiralTotalAngle - Math.PI / 2;
     const y1 = 0.3 + (i + 1) * stepRise + 0.9;
     const y2 = 0.3 + (i + 2) * stepRise + 0.9;
+    if (y1 > BH + 0.1 || y2 > BH + 0.1) continue;
     const hx1 = spiralX + Math.cos(a1) * (spiralR + 0.1);
     const hz1 = spiralZ + Math.sin(a1) * (spiralR + 0.1);
     const hx2 = spiralX + Math.cos(a2) * (spiralR + 0.1);
@@ -2254,31 +2415,44 @@ function buildDocksideCafeBar(B: MapBoxHelper, scene: THREE.Scene) {
   // The main roof is rebuilt as panels around this opening
   const holeR = spiralR + 0.5;
 
-  // Roof railing around staircase opening
-  const holeSegments = 12;
+  // Roof railing around staircase opening (6 posts + top rail, clean look)
+  const holeSegments = 6;
   for (let i = 0; i < holeSegments; i++) {
     const a = (i / holeSegments) * Math.PI * 2;
-    const rx = spiralX + Math.cos(a) * (holeR + 0.1);
-    const rz = spiralZ + Math.sin(a) * (holeR + 0.1);
-    B.cyl(0.03, 0.03, 1.0, rx, BH + 0.5, rz, "steelDark", false);
+    const rx = spiralX + Math.cos(a) * (holeR + 0.15);
+    const rz = spiralZ + Math.sin(a) * (holeR + 0.15);
+    B.cyl(0.035, 0.035, 1.0, rx, BH + 0.5, rz, "steelDark", false);
   }
-  // Circular rail at top of opening
+  // Top rail ring (6 segments)
   for (let i = 0; i < holeSegments; i++) {
     const a1 = (i / holeSegments) * Math.PI * 2;
     const a2 = ((i + 1) / holeSegments) * Math.PI * 2;
-    const rx1 = spiralX + Math.cos(a1) * (holeR + 0.1);
-    const rz1 = spiralZ + Math.sin(a1) * (holeR + 0.1);
-    const rx2 = spiralX + Math.cos(a2) * (holeR + 0.1);
-    const rz2 = spiralZ + Math.sin(a2) * (holeR + 0.1);
+    const rx1 = spiralX + Math.cos(a1) * (holeR + 0.15);
+    const rz1 = spiralZ + Math.sin(a1) * (holeR + 0.15);
+    const rx2 = spiralX + Math.cos(a2) * (holeR + 0.15);
+    const rz2 = spiralZ + Math.sin(a2) * (holeR + 0.15);
     const segLen = Math.sqrt((rx2 - rx1) ** 2 + (rz2 - rz1) ** 2);
     const seg = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.025, 0.025, segLen, 4),
+      new THREE.CylinderGeometry(0.03, 0.03, segLen, 4),
       getMaterial("steelDark")
     );
     seg.position.set((rx1 + rx2) / 2, BH + 1.0, (rz1 + rz2) / 2);
     seg.rotation.z = Math.PI / 2;
     seg.rotation.y = Math.atan2(rz2 - rz1, rx2 - rx1);
     scene.add(seg);
+  }
+  // Collider around the staircase opening to prevent props from clipping through
+  for (let i = 0; i < holeSegments; i++) {
+    const a = (i / holeSegments) * Math.PI * 2;
+    const a2 = ((i + 1) / holeSegments) * Math.PI * 2;
+    const cx1 = spiralX + Math.cos(a) * (holeR + 0.1);
+    const cz1 = spiralZ + Math.sin(a) * (holeR + 0.1);
+    const cx2 = spiralX + Math.cos(a2) * (holeR + 0.1);
+    const cz2 = spiralZ + Math.sin(a2) * (holeR + 0.1);
+    B.addCollider(
+      Math.min(cx1, cx2) - 0.1, BH, Math.min(cz1, cz2) - 0.1,
+      Math.max(cx1, cx2) + 0.1, BH + 1.1, Math.max(cz1, cz2) + 0.1
+    );
   }
 
   // === ROOF (rebuilt with hole for spiral staircase) ===
@@ -2332,22 +2506,182 @@ function buildDocksideCafeBar(B: MapBoxHelper, scene: THREE.Scene) {
     B.colorBox(0.05, 0.9, 0.05, bx - BW / 2, BH + 0.55, pz, navy, 0.85, 0.02, false);
     B.colorBox(0.05, 0.9, 0.05, bx + BW / 2, BH + 0.55, pz, navy, 0.85, 0.02, false);
   }
-  // Rooftop tables (3)
-  for (let i = 0; i < 3; i++) {
-    const rtx = bx - 5 + i * 5;
-    B.colorBox(0.8, 0.06, 0.8, rtx, BH + 0.95, bz, woodBrown, 0.82, 0.02, false);
-    B.addCollider(rtx - 0.45, BH + 0.3, bz - 0.45, rtx + 0.45, BH + 1.0, bz + 0.45);
-    B.cyl(0.04, 0.05, 0.6, rtx, BH + 0.6, bz, "steelDark");
+  // ======================================================================
+  //  LUXURY ROOFTOP BAR LOUNGE
+  // ======================================================================
+  const RY = BH + 0.25; // roof floor surface Y
+  const rLeft = bx - BW / 2 + 0.8;  // -8.2
+  const rRight = bx + BW / 2 - 0.8; //  8.2
+  const rFront = bz + BD / 2 - 0.8; // -29.8
+  const rBack = bz - BD / 2 + 0.8;  // -40.2
+  const stairHoleX = 6, stairHoleZ = -38, stairClear = 2.8;
+  const luxWood = 0x7a5230;
+  const luxDark = 0x1a1a2e;
+  const luxGold = 0xc9a84c;
+  const luxCushion = 0x2c3e50;
+
+  // === ZONE A: LOUNGE AREA (left side) ===
+  const loungeX = rLeft + 2.5, loungeZ = bz + 1;
+  // Decorative rug (flat on floor)
+  B.colorBox(5.0, 0.02, 4.0, loungeX, RY + 0.01, loungeZ, 0x8b3a3a, 0.95, 0.02, false);
+  // L-shaped sofa — long section (along z)
+  B.colorBox(3.5, 0.35, 0.8, loungeX - 0.5, RY + 0.175, loungeZ - 1.2, luxCushion, 0.9, 0.05, true);
+  B.colorBox(3.5, 0.35, 0.15, loungeX - 0.5, RY + 0.35, loungeZ - 1.6, luxDark, 0.85, 0.1, false);
+  // L-shaped sofa — short section (along x)
+  B.colorBox(0.8, 0.35, 2.2, loungeX - 2.5, RY + 0.175, loungeZ, luxCushion, 0.9, 0.05, true);
+  B.colorBox(0.15, 0.35, 2.2, loungeX - 2.9, RY + 0.35, loungeZ, luxDark, 0.85, 0.1, false);
+  // Sofa armrests
+  B.colorBox(0.15, 0.45, 0.8, loungeX + 1.3, RY + 0.225, loungeZ - 1.2, luxDark, 0.85, 0.1, false);
+  B.colorBox(0.8, 0.45, 0.15, loungeX - 2.5, RY + 0.225, loungeZ + 1.15, luxDark, 0.85, 0.1, false);
+  // Coffee table (low, in front of sofa)
+  B.colorBox(1.2, 0.06, 0.6, loungeX, RY + 0.38, loungeZ, luxWood, 0.82, 0.02, false);
+  B.cyl(0.04, 0.04, 0.35, loungeX - 0.4, RY + 0.175, loungeZ, "steelDark");
+  B.cyl(0.04, 0.04, 0.35, loungeX + 0.4, RY + 0.175, loungeZ, "steelDark");
+  // Fire pit table (center of lounge, emissive glow)
+  B.cyl(0.4, 0.35, 0.3, loungeX, RY + 0.15, loungeZ + 1.5, "steelDark", true);
+  const fireMat = getEmissiveMaterial(0xff6622, 0xff4400, 0.7);
+  const fireGlow = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.05, 12), fireMat);
+  fireGlow.position.set(loungeX, RY + 0.32, loungeZ + 1.5);
+  scene.add(fireGlow);
+  // Two lounge chairs (opposite sofa)
+  for (const off of [-0.8, 0.8]) {
+    B.colorBox(0.7, 0.3, 0.7, loungeX + off, RY + 0.15, loungeZ + 2.5, luxCushion, 0.9, 0.05, true);
+    B.colorBox(0.7, 0.4, 0.1, loungeX + off, RY + 0.35, loungeZ + 2.85, luxDark, 0.85, 0.1, false);
   }
 
-  // === NEON SIGN "DOCKSIDE BAR" ===
+  // === ZONE B: ROOFTOP BAR COUNTER (right-front, away from staircase) ===
+  const rBarX = bx + 2, rBarZ = rFront + 0.8;
+  // Counter (long, along x)
+  B.colorBox(5.0, 1.1, 0.8, rBarX, RY + 0.55, rBarZ, luxDark, 0.85, 0.05, false);
+  B.addCollider(rBarX - 2.55, RY, rBarZ - 0.45, rBarX + 2.55, RY + 1.15, rBarZ + 0.45);
+  // Counter top (marble effect)
+  B.colorBox(5.2, 0.06, 0.9, rBarX, RY + 1.13, rBarZ, 0xdddddd, 0.15, 0.7, false);
+  // 4 bar stools
+  for (let s = 0; s < 4; s++) {
+    const sx = rBarX - 1.8 + s * 1.2;
+    B.cyl(0.04, 0.04, 0.55, sx, RY + 0.275, rBarZ + 0.8, "steelDark");
+    B.cyl(0.14, 0.14, 0.06, sx, RY + 0.58, rBarZ + 0.8, "steelDark");
+    B.colorBox(0.28, 0.06, 0.28, sx, RY + 0.61, rBarZ + 0.8, luxCushion, 0.9, 0.02, false);
+  }
+  // Bar counter props (on counter top, Y = RY + 1.16)
+  const rBarTopY = RY + 1.16;
+  // Cocktail shaker
+  B.cyl(0.04, 0.03, 0.2, rBarX - 1.5, rBarTopY + 0.1, rBarZ, "steelLight");
+  // Bottle rack (3 bottles)
+  for (let b = 0; b < 3; b++) {
+    const bc = [0x33aa33, 0xaa2222, 0xccaa22][b];
+    B.cyl(0.03, 0.02, 0.22, rBarX - 0.3 + b * 0.3, rBarTopY + 0.11, rBarZ - 0.15, "steelDark");
+    B.colorBox(0.05, 0.18, 0.05, rBarX - 0.3 + b * 0.3, rBarTopY + 0.09, rBarZ - 0.15, bc, 0.3, 0.5, false);
+  }
+  // Glasses tray
+  B.colorBox(0.5, 0.03, 0.25, rBarX + 1.2, rBarTopY + 0.015, rBarZ, 0x888888, 0.3, 0.6, false);
+  B.cyl(0.03, 0.025, 0.08, rBarX + 1.0, rBarTopY + 0.07, rBarZ, "steelLight");
+  B.cyl(0.03, 0.025, 0.08, rBarX + 1.2, rBarTopY + 0.07, rBarZ, "steelLight");
+  B.cyl(0.03, 0.025, 0.08, rBarX + 1.4, rBarTopY + 0.07, rBarZ, "steelLight");
+
+  // === ZONE C: DINING TABLES (center-right, 2 tables avoiding staircase) ===
+  const diningPositions = [
+    { x: bx - 2, z: bz - 2 },
+    { x: bx + 1, z: bz + 2 },
+  ];
+  for (const dp of diningPositions) {
+    const dtH = 0.75;
+    const dtTopY = RY + dtH;
+    // Round table (approximated)
+    B.cyl(0.5, 0.5, 0.06, dp.x, dtTopY, dp.z, "steelDark");
+    B.colorBox(1.0, 0.04, 1.0, dp.x, dtTopY + 0.02, dp.z, luxWood, 0.82, 0.02, false);
+    B.cyl(0.06, 0.08, dtH - 0.1, dp.x, RY + (dtH - 0.1) / 2, dp.z, "steelDark");
+    B.addCollider(dp.x - 0.55, RY, dp.z - 0.55, dp.x + 0.55, dtTopY + 0.04, dp.z + 0.55);
+    // 4 chairs
+    for (let ci = 0; ci < 4; ci++) {
+      const ca = (ci / 4) * Math.PI * 2;
+      const ccx = dp.x + Math.cos(ca) * 0.85;
+      const ccz = dp.z + Math.sin(ca) * 0.85;
+      B.cyl(0.03, 0.03, 0.4, ccx, RY + 0.2, ccz, "steelDark");
+      B.colorBox(0.3, 0.05, 0.3, ccx, RY + 0.425, ccz, luxCushion, 0.9, 0.02, false);
+    }
+    // Candle (on table)
+    B.cyl(0.03, 0.03, 0.1, dp.x + 0.15, dtTopY + 0.07, dp.z, "steelLight");
+    const candleMat = getEmissiveMaterial(0xffcc66, 0xffaa33, 0.5);
+    const candle = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 4), candleMat);
+    candle.position.set(dp.x + 0.15, dtTopY + 0.14, dp.z);
+    scene.add(candle);
+    // Small plant centerpiece
+    B.cyl(0.05, 0.04, 0.08, dp.x - 0.15, dtTopY + 0.06, dp.z + 0.1, "steelDark");
+    B.colorBox(0.06, 0.1, 0.06, dp.x - 0.15, dtTopY + 0.13, dp.z + 0.1, 0x228833, 0.85, 0.02, false);
+  }
+
+  // === ZONE D: DECORATIVE PERIMETER ===
+  // Large potted plants along railings (every ~2.5m, skip staircase area)
+  const plantPositions = [
+    { x: rLeft + 0.5, z: rFront },
+    { x: rLeft + 0.5, z: bz - 2 },
+    { x: rLeft + 0.5, z: rBack + 1 },
+    { x: rRight - 0.5, z: rFront },
+    { x: rRight - 0.5, z: bz },
+    { x: bx - 3, z: rFront },
+  ];
+  for (const pp of plantPositions) {
+    // Skip if too close to staircase hole
+    const dx = pp.x - stairHoleX, dz = pp.z - stairHoleZ;
+    if (Math.sqrt(dx * dx + dz * dz) < stairClear + 0.5) continue;
+    B.cyl(0.2, 0.16, 0.35, pp.x, RY + 0.175, pp.z, "steelDark");
+    B.cyl(0.03, 0.03, 0.6, pp.x, RY + 0.65, pp.z, "steelDark");
+    B.colorBox(0.5, 0.5, 0.5, pp.x, RY + 1.2, pp.z, 0x1a6b2a, 0.85, 0.02, false);
+  }
+
+  // === LIGHTING ===
+  // String lights between railing posts (front)
+  const roofLightMat = getEmissiveMaterial(0xffeeaa, 0xffddaa, 0.6);
+  for (let i = 0; i < 7; i++) {
+    const lx = bx - BW / 2 + 1.5 + i * (BW / 7);
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 4), roofLightMat);
+    bulb.position.set(lx, BH + 0.85, bz + BD / 2);
+    scene.add(bulb);
+  }
+  // Standing floor lamps (4, near seating areas)
+  const lampPositions = [
+    { x: loungeX + 2, z: loungeZ - 1 },
+    { x: loungeX - 2.8, z: loungeZ + 1.5 },
+    { x: rBarX - 2.8, z: rBarZ + 0.5 },
+    { x: rBarX + 2.8, z: rBarZ + 0.5 },
+  ];
+  for (const lp of lampPositions) {
+    const dx2 = lp.x - stairHoleX, dz2 = lp.z - stairHoleZ;
+    if (Math.sqrt(dx2 * dx2 + dz2 * dz2) < stairClear) continue;
+    B.cyl(0.12, 0.12, 0.03, lp.x, RY + 0.015, lp.z, "steelDark");
+    B.cyl(0.025, 0.025, 1.6, lp.x, RY + 0.83, lp.z, "steelDark");
+    const floorLampMat = getEmissiveMaterial(0xffeecc, 0xffddaa, 0.4);
+    const shade = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.15, 0.25, 8), floorLampMat);
+    shade.position.set(lp.x, RY + 1.75, lp.z);
+    scene.add(shade);
+  }
+
+  // === PROP HUNT HIDING OBJECTS ===
+  // Small bucket near bar
+  B.cyl(0.15, 0.12, 0.25, rBarX + 2.2, RY + 0.125, rBarZ + 0.3, "steelLight", true);
+  // Bottle on floor near lounge
+  B.cyl(0.03, 0.03, 0.2, loungeX + 2.2, RY + 0.1, loungeZ + 0.5, "steelDark");
+  B.colorBox(0.05, 0.16, 0.05, loungeX + 2.2, RY + 0.08, loungeZ + 0.5, 0x33aa33, 0.3, 0.5, false);
+  // Small crate near back edge
+  B.colorBox(0.5, 0.5, 0.5, rLeft + 0.5, RY + 0.25, rBack + 3, 0x926e3a, 0.85, 0.02, true);
+  // Flower pot near railing
+  B.cyl(0.1, 0.08, 0.15, bx - 1, RY + 0.075, rFront, "steelDark");
+  B.colorBox(0.05, 0.12, 0.05, bx - 1, RY + 0.21, rFront, 0x228833, 0.85, 0.02, false);
+  // Small trash bin
+  B.cyl(0.12, 0.1, 0.3, rRight - 0.5, RY + 0.15, bz + 1, "steelDark", true);
+  // Stool near bar
+  B.cyl(0.15, 0.15, 0.04, rBarX - 2.8, RY + 0.38, rBarZ + 1.2, "steelDark");
+  B.cyl(0.04, 0.04, 0.35, rBarX - 2.8, RY + 0.175, rBarZ + 1.2, "steelDark");
+
+  // === NEON SIGN "DOCKSIDE BAR" (mounted on front wall, below rooftop railing) ===
   const signMat = getEmissiveMaterial(orange, orange, 0.9);
   const sign = new THREE.Mesh(new THREE.BoxGeometry(6, 0.8, 0.1), signMat);
-  sign.position.set(bx, BH + 1.5, bz + BD / 2 + 0.1);
+  sign.position.set(bx, BH - 1.5, bz + BD / 2 + 0.2);
   scene.add(sign);
-  B.colorBox(6.4, 1.0, 0.15, bx, BH + 1.5, bz + BD / 2 + 0.05, navy, 0.85, 0.02, false);
+  B.colorBox(6.4, 1.0, 0.15, bx, BH - 1.5, bz + BD / 2 + 0.15, navy, 0.85, 0.02, false);
   const cafeText = makeSignTextMesh("DOCKSIDE BAR", 5.6, 0.7, 38, "#ffffff", null);
-  cafeText.position.set(bx, BH + 1.5, bz + BD / 2 + 0.17);
+  cafeText.position.set(bx, BH - 1.5, bz + BD / 2 + 0.27);
   scene.add(cafeText);
 
   // === TERRACE (outdoor area, front) ===
@@ -2355,20 +2689,46 @@ function buildDocksideCafeBar(B: MapBoxHelper, scene: THREE.Scene) {
   // Terrace floor
   B.colorBox(BW, 0.1, 4, bx, 0.15, tZ, PALETTE.woodWarm, 0.85, 0.02, false);
   B.addCollider(bx - BW / 2, 0, tZ - 2, bx + BW / 2, 0.22, tZ + 2);
-  // Outdoor tables with umbrellas (4)
-  for (let i = 0; i < 4; i++) {
-    const otx = bx - 6 + i * 4;
-    // Table
-    B.colorBox(0.8, 0.06, 0.8, otx, 0.85, tZ, PALETTE.woodWarm, 0.82, 0.02, false);
-    B.addCollider(otx - 0.45, 0.2, tZ - 0.45, otx + 0.45, 0.9, tZ + 0.45);
+  // Outdoor tables with umbrellas (3, wider spacing to prevent overlap)
+  for (let i = 0; i < 3; i++) {
+    const otx = bx - 5.5 + i * 5.5;
+    // Table (round feel with square geometry)
+    B.colorBox(0.9, 0.06, 0.9, otx, 0.85, tZ, PALETTE.woodWarm, 0.82, 0.02, false);
+    B.addCollider(otx - 0.5, 0.2, tZ - 0.5, otx + 0.5, 0.9, tZ + 0.5);
     B.cyl(0.04, 0.05, 0.55, otx, 0.55, tZ, "steelDark");
-    // Umbrella pole + canopy
-    B.cyl(0.03, 0.03, 2.5, otx, 1.4, tZ, "steelDark");
-    const umbColor = [0xff4444, 0x4488ff, 0xffaa22, 0x44cc44][i];
-    B.colorBox(1.6, 0.04, 1.6, otx, 2.65, tZ, umbColor, 0.8, 0.05, false);
-    // 2 chairs
-    B.colorBox(0.3, 0.06, 0.3, otx - 0.7, 0.55, tZ, navy, 0.9, 0.02, true);
-    B.colorBox(0.3, 0.06, 0.3, otx + 0.7, 0.55, tZ, navy, 0.9, 0.02, true);
+    // Umbrella pole + canopy (raised higher to clear string lights)
+    B.cyl(0.03, 0.03, 2.0, otx, 1.7, tZ, "steelDark");
+    const umbColor = [0xff4444, 0x4488ff, 0xffaa22][i];
+    B.colorBox(1.8, 0.05, 1.8, otx, 2.75, tZ, umbColor, 0.8, 0.05, false);
+    // 4 chairs per table (front, back, left, right) with legs
+    const floorY = 0.22;
+    const seatH = 0.5;
+    const seatY = floorY + seatH;
+    // Chair left: seat + legs + backrest
+    B.colorBox(0.35, 0.06, 0.35, otx - 0.8, seatY, tZ, navy, 0.9, 0.02, true);
+    B.cyl(0.02, 0.02, seatH - 0.03, otx - 0.8, floorY + seatH / 2, tZ, "steelDark");
+    B.colorBox(0.35, 0.4, 0.06, otx - 0.8, seatY + 0.23, tZ - 0.15, navy, 0.9, 0.02, false);
+    // Chair right: seat + legs + backrest
+    B.colorBox(0.35, 0.06, 0.35, otx + 0.8, seatY, tZ, navy, 0.9, 0.02, true);
+    B.cyl(0.02, 0.02, seatH - 0.03, otx + 0.8, floorY + seatH / 2, tZ, "steelDark");
+    B.colorBox(0.35, 0.4, 0.06, otx + 0.8, seatY + 0.23, tZ - 0.15, navy, 0.9, 0.02, false);
+    // Chair back
+    B.colorBox(0.35, 0.06, 0.35, otx, seatY, tZ - 0.8, navy, 0.9, 0.02, true);
+    B.cyl(0.02, 0.02, seatH - 0.03, otx, floorY + seatH / 2, tZ - 0.8, "steelDark");
+    // Chair front
+    B.colorBox(0.35, 0.06, 0.35, otx, seatY, tZ + 0.8, navy, 0.9, 0.02, true);
+    B.cyl(0.02, 0.02, seatH - 0.03, otx, floorY + seatH / 2, tZ + 0.8, "steelDark");
+    // Drinks on table (table top at Y=0.88)
+    const tableY = 0.88;
+    // Glass (left)
+    B.cyl(0.035, 0.03, 0.1, otx - 0.2, tableY + 0.05, tZ + 0.15, "steelLight");
+    // Glass (right)
+    B.cyl(0.035, 0.03, 0.1, otx + 0.2, tableY + 0.05, tZ - 0.15, "steelLight");
+    // Bottle (center-back)
+    B.cyl(0.03, 0.02, 0.2, otx + 0.1, tableY + 0.1, tZ + 0.25, "steelDark");
+    B.colorBox(0.05, 0.16, 0.05, otx + 0.1, tableY + 0.08, tZ + 0.25, 0x33aa33, 0.3, 0.5, false);
+    // Napkin holder
+    B.colorBox(0.08, 0.08, 0.04, otx - 0.25, tableY + 0.04, tZ - 0.25, 0x666666, 0.7, 0.3, false);
   }
 
   // String lights over terrace

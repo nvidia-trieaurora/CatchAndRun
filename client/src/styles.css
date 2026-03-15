@@ -158,6 +158,163 @@ body {
   width: auto;
 }
 
+/* Room Browser */
+.room-browser {
+  margin: 1.25rem 0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid #222;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.room-browser-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.room-browser-header h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  margin: 0;
+}
+
+.room-list {
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.room-list-empty {
+  text-align: center;
+  color: #666;
+  font-size: 0.85rem;
+  padding: 12px 0;
+}
+
+.room-entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  margin-bottom: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  border: 1px solid transparent;
+}
+
+.room-entry:hover {
+  border-color: #333;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.room-entry-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.room-entry-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.room-entry-players {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.room-entry-phase {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.room-entry-phase.phase-waiting {
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.15);
+}
+
+.room-entry-phase.phase-active {
+  color: #ff9800;
+  background: rgba(255, 152, 0, 0.15);
+}
+
+.room-join-btn {
+  flex-shrink: 0;
+}
+
+.room-join-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Lock icon */
+.room-lock {
+  margin-right: 4px;
+  font-size: 0.75rem;
+}
+
+/* Passcode Modal */
+.passcode-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.passcode-modal-box {
+  background: #1a1a2e;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  max-width: 320px;
+  width: 90%;
+}
+
+.passcode-modal-box h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.passcode-modal-box p {
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.passcode-modal-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 1.1rem;
+  outline: none;
+  text-align: center;
+}
+
+.passcode-modal-input:focus {
+  border-color: #00d4ff;
+}
+
 .join-code-row {
   display: flex;
   gap: 8px;

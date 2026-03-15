@@ -20,7 +20,7 @@ export class AudioSystem {
     this.listener = new THREE.AudioListener();
     camera.add(this.listener);
     this.ctx = this.listener.context;
-    this.preloadShootSound();
+    void this.preloadShootSound();
   }
 
   private async preloadShootSound() {

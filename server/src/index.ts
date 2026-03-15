@@ -3,7 +3,7 @@ import { createServer } from "http";
 import express from "express";
 import cors from "cors";
 import { GameRoom } from "./rooms/GameRoom";
-import { DEFAULT_SERVER_PORT } from "@catch-and-run/shared";
+import { DEFAULT_SERVER_PORT, MAX_ROOMS } from "@catch-and-run/shared";
 
 const app = express();
 app.use(cors());
@@ -15,7 +15,9 @@ const gameServer = new Server({
   server: httpServer,
 });
 
-gameServer.define("game_room", GameRoom).enableRealtimeListing();
+gameServer.define("game_room", GameRoom)
+  .enableRealtimeListing()
+  .sortBy({ clients: -1 });
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
