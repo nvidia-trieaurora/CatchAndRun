@@ -4,6 +4,15 @@ import type { SnapshotBuffer } from "../utils/SnapshotBuffer";
 import type { ShootData } from "@catch-and-run/shared";
 import mapData from "../data/maps/harbor-warehouse.json";
 
+interface Vec3 {
+  x: number; y: number; z: number;
+}
+
+interface WallOcclusionEntry {
+  min: Vec3;
+  max: Vec3;
+}
+
 interface AABB {
   minX: number; minY: number; minZ: number;
   maxX: number; maxY: number; maxZ: number;
@@ -27,7 +36,7 @@ export class HitValidation {
   }
 
   private loadWallOcclusion() {
-    const occlusion = (mapData as any).wallOcclusion;
+    const occlusion = (mapData as { wallOcclusion?: WallOcclusionEntry[] }).wallOcclusion;
     if (!Array.isArray(occlusion)) return;
     for (const w of occlusion) {
       this.wallBoxes.push({
@@ -51,7 +60,7 @@ export class HitValidation {
   }
 
   processShot(shooterSessionId: string, data: ShootData): HitResult {
-    const snapshot = this.snapshotBuffer.getAtTime(data.timestamp) ||
+    const snapshot = this.snapshotBuffer.getAtTime(data.timestamp) ??
       this.snapshotBuffer.getLatest();
 
     const origin = { x: data.originX, y: data.originY, z: data.originZ };
@@ -68,14 +77,14 @@ export class HitValidation {
     let closestHit: string | null = null;
     let closestDist = wallDist;
 
-    const positions = snapshot?.positions || new Map();
+    const positions = snapshot?.positions ?? new Map<string, { x: number; y: number; z: number }>();
 
-    this.room.state.players.forEach((player, sessionId) => {
-      if (sessionId === shooterSessionId) return;
-      if (!player.isAlive) return;
-      if (player.role !== PlayerRole.PROP) return;
+    for (const [sessionId, player] of this.room.state.players) {
+      if (sessionId === shooterSessionId) continue;
+      if (!player.isAlive) continue;
+      if (player.role !== PlayerRole.PROP) continue;
 
-      const pos = positions.get(sessionId) || { x: player.x, y: player.y, z: player.z };
+      const pos = positions.get(sessionId) ?? { x: player.x, y: player.y, z: player.z };
 
       const hitboxRadius = 0.5;
       const hitboxHeight = 1.8;
@@ -96,7 +105,7 @@ export class HitValidation {
         closestDist = dist;
         closestHit = sessionId;
       }
-    });
+    }
 
     if (closestHit) {
       return {
