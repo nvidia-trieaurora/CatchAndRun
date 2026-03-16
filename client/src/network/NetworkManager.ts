@@ -6,9 +6,13 @@ export type RoomState = any;
 function getServerUrl(): string {
   const envUrl = import.meta.env.VITE_SERVER_URL;
   if (envUrl) return envUrl;
-  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+  const isHTTPS = window.location.protocol === "https:";
+  const protocol = isHTTPS ? "wss" : "ws";
   const host = window.location.hostname || "localhost";
-  return `${protocol}://${host}:${DEFAULT_SERVER_PORT}`;
+  // When served behind Nginx reverse proxy (HTTPS), connect to same host on 443
+  // When local dev, connect to port 2567
+  const port = isHTTPS ? "" : `:${DEFAULT_SERVER_PORT}`;
+  return `${protocol}://${host}${port}`;
 }
 
 export class NetworkManager {

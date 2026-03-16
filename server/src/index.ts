@@ -3,7 +3,7 @@ import { createServer } from "http";
 import express from "express";
 import cors from "cors";
 import { GameRoom } from "./rooms/GameRoom";
-import { DEFAULT_SERVER_PORT, MAX_ROOMS } from "@catch-and-run/shared";
+import { DEFAULT_SERVER_PORT } from "@catch-and-run/shared";
 
 const app = express();
 app.use(cors());
