@@ -171,16 +171,21 @@ export class GameRoom extends Room<GameState> {
     });
   }
 
-  onAuth(_client: Client, options: { nickname?: string; passcode?: string }) {
+  onAuth(_client: Client, options: { nickname?: string; passcode?: string }, req: any) {
     if (this.state.isPrivate && this.passcode) {
       if (!options.passcode || options.passcode !== this.passcode) {
         throw new Error("Invalid passcode");
       }
     }
-    return true;
+    const ip = req?.headers?.["x-real-ip"]
+      || req?.headers?.["x-forwarded-for"]?.split(",")[0]?.trim()
+      || req?.connection?.remoteAddress
+      || req?.socket?.remoteAddress
+      || "";
+    return { ip };
   }
 
-  onJoin(client: Client, options: { nickname?: string; passcode?: string }) {
+  onJoin(client: Client, options: { nickname?: string; passcode?: string }, auth: any) {
     const player = new PlayerSchema();
     player.sessionId = client.sessionId;
     player.nickname = options.nickname || `Player${Math.floor(Math.random() * 1000)}`;
@@ -202,15 +207,7 @@ export class GameRoom extends Room<GameState> {
 
     // Analytics: log join with IP geolocation
     if (GameRoom.analyticsDB) {
-      const c = client as any;
-      const ip = c._httpHeaders?.["x-real-ip"]
-        || c._httpHeaders?.["x-forwarded-for"]?.split(",")[0]?.trim()
-        || c.httpHeaders?.["x-real-ip"]
-        || c.httpHeaders?.["x-forwarded-for"]?.split(",")[0]?.trim()
-        || c.ref?.upgradeReq?.headers?.["x-real-ip"]
-        || c.ref?.upgradeReq?.headers?.["x-forwarded-for"]?.split(",")[0]?.trim()
-        || c._ws?._socket?.remoteAddress
-        || "";
+      const ip = (auth?.ip || "").replace("::ffff:", "");
       const db = GameRoom.analyticsDB;
       lookupIP(ip).then(geo => {
         db.logJoin(client.sessionId, player.nickname, ip, this.roomId, geo.country, geo.city);

@@ -16,11 +16,18 @@ export function createAdminRouter(analyticsDB: AnalyticsDB, gameServer: Server) 
 
   router.use("/admin", authRouter);
 
-  router.get("/admin/api/stats", requireAdmin, (_req, res) => {
-    const daily = analyticsDB.getDailyStats(30);
+  router.get("/admin/api/stats", requireAdmin, (req, res) => {
+    const days = Math.min(365, Math.max(1, Number(req.query.days) || 30));
+    const daily = analyticsDB.getDailyStats(days);
     const today = analyticsDB.getTodayStats();
     const active = analyticsDB.getActiveSessions();
-    res.json({ daily, today, activeCount: active.length });
+    const allTime = analyticsDB.getDailyStats(365);
+    const totalSessions = allTime.reduce((s, d) => s + d.sessions, 0);
+    const totalPlayers = allTime.reduce((s, d) => s + d.players, 0);
+    const avgDurationAll = allTime.length > 0
+      ? allTime.reduce((s, d) => s + d.avgDuration, 0) / allTime.filter(d => d.avgDuration > 0).length || 0
+      : 0;
+    res.json({ daily, today, activeCount: active.length, totalSessions, totalPlayers, avgDurationAll });
   });
 
   router.get("/admin/api/live", requireAdmin, async (_req, res) => {
@@ -64,36 +71,43 @@ function getDashboardHTML(): string {
   <title>CatchAndRun Admin</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0a0a1a; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; }
-    h1 { font-size: 1.5rem; margin-bottom: 20px; background: linear-gradient(135deg, #00d4ff, #7b2ff7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .header a { color: #888; text-decoration: none; font-size: 0.85rem; }
-    .header a:hover { color: #fff; }
-    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
-    .card { background: rgba(255,255,255,0.04); border: 1px solid #222; border-radius: 10px; padding: 16px; }
-    .card .label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-    .card .value { font-size: 1.8rem; font-weight: 700; margin-top: 4px; }
-    .card .value.cyan { color: #00d4ff; }
-    .card .value.green { color: #4caf50; }
-    .card .value.orange { color: #ff9800; }
-    .card .value.purple { color: #7b2ff7; }
-    .chart-container { background: rgba(255,255,255,0.04); border: 1px solid #222; border-radius: 10px; padding: 16px; margin-bottom: 24px; }
-    .chart-container h3 { font-size: 0.85rem; color: #888; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
-    table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; font-size: 0.7rem; color: #666; text-transform: uppercase; letter-spacing: 1px; padding: 8px 12px; border-bottom: 1px solid #222; }
-    td { padding: 8px 12px; font-size: 0.85rem; border-bottom: 1px solid #1a1a2e; }
-    tr:hover td { background: rgba(255,255,255,0.03); }
-    .section { background: rgba(255,255,255,0.04); border: 1px solid #222; border-radius: 10px; padding: 16px; margin-bottom: 24px; }
-    .section h3 { font-size: 0.85rem; color: #888; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
-    .badge-green { background: rgba(76,175,80,0.2); color: #4caf50; }
-    .badge-orange { background: rgba(255,152,0,0.2); color: #ff9800; }
-    .badge-cyan { background: rgba(0,212,255,0.2); color: #00d4ff; }
-    .badge-red { background: rgba(255,80,80,0.2); color: #ff5555; }
-    canvas { max-height: 250px; }
-    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    @media (max-width: 768px) { .grid2 { grid-template-columns: 1fr; } }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0a1a;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;padding:20px}
+    h1{font-size:1.6rem;background:linear-gradient(135deg,#00d4ff,#7b2ff7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block}
+    .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+    .header a{color:#888;text-decoration:none;font-size:0.85rem}
+    .header a:hover{color:#fff}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:28px}
+    .card{background:linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.06));border:1px solid #1a1a3e;border-radius:14px;padding:20px;position:relative;overflow:hidden}
+    .card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px}
+    .card.c1::before{background:#00d4ff} .card.c2::before{background:#4caf50} .card.c3::before{background:#ff9800}
+    .card.c4::before{background:#7b2ff7} .card.c5::before{background:#ff6b6b} .card.c6::before{background:#ffdd44}
+    .card .label{font-size:0.7rem;color:#888;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
+    .card .value{font-size:2.2rem;font-weight:800;line-height:1}
+    .card .sub{font-size:0.75rem;color:#666;margin-top:4px}
+    .c1 .value{color:#00d4ff} .c2 .value{color:#4caf50} .c3 .value{color:#ff9800}
+    .c4 .value{color:#7b2ff7} .c5 .value{color:#ff6b6b} .c6 .value{color:#ffdd44}
+    .chart-box{background:rgba(255,255,255,0.03);border:1px solid #1a1a3e;border-radius:14px;padding:20px;margin-bottom:28px}
+    .chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .chart-header h3{font-size:0.85rem;color:#aaa;text-transform:uppercase;letter-spacing:1px}
+    .filter-btns{display:flex;gap:6px}
+    .filter-btn{background:rgba(255,255,255,0.06);border:1px solid #333;color:#aaa;padding:4px 12px;border-radius:6px;font-size:0.75rem;cursor:pointer;transition:all 0.2s}
+    .filter-btn:hover,.filter-btn.active{background:rgba(0,212,255,0.15);border-color:#00d4ff;color:#00d4ff}
+    table{width:100%;border-collapse:collapse}
+    th{text-align:left;font-size:0.7rem;color:#555;text-transform:uppercase;letter-spacing:1px;padding:10px 14px;border-bottom:1px solid #1a1a3e}
+    td{padding:10px 14px;font-size:0.85rem;border-bottom:1px solid #111128}
+    tr:hover td{background:rgba(255,255,255,0.02)}
+    .section{background:rgba(255,255,255,0.03);border:1px solid #1a1a3e;border-radius:14px;padding:20px;margin-bottom:28px}
+    .section h3{font-size:0.85rem;color:#aaa;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px}
+    .badge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:0.7rem;font-weight:700}
+    .badge-green{background:rgba(76,175,80,0.15);color:#4caf50} .badge-orange{background:rgba(255,152,0,0.15);color:#ff9800}
+    .badge-cyan{background:rgba(0,212,255,0.15);color:#00d4ff} .badge-red{background:rgba(255,80,80,0.15);color:#ff5555}
+    .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;animation:pulse 2s infinite}
+    .dot-green{background:#4caf50} .dot-red{background:#ff5555}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+    canvas{max-height:280px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    @media(max-width:768px){.grid2{grid-template-columns:1fr}.cards{grid-template-columns:repeat(2,1fr)}}
   </style>
 </head>
 <body>
@@ -102,115 +116,112 @@ function getDashboardHTML(): string {
     <a href="/admin/logout">Logout</a>
   </div>
 
-  <div class="cards" id="cards">
-    <div class="card"><div class="label">Players Today</div><div class="value cyan" id="stat-players">-</div></div>
-    <div class="card"><div class="label">Active Now</div><div class="value green" id="stat-active">-</div></div>
-    <div class="card"><div class="label">Sessions Today</div><div class="value orange" id="stat-sessions">-</div></div>
-    <div class="card"><div class="label">Avg Play Time</div><div class="value purple" id="stat-avgtime">-</div></div>
+  <div class="cards">
+    <div class="card c1"><div class="label">Visits Today</div><div class="value" id="s-visits">-</div><div class="sub">sessions today</div></div>
+    <div class="card c2"><div class="label"><span class="dot dot-green"></span>Active Now</div><div class="value" id="s-active">0</div><div class="sub">players online</div></div>
+    <div class="card c3"><div class="label">Unique Players Today</div><div class="value" id="s-players">-</div><div class="sub">by IP address</div></div>
+    <div class="card c4"><div class="label">Avg Play Time</div><div class="value" id="s-avgtime">-</div><div class="sub">today's average</div></div>
+    <div class="card c5"><div class="label">Total Sessions</div><div class="value" id="s-total">-</div><div class="sub">all time</div></div>
+    <div class="card c6"><div class="label">Total Avg Duration</div><div class="value" id="s-totalavg">-</div><div class="sub">all time average</div></div>
   </div>
 
-  <div class="chart-container">
-    <h3>Daily Players (30 days)</h3>
+  <div class="chart-box">
+    <div class="chart-header">
+      <h3>Game Sessions</h3>
+      <div class="filter-btns">
+        <button class="filter-btn" data-days="7">7D</button>
+        <button class="filter-btn active" data-days="30">30D</button>
+        <button class="filter-btn" data-days="90">3M</button>
+        <button class="filter-btn" data-days="365">1Y</button>
+      </div>
+    </div>
     <canvas id="dailyChart"></canvas>
   </div>
 
   <div class="grid2">
     <div class="section">
       <h3>Live Rooms</h3>
-      <table><thead><tr><th>Room</th><th>Players</th><th>Phase</th></tr></thead><tbody id="live-rooms"><tr><td colspan="3">Loading...</td></tr></tbody></table>
+      <table><thead><tr><th>Room</th><th>Players</th><th>Phase</th></tr></thead><tbody id="live-rooms"><tr><td colspan="3" style="color:#555">Loading...</td></tr></tbody></table>
     </div>
     <div class="section">
       <h3>Player Locations</h3>
-      <table><thead><tr><th>Country</th><th>City</th><th>Players</th></tr></thead><tbody id="locations"><tr><td colspan="3">Loading...</td></tr></tbody></table>
+      <table><thead><tr><th>Country</th><th>City</th><th>Players</th></tr></thead><tbody id="locations"><tr><td colspan="3" style="color:#555">Loading...</td></tr></tbody></table>
     </div>
   </div>
 
   <div class="section">
     <h3>Recent Sessions</h3>
-    <table><thead><tr><th>Nickname</th><th>Location</th><th>Duration</th><th>Role</th><th>Score</th><th>Kills</th></tr></thead><tbody id="sessions"><tr><td colspan="6">Loading...</td></tr></tbody></table>
+    <table><thead><tr><th>Nickname</th><th>Location</th><th>Duration</th><th>Role</th><th>Score</th><th>Kills</th></tr></thead><tbody id="sessions"><tr><td colspan="6" style="color:#555">Loading...</td></tr></tbody></table>
   </div>
 
   <script>
-    let chart = null;
+    let chart=null, currentDays=30;
+    function fmt(ms){if(!ms||ms<=0)return'-';const s=Math.floor(ms/1000);if(s<60)return s+'s';const m=Math.floor(s/60);return m+'m '+s%60+'s'}
+    function badge(t,c){return'<span class="badge badge-'+c+'">'+t+'</span>'}
 
-    function fmtDuration(ms) {
-      if (!ms || ms <= 0) return '-';
-      const s = Math.floor(ms / 1000);
-      if (s < 60) return s + 's';
-      return Math.floor(s / 60) + 'm ' + (s % 60) + 's';
-    }
+    async function loadStats(days){
+      currentDays=days||currentDays;
+      const r=await fetch('/admin/api/stats?days='+currentDays);
+      const d=await r.json();
+      document.getElementById('s-visits').textContent=d.today.sessions;
+      document.getElementById('s-active').textContent=d.activeCount;
+      document.getElementById('s-players').textContent=d.today.players;
+      document.getElementById('s-avgtime').textContent=fmt(d.today.avgDuration);
+      document.getElementById('s-total').textContent=d.totalSessions;
+      document.getElementById('s-totalavg').textContent=fmt(d.avgDurationAll);
 
-    function badge(text, cls) { return '<span class="badge badge-' + cls + '">' + text + '</span>'; }
+      const labels=d.daily.map(x=>x.date.slice(5));
+      const sessions=d.daily.map(x=>x.sessions);
+      const players=d.daily.map(x=>x.players);
 
-    async function loadStats() {
-      const res = await fetch('/admin/api/stats');
-      const data = await res.json();
-      document.getElementById('stat-players').textContent = data.today.players;
-      document.getElementById('stat-active').textContent = data.activeCount;
-      document.getElementById('stat-sessions').textContent = data.today.sessions;
-      document.getElementById('stat-avgtime').textContent = fmtDuration(data.today.avgDuration);
-
-      const labels = data.daily.map(d => d.date.slice(5));
-      const players = data.daily.map(d => d.players);
-      const sessions = data.daily.map(d => d.sessions);
-
-      if (chart) chart.destroy();
-      chart = new Chart(document.getElementById('dailyChart'), {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [
-            { label: 'Unique Players', data: players, borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.1)', fill: true, tension: 0.3 },
-            { label: 'Sessions', data: sessions, borderColor: '#ff9800', backgroundColor: 'rgba(255,152,0,0.1)', fill: true, tension: 0.3 },
-          ]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { labels: { color: '#888' } } },
-          scales: {
-            x: { ticks: { color: '#666' }, grid: { color: '#1a1a2e' } },
-            y: { ticks: { color: '#666' }, grid: { color: '#1a1a2e' }, beginAtZero: true }
-          }
-        }
+      if(chart)chart.destroy();
+      chart=new Chart(document.getElementById('dailyChart'),{
+        type:'line',
+        data:{labels,datasets:[
+          {label:'Sessions',data:sessions,borderColor:'#ff9800',backgroundColor:'rgba(255,152,0,0.08)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#ff9800'},
+          {label:'Unique Players',data:players,borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,0.08)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#00d4ff'}
+        ]},
+        options:{responsive:true,interaction:{intersect:false,mode:'index'},
+          plugins:{legend:{labels:{color:'#888',usePointStyle:true,pointStyle:'circle'}},
+            tooltip:{backgroundColor:'#1a1a3e',borderColor:'#333',borderWidth:1,titleColor:'#fff',bodyColor:'#ccc',padding:12}},
+          scales:{x:{ticks:{color:'#555'},grid:{color:'rgba(255,255,255,0.03)'}},
+                  y:{ticks:{color:'#555'},grid:{color:'rgba(255,255,255,0.03)'},beginAtZero:true}}}
       });
     }
 
-    async function loadLive() {
-      const res = await fetch('/admin/api/live');
-      const rooms = await res.json();
-      const tbody = document.getElementById('live-rooms');
-      if (rooms.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="color:#666">No active rooms</td></tr>'; return; }
-      tbody.innerHTML = rooms.map(r =>
-        '<tr><td>' + r.name + '</td><td>' + r.clients + '/' + r.maxClients + '</td><td>' +
-        badge(r.phase === 'waiting' ? 'LOBBY' : 'ACTIVE', r.phase === 'waiting' ? 'green' : 'orange') + '</td></tr>'
-      ).join('');
+    async function loadLive(){
+      const r=await fetch('/admin/api/live');const rooms=await r.json();
+      const t=document.getElementById('live-rooms');
+      if(!rooms.length){t.innerHTML='<tr><td colspan="3" style="color:#555">No active rooms</td></tr>';return}
+      t.innerHTML=rooms.map(r=>'<tr><td>'+r.name+'</td><td>'+r.clients+'/'+r.maxClients+'</td><td>'+
+        badge(r.phase==='waiting'?'LOBBY':'ACTIVE',r.phase==='waiting'?'green':'orange')+'</td></tr>').join('');
     }
 
-    async function loadSessions() {
-      const res = await fetch('/admin/api/sessions');
-      const list = await res.json();
-      document.getElementById('sessions').innerHTML = list.slice(0, 50).map(s =>
-        '<tr><td>' + s.nickname + '</td><td>' + s.country + ', ' + s.city +
-        '</td><td>' + fmtDuration(s.durationMs) + '</td><td>' +
-        (s.role === 'hunter' ? badge('HUNTER','red') : s.role === 'prop' ? badge('PROP','cyan') : (s.role || '-')) +
-        '</td><td>' + (s.score || 0) + '</td><td>' + (s.kills || 0) + '</td></tr>'
-      ).join('');
+    async function loadSessions(){
+      const r=await fetch('/admin/api/sessions');const list=await r.json();
+      document.getElementById('sessions').innerHTML=list.slice(0,50).map(s=>
+        '<tr><td>'+s.nickname+'</td><td>'+s.country+', '+s.city+'</td><td>'+fmt(s.durationMs)+'</td><td>'+
+        (s.role==='hunter'?badge('HUNTER','red'):s.role==='prop'?badge('PROP','cyan'):(s.role||'-'))+
+        '</td><td>'+(s.score||0)+'</td><td>'+(s.kills||0)+'</td></tr>').join('');
     }
 
-    async function loadLocations() {
-      const res = await fetch('/admin/api/locations');
-      const list = await res.json();
-      document.getElementById('locations').innerHTML = list.length === 0
-        ? '<tr><td colspan="3" style="color:#666">No data yet</td></tr>'
-        : list.map(l => '<tr><td>' + l.country + '</td><td>' + l.city + '</td><td>' + l.count + '</td></tr>').join('');
+    async function loadLocations(){
+      const r=await fetch('/admin/api/locations');const list=await r.json();
+      document.getElementById('locations').innerHTML=!list.length
+        ?'<tr><td colspan="3" style="color:#555">No data yet</td></tr>'
+        :list.map(l=>'<tr><td>'+l.country+'</td><td>'+l.city+'</td><td>'+l.count+'</td></tr>').join('');
     }
 
-    async function refresh() {
-      await Promise.all([loadStats(), loadLive(), loadSessions(), loadLocations()]);
-    }
+    document.querySelectorAll('.filter-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        loadStats(Number(btn.dataset.days));
+      });
+    });
 
-    refresh();
-    setInterval(refresh, 30000);
+    async function refresh(){await Promise.all([loadStats(),loadLive(),loadSessions(),loadLocations()])}
+    refresh();setInterval(refresh,30000);
   </script>
 </body>
 </html>`;
