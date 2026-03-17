@@ -36,6 +36,8 @@ import {
   HUNTER_GRENADE_COOLDOWN_MS,
   HUNTER_SCAN_COOLDOWN_MS,
   HUNTER_GRENADE_STUN_MS,
+  HUNTER_PHASEWALK_DURATION_MS,
+  HUNTER_PHASEWALK_COOLDOWN_MS,
 } from "@catch-and-run/shared";
 import mapDataJson from "./world/harbor-warehouse.json";
 
@@ -90,6 +92,9 @@ export class GameManager {
   private lastAbility2Time = 0;
   private hunterBoostEnd = 0;
   private lastHunterBoostTime = 0;
+  private phaseWalkEnd = 0;
+  private lastPhaseWalkTime = 0;
+  private phaseWalkColliders: THREE.Box3[] = [];
   private currentPhase: string = GamePhase.WAITING;
   private mapBuilt = false;
   private invisibleProps = new Set<string>();
@@ -495,8 +500,8 @@ export class GameManager {
     this.weaponSystem = new WeaponSystem(this.scene);
     this.propTransformSystem = new PropTransformSystem(this.scene, this.propRegistry);
     this.audioSystem = new AudioSystem(this.camera);
-    this.audioSystem.startBGM();
-    if (this.musicBtn) this.musicBtn.textContent = "♪ ON";
+    // Music OFF by default
+    if (this.musicBtn) this.musicBtn.textContent = "[M] ♪ OFF";
     this.particleSystem = new ParticleSystem(this.scene);
   }
 
@@ -1001,8 +1006,8 @@ export class GameManager {
       <div style="color:#fff;font-weight:bold;margin-bottom:8px;font-size:0.9rem;">Controls</div>
       <div style="color:#4fc3f7;font-weight:bold;margin-bottom:4px;">Hunter</div>
       <b>LMB</b> Shoot &bull; <b>R</b> Reload &bull; <b>Q</b> Grenade<br>
-      <b>E</b> Scanner &bull; <b>WASD</b> Move &bull; <b>Space</b> Jump<br>
-      <b>Shift</b> Crouch<br>
+      <b>E</b> Scanner &bull; <b>T</b> Speed Boost &bull; <b>1</b> Phase-Walk<br>
+      <b>WASD</b> Move &bull; <b>Space</b> Jump &bull; <b>Shift</b> Crouch<br>
       <div style="color:#66bb6a;font-weight:bold;margin:6px 0 4px;">Prop</div>
       <b>WASD</b> Move &bull; <b>Space</b> Jump &bull; <b>E</b> Transform (2x max)<br>
       <b>F</b> Lock &bull; <b>Q</b> Invisible &bull; <b>R</b> Speed<br>
@@ -1263,7 +1268,20 @@ export class GameManager {
         (this.hunterController as any).speed = 10;
         (this.hunterController as any).jumpSpeed = 13;
       }
-      pos = this.hunterController.update(dt, allColliders);
+
+      const now = Date.now();
+      const inPhaseWalk = now < this.phaseWalkEnd;
+      if (inPhaseWalk) {
+        // During phase-walk: no colliders (walk through walls), slight transparency
+        pos = this.hunterController.update(dt, []);
+      } else {
+        // Phase-walk just ended: push hunter out of any solid they're stuck in
+        if (this.phaseWalkColliders.length > 0) {
+          this.pushHunterOutOfWalls(allColliders);
+          this.phaseWalkColliders = [];
+        }
+        pos = this.hunterController.update(dt, allColliders);
+      }
       this.handleHunterActions(dt);
       this.updateHunterHUD();
     } else {
@@ -1355,6 +1373,19 @@ export class GameManager {
         this.hunterBoostEnd = Date.now() + 5000;
         this.audioSystem?.playSound("ability");
         this.uiManager.showNotification("HUNTER BOOST! Speed + Jump [5s]");
+      }
+    }
+
+    // 1 = Phase-Walk (walk through walls, 5s duration, 40s cooldown)
+    if (this.input.consumeKey("Digit1")) {
+      const now = Date.now();
+      const cdPhase = now - this.lastPhaseWalkTime;
+      if (cdPhase >= HUNTER_PHASEWALK_COOLDOWN_MS && now >= this.phaseWalkEnd) {
+        this.lastPhaseWalkTime = now;
+        this.phaseWalkEnd = now + HUNTER_PHASEWALK_DURATION_MS;
+        this.phaseWalkColliders = [...this.colliders];
+        this.audioSystem?.playSound("ability");
+        this.uiManager.showNotification("PHASE-WALK! Walking through walls [5s]");
       }
     }
 
@@ -1478,13 +1509,39 @@ export class GameManager {
     return eligible[eligible.length - 1];
   }
 
+  private pushHunterOutOfWalls(colliders: THREE.Box3[]) {
+    const pos = this.hunterController.getPosition();
+    const radius = 0.4;
+    const feetY = pos.y - 1.6;
+    const playerBox = new THREE.Box3(
+      new THREE.Vector3(pos.x - radius, feetY, pos.z - radius),
+      new THREE.Vector3(pos.x + radius, feetY + 1.8, pos.z + radius)
+    );
+
+    for (const c of colliders) {
+      if (!playerBox.intersectsBox(c)) continue;
+      const overlapX = Math.min(playerBox.max.x - c.min.x, c.max.x - playerBox.min.x);
+      const overlapZ = Math.min(playerBox.max.z - c.min.z, c.max.z - playerBox.min.z);
+      if (overlapX < overlapZ) {
+        const pushDir = pos.x < (c.min.x + c.max.x) / 2 ? -1 : 1;
+        this.hunterController.setPosition(pos.x + pushDir * (overlapX + 0.2), pos.y, pos.z);
+      } else {
+        const pushDir = pos.z < (c.min.z + c.max.z) / 2 ? -1 : 1;
+        this.hunterController.setPosition(pos.x, pos.y, pos.z + pushDir * (overlapZ + 0.2));
+      }
+      return;
+    }
+  }
+
   private updateHunterHUD() {
     this.gameHUD.updateHealth(this.localHealth, HUNTER_MAX_HEALTH);
     this.gameHUD.updateAmmo(this.localAmmo, WEAPON_MAX_AMMO, this.weaponSystem?.getIsReloading() || false);
     const cdGrenade = Math.max(0, HUNTER_GRENADE_COOLDOWN_MS - (Date.now() - this.lastGrenadeTime));
     const cdScan = Math.max(0, HUNTER_SCAN_COOLDOWN_MS - (Date.now() - this.lastScanTime));
     const cdBoost = Math.max(0, 60000 - (Date.now() - this.lastHunterBoostTime));
-    this.gameHUD.updateHunterAbilities(cdGrenade, cdScan, this.grenadeMode, cdBoost);
+    const cdPhaseWalk = Math.max(0, HUNTER_PHASEWALK_COOLDOWN_MS - (Date.now() - this.lastPhaseWalkTime));
+    const inPhaseWalk = Date.now() < this.phaseWalkEnd;
+    this.gameHUD.updateHunterAbilities(cdGrenade, cdScan, this.grenadeMode, cdBoost, cdPhaseWalk, inPhaseWalk);
     this.gameHUD.updateDamageOverlay(this.localHealth, HUNTER_MAX_HEALTH, true);
     this.gameHUD.updatePropInfo("", false);
     this.gameHUD.setSoulModeVisible(false);

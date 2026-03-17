@@ -253,7 +253,7 @@ export class GameHUD {
     }
   }
 
-  updateHunterAbilities(grenadeCd: number, scanCd: number, grenadeMode: boolean, boostCd = 0) {
+  updateHunterAbilities(grenadeCd: number, scanCd: number, grenadeMode: boolean, boostCd = 0, phaseWalkCd = 0, inPhaseWalk = false) {
     if (!this.abilityEl) return;
     if (grenadeMode) {
       this.abilityEl.innerHTML = `
@@ -276,6 +276,13 @@ export class GameHUD {
       html += `<div class="hud-ability-name">BOOST <span style="color:#ff9800">[T] ${Math.ceil(boostCd / 1000)}s</span></div>`;
     } else {
       html += `<div class="hud-ability-name">BOOST <span style="color:#ffdd44">[T]</span></div>`;
+    }
+    if (inPhaseWalk) {
+      html += `<div class="hud-ability-name" style="color:#00ffcc;font-weight:bold">PHASE-WALK ACTIVE!</div>`;
+    } else if (phaseWalkCd > 0) {
+      html += `<div class="hud-ability-name">PHASE-WALK <span style="color:#ff9800">[1] ${Math.ceil(phaseWalkCd / 1000)}s</span></div>`;
+    } else {
+      html += `<div class="hud-ability-name">PHASE-WALK <span style="color:#00ffcc">[1]</span></div>`;
     }
     this.abilityEl.innerHTML = html;
   }

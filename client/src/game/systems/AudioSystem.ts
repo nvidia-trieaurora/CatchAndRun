@@ -3,7 +3,7 @@ import * as THREE from "three";
 const BGM_PATH = "/assets/audio/starostin-comedy-quirky-sneaky-music-261165.mp3";
 const SHOOT_PATH = "/assets/audio/pistol-shot-233473.mp3";
 const RELOAD_PATH = "/assets/audio/reload-gun.mp3";
-const BGM_VOLUME = 0.15;
+const BGM_VOLUME = 0.08;
 const SFX_VOLUME = 0.4;
 
 export class AudioSystem {
