@@ -202,8 +202,14 @@ export class GameRoom extends Room<GameState> {
 
     // Analytics: log join with IP geolocation
     if (GameRoom.analyticsDB) {
-      const ip = (client as any).httpHeaders?.["x-real-ip"]
-        || (client as any).httpHeaders?.["x-forwarded-for"]?.split(",")[0]?.trim()
+      const c = client as any;
+      const ip = c._httpHeaders?.["x-real-ip"]
+        || c._httpHeaders?.["x-forwarded-for"]?.split(",")[0]?.trim()
+        || c.httpHeaders?.["x-real-ip"]
+        || c.httpHeaders?.["x-forwarded-for"]?.split(",")[0]?.trim()
+        || c.ref?.upgradeReq?.headers?.["x-real-ip"]
+        || c.ref?.upgradeReq?.headers?.["x-forwarded-for"]?.split(",")[0]?.trim()
+        || c._ws?._socket?.remoteAddress
         || "";
       const db = GameRoom.analyticsDB;
       lookupIP(ip).then(geo => {
