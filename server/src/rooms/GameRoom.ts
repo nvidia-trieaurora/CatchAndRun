@@ -3,6 +3,8 @@ import { GameState } from "../schemas/GameState";
 import { PlayerSchema } from "../schemas/PlayerSchema";
 import { ChatMessage } from "../schemas/ChatMessage";
 import { generateRoomCode } from "../utils/RoomCodeGenerator";
+import { AnalyticsDB } from "../analytics/AnalyticsDB";
+import { lookupIP } from "../analytics/GeoIP";
 import { MatchStateMachine } from "../systems/MatchStateMachine";
 import { HitValidation } from "../systems/HitValidation";
 import { PropTransformValidator } from "../systems/PropTransformValidator";
@@ -48,6 +50,8 @@ interface RoomCreateOptions {
 }
 
 export class GameRoom extends Room<GameState> {
+  static analyticsDB: AnalyticsDB | null = null;
+
   private matchSM!: MatchStateMachine;
   private hitValidation!: HitValidation;
   private propValidator!: PropTransformValidator;
@@ -196,6 +200,19 @@ export class GameRoom extends Room<GameState> {
 
     this.state.players.set(client.sessionId, player);
 
+    // Analytics: log join with IP geolocation
+    if (GameRoom.analyticsDB) {
+      const ip = (client as any).httpHeaders?.["x-real-ip"]
+        || (client as any).httpHeaders?.["x-forwarded-for"]?.split(",")[0]?.trim()
+        || "";
+      const db = GameRoom.analyticsDB;
+      lookupIP(ip).then(geo => {
+        db.logJoin(client.sessionId, player.nickname, ip, this.roomId, geo.country, geo.city);
+      }).catch(() => {
+        db.logJoin(client.sessionId, player.nickname, ip, this.roomId);
+      });
+    }
+
     // If solo explore is active and a 2nd player joins, start real match
     if (this.soloExploreActive && this.state.players.size >= 2) {
       this.soloExploreActive = false;
@@ -226,6 +243,11 @@ export class GameRoom extends Room<GameState> {
 
     const nickname = player.nickname;
     const wasHost = player.isHost;
+
+    // Analytics: log leave
+    if (GameRoom.analyticsDB) {
+      GameRoom.analyticsDB.logLeave(client.sessionId, player.role, player.score, player.kills);
+    }
 
     this.state.players.delete(client.sessionId);
 

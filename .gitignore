@@ -8,3 +8,5 @@ client/dist/
 client/node_modules/.vite/
 server/dist/
 shared/dist/
+data/
+*.db
