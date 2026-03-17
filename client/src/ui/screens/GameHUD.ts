@@ -17,6 +17,7 @@ export class GameHUD {
   private chatToastEl!: HTMLElement;
   private soulModeEl!: HTMLElement;
   private controlsHintEl!: HTMLElement;
+  private aliveCountEl!: HTMLElement;
   private killfeedEntries: { el: HTMLElement; time: number }[] = [];
   private chatOpen = false;
   private onChatSend: ((message: string) => void) | null = null;
@@ -32,6 +33,7 @@ export class GameHUD {
         <div class="hud-timer" id="hud-timer">5:00</div>
         <div class="hud-phase" id="hud-phase">WAITING</div>
         <div class="hud-role" id="hud-role"></div>
+        <div class="hud-alive-count" id="hud-alive-count"></div>
       </div>
 
       <div class="hud-bottom-left">
@@ -86,6 +88,7 @@ export class GameHUD {
       this.chatToastEl = this.element.querySelector("#hud-chat-toast")!;
       this.soulModeEl = this.element.querySelector("#hud-soul-mode")!;
       this.controlsHintEl = this.element.querySelector("#hud-controls-hint")!;
+      this.aliveCountEl = this.element.querySelector("#hud-alive-count")!;
 
       this.chatInputEl.addEventListener("keydown", (e) => {
         e.stopPropagation();
@@ -304,6 +307,13 @@ export class GameHUD {
       this.propInfoEl.style.display = "none";
       this.propInfoEl.textContent = "";
     }
+  }
+
+  updateAliveCount(aliveProps: number, totalProps: number, aliveHunters: number, totalHunters: number) {
+    if (!this.aliveCountEl) return;
+    this.aliveCountEl.innerHTML =
+      `<span style="color:#00d4ff">Props: ${aliveProps}/${totalProps}</span>` +
+      ` &nbsp; <span style="color:#ff6b6b">Hunters: ${aliveHunters}/${totalHunters}</span>`;
   }
 
   setVisible(visible: boolean) {

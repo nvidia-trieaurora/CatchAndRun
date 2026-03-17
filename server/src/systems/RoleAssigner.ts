@@ -8,7 +8,15 @@ export class RoleAssigner {
     huntersPerPlayers: number
   ): Map<string, PlayerRole> {
     const roles = new Map<string, PlayerRole>();
-    const numHunters = Math.max(1, Math.floor(playerIds.length / huntersPerPlayers));
+    const count = playerIds.length;
+    let numHunters: number;
+    if (count <= 1) {
+      numHunters = 1;
+    } else if (count <= 3) {
+      numHunters = 1;
+    } else {
+      numHunters = 3;
+    }
 
     const shuffled = [...playerIds].sort(() => Math.random() - 0.5);
 

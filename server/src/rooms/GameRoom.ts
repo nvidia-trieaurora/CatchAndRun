@@ -187,7 +187,7 @@ export class GameRoom extends Room<GameState> {
     }
 
     const isGameRunning = this.state.phase !== GamePhase.WAITING && this.state.phase !== GamePhase.COUNTDOWN;
-    if (isGameRunning) {
+    if (isGameRunning && !this.soloExploreActive) {
       player.isSpectator = true;
       player.role = PlayerRole.SPECTATOR;
       player.isAlive = false;
@@ -196,9 +196,22 @@ export class GameRoom extends Room<GameState> {
 
     this.state.players.set(client.sessionId, player);
 
+    // If solo explore is active and a 2nd player joins, start real match
+    if (this.soloExploreActive && this.state.players.size >= 2) {
+      this.soloExploreActive = false;
+      this.state.phase = GamePhase.WAITING;
+      this.state.players.forEach((p) => {
+        p.role = PlayerRole.PROP;
+        p.isReady = true;
+        p.isAlive = true;
+        p.isSpectator = false;
+      });
+      this.matchSM.startMatch();
+    }
+
     const sysMsg = new ChatMessage();
     sysMsg.sender = "System";
-    sysMsg.message = isGameRunning
+    sysMsg.message = isGameRunning && !this.soloExploreActive
       ? `${player.nickname} joined as spectator (will play next round)`
       : `${player.nickname} joined the room`;
     sysMsg.timestamp = Date.now();
@@ -632,7 +645,11 @@ export class GameRoom extends Room<GameState> {
   private handleStartGame(client: Client) {
     if (client.sessionId !== this.state.hostSessionId) return;
     if (this.state.phase !== GamePhase.WAITING) return;
-    if (this.state.players.size < 2) return;
+
+    if (this.state.players.size === 1) {
+      this.startSoloExplore(client);
+      return;
+    }
 
     void this.setMetadata({
       roomName: this.state.roomName,
@@ -642,6 +659,32 @@ export class GameRoom extends Room<GameState> {
       isPrivate: this.state.isPrivate,
     });
     this.matchSM.startMatch();
+  }
+
+  private soloExploreActive = false;
+
+  private startSoloExplore(client: Client) {
+    this.soloExploreActive = true;
+    const player = this.state.players.get(client.sessionId)!;
+    player.role = PlayerRole.HUNTER;
+    player.isAlive = true;
+    player.health = HUNTER_MAX_HEALTH;
+    player.ammo = WEAPON_MAX_AMMO;
+    const spawn = this.spawnManager.getHunterSpawn();
+    player.x = spawn.position.x;
+    player.y = spawn.position.y;
+    player.z = spawn.position.z;
+
+    this.state.phase = GamePhase.ACTIVE;
+    this.state.timer = 9999;
+
+    void this.setMetadata({
+      roomName: this.state.roomName,
+      roomCode: this.state.roomCode,
+      mapId: this.state.config.mapId,
+      phase: "active",
+      isPrivate: this.state.isPrivate,
+    });
   }
 
   private handleSetConfig(client: Client, data: SetConfigData) {

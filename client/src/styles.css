@@ -597,6 +597,12 @@ body {
   display: inline-block;
 }
 
+.hud-alive-count {
+  font-size: 0.8rem;
+  margin-top: 6px;
+  letter-spacing: 1px;
+}
+
 .hud-role.hunter {
   background: rgba(255, 50, 50, 0.3);
   color: #ff6b6b;

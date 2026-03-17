@@ -291,6 +291,21 @@ export class GameManager {
     this.gameHUD.updateTimer(data.timer || 0);
     this.gameHUD.updatePhase(data.phase || "waiting");
 
+    // Update alive count
+    if (data.players) {
+      let aliveProps = 0, totalProps = 0, aliveHunters = 0, totalHunters = 0;
+      for (const p of data.players) {
+        if (p.role === "prop") {
+          totalProps++;
+          if (p.isAlive) aliveProps++;
+        } else if (p.role === "hunter") {
+          totalHunters++;
+          if (p.isAlive) aliveHunters++;
+        }
+      }
+      this.gameHUD.updateAliveCount(aliveProps, totalProps, aliveHunters, totalHunters);
+    }
+
     if (data.roomCode) {
       this.roomLobby.setRoomCode(data.roomCode);
     }
@@ -357,8 +372,16 @@ export class GameManager {
         break;
 
       case GamePhase.ACTIVE:
+        // Solo explore or normal game — build map if needed
+        if (!this.mapBuilt) {
+          this.buildMapIfNeeded();
+          this.initControllers();
+          this.setHudButtonsVisible(true);
+          this.uiManager.showScreen("gameHUD");
+        }
         this.gameHUD.updateRole(this.localRole);
         if (this.touchInput) {
+          this.touchInput.show();
           this.touchInput.setRole(this.localRole === PlayerRole.HUNTER ? "hunter" : "prop");
         }
         // Open the gate -- remove gate collider so hunters can leave
@@ -418,6 +441,17 @@ export class GameManager {
     this.currentPhase = data.phase;
     this.localRole = PlayerRole.SPECTATOR;
     this.localIsAlive = false;
+
+    // Remove gate so spectator can see freely (gate is already open in ACTIVE)
+    if (this.gateCollider && this.gateColliderIndex >= 0) {
+      const idx = this.colliders.indexOf(this.gateCollider);
+      if (idx >= 0) this.colliders.splice(idx, 1);
+      this.gateCollider = null;
+    }
+    if (this.gateMesh) {
+      this.gateMesh.visible = false;
+      this.gateMesh = null;
+    }
 
     this.spectatorController.setPosition(0, 15, 20);
     this.uiManager.showScreen("gameHUD");
