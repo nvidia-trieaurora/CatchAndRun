@@ -1,5 +1,6 @@
 import { Router } from "express";
 import session from "express-session";
+import PDFDocument from "pdfkit";
 import { authRouter, requireAdmin } from "./auth";
 import type { AnalyticsDB } from "../analytics/AnalyticsDB";
 import type { Server } from "colyseus";
@@ -55,11 +56,122 @@ export function createAdminRouter(analyticsDB: AnalyticsDB, gameServer: Server) 
     res.json(analyticsDB.getLocationStats());
   });
 
+  router.get("/admin/api/export-pdf", requireAdmin, (req, res) => {
+    const days = Math.min(365, Math.max(1, Number(req.query.days) || 30));
+    const daily = analyticsDB.getDailyStats(days);
+    const today = analyticsDB.getTodayStats();
+    const locations = analyticsDB.getLocationStats();
+    const sessions = analyticsDB.getRecentSessions(50);
+    const allTime = analyticsDB.getDailyStats(365);
+    const totalSessions = allTime.reduce((s, d) => s + d.sessions, 0);
+
+    const doc = new PDFDocument({ size: "A4", margin: 40 });
+    const filename = `CatchAndRun_Report_${new Date().toISOString().slice(0, 10)}.pdf`;
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    doc.pipe(res);
+
+    // Title
+    doc.fontSize(22).fillColor("#00d4ff").text("CATCH & RUN", { align: "center" });
+    doc.fontSize(12).fillColor("#888888").text("Analytics Report", { align: "center" });
+    doc.fontSize(9).fillColor("#666666").text(`Generated: ${new Date().toLocaleString()} | Period: ${days} days`, { align: "center" });
+    doc.moveDown(1.5);
+
+    // Summary
+    doc.fontSize(14).fillColor("#ffffff").text("Summary");
+    doc.moveTo(40, doc.y).lineTo(555, doc.y).strokeColor("#333333").stroke();
+    doc.moveDown(0.5);
+    doc.fontSize(10).fillColor("#cccccc");
+    doc.text(`Sessions Today: ${today.sessions}`);
+    doc.text(`Unique Players Today: ${today.players}`);
+    doc.text(`Avg Play Time Today: ${fmtMs(today.avgDuration)}`);
+    doc.text(`Total Sessions (all time): ${totalSessions}`);
+    doc.moveDown(1);
+
+    // Daily stats table
+    doc.fontSize(14).fillColor("#ffffff").text(`Daily Stats (${days} days)`);
+    doc.moveTo(40, doc.y).lineTo(555, doc.y).strokeColor("#333333").stroke();
+    doc.moveDown(0.5);
+    doc.fontSize(8).fillColor("#888888");
+    const colW = [100, 100, 100, 140];
+    const headers = ["Date", "Players", "Sessions", "Avg Duration"];
+    let x = 40;
+    headers.forEach((h, i) => { doc.text(h, x, doc.y, { width: colW[i], continued: i < headers.length - 1 }); x += colW[i]; });
+    doc.moveDown(0.3);
+
+    doc.fontSize(8).fillColor("#cccccc");
+    for (const d of daily.slice(-20)) {
+      x = 40;
+      const row = [d.date, String(d.players), String(d.sessions), fmtMs(d.avgDuration)];
+      row.forEach((v, i) => { doc.text(v, x, doc.y, { width: colW[i], continued: i < row.length - 1 }); x += colW[i]; });
+      doc.moveDown(0.1);
+      if (doc.y > 720) { doc.addPage(); }
+    }
+    doc.moveDown(1);
+
+    // Locations
+    if (locations.length > 0) {
+      if (doc.y > 650) doc.addPage();
+      doc.fontSize(14).fillColor("#ffffff").text("Player Locations");
+      doc.moveTo(40, doc.y).lineTo(555, doc.y).strokeColor("#333333").stroke();
+      doc.moveDown(0.5);
+      doc.fontSize(8).fillColor("#888888");
+      doc.text("Country", 40, doc.y, { width: 150, continued: true });
+      doc.text("City", 190, doc.y, { width: 150, continued: true });
+      doc.text("Players", 340, doc.y, { width: 80 });
+      doc.moveDown(0.3);
+      doc.fontSize(8).fillColor("#cccccc");
+      for (const l of locations.slice(0, 20)) {
+        doc.text(l.country, 40, doc.y, { width: 150, continued: true });
+        doc.text(l.city, 190, doc.y, { width: 150, continued: true });
+        doc.text(String(l.count), 340, doc.y, { width: 80 });
+        doc.moveDown(0.1);
+        if (doc.y > 720) doc.addPage();
+      }
+      doc.moveDown(1);
+    }
+
+    // Recent sessions
+    if (doc.y > 550) doc.addPage();
+    doc.fontSize(14).fillColor("#ffffff").text("Recent Sessions (last 50)");
+    doc.moveTo(40, doc.y).lineTo(555, doc.y).strokeColor("#333333").stroke();
+    doc.moveDown(0.5);
+    doc.fontSize(7).fillColor("#888888");
+    const sCols = [90, 110, 70, 55, 45, 40];
+    const sHeaders = ["Nickname", "Location", "Duration", "Role", "Score", "Kills"];
+    x = 40;
+    sHeaders.forEach((h, i) => { doc.text(h, x, doc.y, { width: sCols[i], continued: i < sHeaders.length - 1 }); x += sCols[i]; });
+    doc.moveDown(0.3);
+    doc.fontSize(7).fillColor("#cccccc");
+    for (const s of sessions) {
+      x = 40;
+      const row = [s.nickname, `${s.country}, ${s.city}`, fmtMs(s.durationMs), s.role || "-", String(s.score || 0), String(s.kills || 0)];
+      row.forEach((v, i) => { doc.text(v, x, doc.y, { width: sCols[i], continued: i < row.length - 1 }); x += sCols[i]; });
+      doc.moveDown(0.1);
+      if (doc.y > 720) doc.addPage();
+    }
+
+    // Footer
+    doc.moveDown(2);
+    doc.fontSize(8).fillColor("#555555").text("CatchAndRun - Prop Hunt Multiplayer Game | trieaurora-catchandrun.pro.vn", { align: "center" });
+
+    doc.end();
+  });
+
   router.get("/admin", requireAdmin, (_req, res) => {
     res.send(getDashboardHTML());
   });
 
   return router;
+}
+
+function fmtMs(ms: number): string {
+  if (!ms || ms <= 0) return "-";
+  const s = Math.floor(ms / 1000);
+  if (s < 60) return `${s}s`;
+  const m = Math.floor(s / 60);
+  return `${m}m ${s % 60}s`;
 }
 
 function getDashboardHTML(): string {
@@ -113,7 +225,10 @@ function getDashboardHTML(): string {
 <body>
   <div class="header">
     <h1>CATCH&RUN Admin</h1>
-    <a href="/admin/logout">Logout</a>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="#" onclick="exportPDF()" style="background:rgba(0,212,255,0.12);border:1px solid #00d4ff;color:#00d4ff;padding:6px 14px;border-radius:8px;font-size:0.8rem;text-decoration:none;font-weight:600">Export PDF</a>
+      <a href="/admin/logout">Logout</a>
+    </div>
   </div>
 
   <div class="cards">
@@ -219,6 +334,8 @@ function getDashboardHTML(): string {
         loadStats(Number(btn.dataset.days));
       });
     });
+
+    function exportPDF(){window.open('/admin/api/export-pdf?days='+currentDays,'_blank')}
 
     async function refresh(){await Promise.all([loadStats(),loadLive(),loadSessions(),loadLocations()])}
     refresh();setInterval(refresh,30000);
