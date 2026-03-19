@@ -82,19 +82,19 @@ export class PropController {
       this.soulEuler.x = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, this.soulEuler.x));
       this.camera.quaternion.setFromEuler(this.soulEuler);
 
-      const hDir = new THREE.Vector3();
-      if (inputState.forward) hDir.z -= 1;
-      if (inputState.backward) hDir.z += 1;
-      if (inputState.left) hDir.x -= 1;
-      if (inputState.right) hDir.x += 1;
-      if (hDir.lengthSq() > 0) {
-        hDir.normalize();
-        const yawQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, this.soulEuler.y, 0));
-        hDir.applyQuaternion(yawQuat);
-        this.soulPosition.addScaledVector(hDir, this.soulSpeed * dt);
+      const dir = new THREE.Vector3();
+      if (inputState.forward) dir.z -= 1;
+      if (inputState.backward) dir.z += 1;
+      if (inputState.left) dir.x -= 1;
+      if (inputState.right) dir.x += 1;
+      if (inputState.jump) dir.y += 1;
+      if (inputState.crouch) dir.y -= 1;
+
+      if (dir.lengthSq() > 0) {
+        dir.normalize();
+        dir.applyQuaternion(this.camera.quaternion);
+        this.soulPosition.addScaledVector(dir, this.soulSpeed * dt);
       }
-      if (inputState.jump) this.soulPosition.y += this.soulSpeed * dt;
-      if (inputState.crouch) this.soulPosition.y -= this.soulSpeed * dt;
 
       this.camera.position.copy(this.soulPosition);
       return this.position.clone();
