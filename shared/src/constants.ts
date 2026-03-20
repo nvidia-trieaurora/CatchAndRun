@@ -7,13 +7,13 @@ export const INTERPOLATION_BUFFER_MS = 100;
 
 export const COUNTDOWN_DURATION = 5;
 export const HIDE_PHASE_DURATION = 10;
-export const ACTIVE_PHASE_DURATION = 150;
+export const ACTIVE_PHASE_DURATION = 240;
 
 export const HUNTER_PHASEWALK_DURATION_MS = 5000;
 export const HUNTER_PHASEWALK_COOLDOWN_MS = 40000;
 export const ROUND_END_DURATION = 8;
 export const MATCH_END_DURATION = 15;
-export const DEFAULT_TOTAL_ROUNDS = 2;
+export const DEFAULT_TOTAL_ROUNDS = 5;
 
 export const HUNTERS_PER_PLAYERS = 4;
 

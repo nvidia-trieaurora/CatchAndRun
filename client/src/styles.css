@@ -600,6 +600,32 @@ body {
   display: inline-block;
 }
 
+.hud-round {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #888;
+  margin-bottom: 4px;
+  display: none;
+}
+
+.round-current {
+  font-size: 1.1rem;
+  color: #ffdd44;
+  font-weight: 800;
+}
+
+.round-sep {
+  color: #555;
+  margin: 0 2px;
+}
+
+.round-total {
+  font-size: 0.85rem;
+  color: #888;
+}
+
 .hud-alive-count {
   font-size: 0.8rem;
   margin-top: 6px;

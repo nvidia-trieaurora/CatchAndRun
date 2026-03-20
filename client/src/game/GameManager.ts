@@ -302,6 +302,7 @@ export class GameManager {
     // Update lobby UI
     this.gameHUD.updateTimer(data.timer || 0);
     this.gameHUD.updatePhase(data.phase || "waiting");
+    this.gameHUD.updateRound(data.currentRound || 0, data.totalRounds || 0);
 
     // Update alive count
     if (data.players) {

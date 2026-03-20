@@ -18,6 +18,7 @@ export class GameHUD {
   private soulModeEl!: HTMLElement;
   private controlsHintEl!: HTMLElement;
   private aliveCountEl!: HTMLElement;
+  private roundEl!: HTMLElement;
   private killfeedEntries: { el: HTMLElement; time: number }[] = [];
   private chatOpen = false;
   private onChatSend: ((message: string) => void) | null = null;
@@ -30,6 +31,7 @@ export class GameHUD {
     }
     this.element.innerHTML = `
       <div class="hud-top">
+        <div class="hud-round" id="hud-round"></div>
         <div class="hud-timer" id="hud-timer">5:00</div>
         <div class="hud-phase" id="hud-phase">WAITING</div>
         <div class="hud-role" id="hud-role"></div>
@@ -89,6 +91,7 @@ export class GameHUD {
       this.soulModeEl = this.element.querySelector("#hud-soul-mode")!;
       this.controlsHintEl = this.element.querySelector("#hud-controls-hint")!;
       this.aliveCountEl = this.element.querySelector("#hud-alive-count")!;
+      this.roundEl = this.element.querySelector("#hud-round")!;
 
       this.chatInputEl.addEventListener("keydown", (e) => {
         e.stopPropagation();
@@ -313,6 +316,16 @@ export class GameHUD {
     } else {
       this.propInfoEl.style.display = "none";
       this.propInfoEl.textContent = "";
+    }
+  }
+
+  updateRound(current: number, total: number) {
+    if (!this.roundEl) return;
+    if (current > 0 && total > 0) {
+      this.roundEl.style.display = "block";
+      this.roundEl.innerHTML = `ROUND <span class="round-current">${current}</span><span class="round-sep">/</span><span class="round-total">${total}</span>`;
+    } else {
+      this.roundEl.style.display = "none";
     }
   }
 
