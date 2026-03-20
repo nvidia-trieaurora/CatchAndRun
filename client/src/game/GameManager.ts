@@ -167,6 +167,13 @@ export class GameManager {
 
     window.addEventListener("resize", () => this.onResize());
 
+    window.addEventListener("beforeunload", (e) => {
+      if (this.isGameActive()) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    });
+
     if (!this.mobile) {
       document.addEventListener("click", () => {
         if (this.currentPhase === GamePhase.ACTIVE || this.currentPhase === GamePhase.HIDING) {
