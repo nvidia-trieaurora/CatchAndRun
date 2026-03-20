@@ -24,6 +24,8 @@ import { PlayerEntity } from "./entities/PlayerEntity";
 import { loadMemeManifest, preloadMemeTextures } from "./entities/MemeTextureLoader";
 import { isMobile } from "../input/MobileDetect";
 import { TouchInputProvider } from "../input/TouchInputProvider";
+import { VoiceChat } from "../voice/VoiceChat";
+import { VoiceUI } from "../voice/VoiceUI";
 import {
   GamePhase,
   PlayerRole,
@@ -118,6 +120,8 @@ export class GameManager {
   private ferrisCabD = 1.4;
   private minimap: Minimap;
   private touchInput: TouchInputProvider | null = null;
+  private voiceChat: VoiceChat | null = null;
+  private voiceUI: VoiceUI | null = null;
   private mobile: boolean;
 
   constructor(canvas: HTMLCanvasElement) {
@@ -363,6 +367,7 @@ export class GameManager {
         this.buildMapIfNeeded();
         this.initControllers();
         this.setHudButtonsVisible(true);
+        this.startVoiceConnections();
         this.uiManager.showScreen("gameHUD");
         this.gameHUD.updateRole(this.localRole);
         if (this.touchInput) {
@@ -444,6 +449,7 @@ export class GameManager {
         this.setHudButtonsVisible(false);
         this.clearGameEntities();
         this.touchInput?.hide();
+        this.stopVoice();
         break;
     }
   }
@@ -946,6 +952,51 @@ export class GameManager {
     room.onMessage(ServerMessage.SOUND_MEME_PLAYED, (data: any) => {
       this.handleSoundMemePlayed(data);
     });
+
+    room.onMessage(ServerMessage.VOICE_SIGNAL, (data: any) => {
+      this.voiceChat?.handleSignal(data.fromSessionId, data.type, data.payload).catch(() => {});
+    });
+
+    this.initVoice();
+  }
+
+  private initVoice() {
+    this.voiceChat?.dispose();
+    this.voiceUI?.dispose();
+
+    this.voiceChat = new VoiceChat((msg) => {
+      this.network.send(msg.type, msg.data);
+    });
+
+    this.voiceUI = new VoiceUI();
+    this.voiceUI.onMicToggle = () => { this.voiceChat?.toggleMic(); };
+    this.voiceUI.onModeToggle = () => { this.voiceChat?.cycleMode(); };
+
+    this.voiceChat.onMicChange = (enabled) => { this.voiceUI?.updateMic(enabled); };
+    this.voiceChat.onModeChange = (mode) => { this.voiceUI?.updateMode(mode); };
+
+    void this.voiceChat.requestMic();
+  }
+
+  private startVoiceConnections() {
+    if (!this.voiceChat || !this.latestRoomState?.players) return;
+    const myId = this.network.getSessionId();
+    const peerRoles = new Map<string, string>();
+
+    for (const p of this.latestRoomState.players) {
+      if (p.sessionId === myId) continue;
+      peerRoles.set(p.sessionId, p.role);
+      if (!this.voiceChat.isConnected(p.sessionId)) {
+        void this.voiceChat.connectToPeer(p.sessionId, p.sessionId > myId);
+      }
+    }
+    this.voiceChat.updateRoles(this.localRole, peerRoles);
+    this.voiceUI?.show();
+  }
+
+  private stopVoice() {
+    this.voiceChat?.dispose();
+    this.voiceUI?.hide();
   }
 
   private setupChat() {
@@ -1023,6 +1074,7 @@ export class GameManager {
       <div style="color:#fff;font-weight:bold;margin:6px 0 4px;">General</div>
       <b>Tab</b> Open/Close Chat<br>
       <b>2</b> Open Sound Meme &rarr; <b>2</b> cycle &rarr; <b>Enter</b> play<br>
+      <b>V</b> Toggle Mic &bull; <b>B</b> Voice Mode (All/Team/Mute)<br>
       <b>M</b> Toggle Music &bull; <b>I</b> Toggle Help<br>
       <b>Esc</b> Release mouse
     `;
@@ -1044,6 +1096,14 @@ export class GameManager {
         if (this.infoPanel) {
           this.infoPanel.style.display = this.infoPanel.style.display === "none" ? "block" : "none";
         }
+      }
+      if (e.code === "KeyV") {
+        e.preventDefault();
+        this.voiceChat?.toggleMic();
+      }
+      if (e.code === "KeyB") {
+        e.preventDefault();
+        this.voiceChat?.cycleMode();
       }
     });
   }
@@ -1121,6 +1181,7 @@ export class GameManager {
     if (!this.mobile) this.input.exitPointerLock();
     this.minimap.hide();
     this.touchInput?.hide();
+    this.stopVoice();
     this.clearGameEntities();
     this.currentPhase = GamePhase.WAITING;
     this.latestRoomState = null;

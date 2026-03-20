@@ -25,6 +25,7 @@ import {
   type SetConfigData,
   type ThrowGrenadeData,
   type PlaySoundMemeData,
+  type VoiceSignalData,
   MAX_PLAYERS_PER_ROOM,
   MAX_ROOMS,
   HUNTER_MAX_HEALTH,
@@ -168,6 +169,17 @@ export class GameRoom extends Room<GameState> {
 
     this.onMessage(ClientMessage.PLAY_SOUND_MEME, (client, data: PlaySoundMemeData) => {
       this.handleSoundMeme(client, data);
+    });
+
+    this.onMessage(ClientMessage.VOICE_SIGNAL, (client, data: VoiceSignalData) => {
+      const target = this.clients.find(c => c.sessionId === data.targetSessionId);
+      if (target) {
+        target.send(ServerMessage.VOICE_SIGNAL, {
+          fromSessionId: client.sessionId,
+          type: data.type,
+          payload: data.payload,
+        });
+      }
     });
   }
 

@@ -82,10 +82,10 @@ export class InputManager {
 
   getState(): InputState {
     return {
-      forward: this.keys.has("KeyW"),
-      backward: this.keys.has("KeyS"),
-      left: this.keys.has("KeyA"),
-      right: this.keys.has("KeyD"),
+      forward: this.keys.has("KeyW") || this.keys.has("ArrowUp"),
+      backward: this.keys.has("KeyS") || this.keys.has("ArrowDown"),
+      left: this.keys.has("KeyA") || this.keys.has("ArrowLeft"),
+      right: this.keys.has("KeyD") || this.keys.has("ArrowRight"),
       jump: this.keys.has("Space"),
       crouch: this.keys.has("ShiftLeft") || this.keys.has("ShiftRight"),
       shoot: this.mouseDown,

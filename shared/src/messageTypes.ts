@@ -15,6 +15,7 @@ export enum ClientMessage {
   THROW_GRENADE = "throwGrenade",
   SCAN_AREA = "scanArea",
   PLAY_SOUND_MEME = "playSoundMeme",
+  VOICE_SIGNAL = "voiceSignal",
 }
 
 export enum ServerMessage {
@@ -39,6 +40,7 @@ export enum ServerMessage {
   SCAN_RESULT = "scanResult",
   CHAT_MESSAGE = "chatMessage",
   SOUND_MEME_PLAYED = "soundMemePlayed",
+  VOICE_SIGNAL = "voiceSignal",
 }
 
 export interface PlayerInputData {
@@ -122,4 +124,10 @@ export interface SoundMemePlayedData {
   z: number;
   zone: string;
   senderSessionId: string;
+}
+
+export interface VoiceSignalData {
+  targetSessionId: string;
+  type: "offer" | "answer" | "ice";
+  payload: any;
 }
