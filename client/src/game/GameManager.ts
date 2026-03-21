@@ -1428,11 +1428,13 @@ export class GameManager {
       });
     }
 
-    if (this.input.consumeKey("KeyR") && this.localAmmo < WEAPON_MAX_AMMO) {
-      this.weaponSystem.startReload();
-      this.audioSystem?.playSound("reload");
-      this.network.send(ClientMessage.RELOAD);
-      this.startReloadAnimation();
+    if ((this.input.consumeKey("KeyR") && this.localAmmo < WEAPON_MAX_AMMO) || this.localAmmo <= 0) {
+      if (!this.isReloadingAnim) {
+        this.weaponSystem.startReload();
+        this.audioSystem?.playSound("reload");
+        this.network.send(ClientMessage.RELOAD);
+        this.startReloadAnimation();
+      }
     }
 
     // Q = Equip grenade

@@ -102,6 +102,8 @@ export class GameRoom extends Room<GameState> {
     this.roleAssigner = new RoleAssigner();
     this.spawnManager = new SpawnManager(mapData as any);
 
+    this.autoDispose = true;
+
     this.registerMessages();
 
     this.setSimulationInterval((dt) => this.update(dt), 1000 / 20);
@@ -286,9 +288,14 @@ export class GameRoom extends Room<GameState> {
 
     const sysMsg = new ChatMessage();
     sysMsg.sender = "System";
-    sysMsg.message = `${nickname} left the room`;
+    sysMsg.message = `${nickname} disconnected`;
     sysMsg.timestamp = Date.now();
     this.state.chat.push(sysMsg);
+
+    this.broadcast(ServerMessage.CHAT_MESSAGE, {
+      sender: "System",
+      message: `${nickname} disconnected`,
+    });
 
     if (this.state.phase === GamePhase.ACTIVE || this.state.phase === GamePhase.HIDING) {
       this.matchSM.checkRoundEndCondition();
@@ -400,6 +407,15 @@ export class GameRoom extends Room<GameState> {
 
     player.ammo--;
     player.lastFireTime = Date.now();
+
+    if (player.ammo <= 0) {
+      setTimeout(() => {
+        const p = this.state.players.get(client.sessionId);
+        if (p && p.isAlive && p.role === PlayerRole.HUNTER) {
+          p.ammo = WEAPON_MAX_AMMO;
+        }
+      }, 2000);
+    }
 
     // Broadcast shot to ALL clients so everyone sees the tracer
     this.broadcast(ServerMessage.SHOT_FIRED, {
