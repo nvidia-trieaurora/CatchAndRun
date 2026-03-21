@@ -256,6 +256,25 @@ export class GameHUD {
     }
   }
 
+  updatePropAbilities(invisCd: number, speedCd: number, transformsLeft: number, duplicatesLeft: number) {
+    if (!this.abilityEl) return;
+    let html = "";
+    if (invisCd > 0) {
+      html += `<div class="hud-ability-name">INVISIBLE <span style="color:#ff9800">[Q] ${Math.ceil(invisCd / 1000)}s</span></div>`;
+    } else {
+      html += `<div class="hud-ability-name">INVISIBLE <span style="color:#4caf50">[Q]</span></div>`;
+    }
+    html += `<div class="hud-ability-name">TRANSFORM <span style="color:${transformsLeft > 0 ? '#00d4ff' : '#ff5555'}">[E] ${transformsLeft}/2</span></div>`;
+    if (speedCd > 0) {
+      html += `<div class="hud-ability-name">SPEED <span style="color:#ff9800">[R] ${Math.ceil(speedCd / 1000)}s</span></div>`;
+    } else {
+      html += `<div class="hud-ability-name">SPEED <span style="color:#ffdd44">[R]</span></div>`;
+    }
+    html += `<div class="hud-ability-name">DUPLICATE <span style="color:${duplicatesLeft > 0 ? '#00ffcc' : '#ff5555'}">[T] ${duplicatesLeft}/4</span></div>`;
+    html += `<div class="hud-ability-name">LOCK <span style="color:#aaa">[F]</span> &bull; SOUL <span style="color:#c0a0ff">[1]</span></div>`;
+    this.abilityEl.innerHTML = html;
+  }
+
   updateHunterAbilities(grenadeCd: number, scanCd: number, grenadeMode: boolean, boostCd = 0, phaseWalkCd = 0, inPhaseWalk = false) {
     if (!this.abilityEl) return;
     if (grenadeMode) {

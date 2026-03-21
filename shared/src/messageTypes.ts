@@ -16,6 +16,7 @@ export enum ClientMessage {
   SCAN_AREA = "scanArea",
   PLAY_SOUND_MEME = "playSoundMeme",
   VOICE_SIGNAL = "voiceSignal",
+  DUPLICATE_PROP = "duplicateProp",
 }
 
 export enum ServerMessage {
@@ -41,6 +42,16 @@ export enum ServerMessage {
   CHAT_MESSAGE = "chatMessage",
   SOUND_MEME_PLAYED = "soundMemePlayed",
   VOICE_SIGNAL = "voiceSignal",
+  DUPLICATE_SPAWNED = "duplicateSpawned",
+  DUPLICATE_DESTROYED = "duplicateDestroyed",
+}
+
+export interface DuplicatePropData {
+  x: number;
+  y: number;
+  z: number;
+  propId: string;
+  rotY: number;
 }
 
 export interface PlayerInputData {

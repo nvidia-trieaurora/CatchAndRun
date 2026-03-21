@@ -97,6 +97,8 @@ export class GameManager {
   private phaseWalkEnd = 0;
   private lastPhaseWalkTime = 0;
   private phaseWalkColliders: THREE.Box3[] = [];
+  private duplicatesLeft = 4;
+  private duplicates: { mesh: THREE.Mesh; collider: THREE.Box3; hp: number; vy: number; onGround: boolean }[] = [];
   private currentPhase: string = GamePhase.WAITING;
   private mapBuilt = false;
   private invisibleProps = new Set<string>();
@@ -749,6 +751,7 @@ export class GameManager {
       if (data.success && data.propId) {
         this.localPropId = data.propId;
         this.localTransformCount++;
+        this.clearDuplicates();
         this.audioSystem?.playSound("ability");
         if (this.propTransformSystem && this.propController) {
           const pos = this.propController.getPosition();
@@ -953,6 +956,11 @@ export class GameManager {
       this.handleSoundMemePlayed(data);
     });
 
+    room.onMessage(ServerMessage.DUPLICATE_SPAWNED, (data: any) => {
+      if (data.sessionId === this.network.getSessionId()) return;
+      this.spawnDuplicateMesh(data.x, data.y, data.z, data.propId, data.rotY);
+    });
+
     room.onMessage(ServerMessage.VOICE_SIGNAL, (data: any) => {
       this.voiceChat?.handleSignal(data.fromSessionId, data.type, data.payload).catch(() => {});
     });
@@ -1070,7 +1078,7 @@ export class GameManager {
       <div style="color:#66bb6a;font-weight:bold;margin:6px 0 4px;">Prop</div>
       <b>WASD</b> Move &bull; <b>Space</b> Jump &bull; <b>E</b> Transform (2x max)<br>
       <b>F</b> Lock &bull; <b>Q</b> Invisible &bull; <b>R</b> Speed<br>
-      <b>1</b> Soul Mode<br>
+      <b>T</b> Duplicate (4x, resets on transform) &bull; <b>1</b> Soul Mode<br>
       <div style="color:#fff;font-weight:bold;margin:6px 0 4px;">General</div>
       <b>Tab</b> Open/Close Chat<br>
       <b>2</b> Open Sound Meme &rarr; <b>2</b> cycle &rarr; <b>Enter</b> play<br>
@@ -1214,6 +1222,7 @@ export class GameManager {
 
     this.weaponSystem?.update(dt);
     this.particleSystem?.update(dt);
+    this.updateDuplicatePhysics(dt);
     this.updateGunViewmodel(dt);
 
     this.renderer.render(this.scene, this.camera);
@@ -1555,6 +1564,97 @@ export class GameManager {
       this.network.send(ClientMessage.USE_ABILITY);
       this.lastAbilityTime = Date.now();
     }
+
+    // T = Duplicate prop (spawn decoy at current position)
+    if (this.input.consumeKey("KeyT") && this.duplicatesLeft > 0 && this.localPropId) {
+      const pos = this.propController.getPosition();
+      const rot = this.propController.getRotation();
+
+      this.network.send(ClientMessage.DUPLICATE_PROP, {
+        x: pos.x, y: pos.y, z: pos.z,
+        propId: this.localPropId, rotY: rot.y,
+      });
+      this.duplicatesLeft--;
+      this.spawnDuplicateMesh(pos.x, pos.y, pos.z, this.localPropId, rot.y);
+      this.audioSystem?.playSound("ability");
+    }
+  }
+
+  private spawnDuplicateMesh(x: number, y: number, z: number, propId: string, rotY: number) {
+    const mesh = this.propRegistry.createMesh(propId);
+    if (!mesh) return;
+    mesh.position.set(x, y, z);
+    mesh.rotation.y = rotY;
+    (mesh as any)._isDuplicate = true;
+    this.scene.add(mesh);
+
+    const box = new THREE.Box3().setFromObject(mesh);
+    this.colliders.push(box);
+
+    const propDef = this.propRegistry.get(propId);
+    const hp = (propDef as any)?.hp || 100;
+
+    this.duplicates.push({ mesh, collider: box, hp, vy: 0, onGround: false });
+  }
+
+  private updateDuplicatePhysics(dt: number) {
+    const gravity = -28;
+    for (const dup of this.duplicates) {
+      if (dup.onGround) continue;
+
+      dup.vy += gravity * dt;
+      dup.mesh.position.y += dup.vy * dt;
+
+      // Find ground from map colliders (exclude other duplicate colliders)
+      let groundY = 0;
+      const mx = dup.mesh.position.x;
+      const mz = dup.mesh.position.z;
+      for (const c of this.colliders) {
+        if (this.duplicates.some(d => d.collider === c)) continue;
+        if (mx > c.min.x && mx < c.max.x && mz > c.min.z && mz < c.max.z) {
+          if (c.max.y > groundY && c.max.y <= dup.mesh.position.y + 0.5) {
+            groundY = c.max.y;
+          }
+        }
+      }
+
+      if (dup.mesh.position.y <= groundY) {
+        dup.mesh.position.y = groundY;
+        dup.vy = 0;
+        dup.onGround = true;
+      }
+
+      // Update collider position
+      dup.collider.setFromObject(dup.mesh);
+    }
+  }
+
+  damageDuplicate(mesh: THREE.Mesh, damage: number): boolean {
+    const dup = this.duplicates.find(d => d.mesh === mesh);
+    if (!dup) return false;
+    dup.hp -= damage;
+    if (dup.hp <= 0) {
+      this.destroyDuplicate(dup);
+      return true;
+    }
+    return false;
+  }
+
+  private destroyDuplicate(dup: { mesh: THREE.Mesh; collider: THREE.Box3 }) {
+    this.scene.remove(dup.mesh);
+    const colIdx = this.colliders.indexOf(dup.collider);
+    if (colIdx >= 0) this.colliders.splice(colIdx, 1);
+    this.duplicates = this.duplicates.filter(d => d !== dup);
+  }
+
+  private clearDuplicates() {
+    for (const dup of this.duplicates) {
+      this.scene.remove(dup.mesh);
+      const idx = this.colliders.indexOf(dup.collider);
+      if (idx >= 0) this.colliders.splice(idx, 1);
+    }
+    this.duplicates = [];
+    this.duplicatesLeft = 4;
   }
 
   private static RARITY_WEIGHTS: Record<string, number> = {
@@ -1629,13 +1729,8 @@ export class GameManager {
     this.gameHUD.updatePropInfo(propDef?.name || "", this.localIsLocked);
     const cdInvis = Math.max(0, 120000 - (Date.now() - this.lastAbilityTime));
     const cdSpeed = Math.max(0, 30000 - (Date.now() - this.lastAbility2Time));
-    if (cdInvis > 0) {
-      this.gameHUD.updateAbility("Invisible", "Q", cdInvis);
-    } else if (cdSpeed > 0) {
-      this.gameHUD.updateAbility("Speed", "R", cdSpeed);
-    } else {
-      this.gameHUD.updateAbility("Q:INVIS E:TRANS R:SPEED", "", 0);
-    }
+    const transformsLeft = 2 - this.localTransformCount;
+    this.gameHUD.updatePropAbilities(cdInvis, cdSpeed, transformsLeft, this.duplicatesLeft);
     this.gameHUD.updateDamageOverlay(this.localHealth, maxHp, false);
     this.gameHUD.setSoulModeVisible(this.propController.isInSoulMode());
   }

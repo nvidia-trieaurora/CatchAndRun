@@ -14,6 +14,8 @@ export class RoleAssigner {
       numHunters = 1;
     } else if (count <= 3) {
       numHunters = 1;
+    } else if (count <= 5) {
+      numHunters = 2;
     } else {
       numHunters = 3;
     }

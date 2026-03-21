@@ -26,6 +26,7 @@ import {
   type ThrowGrenadeData,
   type PlaySoundMemeData,
   type VoiceSignalData,
+  type DuplicatePropData,
   MAX_PLAYERS_PER_ROOM,
   MAX_ROOMS,
   HUNTER_MAX_HEALTH,
@@ -169,6 +170,16 @@ export class GameRoom extends Room<GameState> {
 
     this.onMessage(ClientMessage.PLAY_SOUND_MEME, (client, data: PlaySoundMemeData) => {
       this.handleSoundMeme(client, data);
+    });
+
+    this.onMessage(ClientMessage.DUPLICATE_PROP, (client, data: DuplicatePropData) => {
+      const player = this.state.players.get(client.sessionId);
+      if (!player?.isAlive || player.role !== PlayerRole.PROP) return;
+      this.broadcast(ServerMessage.DUPLICATE_SPAWNED, {
+        sessionId: client.sessionId,
+        x: data.x, y: data.y, z: data.z,
+        propId: data.propId, rotY: data.rotY,
+      });
     });
 
     this.onMessage(ClientMessage.VOICE_SIGNAL, (client, data: VoiceSignalData) => {
