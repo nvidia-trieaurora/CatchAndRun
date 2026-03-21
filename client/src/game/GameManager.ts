@@ -1703,7 +1703,7 @@ export class GameManager {
   }
 
   private updateHunterHUD() {
-    this.gameHUD.updateHealth(this.localHealth, HUNTER_MAX_HEALTH);
+    this.gameHUD.updateHealth(this.localAmmo, WEAPON_MAX_AMMO);
     this.gameHUD.updateAmmo(this.localAmmo, WEAPON_MAX_AMMO, this.weaponSystem?.getIsReloading() || false);
     const cdGrenade = Math.max(0, HUNTER_GRENADE_COOLDOWN_MS - (Date.now() - this.lastGrenadeTime));
     const cdScan = Math.max(0, HUNTER_SCAN_COOLDOWN_MS - (Date.now() - this.lastScanTime));
@@ -1719,6 +1719,18 @@ export class GameManager {
     const pos = this.hunterController.getPosition();
     const rot = this.hunterController.getRotation();
     this.minimap.updatePlayerPosition(pos.x, pos.z, rot.y);
+
+    const myId = this.network.getSessionId();
+    const teammates: { x: number; z: number; yaw: number }[] = [];
+    if (this.latestRoomState?.players) {
+      for (const p of this.latestRoomState.players) {
+        if (p.sessionId === myId) continue;
+        if (p.role === "hunter" && p.isAlive) {
+          teammates.push({ x: p.x, z: p.z, yaw: p.rotY });
+        }
+      }
+    }
+    this.minimap.updateTeammates(teammates);
   }
 
   private updatePropHUD() {

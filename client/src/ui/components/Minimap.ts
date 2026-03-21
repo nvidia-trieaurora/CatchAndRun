@@ -29,6 +29,7 @@ export class Minimap {
   private playerYaw = 0;
   private detectedProps: DetectedProp[] = [];
   private soundPings: SoundPing[] = [];
+  private teammates: { x: number; z: number; yaw: number }[] = [];
   private visible = false;
 
   constructor() {
@@ -73,6 +74,10 @@ export class Minimap {
     for (const d of detected) {
       this.detectedProps.push({ x: d.x, z: d.z, expireTime: expire });
     }
+  }
+
+  updateTeammates(teammates: { x: number; z: number; yaw: number }[]) {
+    this.teammates = teammates;
   }
 
   addSoundPing(x: number, z: number, zone: string) {
@@ -192,6 +197,22 @@ export class Minimap {
     ctx.fillStyle = "rgba(68, 255, 68, 0.06)";
     ctx.fill();
     ctx.restore();
+
+    // Teammate hunters (green dots)
+    for (const t of this.teammates) {
+      const [tx, tz] = this.worldToCanvas(t.x, t.z);
+      ctx.save();
+      ctx.translate(tx, tz);
+      ctx.rotate(-t.yaw);
+      ctx.beginPath();
+      ctx.moveTo(0, -5);
+      ctx.lineTo(-3, 3);
+      ctx.lineTo(3, 3);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(68, 255, 68, 0.6)";
+      ctx.fill();
+      ctx.restore();
+    }
 
     // Sound pings (directional arrows pointing from hunter toward sound source)
     this.soundPings = this.soundPings.filter((p) => p.expireTime > now);

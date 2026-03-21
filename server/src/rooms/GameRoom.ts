@@ -448,9 +448,6 @@ export class GameRoom extends Room<GameState> {
           this.matchSM.checkRoundEndCondition();
         }
       }
-    } else if (hitResult.hitEnvironment) {
-      player.health -= this.state.config.maxPlayers > 0 ? 5 : 5;
-      if (player.health <= 0) player.health = 1;
     }
   }
 
