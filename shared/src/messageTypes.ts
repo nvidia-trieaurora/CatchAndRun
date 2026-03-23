@@ -17,6 +17,7 @@ export enum ClientMessage {
   PLAY_SOUND_MEME = "playSoundMeme",
   VOICE_SIGNAL = "voiceSignal",
   DUPLICATE_PROP = "duplicateProp",
+  VIEW_PROP = "viewProp",
 }
 
 export enum ServerMessage {
@@ -44,6 +45,7 @@ export enum ServerMessage {
   VOICE_SIGNAL = "voiceSignal",
   DUPLICATE_SPAWNED = "duplicateSpawned",
   DUPLICATE_DESTROYED = "duplicateDestroyed",
+  VIEW_PROP_RESULT = "viewPropResult",
 }
 
 export interface DuplicatePropData {

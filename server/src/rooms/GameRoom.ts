@@ -179,6 +179,23 @@ export class GameRoom extends Room<GameState> {
       this.handleSoundMeme(client, data);
     });
 
+    this.onMessage(ClientMessage.VIEW_PROP, (client) => {
+      const player = this.state.players.get(client.sessionId);
+      if (!player) return;
+      if (this.state.phase !== GamePhase.ROUND_END && this.state.phase !== GamePhase.MATCH_END) return;
+      if (player.role !== PlayerRole.HUNTER) return;
+
+      const aliveProps: { sessionId: string; x: number; y: number; z: number; nickname: string }[] = [];
+      this.state.players.forEach((p, sid) => {
+        if (p.role === PlayerRole.PROP && p.isAlive) {
+          aliveProps.push({ sessionId: sid, x: p.x, y: p.y, z: p.z, nickname: p.nickname });
+        }
+      });
+      if (aliveProps.length > 0) {
+        client.send(ServerMessage.VIEW_PROP_RESULT, { props: aliveProps });
+      }
+    });
+
     this.onMessage(ClientMessage.DUPLICATE_PROP, (client, data: DuplicatePropData) => {
       const player = this.state.players.get(client.sessionId);
       if (!player?.isAlive || player.role !== PlayerRole.PROP) return;
@@ -392,7 +409,7 @@ export class GameRoom extends Room<GameState> {
       data.y = Math.max(0, Math.min(3, data.y));
     }
 
-    if (this.state.phase !== GamePhase.ACTIVE && this.state.phase !== GamePhase.HIDING) return;
+    if (this.state.phase !== GamePhase.ACTIVE && this.state.phase !== GamePhase.HIDING && this.state.phase !== GamePhase.ROUND_END) return;
 
     if (player.isLocked && player.role === PlayerRole.PROP) return;
 
@@ -640,6 +657,8 @@ export class GameRoom extends Room<GameState> {
         const cl = this.clients.find((c) => c.sessionId === sid);
         cl?.send(ServerMessage.PROP_STUNNED, { duration: HUNTER_GRENADE_STUN_MS });
       });
+
+      this.matchSM.checkRoundEndCondition();
     }, flightMs);
   }
 

@@ -106,6 +106,7 @@ export class GameManager {
   private fpGrenade: THREE.Group | null = null;
   private lastGrenadeTime = 0;
   private grenadesUsed = 0;
+  private viewPropIndex = 0;
   private lastScanTime = 0;
 
   private inputSeq = 0;
@@ -368,6 +369,16 @@ export class GameManager {
         this.invisibleProps.clear();
         this.localTransformCount = 0;
         this.grenadesUsed = 0;
+        this.lastGrenadeTime = 0;
+        this.lastScanTime = 0;
+        this.lastHunterBoostTime = 0;
+        this.lastPhaseWalkTime = 0;
+        this.phaseWalkEnd = 0;
+        this.lastAbilityTime = 0;
+        this.lastAbility2Time = 0;
+        this.duplicatesLeft = 4;
+        this.viewPropIndex = 0;
+        this.clearDuplicates();
         this.showGuideHint();
         this.buildMapIfNeeded();
         this.initControllers();
@@ -439,7 +450,11 @@ export class GameManager {
         break;
 
       case GamePhase.ROUND_END:
-        this.minimap.hide();
+        if (this.localRole === PlayerRole.HUNTER) {
+          this.uiManager.showNotification("Round over! Press Y to spectate props. No killing!");
+        } else {
+          this.uiManager.showNotification("Round over! You're safe — show yourself!");
+        }
         break;
 
       case GamePhase.MATCH_END:
@@ -816,9 +831,21 @@ export class GameManager {
         this.particleSystem.spawnExplosion(new THREE.Vector3(data.x, (data.y || 0) + 0.3, data.z));
       }
       this.audioSystem?.playSound("kill");
+
       if (data.stunnedCount > 0) {
-        this.uiManager.showNotification(`Grenade stunned ${data.stunnedCount} prop(s)!`);
+        this.uiManager.showNotification(`Grenade hit ${data.stunnedCount} prop(s)!`);
+        this.audioSystem?.playSound("hit");
+
+        if (this.localRole === PlayerRole.HUNTER) {
+          this.minimap.addDetectedProps(
+            (data.stunnedSessionIds || []).map((sid: string) => {
+              const entity = this.playerEntities.get(sid);
+              return entity ? { x: entity.group.position.x, z: entity.group.position.z } : null;
+            }).filter(Boolean)
+          );
+        }
       }
+
       if (data.stunnedSessionIds) {
         for (const sid of data.stunnedSessionIds) {
           const entity = this.playerEntities.get(sid);
@@ -957,6 +984,16 @@ export class GameManager {
 
     room.onMessage(ServerMessage.SOUND_MEME_PLAYED, (data: any) => {
       this.handleSoundMemePlayed(data);
+    });
+
+    room.onMessage(ServerMessage.VIEW_PROP_RESULT, (data: any) => {
+      if (data.props && data.props.length > 0) {
+        const idx = this.viewPropIndex % data.props.length;
+        const prop = data.props[idx];
+        this.spectatorController.setPosition(prop.x, prop.y + 3, prop.z + 4);
+        this.uiManager.showNotification(`Viewing: ${prop.nickname}`);
+        this.viewPropIndex++;
+      }
     });
 
     room.onMessage(ServerMessage.DUPLICATE_SPAWNED, (data: any) => {
@@ -1142,6 +1179,12 @@ export class GameManager {
       if (e.code === "KeyV") {
         e.preventDefault();
         this.voiceChat?.toggleMic();
+      }
+      if (e.code === "KeyY" && (this.currentPhase === GamePhase.ROUND_END || this.currentPhase === GamePhase.MATCH_END)) {
+        e.preventDefault();
+        if (this.localRole === PlayerRole.HUNTER) {
+          this.network.send(ClientMessage.VIEW_PROP);
+        }
       }
       if (e.code === "KeyB") {
         e.preventDefault();
@@ -1346,7 +1389,8 @@ export class GameManager {
   private isGameActive(): boolean {
     return (
       this.currentPhase === GamePhase.ACTIVE ||
-      this.currentPhase === GamePhase.HIDING
+      this.currentPhase === GamePhase.HIDING ||
+      this.currentPhase === GamePhase.ROUND_END
     );
   }
 
