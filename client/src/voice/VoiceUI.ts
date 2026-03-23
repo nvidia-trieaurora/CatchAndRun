@@ -1,4 +1,5 @@
 import type { VoiceMode } from "./VoiceChat";
+import { t } from "../i18n/i18n";
 
 export class VoiceUI {
   readonly element: HTMLElement;
@@ -14,8 +15,8 @@ export class VoiceUI {
     this.element.className = "voice-controls";
     this.element.style.display = "none";
     this.element.innerHTML = `
-      <button class="voice-btn voice-mic" id="voice-mic" title="Toggle Mic [V]">MIC OFF</button>
-      <button class="voice-btn voice-mode" id="voice-mode" title="Voice Mode [B]">ALL</button>
+      <button class="voice-btn voice-mic" id="voice-mic" title="${t("voice.toggle_mic")}">${t("voice.mic_off")}</button>
+      <button class="voice-btn voice-mode" id="voice-mode" title="${t("voice.voice_mode")}">${t("voice.mode_all")}</button>
       <span class="voice-status" id="voice-status"></span>
     `;
 
@@ -44,12 +45,16 @@ export class VoiceUI {
   }
 
   updateMic(enabled: boolean) {
-    this.micBtn.textContent = enabled ? "MIC ON" : "MIC OFF";
+    this.micBtn.textContent = enabled ? t("voice.mic_on") : t("voice.mic_off");
     this.micBtn.classList.toggle("active", enabled);
   }
 
   updateMode(mode: VoiceMode) {
-    const labels: Record<VoiceMode, string> = { all: "ALL", team: "TEAM", mute: "MUTE" };
+    const labels: Record<VoiceMode, string> = {
+      all: t("voice.mode_all"),
+      team: t("voice.mode_team"),
+      mute: t("voice.mode_mute"),
+    };
     this.modeBtn.textContent = labels[mode];
     this.modeBtn.className = `voice-btn voice-mode mode-${mode}`;
   }

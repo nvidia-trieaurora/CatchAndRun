@@ -34,9 +34,14 @@ import {
   WEAPON_MAX_AMMO,
   HUNTER_SCAN_COOLDOWN_MS,
   HUNTER_SCAN_RADIUS,
+  HUNTER_SCAN_DURATION_MS,
+  HUNTER_SCAN_PULSE_INTERVAL_MS,
   HUNTER_GRENADE_COOLDOWN_MS,
   HUNTER_GRENADE_RADIUS,
   HUNTER_GRENADE_STUN_MS,
+  HUNTER_GRENADE_MAX_PER_ROUND,
+  HUNTER_GRENADE_DAMAGE_MAX,
+  HUNTER_GRENADE_DAMAGE_MIN,
   HUNTER_GRENADE_THROW_SPEED,
   HUNTER_GRENADE_UP_BOOST,
   HUNTER_GRENADE_GRAVITY,
@@ -550,9 +555,13 @@ export class GameRoom extends Room<GameState> {
     if (player.role !== PlayerRole.HUNTER) return;
     if (this.state.phase !== GamePhase.ACTIVE) return;
 
+    const used = this.grenadeCount.get(client.sessionId) || 0;
+    if (used >= HUNTER_GRENADE_MAX_PER_ROUND) return;
+
     const now = Date.now();
     if (now - player.lastAbilityTime < HUNTER_GRENADE_COOLDOWN_MS) return;
     player.lastAbilityTime = now;
+    this.grenadeCount.set(client.sessionId, used + 1);
 
     const len = Math.sqrt(data.dirX * data.dirX + data.dirY * data.dirY + data.dirZ * data.dirZ) || 0.01;
     const nx = data.dirX / len;
@@ -596,11 +605,28 @@ export class GameRoom extends Room<GameState> {
         const dist = Math.sqrt(dx * dx + dz * dz);
         if (dist <= HUNTER_GRENADE_RADIUS) {
           stunnedPlayers.push(sid);
-          other.isLocked = true;
-          setTimeout(() => {
-            const p = this.state.players.get(sid);
-            if (p) p.isLocked = false;
-          }, HUNTER_GRENADE_STUN_MS);
+          const dmgRatio = 1 - (dist / HUNTER_GRENADE_RADIUS);
+          const damage = Math.round(HUNTER_GRENADE_DAMAGE_MIN + dmgRatio * (HUNTER_GRENADE_DAMAGE_MAX - HUNTER_GRENADE_DAMAGE_MIN));
+          other.health -= damage;
+          if (other.health <= 0) {
+            other.health = 0;
+            other.isAlive = false;
+            other.role = PlayerRole.SPECTATOR;
+            player.kills++;
+            this.scoring.onPropKilled(client.sessionId);
+            this.broadcast(ServerMessage.PLAYER_KILLED, {
+              killerSessionId: client.sessionId,
+              killerNickname: player.nickname,
+              victimSessionId: sid,
+              victimNickname: other.nickname,
+            });
+          } else {
+            other.isLocked = true;
+            setTimeout(() => {
+              const p = this.state.players.get(sid);
+              if (p) p.isLocked = false;
+            }, HUNTER_GRENADE_STUN_MS);
+          }
         }
       });
 
@@ -627,24 +653,9 @@ export class GameRoom extends Room<GameState> {
     if (now - player.lastScanTime < HUNTER_SCAN_COOLDOWN_MS) return;
     player.lastScanTime = now;
 
-    const detected: { sessionId: string; x: number; y: number; z: number }[] = [];
-    this.state.players.forEach((other, sid) => {
-      if (other.role !== PlayerRole.PROP || !other.isAlive) return;
-      const dx = other.x - player.x;
-      const dy = other.y - player.y;
-      const dz = other.z - player.z;
-      const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-      if (dist <= HUNTER_SCAN_RADIUS) {
-        detected.push({ sessionId: sid, x: other.x, y: other.y, z: other.z });
-      }
-    });
+    const pulseCount = Math.floor(HUNTER_SCAN_DURATION_MS / HUNTER_SCAN_PULSE_INTERVAL_MS);
 
-    client.send(ServerMessage.SCAN_RESULT, {
-      count: detected.length,
-      detected,
-    });
-
-    // Notify all props that hunter used scan
+    // Notify all props that hunter used scan (once)
     this.state.players.forEach((other, sid) => {
       if (other.role === PlayerRole.PROP && other.isAlive) {
         const propClient = this.clients.find((c) => c.sessionId === sid);
@@ -656,6 +667,30 @@ export class GameRoom extends Room<GameState> {
         }
       }
     });
+
+    // Pulse scan multiple times over duration
+    for (let i = 0; i < pulseCount; i++) {
+      setTimeout(() => {
+        if (this.state.phase !== GamePhase.ACTIVE) return;
+        const p = this.state.players.get(client.sessionId);
+        if (!p?.isAlive || p.role !== PlayerRole.HUNTER) return;
+
+        const detected: { sessionId: string; x: number; y: number; z: number }[] = [];
+        this.state.players.forEach((other, sid) => {
+          if (other.role !== PlayerRole.PROP || !other.isAlive) return;
+          const dx = other.x - p.x;
+          const dy = other.y - p.y;
+          const dz = other.z - p.z;
+          const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+          if (dist <= HUNTER_SCAN_RADIUS) {
+            detected.push({ sessionId: sid, x: other.x, y: other.y, z: other.z });
+          }
+        });
+
+        client.send(ServerMessage.SCAN_RESULT, { count: detected.length, detected });
+      }, i * HUNTER_SCAN_PULSE_INTERVAL_MS);
+    }
+
   }
 
   private handleUseAbility2(client: Client) {
@@ -776,6 +811,7 @@ export class GameRoom extends Room<GameState> {
   }
 
   private lastSoundMemeTime = new Map<string, number>();
+  private grenadeCount = new Map<string, number>();
 
   private handleSoundMeme(client: Client, data: PlaySoundMemeData) {
     const player = this.state.players.get(client.sessionId);
@@ -804,6 +840,8 @@ export class GameRoom extends Room<GameState> {
   }
 
   public initRound() {
+    this.grenadeCount.clear();
+
     // Clear spectator flag so mid-game joiners participate in this round
     this.state.players.forEach((player) => {
       player.isSpectator = false;

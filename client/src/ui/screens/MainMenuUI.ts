@@ -1,3 +1,5 @@
+import { t, onLangChange } from "../../i18n/i18n";
+
 export interface MainMenuCallbacks {
   onQuickJoin: (nickname: string) => Promise<void>;
   onCreate: (nickname: string, roomName: string, isPrivate: boolean, passcode: string) => Promise<void>;
@@ -18,59 +20,83 @@ export class MainMenuUI {
   private allButtons: HTMLButtonElement[] = [];
   private busy = false;
   private callbacks!: MainMenuCallbacks;
+  private unsubLang?: () => void;
 
   constructor(callbacks: MainMenuCallbacks) {
     this.callbacks = callbacks;
     this.element = document.createElement("div");
     this.element.className = "main-menu";
+    this.buildHTML();
+    this.bindEvents(callbacks);
+
+    this.unsubLang = onLangChange(() => {
+      const savedNick = this.nicknameInput?.value || "";
+      const savedRoomName = this.roomNameInput?.value || "";
+      const savedCode = this.codeInput?.value || "";
+      const savedPrivate = this.privateCheckbox?.checked || false;
+      const savedPasscode = this.passcodeInput?.value || "";
+
+      this.buildHTML();
+      this.bindEvents(callbacks);
+
+      if (savedNick) this.nicknameInput.value = savedNick;
+      if (savedRoomName) this.roomNameInput.value = savedRoomName;
+      if (savedCode) this.codeInput.value = savedCode;
+      this.privateCheckbox.checked = savedPrivate;
+      if (savedPrivate) this.passcodeGroup.style.display = "block";
+      if (savedPasscode) this.passcodeInput.value = savedPasscode;
+    });
+  }
+
+  private buildHTML() {
     this.element.innerHTML = `
       <div class="menu-container">
-        <h1 class="game-title">CATCH&RUN</h1>
-        <p class="game-subtitle">Prop Hunt Multiplayer</p>
+        <h1 class="game-title">${t("menu.title")}</h1>
+        <p class="game-subtitle">${t("menu.subtitle")}</p>
 
         <div class="input-group">
-          <label>Nickname</label>
-          <input type="text" id="nickname-input" placeholder="Enter your nickname..." maxlength="20" inputmode="text" />
+          <label>${t("menu.nickname")}</label>
+          <input type="text" id="nickname-input" placeholder="${t("menu.nickname_placeholder")}" maxlength="20" inputmode="text" />
         </div>
 
-        <button class="btn btn-primary" id="btn-quick-join">Quick Join</button>
+        <button class="btn btn-primary" id="btn-quick-join">${t("menu.quick_join")}</button>
 
         <div class="room-browser">
           <div class="room-browser-header">
-            <h3>Available Rooms</h3>
-            <button class="btn btn-small btn-secondary" id="btn-refresh-rooms">Refresh</button>
+            <h3>${t("menu.available_rooms")}</h3>
+            <button class="btn btn-small btn-secondary" id="btn-refresh-rooms">${t("menu.refresh")}</button>
           </div>
           <div class="room-list" id="room-list">
-            <div class="room-list-empty">Click Refresh to see rooms</div>
+            <div class="room-list-empty">${t("menu.click_refresh")}</div>
           </div>
         </div>
 
         <div class="input-group" style="margin-top: 1.5rem;">
-          <label>Room Name</label>
-          <input type="text" id="room-name-input" placeholder="My Room" maxlength="30" />
+          <label>${t("menu.room_name")}</label>
+          <input type="text" id="room-name-input" placeholder="${t("menu.room_name_placeholder")}" maxlength="30" />
         </div>
 
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.75rem;">
           <input type="checkbox" id="private-check" />
-          <label for="private-check" style="font-size:0.9rem;color:#ccc;">Private Room</label>
+          <label for="private-check" style="font-size:0.9rem;color:#ccc;">${t("menu.private_room")}</label>
         </div>
 
         <div class="input-group" id="passcode-group" style="display:none;margin-bottom:0.75rem;">
-          <label>Passcode</label>
-          <input type="text" id="passcode-input" placeholder="Enter room passcode..." maxlength="10" style="text-transform:uppercase;letter-spacing:2px;font-family:monospace;" />
+          <label>${t("menu.passcode")}</label>
+          <input type="text" id="passcode-input" placeholder="${t("menu.passcode_placeholder")}" maxlength="10" style="text-transform:uppercase;letter-spacing:2px;font-family:monospace;" />
         </div>
 
-        <button class="btn btn-secondary" id="btn-create">Create Room</button>
+        <button class="btn btn-secondary" id="btn-create">${t("menu.create_room")}</button>
 
         <div class="join-code-row" style="margin-top: 1rem;">
-          <input type="text" id="code-input" placeholder="Room Code" maxlength="6" style="text-transform:uppercase;letter-spacing:2px;font-family:monospace;" />
-          <button class="btn btn-secondary btn-small" id="btn-join-code">Join</button>
+          <input type="text" id="code-input" placeholder="${t("menu.room_code")}" maxlength="6" style="text-transform:uppercase;letter-spacing:2px;font-family:monospace;" />
+          <button class="btn btn-secondary btn-small" id="btn-join-code">${t("menu.join")}</button>
         </div>
       </div>
     `;
+  }
 
-    this.element.addEventListener("click", (e) => e.stopPropagation());
-
+  private bindEvents(callbacks: MainMenuCallbacks) {
     setTimeout(() => {
       this.nicknameInput = this.element.querySelector("#nickname-input")!;
       this.roomNameInput = this.element.querySelector("#room-name-input")!;
@@ -123,15 +149,17 @@ export class MainMenuUI {
 
       void this.refreshRoomList();
     }, 0);
+
+    this.element.addEventListener("click", (e) => e.stopPropagation());
   }
 
   async refreshRoomList() {
     if (!this.roomListEl) return;
-    this.roomListEl.innerHTML = '<div class="room-list-empty">Loading...</div>';
+    this.roomListEl.innerHTML = `<div class="room-list-empty">${t("menu.loading")}</div>`;
     try {
       const rooms = await this.callbacks.onBrowseRooms();
       if (rooms.length === 0) {
-        this.roomListEl.innerHTML = '<div class="room-list-empty">No rooms available — create one!</div>';
+        this.roomListEl.innerHTML = `<div class="room-list-empty">${t("menu.no_rooms")}</div>`;
         return;
       }
       this.roomListEl.innerHTML = rooms.map((r: any) => {
@@ -142,10 +170,10 @@ export class MainMenuUI {
         const isPrivate = r.metadata?.isPrivate || false;
         const isWaiting = phase === "waiting" || phase === "countdown";
         const isFull = players >= max;
-        const phaseLabel = isWaiting ? "LOBBY" : "IN GAME";
+        const phaseLabel = isWaiting ? t("menu.lobby") : t("menu.in_game");
         const phaseClass = isWaiting ? "phase-waiting" : "phase-active";
         const lockIcon = isPrivate ? '<span class="room-lock">&#128274;</span>' : "";
-        const btnLabel = isFull ? "Full" : (isWaiting ? "Join" : "Spectate");
+        const btnLabel = isFull ? t("menu.full") : (isWaiting ? t("menu.join") : t("menu.spectate"));
         return `
           <div class="room-entry" data-room-id="${r.roomId}" data-private="${isPrivate}">
             <div class="room-entry-info">
@@ -178,7 +206,7 @@ export class MainMenuUI {
         });
       });
     } catch {
-      this.roomListEl.innerHTML = '<div class="room-list-empty">Failed to load rooms</div>';
+      this.roomListEl.innerHTML = `<div class="room-list-empty">${t("menu.failed_load")}</div>`;
     }
   }
 
@@ -190,13 +218,13 @@ export class MainMenuUI {
     modal.className = "passcode-modal";
     modal.innerHTML = `
       <div class="passcode-modal-box">
-        <h3>&#128274; Private Room</h3>
-        <p>Enter passcode to join:</p>
-        <input type="text" class="passcode-modal-input" placeholder="PASSCODE" maxlength="10"
+        <h3>&#128274; ${t("menu.private_room_title")}</h3>
+        <p>${t("menu.enter_passcode")}</p>
+        <input type="text" class="passcode-modal-input" placeholder="${t("menu.passcode_input")}" maxlength="10"
                style="text-transform:uppercase;letter-spacing:2px;font-family:monospace;" />
         <div style="display:flex;gap:8px;margin-top:12px;">
-          <button class="btn btn-primary btn-small passcode-modal-ok">Join</button>
-          <button class="btn btn-secondary btn-small passcode-modal-cancel">Cancel</button>
+          <button class="btn btn-primary btn-small passcode-modal-ok">${t("menu.join")}</button>
+          <button class="btn btn-secondary btn-small passcode-modal-cancel">${t("menu.cancel")}</button>
         </div>
         <div class="passcode-modal-error" style="color:#ff4444;font-size:0.8rem;margin-top:8px;display:none;"></div>
       </div>
@@ -218,7 +246,7 @@ export class MainMenuUI {
           await this.callbacks.onJoinRoom(nickname, roomId, code);
           modal.remove();
         } catch (err: any) {
-          errorEl.textContent = err.message || "Invalid passcode";
+          errorEl.textContent = err.message || t("menu.invalid_passcode");
           errorEl.style.display = "block";
           input.style.borderColor = "#ff4444";
         }

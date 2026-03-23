@@ -1,3 +1,5 @@
+import { t } from "../../i18n/i18n";
+
 interface SoundMemeEntry {
   id: string;
   name: string;
@@ -30,7 +32,7 @@ export class SoundMemePanel {
     `;
 
     const title = document.createElement("div");
-    title.innerHTML = `Sound Meme <span style="opacity:0.5;font-size:0.75rem;">[2] next &middot; [Enter] play &middot; [Esc] close</span>`;
+    title.innerHTML = `${t("meme.title")} <span style="opacity:0.5;font-size:0.75rem;">${t("meme.hint_next")} &middot; ${t("meme.hint_play")} &middot; ${t("meme.hint_close")}</span>`;
     title.style.cssText = `
       color: #fff; font-size: 0.9rem; font-weight: bold;
       margin-bottom: 12px; text-align: center;

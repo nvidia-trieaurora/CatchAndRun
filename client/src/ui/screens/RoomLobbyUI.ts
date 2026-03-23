@@ -1,4 +1,5 @@
 import { getMemePreviewDataURL, loadMemeManifest } from "../../game/entities/MemeTextureLoader";
+import { t, onLangChange } from "../../i18n/i18n";
 
 export interface RoomLobbyCallbacks {
   onReady: () => void;
@@ -19,46 +20,63 @@ export class RoomLobbyUI {
   private roomCodeEl!: HTMLElement;
   private memeGridEl!: HTMLElement;
   private selectedMemeId: string = "default";
+  private unsubLang?: () => void;
 
   constructor(private callbacks: RoomLobbyCallbacks) {
     this.element = document.createElement("div");
     this.element.className = "room-lobby";
+    this.buildHTML();
+    this.bindEvents(callbacks);
+
+    this.unsubLang = onLangChange(() => {
+      const chatHistory = this.chatMessagesEl?.innerHTML || "";
+      const roomCode = this.roomCodeEl?.textContent || "------";
+      this.buildHTML();
+      this.bindEvents(callbacks);
+      if (this.chatMessagesEl) this.chatMessagesEl.innerHTML = chatHistory;
+      if (this.roomCodeEl) this.roomCodeEl.textContent = roomCode;
+    });
+  }
+
+  private buildHTML() {
     this.element.innerHTML = `
       <div class="lobby-container">
         <div class="lobby-header">
-          <h2>Room Lobby</h2>
+          <h2>${t("lobby.title")}</h2>
           <div class="room-code-display" id="room-code">------</div>
         </div>
 
         <div class="player-list" id="player-list-panel">
-          <h3>Players</h3>
+          <h3>${t("lobby.players")}</h3>
           <div id="player-list"></div>
         </div>
 
         <div class="lobby-sidebar">
           <div class="meme-section">
-            <h3>CHOOSE YOUR MEME (Hunter Face)</h3>
+            <h3>${t("lobby.choose_meme")}</h3>
             <div class="meme-grid" id="meme-grid"></div>
           </div>
 
           <div class="chat-box">
-            <h3>Chat</h3>
+            <h3>${t("lobby.chat")}</h3>
             <div class="chat-messages" id="chat-messages"></div>
             <div class="chat-input-row">
-              <input type="text" id="chat-input" placeholder="Type a message..." maxlength="200" />
-              <button id="btn-chat-send">Send</button>
+              <input type="text" id="chat-input" placeholder="${t("lobby.chat_placeholder")}" maxlength="200" />
+              <button id="btn-chat-send">${t("lobby.send")}</button>
             </div>
           </div>
 
           <div class="lobby-actions">
-            <button class="btn btn-primary" id="btn-ready">Ready</button>
-            <button class="btn btn-primary" id="btn-start" style="display:none;">Start Game</button>
-            <button class="btn btn-danger" id="btn-leave">Leave Room</button>
+            <button class="btn btn-primary" id="btn-ready">${t("lobby.ready")}</button>
+            <button class="btn btn-primary" id="btn-start" style="display:none;">${t("lobby.start_game")}</button>
+            <button class="btn btn-danger" id="btn-leave">${t("lobby.leave_room")}</button>
           </div>
         </div>
       </div>
     `;
+  }
 
+  private bindEvents(callbacks: RoomLobbyCallbacks) {
     this.element.addEventListener("click", (e) => e.stopPropagation());
 
     setTimeout(() => {
@@ -77,13 +95,13 @@ export class RoomLobbyUI {
       this.element.querySelector("#btn-start")!.addEventListener("click", () => {
         if (this.startBtnEl.disabled) return;
         this.startBtnEl.disabled = true;
-        this.startBtnEl.textContent = "Starting...";
+        this.startBtnEl.textContent = t("lobby.starting");
         this.startBtnEl.style.opacity = "0.5";
         callbacks.onStart();
         setTimeout(() => {
           if (this.startBtnEl) {
             this.startBtnEl.disabled = false;
-            this.startBtnEl.textContent = "Start Game";
+            this.startBtnEl.textContent = t("lobby.start_game");
             this.startBtnEl.style.opacity = "1";
           }
         }, 3000);
@@ -159,10 +177,10 @@ export class RoomLobbyUI {
             <span class="player-info">
               ${memePreview ? `<img class="player-meme-icon" src="${memePreview}" />` : ""}
               ${p.nickname}
-              ${p.isHost ? '<span class="host-badge">HOST</span>' : ""}
+              ${p.isHost ? `<span class="host-badge">${t("lobby.host")}</span>` : ""}
             </span>
             <span class="ready-status ${p.isReady ? "ready" : "not-ready"}">
-              ${p.isReady ? "READY" : "NOT READY"}
+              ${p.isReady ? t("lobby.player_ready") : t("lobby.player_not_ready")}
             </span>
           </div>
         `;
@@ -198,7 +216,7 @@ export class RoomLobbyUI {
     if (!allReady || playerCount < 1) {
       this.startBtnEl.disabled = true;
       this.startBtnEl.style.opacity = "0.4";
-      this.startBtnEl.title = "All players must be ready";
+      this.startBtnEl.title = t("lobby.all_must_ready");
     } else {
       this.startBtnEl.disabled = false;
       this.startBtnEl.style.opacity = "1";
@@ -208,7 +226,7 @@ export class RoomLobbyUI {
 
   setReadyState(isReady: boolean) {
     if (!this.readyBtnEl) return;
-    this.readyBtnEl.textContent = isReady ? "Unready" : "Ready";
+    this.readyBtnEl.textContent = isReady ? t("lobby.unready") : t("lobby.ready");
     this.readyBtnEl.className = isReady ? "btn btn-secondary" : "btn btn-primary";
   }
 }

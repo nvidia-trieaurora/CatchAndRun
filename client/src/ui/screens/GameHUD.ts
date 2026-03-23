@@ -1,3 +1,5 @@
+import { t } from "../../i18n/i18n";
+
 export class GameHUD {
   readonly element: HTMLElement;
   private timerEl!: HTMLElement;
@@ -33,7 +35,7 @@ export class GameHUD {
       <div class="hud-top">
         <div class="hud-round" id="hud-round"></div>
         <div class="hud-timer" id="hud-timer">5:00</div>
-        <div class="hud-phase" id="hud-phase">WAITING</div>
+        <div class="hud-phase" id="hud-phase">${t("hud.waiting")}</div>
         <div class="hud-role" id="hud-role"></div>
         <div class="hud-alive-count" id="hud-alive-count"></div>
       </div>
@@ -60,13 +62,13 @@ export class GameHUD {
 
       <div class="hud-chat-container" id="hud-chat-container" style="display:none;">
         <div class="hud-chat-messages" id="hud-chat-messages"></div>
-        <input class="hud-chat-input" id="hud-chat-input" type="text" placeholder="Type a message... (Tab to close)" maxlength="120" autocomplete="off" />
+        <input class="hud-chat-input" id="hud-chat-input" type="text" placeholder="${t("hud.chat_placeholder")}" maxlength="120" autocomplete="off" />
       </div>
 
       <div class="hud-chat-toast" id="hud-chat-toast"></div>
 
       <div class="hud-soul-mode" id="hud-soul-mode" style="display:none;">
-        SOUL MODE - Press 1 to return
+        ${t("hud.soul_mode")}
       </div>
 
       <div class="hud-controls-hint" id="hud-controls-hint" style="display:none;"></div>
@@ -162,11 +164,9 @@ export class GameHUD {
   updateDamageOverlay(currentHp: number, maxHp: number, isHunter: boolean) {
     if (!this.vignetteEl) return;
     if (isHunter) {
-      // Hunter never shows damage vignette
       this.vignetteEl.style.opacity = "0";
       return;
     }
-    // Prop: show red vignette when below 70% HP
     const hpRatio = Math.max(0, currentHp / maxHp);
     const vignetteOpacity = hpRatio < 0.7 ? (0.7 - hpRatio) * 1.0 : 0;
     this.vignetteEl.style.opacity = String(Math.min(0.7, vignetteOpacity));
@@ -190,12 +190,12 @@ export class GameHUD {
   updatePhase(phase: string) {
     if (!this.phaseEl || !phase) return;
     const labels: Record<string, string> = {
-      waiting: "WAITING",
-      countdown: "GET READY",
-      hiding: "HIDE!",
-      active: "HUNT!",
-      roundEnd: "ROUND OVER",
-      matchEnd: "MATCH OVER",
+      waiting: t("hud.waiting"),
+      countdown: t("hud.get_ready"),
+      hiding: t("hud.hide"),
+      active: t("hud.hunt"),
+      roundEnd: t("hud.round_over"),
+      matchEnd: t("hud.match_over"),
     };
     this.phaseEl.textContent = labels[phase] || phase.toUpperCase();
   }
@@ -203,7 +203,7 @@ export class GameHUD {
   updateRole(role: string) {
     if (!this.roleEl || !role) return;
     if (role === "ghost") {
-      this.roleEl.textContent = "GHOST";
+      this.roleEl.textContent = t("hud.ghost");
       this.roleEl.className = "hud-role ghost";
     } else {
       this.roleEl.textContent = role.toUpperCase();
@@ -235,7 +235,7 @@ export class GameHUD {
   updateAmmo(current: number, max: number, reloading: boolean) {
     if (!this.ammoEl) return;
     if (reloading) {
-      this.ammoEl.innerHTML = `<span style="color:#ff9800;">RELOADING...</span>`;
+      this.ammoEl.innerHTML = `<span style="color:#ff9800;">${t("hud.reloading")}</span>`;
     } else {
       this.ammoEl.innerHTML = `${current} <span>/ ${max}</span>`;
     }
@@ -260,51 +260,53 @@ export class GameHUD {
     if (!this.abilityEl) return;
     let html = "";
     if (invisCd > 0) {
-      html += `<div class="hud-ability-name">INVISIBLE <span style="color:#ff9800">[Q] ${Math.ceil(invisCd / 1000)}s</span></div>`;
+      html += `<div class="hud-ability-name">${t("ability.invisible")} <span style="color:#ff9800">[Q] ${Math.ceil(invisCd / 1000)}s</span></div>`;
     } else {
-      html += `<div class="hud-ability-name">INVISIBLE <span style="color:#4caf50">[Q]</span></div>`;
+      html += `<div class="hud-ability-name">${t("ability.invisible")} <span style="color:#4caf50">[Q]</span></div>`;
     }
-    html += `<div class="hud-ability-name">TRANSFORM <span style="color:${transformsLeft > 0 ? '#00d4ff' : '#ff5555'}">[E] ${transformsLeft}/2</span></div>`;
+    html += `<div class="hud-ability-name">${t("ability.transform")} <span style="color:${transformsLeft > 0 ? '#00d4ff' : '#ff5555'}">[E] ${transformsLeft}/2</span></div>`;
     if (speedCd > 0) {
-      html += `<div class="hud-ability-name">SPEED <span style="color:#ff9800">[R] ${Math.ceil(speedCd / 1000)}s</span></div>`;
+      html += `<div class="hud-ability-name">${t("ability.speed")} <span style="color:#ff9800">[R] ${Math.ceil(speedCd / 1000)}s</span></div>`;
     } else {
-      html += `<div class="hud-ability-name">SPEED <span style="color:#ffdd44">[R]</span></div>`;
+      html += `<div class="hud-ability-name">${t("ability.speed")} <span style="color:#ffdd44">[R]</span></div>`;
     }
-    html += `<div class="hud-ability-name">DUPLICATE <span style="color:${duplicatesLeft > 0 ? '#00ffcc' : '#ff5555'}">[T] ${duplicatesLeft}/4</span></div>`;
-    html += `<div class="hud-ability-name">LOCK <span style="color:#aaa">[F]</span> &bull; SOUL <span style="color:#c0a0ff">[1]</span></div>`;
+    html += `<div class="hud-ability-name">${t("ability.duplicate")} <span style="color:${duplicatesLeft > 0 ? '#00ffcc' : '#ff5555'}">[T] ${duplicatesLeft}/4</span></div>`;
+    html += `<div class="hud-ability-name">${t("ability.lock")} <span style="color:#aaa">[F]</span> &bull; ${t("ability.soul")} <span style="color:#c0a0ff">[1]</span></div>`;
     this.abilityEl.innerHTML = html;
   }
 
-  updateHunterAbilities(grenadeCd: number, scanCd: number, grenadeMode: boolean, boostCd = 0, phaseWalkCd = 0, inPhaseWalk = false) {
+  updateHunterAbilities(grenadeCd: number, scanCd: number, grenadeMode: boolean, boostCd = 0, phaseWalkCd = 0, inPhaseWalk = false, grenadesLeft = 3) {
     if (!this.abilityEl) return;
     if (grenadeMode) {
       this.abilityEl.innerHTML = `
-        <div class="hud-ability-name" style="color:#ff6b6b;font-weight:bold">CLICK to throw | Q cancel</div>
+        <div class="hud-ability-name" style="color:#ff6b6b;font-weight:bold">${t("ability.grenade_mode")}</div>
       `;
       return;
     }
     let html = "";
-    if (grenadeCd > 0) {
-      html += `<div class="hud-ability-name">GRENADE <span style="color:#ff9800">[Q] ${Math.ceil(grenadeCd / 1000)}s</span></div>`;
+    if (grenadesLeft <= 0) {
+      html += `<div class="hud-ability-name">${t("ability.grenade")} <span style="color:#ff5555">[Q] 0/3</span></div>`;
+    } else if (grenadeCd > 0) {
+      html += `<div class="hud-ability-name">${t("ability.grenade")} <span style="color:#ff9800">[Q] ${Math.ceil(grenadeCd / 1000)}s (${grenadesLeft}/3)</span></div>`;
     } else {
-      html += `<div class="hud-ability-name">GRENADE <span style="color:#4caf50">[Q]</span></div>`;
+      html += `<div class="hud-ability-name">${t("ability.grenade")} <span style="color:#4caf50">[Q] (${grenadesLeft}/3)</span></div>`;
     }
     if (scanCd > 0) {
-      html += `<div class="hud-ability-name">SCANNER <span style="color:#ff9800">[E] ${Math.ceil(scanCd / 1000)}s</span></div>`;
+      html += `<div class="hud-ability-name">${t("ability.scanner")} <span style="color:#ff9800">[E] ${Math.ceil(scanCd / 1000)}s</span></div>`;
     } else {
-      html += `<div class="hud-ability-name">SCANNER <span style="color:#00d4ff">[E]</span></div>`;
+      html += `<div class="hud-ability-name">${t("ability.scanner")} <span style="color:#00d4ff">[E]</span></div>`;
     }
     if (boostCd > 0) {
-      html += `<div class="hud-ability-name">BOOST <span style="color:#ff9800">[T] ${Math.ceil(boostCd / 1000)}s</span></div>`;
+      html += `<div class="hud-ability-name">${t("ability.boost")} <span style="color:#ff9800">[T] ${Math.ceil(boostCd / 1000)}s</span></div>`;
     } else {
-      html += `<div class="hud-ability-name">BOOST <span style="color:#ffdd44">[T]</span></div>`;
+      html += `<div class="hud-ability-name">${t("ability.boost")} <span style="color:#ffdd44">[T]</span></div>`;
     }
     if (inPhaseWalk) {
-      html += `<div class="hud-ability-name" style="color:#00ffcc;font-weight:bold">PHASE-WALK ACTIVE!</div>`;
+      html += `<div class="hud-ability-name" style="color:#00ffcc;font-weight:bold">${t("ability.phase_walk_active")}</div>`;
     } else if (phaseWalkCd > 0) {
-      html += `<div class="hud-ability-name">PHASE-WALK <span style="color:#ff9800">[1] ${Math.ceil(phaseWalkCd / 1000)}s</span></div>`;
+      html += `<div class="hud-ability-name">${t("ability.phase_walk")} <span style="color:#ff9800">[1] ${Math.ceil(phaseWalkCd / 1000)}s</span></div>`;
     } else {
-      html += `<div class="hud-ability-name">PHASE-WALK <span style="color:#00ffcc">[1]</span></div>`;
+      html += `<div class="hud-ability-name">${t("ability.phase_walk")} <span style="color:#00ffcc">[1]</span></div>`;
     }
     this.abilityEl.innerHTML = html;
   }
@@ -313,7 +315,7 @@ export class GameHUD {
     if (!this.killfeedEl) return;
     const el = document.createElement("div");
     el.className = "killfeed-entry";
-    el.innerHTML = `<span style="color:#ff6b6b">${killer}</span> eliminated <span style="color:#00d4ff">${victim}</span>`;
+    el.innerHTML = `<span style="color:#ff6b6b">${killer}</span> ${t("hud.eliminated")} <span style="color:#00d4ff">${victim}</span>`;
     this.killfeedEl.appendChild(el);
     this.killfeedEntries.push({ el, time: Date.now() });
 
@@ -328,9 +330,9 @@ export class GameHUD {
     if (propName) {
       this.propInfoEl.style.display = "block";
       this.propInfoEl.innerHTML = `
-        Disguised as: <strong>${propName}</strong>
-        ${isLocked ? " | <span style='color:#4caf50'>LOCKED</span>" : " | Press F to Lock"}
-        <br>Press E near objects to transform
+        ${t("prop.disguised_as")}: <strong>${propName}</strong>
+        ${isLocked ? ` | <span style='color:#4caf50'>${t("prop.locked")}</span>` : ` | ${t("prop.press_f_lock")}`}
+        <br>${t("prop.press_e_transform")}
       `;
     } else {
       this.propInfoEl.style.display = "none";
@@ -342,7 +344,7 @@ export class GameHUD {
     if (!this.roundEl) return;
     if (current > 0 && total > 0) {
       this.roundEl.style.display = "block";
-      this.roundEl.innerHTML = `ROUND <span class="round-current">${current}</span><span class="round-sep">/</span><span class="round-total">${total}</span>`;
+      this.roundEl.innerHTML = `${t("hud.round")} <span class="round-current">${current}</span><span class="round-sep">/</span><span class="round-total">${total}</span>`;
     } else {
       this.roundEl.style.display = "none";
     }
@@ -351,8 +353,8 @@ export class GameHUD {
   updateAliveCount(aliveProps: number, totalProps: number, aliveHunters: number, totalHunters: number) {
     if (!this.aliveCountEl) return;
     this.aliveCountEl.innerHTML =
-      `<span style="color:#00d4ff">Props: ${aliveProps}/${totalProps}</span>` +
-      ` &nbsp; <span style="color:#ff6b6b">Hunters: ${aliveHunters}/${totalHunters}</span>`;
+      `<span style="color:#00d4ff">${t("hud.props")}: ${aliveProps}/${totalProps}</span>` +
+      ` &nbsp; <span style="color:#ff6b6b">${t("hud.hunters")}: ${aliveHunters}/${totalHunters}</span>`;
   }
 
   setVisible(visible: boolean) {

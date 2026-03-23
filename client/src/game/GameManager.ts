@@ -105,6 +105,7 @@ export class GameManager {
   private grenadeMode = false;
   private fpGrenade: THREE.Group | null = null;
   private lastGrenadeTime = 0;
+  private grenadesUsed = 0;
   private lastScanTime = 0;
 
   private inputSeq = 0;
@@ -366,6 +367,8 @@ export class GameManager {
       case GamePhase.HIDING:
         this.invisibleProps.clear();
         this.localTransformCount = 0;
+        this.grenadesUsed = 0;
+        this.showGuideHint();
         this.buildMapIfNeeded();
         this.initControllers();
         this.setHudButtonsVisible(true);
@@ -1007,6 +1010,31 @@ export class GameManager {
     this.voiceUI?.hide();
   }
 
+  private showGuideHint() {
+    if (localStorage.getItem("catchandrun_guide_seen")) return;
+
+    const hint = document.createElement("div");
+    hint.style.cssText = `
+      position: fixed; top: 38px; left: 110px; z-index: 150;
+      background: rgba(0,212,255,0.15); border: 1px solid #00d4ff;
+      border-radius: 8px; padding: 8px 14px; font-size: 0.8rem;
+      color: #00d4ff; font-weight: 600; pointer-events: none;
+      animation: guideHintPulse 1s ease-in-out infinite;
+    `;
+    hint.innerHTML = `<span style="font-size:1.1rem;">&#8593;</span> Press [I] or click GUIDE for controls!`;
+    document.body.appendChild(hint);
+
+    const style = document.createElement("style");
+    style.textContent = `@keyframes guideHintPulse { 0%,100% { opacity: 1; transform: translateY(0); } 50% { opacity: 0.6; transform: translateY(-3px); } }`;
+    document.head.appendChild(style);
+
+    setTimeout(() => {
+      hint.remove();
+      style.remove();
+      localStorage.setItem("catchandrun_guide_seen", "1");
+    }, 5000);
+  }
+
   private setupChat() {
     this.input.setTabToggleHandler(() => {
       const isOpen = this.gameHUD.toggleChat();
@@ -1051,14 +1079,20 @@ export class GameManager {
 
     const infoBtn = document.createElement("button");
     infoBtn.id = "info-toggle";
-    infoBtn.textContent = "[I] ?";
+    infoBtn.textContent = "[I] GUIDE";
     infoBtn.style.cssText = `
       position: fixed; top: 16px; left: 110px; z-index: 100;
       background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2);
       border-radius: 6px; padding: 6px 10px; font-size: 0.75rem;
-      font-family: inherit; backdrop-filter: blur(4px); pointer-events: none;
-      display: none;
+      font-family: inherit; backdrop-filter: blur(4px); pointer-events: auto;
+      display: none; cursor: pointer;
     `;
+    infoBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (this.infoPanel) {
+        this.infoPanel.style.display = this.infoPanel.style.display === "none" ? "block" : "none";
+      }
+    });
     document.body.appendChild(infoBtn);
     this.infoBtn = infoBtn;
 
@@ -1403,6 +1437,7 @@ export class GameManager {
         this.audioSystem?.playSound("ability");
         this.exitGrenadeMode();
         this.lastGrenadeTime = Date.now();
+        this.grenadesUsed++;
       }
       if (this.input.consumeKey("KeyQ")) {
         this.exitGrenadeMode();
@@ -1437,11 +1472,15 @@ export class GameManager {
       }
     }
 
-    // Q = Equip grenade
+    // Q = Equip grenade (max 3 per round)
     if (this.input.consumeKey("KeyQ")) {
-      const cdGrenade = Date.now() - this.lastGrenadeTime;
-      if (cdGrenade >= HUNTER_GRENADE_COOLDOWN_MS) {
-        this.enterGrenadeMode();
+      if (this.grenadesUsed >= 3) {
+        this.uiManager.showNotification("No grenades left! (0/3)");
+      } else {
+        const cdGrenade = Date.now() - this.lastGrenadeTime;
+        if (cdGrenade >= HUNTER_GRENADE_COOLDOWN_MS) {
+          this.enterGrenadeMode();
+        }
       }
     }
 
@@ -1681,38 +1720,53 @@ export class GameManager {
   }
 
   private pushHunterOutOfWalls(colliders: THREE.Box3[]) {
-    const pos = this.hunterController.getPosition();
     const radius = 0.4;
-    const feetY = pos.y - 1.6;
-    const playerBox = new THREE.Box3(
-      new THREE.Vector3(pos.x - radius, feetY, pos.z - radius),
-      new THREE.Vector3(pos.x + radius, feetY + 1.8, pos.z + radius)
-    );
+    const height = 1.8;
 
-    for (const c of colliders) {
-      if (!playerBox.intersectsBox(c)) continue;
-      const overlapX = Math.min(playerBox.max.x - c.min.x, c.max.x - playerBox.min.x);
-      const overlapZ = Math.min(playerBox.max.z - c.min.z, c.max.z - playerBox.min.z);
-      if (overlapX < overlapZ) {
-        const pushDir = pos.x < (c.min.x + c.max.x) / 2 ? -1 : 1;
-        this.hunterController.setPosition(pos.x + pushDir * (overlapX + 0.2), pos.y, pos.z);
-      } else {
-        const pushDir = pos.z < (c.min.z + c.max.z) / 2 ? -1 : 1;
-        this.hunterController.setPosition(pos.x, pos.y, pos.z + pushDir * (overlapZ + 0.2));
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const pos = this.hunterController.getPosition();
+      const feetY = pos.y - 1.6;
+      const playerBox = new THREE.Box3(
+        new THREE.Vector3(pos.x - radius, feetY, pos.z - radius),
+        new THREE.Vector3(pos.x + radius, feetY + height, pos.z + radius)
+      );
+
+      let pushed = false;
+      for (const c of colliders) {
+        if (!playerBox.intersectsBox(c)) continue;
+
+        const overlapX = Math.min(playerBox.max.x - c.min.x, c.max.x - playerBox.min.x);
+        const overlapZ = Math.min(playerBox.max.z - c.min.z, c.max.z - playerBox.min.z);
+        const overlapY = Math.min(playerBox.max.y - c.min.y, c.max.y - playerBox.min.y);
+
+        // Push along the axis with smallest overlap
+        if (overlapY < overlapX && overlapY < overlapZ && overlapY < 1.0) {
+          const pushDir = pos.y < (c.min.y + c.max.y) / 2 ? -1 : 1;
+          this.hunterController.setPosition(pos.x, pos.y + pushDir * (overlapY + 0.1), pos.z);
+        } else if (overlapX <= overlapZ) {
+          const pushDir = pos.x < (c.min.x + c.max.x) / 2 ? -1 : 1;
+          this.hunterController.setPosition(pos.x + pushDir * (overlapX + 0.15), pos.y, pos.z);
+        } else {
+          const pushDir = pos.z < (c.min.z + c.max.z) / 2 ? -1 : 1;
+          this.hunterController.setPosition(pos.x, pos.y, pos.z + pushDir * (overlapZ + 0.15));
+        }
+        pushed = true;
+        break;
       }
-      return;
+
+      if (!pushed) return;
     }
   }
 
   private updateHunterHUD() {
     this.gameHUD.updateHealth(this.localAmmo, WEAPON_MAX_AMMO);
     this.gameHUD.updateAmmo(this.localAmmo, WEAPON_MAX_AMMO, this.weaponSystem?.getIsReloading() || false);
-    const cdGrenade = Math.max(0, HUNTER_GRENADE_COOLDOWN_MS - (Date.now() - this.lastGrenadeTime));
+    const cdGrenade = this.grenadesUsed >= 3 ? -1 : Math.max(0, HUNTER_GRENADE_COOLDOWN_MS - (Date.now() - this.lastGrenadeTime));
     const cdScan = Math.max(0, HUNTER_SCAN_COOLDOWN_MS - (Date.now() - this.lastScanTime));
     const cdBoost = Math.max(0, 60000 - (Date.now() - this.lastHunterBoostTime));
     const cdPhaseWalk = Math.max(0, HUNTER_PHASEWALK_COOLDOWN_MS - (Date.now() - this.lastPhaseWalkTime));
     const inPhaseWalk = Date.now() < this.phaseWalkEnd;
-    this.gameHUD.updateHunterAbilities(cdGrenade, cdScan, this.grenadeMode, cdBoost, cdPhaseWalk, inPhaseWalk);
+    this.gameHUD.updateHunterAbilities(cdGrenade, cdScan, this.grenadeMode, cdBoost, cdPhaseWalk, inPhaseWalk, 3 - this.grenadesUsed);
     this.gameHUD.updateDamageOverlay(this.localHealth, HUNTER_MAX_HEALTH, true);
     this.gameHUD.updatePropInfo("", false);
     this.gameHUD.setSoulModeVisible(false);
