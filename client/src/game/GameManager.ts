@@ -1736,7 +1736,6 @@ export class GameManager {
   }
 
   private updatePropHUD() {
-    this.minimap.hide();
     const propDef = this.propRegistry.get(this.localPropId);
     const maxHp = (propDef as any)?.hp || PROP_MAX_HEALTH;
     this.gameHUD.updateHealth(this.localHealth, maxHp);
@@ -1747,6 +1746,23 @@ export class GameManager {
     this.gameHUD.updatePropAbilities(cdInvis, cdSpeed, transformsLeft, this.duplicatesLeft);
     this.gameHUD.updateDamageOverlay(this.localHealth, maxHp, false);
     this.gameHUD.setSoulModeVisible(this.propController.isInSoulMode());
+
+    this.minimap.show();
+    const pos = this.propController.getPosition();
+    const rot = this.propController.getRotation();
+    this.minimap.updatePlayerPosition(pos.x, pos.z, rot.y);
+
+    const myId = this.network.getSessionId();
+    const teammates: { x: number; z: number; yaw: number }[] = [];
+    if (this.latestRoomState?.players) {
+      for (const p of this.latestRoomState.players) {
+        if (p.sessionId === myId) continue;
+        if (p.role === "prop" && p.isAlive) {
+          teammates.push({ x: p.x, z: p.z, yaw: p.rotY });
+        }
+      }
+    }
+    this.minimap.updateTeammates(teammates);
   }
 
   private sendInputToServer(position: THREE.Vector3) {

@@ -124,14 +124,11 @@ export class ParticleSystem {
     trail.visible = false;
     this.scene.add(trail);
 
-    const hLen = Math.sqrt(dir.x * dir.x + dir.z * dir.z) || 0.01;
-    const hdx = dir.x / hLen;
-    const hdz = dir.z / hLen;
-
+    const normDir = dir.clone().normalize();
     const velocity = new THREE.Vector3(
-      hdx * HUNTER_GRENADE_THROW_SPEED,
-      HUNTER_GRENADE_UP_BOOST + Math.max(0, dir.y) * 5,
-      hdz * HUNTER_GRENADE_THROW_SPEED
+      normDir.x * HUNTER_GRENADE_THROW_SPEED,
+      normDir.y * HUNTER_GRENADE_THROW_SPEED + HUNTER_GRENADE_UP_BOOST,
+      normDir.z * HUNTER_GRENADE_THROW_SPEED
     );
 
     this.grenades.push({

@@ -254,13 +254,20 @@ export class GameRoom extends Room<GameState> {
       this.matchSM.startMatch();
     }
 
+    const joinMsg = isGameRunning && !this.soloExploreActive
+      ? `${player.nickname} joined as spectator`
+      : `${player.nickname} joined the room`;
+
     const sysMsg = new ChatMessage();
     sysMsg.sender = "System";
-    sysMsg.message = isGameRunning && !this.soloExploreActive
-      ? `${player.nickname} joined as spectator (will play next round)`
-      : `${player.nickname} joined the room`;
+    sysMsg.message = joinMsg;
     sysMsg.timestamp = Date.now();
     this.state.chat.push(sysMsg);
+
+    this.broadcast(ServerMessage.CHAT_MESSAGE, {
+      sender: "System",
+      message: joinMsg,
+    });
 
     this.broadcastRoomState();
   }
@@ -547,13 +554,14 @@ export class GameRoom extends Room<GameState> {
     if (now - player.lastAbilityTime < HUNTER_GRENADE_COOLDOWN_MS) return;
     player.lastAbilityTime = now;
 
-    const hLen = Math.sqrt(data.dirX * data.dirX + data.dirZ * data.dirZ) || 0.01;
-    const hdx = data.dirX / hLen;
-    const hdz = data.dirZ / hLen;
+    const len = Math.sqrt(data.dirX * data.dirX + data.dirY * data.dirY + data.dirZ * data.dirZ) || 0.01;
+    const nx = data.dirX / len;
+    const ny = data.dirY / len;
+    const nz = data.dirZ / len;
 
-    const vx = hdx * HUNTER_GRENADE_THROW_SPEED;
-    const vz = hdz * HUNTER_GRENADE_THROW_SPEED;
-    const vy = HUNTER_GRENADE_UP_BOOST + Math.max(0, data.dirY) * 5;
+    const vx = nx * HUNTER_GRENADE_THROW_SPEED;
+    const vz = nz * HUNTER_GRENADE_THROW_SPEED;
+    const vy = ny * HUNTER_GRENADE_THROW_SPEED + HUNTER_GRENADE_UP_BOOST;
 
     // Solve for time when grenade hits ground (y=0)
     // 0 = originY + vy*t + 0.5*g*t^2
