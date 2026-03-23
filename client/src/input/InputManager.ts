@@ -61,7 +61,24 @@ export class InputManager {
     });
 
     document.addEventListener("pointerlockchange", () => {
+      const wasLocked = this.locked;
       this.locked = document.pointerLockElement === this.canvas;
+      if (wasLocked && !this.locked) {
+        this.keys.clear();
+        this.mouseDown = false;
+      }
+    });
+
+    window.addEventListener("blur", () => {
+      this.keys.clear();
+      this.mouseDown = false;
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        this.keys.clear();
+        this.mouseDown = false;
+      }
     });
   }
 
