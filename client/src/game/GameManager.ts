@@ -1244,7 +1244,7 @@ export class GameManager {
     document.addEventListener("keydown", (e) => {
       if (this.currentPhase !== GamePhase.ACTIVE && this.currentPhase !== GamePhase.HIDING) return;
 
-      if (e.code === "Digit2") {
+      if (e.code === "Digit2" && this.localIsAlive) {
         e.preventDefault();
         if (this.soundMemePanel.isVisible()) {
           this.soundMemePanel.cycleNext();
@@ -1831,6 +1831,15 @@ export class GameManager {
       }
     }
     this.minimap.updateTeammates(teammates);
+
+    // Update detected prop positions in realtime
+    if (this.latestRoomState?.players) {
+      const positions = new Map<string, { x: number; z: number }>();
+      for (const p of this.latestRoomState.players) {
+        positions.set(p.sessionId, { x: p.x, z: p.z });
+      }
+      this.minimap.updateDetectedPositions(positions);
+    }
   }
 
   private updatePropHUD() {

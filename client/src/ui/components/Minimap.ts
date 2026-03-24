@@ -7,6 +7,7 @@ const MAP_CX = (MAP_MIN_X + MAP_MAX_X) / 2;
 const MAP_CZ = (MAP_MIN_Z + MAP_MAX_Z) / 2;
 
 interface DetectedProp {
+  sessionId: string;
   x: number;
   z: number;
   expireTime: number;
@@ -69,10 +70,28 @@ export class Minimap {
     if (this.visible) this.draw();
   }
 
-  addDetectedProps(detected: { x: number; z: number }[]) {
+  addDetectedProps(detected: { sessionId?: string; x: number; z: number }[]) {
     const expire = Date.now() + 5000;
     for (const d of detected) {
-      this.detectedProps.push({ x: d.x, z: d.z, expireTime: expire });
+      const sid = d.sessionId || `${d.x}_${d.z}`;
+      const existing = this.detectedProps.find(p => p.sessionId === sid);
+      if (existing) {
+        existing.expireTime = expire;
+        existing.x = d.x;
+        existing.z = d.z;
+      } else {
+        this.detectedProps.push({ sessionId: sid, x: d.x, z: d.z, expireTime: expire });
+      }
+    }
+  }
+
+  updateDetectedPositions(positions: Map<string, { x: number; z: number }>) {
+    for (const dp of this.detectedProps) {
+      const pos = positions.get(dp.sessionId);
+      if (pos) {
+        dp.x = pos.x;
+        dp.z = pos.z;
+      }
     }
   }
 
