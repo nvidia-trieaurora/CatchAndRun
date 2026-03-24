@@ -1010,6 +1010,62 @@ body {
   font-weight: 600;
 }
 
+/* Scope Overlay */
+.scope-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 55;
+  pointer-events: none;
+  display: none;
+}
+
+.scope-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50vh;
+  height: 50vh;
+  transform: translate(-50%, -50%);
+  border: 3px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7);
+}
+
+.scope-cross-h {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40vh;
+  height: 1px;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.scope-cross-v {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1px;
+  height: 40vh;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.scope-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  transform: translate(-50%, -50%);
+  background: #ff3333;
+  border-radius: 50%;
+  box-shadow: 0 0 4px #ff3333;
+}
+
 /* Voice Controls */
 .voice-controls {
   position: fixed;

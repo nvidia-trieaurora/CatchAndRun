@@ -107,6 +107,9 @@ export class GameManager {
   private lastGrenadeTime = 0;
   private grenadesUsed = 0;
   private viewPropIndex = 0;
+  private scopeActive = false;
+  private scopeOverlay: HTMLElement | null = null;
+  private defaultFov = 75;
   private lastScanTime = 0;
 
   private inputSeq = 0;
@@ -184,8 +187,8 @@ export class GameManager {
 
     if (!this.mobile) {
       document.addEventListener("click", () => {
-        if (this.currentPhase === GamePhase.ACTIVE || this.currentPhase === GamePhase.HIDING) {
-          if (!this.input.isPointerLocked() && this.localIsAlive) {
+        if (this.currentPhase === GamePhase.ACTIVE || this.currentPhase === GamePhase.HIDING || this.currentPhase === GamePhase.ROUND_END) {
+          if (!this.input.isPointerLocked()) {
             this.input.requestPointerLock();
           }
         }
@@ -370,6 +373,7 @@ export class GameManager {
         this.localTransformCount = 0;
         this.grenadesUsed = 0;
         this.lastGrenadeTime = 0;
+        this.disableScope();
         this.lastScanTime = 0;
         this.lastHunterBoostTime = 0;
         this.lastPhaseWalkTime = 0;
@@ -1143,8 +1147,8 @@ export class GameManager {
     panel.innerHTML = `
       <div style="color:#fff;font-weight:bold;margin-bottom:8px;font-size:0.9rem;">Controls</div>
       <div style="color:#4fc3f7;font-weight:bold;margin-bottom:4px;">Hunter</div>
-      <b>LMB</b> Shoot &bull; <b>R</b> Reload &bull; <b>Q</b> Grenade<br>
-      <b>E</b> Scanner &bull; <b>T</b> Speed Boost &bull; <b>1</b> Phase-Walk<br>
+      <b>LMB</b> Shoot &bull; <b>RMB</b> Scope &bull; <b>R</b> Reload<br>
+      <b>Q</b> Grenade &bull; <b>E</b> Scanner &bull; <b>T</b> Boost &bull; <b>1</b> Phase-Walk<br>
       <b>WASD</b> Move &bull; <b>Space</b> Jump &bull; <b>Shift</b> Crouch<br>
       <div style="color:#66bb6a;font-weight:bold;margin:6px 0 4px;">Prop</div>
       <b>WASD</b> Move &bull; <b>Space</b> Jump &bull; <b>E</b> Transform (2x max)<br>
@@ -1465,6 +1469,11 @@ export class GameManager {
   private handleHunterActions(_dt: number) {
     if (this.currentPhase !== GamePhase.ACTIVE) return;
 
+    // Right-click scope toggle
+    if (this.input.consumeRightClick()) {
+      this.toggleScope();
+    }
+
     const state = this.input.getState();
 
     if (this.grenadeMode) {
@@ -1567,6 +1576,7 @@ export class GameManager {
   }
 
   private enterGrenadeMode() {
+    this.disableScope();
     this.grenadeMode = true;
     if (this.fpGun) this.fpGun.visible = false;
 
@@ -1742,6 +1752,46 @@ export class GameManager {
     this.duplicatesLeft = 4;
   }
 
+  private toggleScope() {
+    this.scopeActive = !this.scopeActive;
+
+    if (this.scopeActive) {
+      this.camera.fov = 30;
+      this.camera.updateProjectionMatrix();
+      (this.hunterController as any).speed = 4;
+
+      if (!this.scopeOverlay) {
+        this.scopeOverlay = document.createElement("div");
+        this.scopeOverlay.className = "scope-overlay";
+        this.scopeOverlay.innerHTML = `
+          <div class="scope-ring"></div>
+          <div class="scope-cross-h"></div>
+          <div class="scope-cross-v"></div>
+          <div class="scope-dot"></div>
+        `;
+        document.body.appendChild(this.scopeOverlay);
+      }
+      this.scopeOverlay.style.display = "block";
+      if (this.fpGun) this.fpGun.visible = false;
+    } else {
+      this.camera.fov = this.defaultFov;
+      this.camera.updateProjectionMatrix();
+      (this.hunterController as any).speed = 10;
+
+      if (this.scopeOverlay) this.scopeOverlay.style.display = "none";
+      if (this.fpGun) this.fpGun.visible = true;
+    }
+  }
+
+  private disableScope() {
+    if (!this.scopeActive) return;
+    this.scopeActive = false;
+    this.camera.fov = this.defaultFov;
+    this.camera.updateProjectionMatrix();
+    if (this.scopeOverlay) this.scopeOverlay.style.display = "none";
+    if (this.fpGun) this.fpGun.visible = true;
+  }
+
   private static RARITY_WEIGHTS: Record<string, number> = {
     common: 70,
     uncommon: 25,
@@ -1847,7 +1897,7 @@ export class GameManager {
     const maxHp = (propDef as any)?.hp || PROP_MAX_HEALTH;
     this.gameHUD.updateHealth(this.localHealth, maxHp);
     this.gameHUD.updatePropInfo(propDef?.name || "", this.localIsLocked);
-    const cdInvis = Math.max(0, 120000 - (Date.now() - this.lastAbilityTime));
+    const cdInvis = Math.max(0, 40000 - (Date.now() - this.lastAbilityTime));
     const cdSpeed = Math.max(0, 30000 - (Date.now() - this.lastAbility2Time));
     const transformsLeft = 2 - this.localTransformCount;
     this.gameHUD.updatePropAbilities(cdInvis, cdSpeed, transformsLeft, this.duplicatesLeft);

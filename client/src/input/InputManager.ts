@@ -26,6 +26,7 @@ export class InputManager {
   private chatActive = false;
   private onTabToggle: (() => void) | null = null;
   isMobileMode = false;
+  private rightClickToggled = false;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -48,10 +49,15 @@ export class InputManager {
     document.addEventListener("mousedown", (e) => {
       if (!this.enabled) return;
       if (e.button === 0) this.mouseDown = true;
+      if (e.button === 2) this.rightClickToggled = true;
     });
 
     document.addEventListener("mouseup", (e) => {
       if (e.button === 0) this.mouseDown = false;
+    });
+
+    document.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
     });
 
     document.addEventListener("mousemove", (e) => {
@@ -166,5 +172,13 @@ export class InputManager {
 
   setMouseDown(down: boolean) {
     this.mouseDown = down;
+  }
+
+  consumeRightClick(): boolean {
+    if (this.rightClickToggled) {
+      this.rightClickToggled = false;
+      return true;
+    }
+    return false;
   }
 }

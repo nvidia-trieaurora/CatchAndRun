@@ -428,12 +428,12 @@ function buildConstructionZone(B: MapBoxHelper) {
     B.addCollider(tX - tW / 2 - 0.15, fy - 0.12, tZ - tD / 2 - 0.15, tX + tW / 2 + 0.15, fy + 0.05, tZ + tD / 2 + 0.15);
     // Guardrails only on 3 sides (leave stair side open for entry)
     if (openSide !== 1) {
-      B.colorBox(tW + 0.3, 0.05, 0.05, tX, fy + 0.9, tZ - tD / 2, CZ.yellow, 0.6, 0.3, false);
-      B.addCollider(tX - tW / 2, fy, tZ - tD / 2 - 0.1, tX + tW / 2, fy + 1.0, tZ - tD / 2 + 0.1);
+    B.colorBox(tW + 0.3, 0.05, 0.05, tX, fy + 0.9, tZ - tD / 2, CZ.yellow, 0.6, 0.3, false);
+    B.addCollider(tX - tW / 2, fy, tZ - tD / 2 - 0.1, tX + tW / 2, fy + 1.0, tZ - tD / 2 + 0.1);
     }
     if (openSide !== -1) {
-      B.colorBox(tW + 0.3, 0.05, 0.05, tX, fy + 0.9, tZ + tD / 2, CZ.yellow, 0.6, 0.3, false);
-      B.addCollider(tX - tW / 2, fy, tZ + tD / 2 - 0.1, tX + tW / 2, fy + 1.0, tZ + tD / 2 + 0.1);
+    B.colorBox(tW + 0.3, 0.05, 0.05, tX, fy + 0.9, tZ + tD / 2, CZ.yellow, 0.6, 0.3, false);
+    B.addCollider(tX - tW / 2, fy, tZ + tD / 2 - 0.1, tX + tW / 2, fy + 1.0, tZ + tD / 2 + 0.1);
     }
     // Side guardrails (always present)
     B.colorBox(0.05, 0.05, tD, tX - tW / 2, fy + 0.9, tZ, CZ.yellow, 0.6, 0.3, false);

@@ -540,8 +540,8 @@ export class GameRoom extends Room<GameState> {
     const now = Date.now();
 
     if (player.role === PlayerRole.PROP) {
-      // Q = Invisibility: become invisible for 5s, cooldown 120s
-      const cd = 120000;
+      // Q = Invisibility: become invisible for 7s, cooldown 40s
+      const cd = 40000;
       if (now - player.lastAbilityTime < cd) return;
       player.lastAbilityTime = now;
 
