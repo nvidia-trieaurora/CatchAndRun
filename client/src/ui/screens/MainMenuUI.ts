@@ -1,4 +1,4 @@
-import { t, onLangChange } from "../../i18n/i18n";
+import { t, getLang, setLang, onLangChange } from "../../i18n/i18n";
 
 export interface MainMenuCallbacks {
   onQuickJoin: (nickname: string) => Promise<void>;
@@ -51,6 +51,9 @@ export class MainMenuUI {
   private buildHTML() {
     this.element.innerHTML = `
       <div class="menu-container">
+        <div style="text-align:right;margin-bottom:8px;">
+          <button class="btn-lang" id="btn-lang">${getLang() === "en" ? "🇻🇳 Tiếng Việt" : "🇬🇧 English"}</button>
+        </div>
         <h1 class="game-title">${t("menu.title")}</h1>
         <p class="game-subtitle">${t("menu.subtitle")}</p>
 
@@ -105,6 +108,10 @@ export class MainMenuUI {
       this.passcodeInput = this.element.querySelector("#passcode-input")!;
       this.passcodeGroup = this.element.querySelector("#passcode-group")!;
       this.roomListEl = this.element.querySelector("#room-list")!;
+
+      this.element.querySelector("#btn-lang")?.addEventListener("click", () => {
+        setLang(getLang() === "en" ? "vi" : "en");
+      });
 
       this.privateCheckbox.addEventListener("change", () => {
         this.passcodeGroup.style.display = this.privateCheckbox.checked ? "block" : "none";

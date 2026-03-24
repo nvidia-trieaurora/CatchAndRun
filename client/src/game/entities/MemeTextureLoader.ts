@@ -188,46 +188,11 @@ export function preloadMemeTextures(memes: MemeEntry[]) {
   }
 }
 
-export function getMemePreviewDataURL(id: string, name: string): string {
-  const size = 128;
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext("2d")!;
-
-  const cfg = PLACEHOLDER_CONFIGS[id] || PLACEHOLDER_CONFIGS.default;
-
-  ctx.fillStyle = cfg.bg;
-  ctx.fillRect(0, 0, size, size);
-
-  ctx.strokeStyle = cfg.fg;
-  ctx.lineWidth = 3;
-  ctx.strokeRect(2, 2, size - 4, size - 4);
-
-  ctx.fillStyle = cfg.fg;
-  ctx.font = "bold 36px monospace";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(cfg.face, size / 2, size / 2 - 8);
-
-  ctx.font = "bold 14px sans-serif";
-  ctx.fillText(name.toUpperCase(), size / 2, size - 18);
-
-  // If there's a real image loaded, try to use it for preview
+export function getMemePreviewDataURL(id: string, _name: string): string {
   const manifest = (window as any).__memeManifest as MemeEntry[] | undefined;
   const entry = manifest?.find((m) => m.id === id);
   if (entry) {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = `/assets/memes/${entry.file}`;
-    img.onload = () => {
-      ctx.clearRect(0, 0, size, size);
-      ctx.drawImage(img, 0, 0, size, size);
-      ctx.strokeStyle = "rgba(255,255,255,0.3)";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(1, 1, size - 2, size - 2);
-    };
+    return `/assets/memes/${entry.file}`;
   }
-
-  return canvas.toDataURL();
+  return "";
 }

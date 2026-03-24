@@ -1051,8 +1051,10 @@ export class GameManager {
     this.voiceUI?.hide();
   }
 
+  private guideHintEl: HTMLElement | null = null;
+
   private showGuideHint() {
-    if (localStorage.getItem("catchandrun_guide_seen")) return;
+    if (this.guideHintEl) this.guideHintEl.remove();
 
     const hint = document.createElement("div");
     hint.style.cssText = `
@@ -1062,18 +1064,21 @@ export class GameManager {
       color: #00d4ff; font-weight: 600; pointer-events: none;
       animation: guideHintPulse 1s ease-in-out infinite;
     `;
-    hint.innerHTML = `<span style="font-size:1.1rem;">&#8593;</span> Press [I] or click GUIDE for controls!`;
+    hint.innerHTML = `<span style="font-size:1.2rem;">&#9757;</span> Press [I] or click GUIDE!`;
     document.body.appendChild(hint);
+    this.guideHintEl = hint;
 
-    const style = document.createElement("style");
-    style.textContent = `@keyframes guideHintPulse { 0%,100% { opacity: 1; transform: translateY(0); } 50% { opacity: 0.6; transform: translateY(-3px); } }`;
-    document.head.appendChild(style);
+    if (!document.querySelector("#guideHintStyle")) {
+      const style = document.createElement("style");
+      style.id = "guideHintStyle";
+      style.textContent = `@keyframes guideHintPulse { 0%,100% { opacity: 1; transform: translateY(0); } 50% { opacity: 0.5; transform: translateY(-4px); } }`;
+      document.head.appendChild(style);
+    }
 
     setTimeout(() => {
       hint.remove();
-      style.remove();
-      localStorage.setItem("catchandrun_guide_seen", "1");
-    }, 5000);
+      if (this.guideHintEl === hint) this.guideHintEl = null;
+    }, 3000);
   }
 
   private setupChat() {

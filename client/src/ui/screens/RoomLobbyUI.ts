@@ -128,11 +128,11 @@ export class RoomLobbyUI {
     if (!this.memeGridEl) return;
 
     this.memeGridEl.innerHTML = memes.map((m) => {
-      const preview = getMemePreviewDataURL(m.id, m.name);
+      const preview = `/assets/memes/${m.file}`;
       const isSelected = m.id === this.selectedMemeId;
       return `
         <div class="meme-item ${isSelected ? "selected" : ""}" data-meme-id="${m.id}">
-          <img src="${preview}" alt="${m.name}" />
+          <img src="${preview}" alt="${m.name}" style="object-fit:cover;" />
           <span class="meme-name">${m.name}</span>
         </div>
       `;

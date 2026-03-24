@@ -315,6 +315,24 @@ body {
   border-color: #00d4ff;
 }
 
+.btn-lang {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid #444;
+  color: #ccc;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.btn-lang:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #00d4ff;
+  color: #fff;
+}
+
 .join-code-row {
   display: flex;
   gap: 8px;
