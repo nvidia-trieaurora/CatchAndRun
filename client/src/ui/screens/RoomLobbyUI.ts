@@ -57,6 +57,34 @@ export class RoomLobbyUI {
             <div class="meme-grid" id="meme-grid"></div>
           </div>
 
+          <div class="lobby-settings" id="lobby-settings" style="display:none;">
+            <h3>GAME SETTINGS (Host only)</h3>
+            <div class="setting-item">
+              <label>Max Players</label>
+              <div class="setting-control">
+                <button class="setting-btn" data-setting="maxPlayers" data-dir="-1">-</button>
+                <span id="cfg-maxPlayers">10</span>
+                <button class="setting-btn" data-setting="maxPlayers" data-dir="1">+</button>
+              </div>
+            </div>
+            <div class="setting-item">
+              <label>Rounds</label>
+              <div class="setting-control">
+                <button class="setting-btn" data-setting="totalRounds" data-dir="-1">-</button>
+                <span id="cfg-totalRounds">5</span>
+                <button class="setting-btn" data-setting="totalRounds" data-dir="1">+</button>
+              </div>
+            </div>
+            <div class="setting-item">
+              <label>Round Time</label>
+              <div class="setting-control">
+                <button class="setting-btn" data-setting="roundTime" data-dir="-30">-</button>
+                <span id="cfg-roundTime">4:00</span>
+                <button class="setting-btn" data-setting="roundTime" data-dir="30">+</button>
+              </div>
+            </div>
+          </div>
+
           <div class="chat-box">
             <h3>${t("lobby.chat")}</h3>
             <div class="chat-messages" id="chat-messages"></div>
@@ -87,6 +115,30 @@ export class RoomLobbyUI {
       this.readyBtnEl = this.element.querySelector("#btn-ready")!;
       this.roomCodeEl = this.element.querySelector("#room-code")!;
       this.memeGridEl = this.element.querySelector("#meme-grid")!;
+
+      const cfgState = { maxPlayers: 10, totalRounds: 5, roundTime: 240 };
+      this.element.querySelectorAll(".setting-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const setting = (btn as HTMLElement).dataset.setting!;
+          const dir = Number((btn as HTMLElement).dataset.dir!);
+          if (setting === "maxPlayers") {
+            cfgState.maxPlayers = Math.min(10, Math.max(5, cfgState.maxPlayers + dir));
+            const el = this.element.querySelector("#cfg-maxPlayers");
+            if (el) el.textContent = String(cfgState.maxPlayers);
+            callbacks.onConfigChange({ maxPlayers: cfgState.maxPlayers });
+          } else if (setting === "totalRounds") {
+            cfgState.totalRounds = Math.min(10, Math.max(1, cfgState.totalRounds + dir));
+            const el = this.element.querySelector("#cfg-totalRounds");
+            if (el) el.textContent = String(cfgState.totalRounds);
+            callbacks.onConfigChange({ totalRounds: cfgState.totalRounds });
+          } else if (setting === "roundTime") {
+            cfgState.roundTime = Math.min(600, Math.max(60, cfgState.roundTime + dir));
+            const el = this.element.querySelector("#cfg-roundTime");
+            if (el) el.textContent = `${Math.floor(cfgState.roundTime / 60)}:${String(cfgState.roundTime % 60).padStart(2, "0")}`;
+            callbacks.onConfigChange({ roundTime: cfgState.roundTime });
+          }
+        });
+      });
 
       this.element.querySelector("#btn-ready")!.addEventListener("click", () => {
         callbacks.onReady();
@@ -209,6 +261,8 @@ export class RoomLobbyUI {
   setIsHost(isHost: boolean) {
     if (!this.startBtnEl) return;
     this.startBtnEl.style.display = isHost ? "block" : "none";
+    const settingsEl = this.element.querySelector("#lobby-settings") as HTMLElement;
+    if (settingsEl) settingsEl.style.display = isHost ? "block" : "none";
   }
 
   updateStartButton(allReady: boolean, playerCount: number) {

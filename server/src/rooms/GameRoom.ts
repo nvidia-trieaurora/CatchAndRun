@@ -815,7 +815,7 @@ export class GameRoom extends Room<GameState> {
     if (this.state.phase !== GamePhase.WAITING) return;
 
     if (data.maxPlayers !== undefined) {
-      this.state.config.maxPlayers = Math.min(Math.max(data.maxPlayers, 2), MAX_PLAYERS_PER_ROOM);
+      this.state.config.maxPlayers = Math.min(Math.max(data.maxPlayers, 5), MAX_PLAYERS_PER_ROOM);
       this.maxClients = this.state.config.maxPlayers;
     }
     if (data.roundTime !== undefined) {
