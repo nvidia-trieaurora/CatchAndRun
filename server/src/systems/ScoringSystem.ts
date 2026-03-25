@@ -23,13 +23,13 @@ export class ScoringSystem {
   updateSurvivalScores(dt: number) {
     this.survivalAccumulator += dt / 1000;
 
-    if (this.survivalAccumulator >= 1) {
-      const seconds = Math.floor(this.survivalAccumulator);
-      this.survivalAccumulator -= seconds;
+    if (this.survivalAccumulator >= 2) {
+      const ticks = Math.floor(this.survivalAccumulator / 2);
+      this.survivalAccumulator -= ticks * 2;
 
       this.room.state.players.forEach((player) => {
         if (player.role === PlayerRole.PROP && player.isAlive) {
-          player.score += SCORE_PROP_SURVIVE_PER_SEC * seconds;
+          player.score += SCORE_PROP_SURVIVE_PER_SEC * ticks;
         }
       });
     }

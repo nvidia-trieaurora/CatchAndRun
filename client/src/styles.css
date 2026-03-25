@@ -1047,9 +1047,9 @@ body {
   width: 50vh;
   height: 50vh;
   transform: translate(-50%, -50%);
-  border: 3px solid rgba(255, 255, 255, 0.7);
+  border: 3px solid rgba(255, 255, 255, 0.8);
   border-radius: 50%;
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 1);
 }
 
 .scope-cross-h {

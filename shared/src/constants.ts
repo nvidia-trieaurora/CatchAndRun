@@ -1,4 +1,4 @@
-export const MAX_PLAYERS_PER_ROOM = 8;
+export const MAX_PLAYERS_PER_ROOM = 10;
 export const MAX_ROOMS = 4;
 export const MIN_PLAYERS_TO_START = 2;
 export const SERVER_TICK_RATE = 20;
@@ -56,7 +56,7 @@ export const ANTI_CHEAT_SPEED_TOLERANCE = 1.2;
 export const ANTI_CHEAT_MIN_FIRE_INTERVAL_MS = 100;
 
 export const SCORE_PROP_KILL = 100;
-export const SCORE_PROP_SURVIVE_PER_SEC = 2;
+export const SCORE_PROP_SURVIVE_PER_SEC = 1;
 export const SCORE_HUNTER_WIN_BONUS = 200;
 export const SCORE_PROP_WIN_BONUS = 150;
 

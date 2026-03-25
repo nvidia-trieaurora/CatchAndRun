@@ -26,7 +26,7 @@ export class InputManager {
   private chatActive = false;
   private onTabToggle: (() => void) | null = null;
   isMobileMode = false;
-  private rightClickToggled = false;
+  private rightMouseDown = false;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -49,11 +49,12 @@ export class InputManager {
     document.addEventListener("mousedown", (e) => {
       if (!this.enabled) return;
       if (e.button === 0) this.mouseDown = true;
-      if (e.button === 2) this.rightClickToggled = true;
+      if (e.button === 2) this.rightMouseDown = true;
     });
 
     document.addEventListener("mouseup", (e) => {
       if (e.button === 0) this.mouseDown = false;
+      if (e.button === 2) this.rightMouseDown = false;
     });
 
     document.addEventListener("contextmenu", (e) => {
@@ -72,18 +73,21 @@ export class InputManager {
       if (wasLocked && !this.locked) {
         this.keys.clear();
         this.mouseDown = false;
+        this.rightMouseDown = false;
       }
     });
 
     window.addEventListener("blur", () => {
       this.keys.clear();
       this.mouseDown = false;
+      this.rightMouseDown = false;
     });
 
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         this.keys.clear();
         this.mouseDown = false;
+        this.rightMouseDown = false;
       }
     });
   }
@@ -174,11 +178,7 @@ export class InputManager {
     this.mouseDown = down;
   }
 
-  consumeRightClick(): boolean {
-    if (this.rightClickToggled) {
-      this.rightClickToggled = false;
-      return true;
-    }
-    return false;
+  isRightMouseDown(): boolean {
+    return this.rightMouseDown;
   }
 }

@@ -1474,9 +1474,12 @@ export class GameManager {
   private handleHunterActions(_dt: number) {
     if (this.currentPhase !== GamePhase.ACTIVE) return;
 
-    // Right-click scope toggle
-    if (this.input.consumeRightClick()) {
-      this.toggleScope();
+    // Right-click hold = scope
+    const wantsScope = this.input.isRightMouseDown();
+    if (wantsScope && !this.scopeActive) {
+      this.enableScope();
+    } else if (!wantsScope && this.scopeActive) {
+      this.disableScope();
     }
 
     const state = this.input.getState();
@@ -1757,35 +1760,25 @@ export class GameManager {
     this.duplicatesLeft = 4;
   }
 
-  private toggleScope() {
-    this.scopeActive = !this.scopeActive;
+  private enableScope() {
+    this.scopeActive = true;
+    this.camera.fov = 30;
+    this.camera.updateProjectionMatrix();
+    (this.hunterController as any).speed = 3;
 
-    if (this.scopeActive) {
-      this.camera.fov = 30;
-      this.camera.updateProjectionMatrix();
-      (this.hunterController as any).speed = 4;
-
-      if (!this.scopeOverlay) {
-        this.scopeOverlay = document.createElement("div");
-        this.scopeOverlay.className = "scope-overlay";
-        this.scopeOverlay.innerHTML = `
-          <div class="scope-ring"></div>
-          <div class="scope-cross-h"></div>
-          <div class="scope-cross-v"></div>
-          <div class="scope-dot"></div>
-        `;
-        document.body.appendChild(this.scopeOverlay);
-      }
-      this.scopeOverlay.style.display = "block";
-      if (this.fpGun) this.fpGun.visible = false;
-    } else {
-      this.camera.fov = this.defaultFov;
-      this.camera.updateProjectionMatrix();
-      (this.hunterController as any).speed = 10;
-
-      if (this.scopeOverlay) this.scopeOverlay.style.display = "none";
-      if (this.fpGun) this.fpGun.visible = true;
+    if (!this.scopeOverlay) {
+      this.scopeOverlay = document.createElement("div");
+      this.scopeOverlay.className = "scope-overlay";
+      this.scopeOverlay.innerHTML = `
+        <div class="scope-ring"></div>
+        <div class="scope-cross-h"></div>
+        <div class="scope-cross-v"></div>
+        <div class="scope-dot"></div>
+      `;
+      document.body.appendChild(this.scopeOverlay);
     }
+    this.scopeOverlay.style.display = "block";
+    if (this.fpGun) this.fpGun.visible = false;
   }
 
   private disableScope() {
@@ -1793,6 +1786,7 @@ export class GameManager {
     this.scopeActive = false;
     this.camera.fov = this.defaultFov;
     this.camera.updateProjectionMatrix();
+    (this.hunterController as any).speed = 10;
     if (this.scopeOverlay) this.scopeOverlay.style.display = "none";
     if (this.fpGun) this.fpGun.visible = true;
   }
