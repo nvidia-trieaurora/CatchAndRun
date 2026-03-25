@@ -88,7 +88,12 @@ export class MatchStateMachine {
       if (player.role === PlayerRole.HUNTER) aliveHunters++;
     });
 
-    if (aliveProps === 0) {
+    let totalProps = 0;
+    state.players.forEach((player) => {
+      if (player.role === PlayerRole.PROP) totalProps++;
+    });
+
+    if (totalProps > 0 && aliveProps === 0) {
       this.endRound("hunters");
     } else if (aliveHunters === 0) {
       this.endRound("props");

@@ -40,64 +40,67 @@ export class RoomLobbyUI {
 
   private buildHTML() {
     this.element.innerHTML = `
-      <div class="lobby-container">
+      <div class="lobby-wrapper">
         <div class="lobby-header">
           <h2>${t("lobby.title")}</h2>
           <div class="room-code-display" id="room-code">------</div>
         </div>
 
-        <div class="player-list" id="player-list-panel">
-          <h3>${t("lobby.players")}</h3>
-          <div id="player-list"></div>
-        </div>
-
-        <div class="lobby-sidebar">
-          <div class="meme-section">
-            <h3>${t("lobby.choose_meme")}</h3>
-            <div class="meme-grid" id="meme-grid"></div>
-          </div>
-
-          <div class="lobby-settings" id="lobby-settings" style="display:none;">
-            <h3>GAME SETTINGS (Host only)</h3>
-            <div class="setting-item">
-              <label>Max Players</label>
-              <div class="setting-control">
-                <button class="setting-btn" data-setting="maxPlayers" data-dir="-1">-</button>
-                <span id="cfg-maxPlayers">10</span>
-                <button class="setting-btn" data-setting="maxPlayers" data-dir="1">+</button>
-              </div>
+        <div class="lobby-body">
+          <div class="lobby-col lobby-col-left">
+            <div class="lobby-panel player-list" id="player-list-panel">
+              <h3>${t("lobby.players")}</h3>
+              <div id="player-list"></div>
             </div>
-            <div class="setting-item">
-              <label>Rounds</label>
-              <div class="setting-control">
-                <button class="setting-btn" data-setting="totalRounds" data-dir="-1">-</button>
-                <span id="cfg-totalRounds">5</span>
-                <button class="setting-btn" data-setting="totalRounds" data-dir="1">+</button>
-              </div>
-            </div>
-            <div class="setting-item">
-              <label>Round Time</label>
-              <div class="setting-control">
-                <button class="setting-btn" data-setting="roundTime" data-dir="-30">-</button>
-                <span id="cfg-roundTime">4:00</span>
-                <button class="setting-btn" data-setting="roundTime" data-dir="30">+</button>
+            <div class="lobby-panel chat-box">
+              <h3>${t("lobby.chat")}</h3>
+              <div class="chat-messages" id="chat-messages"></div>
+              <div class="chat-input-row">
+                <input type="text" id="chat-input" placeholder="${t("lobby.chat_placeholder")}" maxlength="200" />
+                <button id="btn-chat-send">${t("lobby.send")}</button>
               </div>
             </div>
           </div>
 
-          <div class="chat-box">
-            <h3>${t("lobby.chat")}</h3>
-            <div class="chat-messages" id="chat-messages"></div>
-            <div class="chat-input-row">
-              <input type="text" id="chat-input" placeholder="${t("lobby.chat_placeholder")}" maxlength="200" />
-              <button id="btn-chat-send">${t("lobby.send")}</button>
+          <div class="lobby-col lobby-col-right">
+            <div class="lobby-panel meme-section">
+              <h3>${t("lobby.choose_meme")}</h3>
+              <div class="meme-grid" id="meme-grid"></div>
             </div>
-          </div>
 
-          <div class="lobby-actions">
-            <button class="btn btn-primary" id="btn-ready">${t("lobby.ready")}</button>
-            <button class="btn btn-primary" id="btn-start" style="display:none;">${t("lobby.start_game")}</button>
-            <button class="btn btn-danger" id="btn-leave">${t("lobby.leave_room")}</button>
+            <div class="lobby-panel lobby-settings" id="lobby-settings" style="display:none;">
+              <h3>GAME SETTINGS</h3>
+              <div class="setting-item">
+                <label>Max Players</label>
+                <div class="setting-control">
+                  <button class="setting-btn" data-setting="maxPlayers" data-dir="-1">-</button>
+                  <span id="cfg-maxPlayers">10</span>
+                  <button class="setting-btn" data-setting="maxPlayers" data-dir="1">+</button>
+                </div>
+              </div>
+              <div class="setting-item">
+                <label>Rounds</label>
+                <div class="setting-control">
+                  <button class="setting-btn" data-setting="totalRounds" data-dir="-1">-</button>
+                  <span id="cfg-totalRounds">5</span>
+                  <button class="setting-btn" data-setting="totalRounds" data-dir="1">+</button>
+                </div>
+              </div>
+              <div class="setting-item">
+                <label>Round Time</label>
+                <div class="setting-control">
+                  <button class="setting-btn" data-setting="roundTime" data-dir="-30">-</button>
+                  <span id="cfg-roundTime">4:00</span>
+                  <button class="setting-btn" data-setting="roundTime" data-dir="30">+</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="lobby-actions">
+              <button class="btn btn-primary" id="btn-ready">${t("lobby.ready")}</button>
+              <button class="btn btn-primary" id="btn-start" style="display:none;">${t("lobby.start_game")}</button>
+              <button class="btn btn-danger" id="btn-leave">${t("lobby.leave_room")}</button>
+            </div>
           </div>
         </div>
       </div>
