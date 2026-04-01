@@ -80,6 +80,8 @@ export class MatchStateMachine {
     const state = this.room.state;
     if (state.phase !== GamePhase.ACTIVE && state.phase !== GamePhase.HIDING) return;
 
+    if (state.players.size < 2) return;
+
     let aliveProps = 0;
     let aliveHunters = 0;
     state.players.forEach((player) => {
@@ -88,12 +90,7 @@ export class MatchStateMachine {
       if (player.role === PlayerRole.HUNTER) aliveHunters++;
     });
 
-    let totalProps = 0;
-    state.players.forEach((player) => {
-      if (player.role === PlayerRole.PROP) totalProps++;
-    });
-
-    if (totalProps > 0 && aliveProps === 0) {
+    if (aliveProps === 0) {
       this.endRound("hunters");
     } else if (aliveHunters === 0) {
       this.endRound("props");
