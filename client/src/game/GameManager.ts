@@ -383,6 +383,7 @@ export class GameManager {
         this.duplicatesLeft = 4;
         this.viewPropIndex = 0;
         this.clearDuplicates();
+        this.minimap.setGhostMode(false);
         this.showGuideHint();
         this.buildMapIfNeeded();
         this.initControllers();
@@ -765,6 +766,8 @@ export class GameManager {
         }
         this.gameHUD.updateRole("ghost");
         this.touchInput?.setRole("spectator");
+        this.minimap.setGhostMode(true);
+        this.disableScope();
         this.spectatorController.setPosition(pos.x, pos.y + 2, pos.z);
       }
     });
@@ -1406,6 +1409,7 @@ export class GameManager {
   private updateGameplay(dt: number) {
     if (!this.localIsAlive) {
       this.spectatorController?.update(dt);
+      this.updateGhostMinimap();
       return;
     }
 
@@ -1896,8 +1900,8 @@ export class GameManager {
     const maxHp = (propDef as any)?.hp || PROP_MAX_HEALTH;
     this.gameHUD.updateHealth(this.localHealth, maxHp);
     this.gameHUD.updatePropInfo(propDef?.name || "", this.localIsLocked);
-    const cdInvis = Math.max(0, 40000 - (Date.now() - this.lastAbilityTime));
-    const cdSpeed = Math.max(0, 30000 - (Date.now() - this.lastAbility2Time));
+    const cdInvis = Math.max(0, 20000 - (Date.now() - this.lastAbilityTime));
+    const cdSpeed = Math.max(0, 20000 - (Date.now() - this.lastAbility2Time));
     const transformsLeft = 2 - this.localTransformCount;
     this.gameHUD.updatePropAbilities(cdInvis, cdSpeed, transformsLeft, this.duplicatesLeft);
     this.gameHUD.updateDamageOverlay(this.localHealth, maxHp, false);
@@ -1919,6 +1923,14 @@ export class GameManager {
       }
     }
     this.minimap.updateTeammates(teammates);
+  }
+
+  private updateGhostMinimap() {
+    this.minimap.show();
+    const cam = this.camera.position;
+    const euler = new THREE.Euler().setFromQuaternion(this.camera.quaternion);
+    this.minimap.updatePlayerPosition(cam.x, cam.z, euler.y);
+    this.minimap.updateTeammates([]);
   }
 
   private sendInputToServer(position: THREE.Vector3) {

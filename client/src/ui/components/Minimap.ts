@@ -32,6 +32,7 @@ export class Minimap {
   private soundPings: SoundPing[] = [];
   private teammates: { x: number; z: number; yaw: number }[] = [];
   private visible = false;
+  private ghostMode = false;
 
   constructor() {
     this.element = document.createElement("div");
@@ -93,6 +94,10 @@ export class Minimap {
         dp.z = pos.z;
       }
     }
+  }
+
+  setGhostMode(ghost: boolean) {
+    this.ghostMode = ghost;
   }
 
   updateTeammates(teammates: { x: number; z: number; yaw: number }[]) {
@@ -196,7 +201,7 @@ export class Minimap {
     ctx.lineTo(-4, 5);
     ctx.lineTo(4, 5);
     ctx.closePath();
-    ctx.fillStyle = "#44ff44";
+    ctx.fillStyle = this.ghostMode ? "#c080ff" : "#44ff44";
     ctx.fill();
     ctx.strokeStyle = "#ffffff";
     ctx.lineWidth = 1;
@@ -213,7 +218,7 @@ export class Minimap {
     ctx.lineTo(-8, -fovLen);
     ctx.lineTo(8, -fovLen);
     ctx.closePath();
-    ctx.fillStyle = "rgba(68, 255, 68, 0.06)";
+    ctx.fillStyle = this.ghostMode ? "rgba(192, 128, 255, 0.06)" : "rgba(68, 255, 68, 0.06)";
     ctx.fill();
     ctx.restore();
 
