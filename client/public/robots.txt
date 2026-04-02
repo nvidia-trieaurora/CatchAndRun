@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://trieaurora-catchandrun.pro.vn/sitemap.xml
