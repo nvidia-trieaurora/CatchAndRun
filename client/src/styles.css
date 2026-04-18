@@ -1090,6 +1090,63 @@ body {
   font-weight: 600;
 }
 
+/* Scoreboard (Tab) */
+.hud-scoreboard {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  padding: 16px 22px;
+  min-width: 520px;
+  max-width: 80vw;
+  z-index: 200;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-family: inherit;
+}
+
+.hud-scoreboard-title {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #fff;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.hud-scoreboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.hud-scoreboard-table th {
+  text-align: center;
+  padding: 6px 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hud-scoreboard-table td {
+  text-align: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.hud-scoreboard-table tr:last-child td {
+  border-bottom: none;
+}
+
 /* Scope Overlay */
 .scope-overlay {
   position: fixed;

@@ -21,9 +21,13 @@ export class GameHUD {
   private controlsHintEl!: HTMLElement;
   private aliveCountEl!: HTMLElement;
   private roundEl!: HTMLElement;
+  private scoreboardEl!: HTMLElement;
+  private scoreboardBodyEl!: HTMLElement;
   private killfeedEntries: { el: HTMLElement; time: number }[] = [];
   private chatOpen = false;
+  private scoreboardOpen = false;
   private onChatSend: ((message: string) => void) | null = null;
+  private onChatClose: (() => void) | null = null;
 
   constructor() {
     this.element = document.createElement("div");
@@ -72,6 +76,22 @@ export class GameHUD {
       </div>
 
       <div class="hud-controls-hint" id="hud-controls-hint" style="display:none;"></div>
+
+      <div class="hud-scoreboard" id="hud-scoreboard" style="display:none;">
+        <div class="hud-scoreboard-title">${t("hud.scoreboard_title")}</div>
+        <table class="hud-scoreboard-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">${t("hud.sb_player")}</th>
+              <th>${t("hud.sb_role")}</th>
+              <th>${t("hud.sb_score")}</th>
+              <th>${t("hud.sb_kills")}</th>
+              <th>${t("hud.sb_status")}</th>
+            </tr>
+          </thead>
+          <tbody id="hud-scoreboard-body"></tbody>
+        </table>
+      </div>
     `;
 
     setTimeout(() => {
@@ -94,6 +114,8 @@ export class GameHUD {
       this.controlsHintEl = this.element.querySelector("#hud-controls-hint")!;
       this.aliveCountEl = this.element.querySelector("#hud-alive-count")!;
       this.roundEl = this.element.querySelector("#hud-round")!;
+      this.scoreboardEl = this.element.querySelector("#hud-scoreboard")!;
+      this.scoreboardBodyEl = this.element.querySelector("#hud-scoreboard-body")!;
 
       this.chatInputEl.addEventListener("keydown", (e) => {
         e.stopPropagation();
@@ -103,6 +125,9 @@ export class GameHUD {
             this.onChatSend(msg);
           }
           this.chatInputEl.value = "";
+        } else if (e.key === "Escape") {
+          this.chatInputEl.value = "";
+          if (this.onChatClose) this.onChatClose();
         }
       });
     }, 0);
@@ -112,17 +137,20 @@ export class GameHUD {
     this.onChatSend = handler;
   }
 
-  toggleChat(): boolean {
-    this.chatOpen = !this.chatOpen;
+  setChatCloseHandler(handler: () => void) {
+    this.onChatClose = handler;
+  }
+
+  setChatOpen(open: boolean) {
+    this.chatOpen = open;
     if (this.chatContainerEl) {
-      this.chatContainerEl.style.display = this.chatOpen ? "flex" : "none";
-      if (this.chatOpen) {
+      this.chatContainerEl.style.display = open ? "flex" : "none";
+      if (open) {
         this.chatInputEl.focus();
       } else {
         this.chatInputEl.blur();
       }
     }
-    return this.chatOpen;
   }
 
   isChatOpen(): boolean {
@@ -360,4 +388,62 @@ export class GameHUD {
   setVisible(visible: boolean) {
     this.element.style.display = visible ? "block" : "none";
   }
+
+  showScoreboard(players: ScoreboardPlayer[]) {
+    if (!this.scoreboardEl) return;
+    this.scoreboardOpen = true;
+    this.scoreboardEl.style.display = "block";
+    this.renderScoreboard(players);
+  }
+
+  hideScoreboard() {
+    if (!this.scoreboardEl) return;
+    this.scoreboardOpen = false;
+    this.scoreboardEl.style.display = "none";
+  }
+
+  isScoreboardOpen(): boolean {
+    return this.scoreboardOpen;
+  }
+
+  updateScoreboard(players: ScoreboardPlayer[]) {
+    if (!this.scoreboardOpen) return;
+    this.renderScoreboard(players);
+  }
+
+  private renderScoreboard(players: ScoreboardPlayer[]) {
+    if (!this.scoreboardBodyEl) return;
+    const sorted = [...players].sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return b.kills - a.kills;
+    });
+    const rows = sorted.map((p) => {
+      const roleColor = p.role === "hunter" ? "#ff6b6b" : p.role === "prop" ? "#00d4ff" : "#aaa";
+      const roleLabel = p.role === "hunter" ? t("hud.hunter") : p.role === "prop" ? t("hud.prop") : t("hud.ghost");
+      const aliveLabel = p.isAlive
+        ? `<span style="color:#4caf50;">${t("hud.alive")}</span>`
+        : `<span style="color:#999;">${t("hud.dead")}</span>`;
+      const youMark = p.isLocal ? ` <span style="color:#ffd700;">(${t("hud.you")})</span>` : "";
+      const nameSafe = String(p.nickname).replace(/[<>&]/g, "");
+      return `
+        <tr>
+          <td style="text-align:left;">${nameSafe}${youMark}</td>
+          <td style="color:${roleColor};font-weight:bold;">${roleLabel}</td>
+          <td>${p.score}</td>
+          <td>${p.kills}</td>
+          <td>${aliveLabel}</td>
+        </tr>
+      `;
+    }).join("");
+    this.scoreboardBodyEl.innerHTML = rows;
+  }
+}
+
+export interface ScoreboardPlayer {
+  nickname: string;
+  role: string;
+  score: number;
+  kills: number;
+  isAlive: boolean;
+  isLocal: boolean;
 }

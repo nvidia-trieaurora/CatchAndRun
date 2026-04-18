@@ -24,7 +24,9 @@ export class InputManager {
   private canvas: HTMLCanvasElement;
   private enabled = true;
   private chatActive = false;
-  private onTabToggle: (() => void) | null = null;
+  private onScoreboardShow: (() => void) | null = null;
+  private onScoreboardHide: (() => void) | null = null;
+  private scoreboardActive = false;
   isMobileMode = false;
   private rightMouseDown = false;
 
@@ -34,7 +36,12 @@ export class InputManager {
     document.addEventListener("keydown", (e) => {
       if (e.code === "Tab") {
         e.preventDefault();
-        if (this.onTabToggle) this.onTabToggle();
+        if (e.repeat) return;
+        if (this.chatActive) return;
+        if (!this.scoreboardActive) {
+          this.scoreboardActive = true;
+          this.onScoreboardShow?.();
+        }
         return;
       }
       if (this.chatActive) return;
@@ -43,6 +50,14 @@ export class InputManager {
     });
 
     document.addEventListener("keyup", (e) => {
+      if (e.code === "Tab") {
+        e.preventDefault();
+        if (this.scoreboardActive) {
+          this.scoreboardActive = false;
+          this.onScoreboardHide?.();
+        }
+        return;
+      }
       this.keys.delete(e.code);
     });
 
@@ -131,11 +146,16 @@ export class InputManager {
     if (active) {
       this.keys.clear();
       this.mouseDown = false;
+      if (this.scoreboardActive) {
+        this.scoreboardActive = false;
+        this.onScoreboardHide?.();
+      }
     }
   }
 
-  setTabToggleHandler(handler: () => void) {
-    this.onTabToggle = handler;
+  setScoreboardHandlers(onShow: () => void, onHide: () => void) {
+    this.onScoreboardShow = onShow;
+    this.onScoreboardHide = onHide;
   }
 
   consumeMouseDelta(): { x: number; y: number } {

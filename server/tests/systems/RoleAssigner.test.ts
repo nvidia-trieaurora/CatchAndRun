@@ -43,7 +43,7 @@ describe("RoleAssigner", () => {
     expect(hunters.length).toBe(1);
   });
 
-  it("should deprioritize previous hunters for fair rotation", () => {
+  it("should produce independent random assignments across rounds", () => {
     const assigner2 = new RoleAssigner();
     const players = ["p1", "p2", "p3", "p4"];
 

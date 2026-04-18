@@ -330,6 +330,10 @@ export class GameManager {
       this.gameHUD.updateAliveCount(aliveProps, totalProps, aliveHunters, totalHunters);
     }
 
+    if (this.gameHUD.isScoreboardOpen()) {
+      this.gameHUD.updateScoreboard(this.buildScoreboardPlayers());
+    }
+
     if (data.roomCode) {
       this.roomLobby.setRoomCode(data.roomCode);
     }
@@ -1085,14 +1089,46 @@ export class GameManager {
   }
 
   private setupChat() {
-    this.input.setTabToggleHandler(() => {
-      const isOpen = this.gameHUD.toggleChat();
-      this.input.setChatActive(isOpen);
-    });
+    this.input.setScoreboardHandlers(
+      () => this.gameHUD.showScoreboard(this.buildScoreboardPlayers()),
+      () => this.gameHUD.hideScoreboard(),
+    );
 
     this.gameHUD.setChatSendHandler((message: string) => {
       this.network.send(ClientMessage.CHAT, { message });
     });
+
+    this.gameHUD.setChatCloseHandler(() => {
+      this.gameHUD.setChatOpen(false);
+      this.input.setChatActive(false);
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.code !== "Digit3") return;
+      if (this.gameHUD.isChatOpen()) {
+        this.gameHUD.setChatOpen(false);
+        this.input.setChatActive(false);
+      } else {
+        this.gameHUD.setChatOpen(true);
+        this.input.setChatActive(true);
+      }
+      e.preventDefault();
+    });
+  }
+
+  private buildScoreboardPlayers() {
+    const sid = this.network.getSessionId();
+    const players = this.latestRoomState?.players ?? [];
+    return players
+      .filter((p: any) => !p.isSpectator)
+      .map((p: any) => ({
+        nickname: p.nickname,
+        role: p.role,
+        score: p.score ?? 0,
+        kills: p.kills ?? 0,
+        isAlive: p.isAlive,
+        isLocal: p.sessionId === sid,
+      }));
   }
 
   private infoPanel: HTMLElement | null = null;
@@ -1163,7 +1199,8 @@ export class GameManager {
       <b>F</b> Lock &bull; <b>Q</b> Invisible &bull; <b>R</b> Speed<br>
       <b>T</b> Duplicate (4x, resets on transform) &bull; <b>1</b> Soul Mode<br>
       <div style="color:#fff;font-weight:bold;margin:6px 0 4px;">General</div>
-      <b>Tab</b> Open/Close Chat<br>
+      <b>Tab</b> Show Scoreboard (hold)<br>
+      <b>3</b> Open/Close Chat<br>
       <b>2</b> Open Sound Meme &rarr; <b>2</b> cycle &rarr; <b>Enter</b> play<br>
       <b>V</b> Toggle Mic &bull; <b>B</b> Voice Mode (All/Team/Mute)<br>
       <b>M</b> Toggle Music &bull; <b>I</b> Toggle Help<br>

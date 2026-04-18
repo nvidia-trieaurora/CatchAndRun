@@ -1,11 +1,9 @@
 import { PlayerRole } from "@catch-and-run/shared";
 
 export class RoleAssigner {
-  private previousHunters = new Set<string>();
-
   assignRoles(
     playerIds: string[],
-    huntersPerPlayers: number
+    _huntersPerPlayers: number
   ): Map<string, PlayerRole> {
     const roles = new Map<string, PlayerRole>();
     const count = playerIds.length;
@@ -20,23 +18,17 @@ export class RoleAssigner {
       numHunters = 3;
     }
 
-    const shuffled = [...playerIds].sort(() => Math.random() - 0.5);
+    // Fisher-Yates shuffle for unbiased random assignment each round.
+    // Every player has equal chance to be hunter or prop regardless of
+    // previous round, ensuring fair role rolls per round.
+    const shuffled = [...playerIds];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
 
-    const prioritized = shuffled.sort((a, b) => {
-      const aWasHunter = this.previousHunters.has(a) ? 1 : 0;
-      const bWasHunter = this.previousHunters.has(b) ? 1 : 0;
-      return aWasHunter - bWasHunter;
-    });
-
-    this.previousHunters.clear();
-
-    for (let i = 0; i < prioritized.length; i++) {
-      if (i < numHunters) {
-        roles.set(prioritized[i], PlayerRole.HUNTER);
-        this.previousHunters.add(prioritized[i]);
-      } else {
-        roles.set(prioritized[i], PlayerRole.PROP);
-      }
+    for (let i = 0; i < shuffled.length; i++) {
+      roles.set(shuffled[i], i < numHunters ? PlayerRole.HUNTER : PlayerRole.PROP);
     }
 
     return roles;
