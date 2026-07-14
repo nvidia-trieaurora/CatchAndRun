@@ -146,7 +146,20 @@ export const en = {
   "results.props_win": "Props Win!",
   "results.round": "Round",
 
+  // Maps
+  "map.label": "Map",
+  "map.harbor": "Old Harbor",
+  "map.school": "Sunny School",
+
+  // Game modes
+  "mode.label": "Mode",
+  "mode.classic": "Classic",
+  "mode.infection": "Infection",
+  "mode.infection_desc": "Downed props turn into hunters. Survive the round to win big!",
+
   // Announcements
+  "splash.infected": "YOU'VE BEEN INFECTED!",
+  "splash.infected_sub": "Hunt down your old teammates!",
   "splash.you_are_hunter": "YOU ARE THE HUNTER",
   "splash.you_are_prop": "YOU ARE A PROP",
   "splash.hunter_task": "Wait for the gate to open, then hunt them all!",

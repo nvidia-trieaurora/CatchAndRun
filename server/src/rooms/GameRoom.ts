@@ -12,10 +12,12 @@ import { AntiCheat } from "../systems/AntiCheat";
 import { ScoringSystem } from "../systems/ScoringSystem";
 import { RoleAssigner } from "../systems/RoleAssigner";
 import { SpawnManager } from "../systems/SpawnManager";
+import { handlePropDown } from "../systems/PropDownHandler";
 import { SnapshotBuffer } from "../utils/SnapshotBuffer";
 import {
   GamePhase,
   PlayerRole,
+  GameMode,
   ClientMessage,
   ServerMessage,
   type PlayerInputData,
@@ -46,7 +48,7 @@ import {
   HUNTER_GRENADE_UP_BOOST,
   HUNTER_GRENADE_GRAVITY,
 } from "@catch-and-run/shared";
-import mapData from "../data/maps/harbor-warehouse.json";
+import { getMapData, isValidMapId } from "../data/maps";
 
 interface RoomCreateOptions {
   roomName?: string;
@@ -59,11 +61,11 @@ interface RoomCreateOptions {
 export class GameRoom extends Room<GameState> {
   static analyticsDB: AnalyticsDB | null = null;
 
-  private matchSM!: MatchStateMachine;
+  matchSM!: MatchStateMachine;
   private hitValidation!: HitValidation;
   private propValidator!: PropTransformValidator;
   private antiCheat!: AntiCheat;
-  private scoring!: ScoringSystem;
+  scoring!: ScoringSystem;
   private roleAssigner!: RoleAssigner;
   private spawnManager!: SpawnManager;
   private snapshotBuffer!: SnapshotBuffer;
@@ -105,7 +107,7 @@ export class GameRoom extends Room<GameState> {
     this.antiCheat = new AntiCheat(this);
     this.scoring = new ScoringSystem(this);
     this.roleAssigner = new RoleAssigner();
-    this.spawnManager = new SpawnManager(mapData as any);
+    this.spawnManager = new SpawnManager(getMapData(this.state.config.mapId) as any);
 
     this.autoDispose = true;
 
@@ -383,6 +385,13 @@ export class GameRoom extends Room<GameState> {
       roomCode: this.state.roomCode,
       isPrivate: this.state.isPrivate,
       hostSessionId: this.state.hostSessionId,
+      config: {
+        maxPlayers: this.state.config.maxPlayers,
+        roundTime: this.state.config.roundTime,
+        totalRounds: this.state.config.totalRounds,
+        gameMode: this.state.config.gameMode,
+        mapId: this.state.config.mapId,
+      },
       players,
       chat,
     });
@@ -460,13 +469,7 @@ export class GameRoom extends Room<GameState> {
       if (target && target.isAlive && target.role === PlayerRole.PROP) {
         target.health -= hitResult.damage;
         const killed = target.health <= 0;
-        if (killed) {
-          target.health = 0;
-          target.isAlive = false;
-          target.role = PlayerRole.SPECTATOR;
-          player.kills++;
-          this.scoring.onPropKilled(client.sessionId);
-        }
+        if (killed) target.health = 0;
 
         client.send(ServerMessage.HIT_CONFIRMED, {
           targetSessionId: hitResult.hitPlayerSessionId,
@@ -484,13 +487,7 @@ export class GameRoom extends Room<GameState> {
         });
 
         if (killed) {
-          this.broadcast(ServerMessage.PLAYER_KILLED, {
-            killerSessionId: client.sessionId,
-            killerNickname: player.nickname,
-            victimSessionId: hitResult.hitPlayerSessionId,
-            victimNickname: target.nickname,
-          });
-          this.matchSM.checkRoundEndCondition();
+          this.onPropDown(client.sessionId, player, hitResult.hitPlayerSessionId, target);
         }
       }
     }
@@ -516,7 +513,7 @@ export class GameRoom extends Room<GameState> {
       player.currentPropId = data.propId;
       player.lastTransformTime = Date.now();
       player.transformCount++;
-      const propDef = (mapData as any).props.find((p: any) => p.id === data.propId);
+      const propDef = (getMapData(this.state.config.mapId) as any).props.find((p: any) => p.id === data.propId);
       if (propDef?.hp) {
         player.health = propDef.hp;
       }
@@ -627,16 +624,7 @@ export class GameRoom extends Room<GameState> {
           other.health -= damage;
           if (other.health <= 0) {
             other.health = 0;
-            other.isAlive = false;
-            other.role = PlayerRole.SPECTATOR;
-            player.kills++;
-            this.scoring.onPropKilled(client.sessionId);
-            this.broadcast(ServerMessage.PLAYER_KILLED, {
-              killerSessionId: client.sessionId,
-              killerNickname: player.nickname,
-              victimSessionId: sid,
-              victimNickname: other.nickname,
-            });
+            this.onPropDown(client.sessionId, player, sid, other);
           } else {
             other.isLocked = true;
             setTimeout(() => {
@@ -654,6 +642,9 @@ export class GameRoom extends Room<GameState> {
       });
 
       stunnedPlayers.forEach((sid) => {
+        // Skip players converted to hunter by this same blast (infection mode)
+        const p = this.state.players.get(sid);
+        if (p?.role !== PlayerRole.PROP) return;
         const cl = this.clients.find((c) => c.sessionId === sid);
         cl?.send(ServerMessage.PROP_STUNNED, { duration: HUNTER_GRENADE_STUN_MS });
       });
@@ -827,6 +818,35 @@ export class GameRoom extends Room<GameState> {
     if (data.huntersPerPlayers !== undefined) {
       this.state.config.huntersPerPlayers = Math.min(Math.max(data.huntersPerPlayers, 2), 8);
     }
+    if (data.gameMode !== undefined) {
+      if (data.gameMode === GameMode.CLASSIC || data.gameMode === GameMode.INFECTION) {
+        this.state.config.gameMode = data.gameMode;
+      }
+    }
+    if (data.mapId !== undefined && isValidMapId(data.mapId)) {
+      this.state.config.mapId = data.mapId;
+      this.spawnManager.setMapData(getMapData(data.mapId) as any);
+      void this.setMetadata({
+        roomName: this.state.roomName,
+        roomCode: this.state.roomCode,
+        mapId: this.state.config.mapId,
+        phase: "waiting",
+        isPrivate: this.state.isPrivate,
+      });
+    }
+  }
+
+  /**
+   * A prop reached 0 HP — classic death or infection conversion.
+   * Logic lives in PropDownHandler so it can be unit-tested.
+   */
+  public onPropDown(
+    killerSessionId: string,
+    killer: PlayerSchema,
+    victimSessionId: string,
+    victim: PlayerSchema
+  ) {
+    handlePropDown(this, killerSessionId, killer, victimSessionId, victim);
   }
 
   private lastSoundMemeTime = new Map<string, number>();
@@ -860,6 +880,8 @@ export class GameRoom extends Room<GameState> {
 
   public initRound() {
     this.grenadeCount.clear();
+    const mapData = getMapData(this.state.config.mapId);
+    this.spawnManager.setMapData(mapData as any);
 
     // Clear spectator flag so mid-game joiners participate in this round
     this.state.players.forEach((player) => {

@@ -13,6 +13,11 @@ export enum PlayerRole {
   SPECTATOR = "spectator",
 }
 
+export enum GameMode {
+  CLASSIC = "classic",
+  INFECTION = "infection",
+}
+
 export interface Vector3 {
   x: number;
   y: number;
@@ -34,7 +39,7 @@ export interface PropDefinition {
 export interface SpawnPoint {
   position: Vector3;
   rotation: number;
-  zone: "hunterSpawn" | "warehouse" | "office" | "containerYard";
+  zone: string;
 }
 
 export interface MapData {

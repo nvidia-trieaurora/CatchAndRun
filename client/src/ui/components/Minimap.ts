@@ -1,10 +1,38 @@
-const MAP_MIN_X = -55, MAP_MAX_X = 63;
-const MAP_MIN_Z = -43, MAP_MAX_Z = 47;
-const MAP_W = MAP_MAX_X - MAP_MIN_X;
-const MAP_D = MAP_MAX_Z - MAP_MIN_Z;
 const CANVAS_SIZE = 170;
-const MAP_CX = (MAP_MIN_X + MAP_MAX_X) / 2;
-const MAP_CZ = (MAP_MIN_Z + MAP_MAX_Z) / 2;
+
+interface MinimapZoneRect {
+  x1: number; z1: number; x2: number; z2: number;
+  color: string;
+}
+
+interface MinimapLayout {
+  minX: number; maxX: number; minZ: number; maxZ: number;
+  bg: string;
+  zones: MinimapZoneRect[];
+}
+
+const MINIMAP_LAYOUTS: Record<string, MinimapLayout> = {
+  "harbor-warehouse": {
+    minX: -55, maxX: 63, minZ: -43, maxZ: 47,
+    bg: "rgba(60, 90, 40, 0.8)",
+    zones: [
+      { x1: -23, z1: -18, x2: 23, z2: 18, color: "rgba(140, 135, 120, 0.7)" },  // warehouse
+      { x1: 24, z1: -25, x2: 56, z2: 5, color: "rgba(70, 70, 70, 0.6)" },       // container yard
+      { x1: -20, z1: 34, x2: 50, z2: 42, color: "rgba(110, 100, 80, 0.6)" },    // dock
+      { x1: -49, z1: -7, x2: -35, z2: 7, color: "rgba(100, 90, 80, 0.6)" },     // hunter spawn
+    ],
+  },
+  "school": {
+    minX: -48, maxX: 48, minZ: -32, maxZ: 40,
+    bg: "rgba(70, 100, 55, 0.8)",
+    zones: [
+      { x1: -30, z1: -28, x2: 30, z2: 0, color: "rgba(150, 110, 90, 0.7)" },    // main building
+      { x1: -45, z1: 2, x2: -32, z2: 30, color: "rgba(140, 100, 80, 0.65)" },   // gym
+      { x1: 32, z1: 2, x2: 45, z2: 26, color: "rgba(140, 110, 85, 0.65)" },     // cafeteria
+      { x1: -32, z1: 2, x2: 32, z2: 32, color: "rgba(160, 155, 140, 0.5)" },    // yard
+    ],
+  },
+};
 
 interface DetectedProp {
   sessionId: string;
@@ -33,6 +61,11 @@ export class Minimap {
   private teammates: { x: number; z: number; yaw: number }[] = [];
   private visible = false;
   private ghostMode = false;
+  private layout: MinimapLayout = MINIMAP_LAYOUTS["harbor-warehouse"];
+
+  setMap(mapId: string) {
+    this.layout = MINIMAP_LAYOUTS[mapId] ?? MINIMAP_LAYOUTS["harbor-warehouse"];
+  }
 
   constructor() {
     this.element = document.createElement("div");
@@ -110,8 +143,9 @@ export class Minimap {
   }
 
   private worldToCanvas(wx: number, wz: number): [number, number] {
-    const cx = ((wx - MAP_MIN_X) / MAP_W) * CANVAS_SIZE;
-    const cy = ((wz - MAP_MIN_Z) / MAP_D) * CANVAS_SIZE;
+    const L = this.layout;
+    const cx = ((wx - L.minX) / (L.maxX - L.minX)) * CANVAS_SIZE;
+    const cy = ((wz - L.minZ) / (L.maxZ - L.minZ)) * CANVAS_SIZE;
     return [cx, cy];
   }
 
@@ -120,36 +154,21 @@ export class Minimap {
     const S = CANVAS_SIZE;
     ctx.clearRect(0, 0, S, S);
 
-    ctx.fillStyle = "rgba(60, 90, 40, 0.8)";
+    ctx.fillStyle = this.layout.bg;
     ctx.fillRect(0, 0, S, S);
 
-    // Warehouse floor
-    const [wfx, wfz] = this.worldToCanvas(-23, -18);
-    const [wfx2, wfz2] = this.worldToCanvas(23, 18);
-    ctx.fillStyle = "rgba(140, 135, 120, 0.7)";
-    ctx.fillRect(wfx, wfz, wfx2 - wfx, wfz2 - wfz);
-
-    // Container yard
-    const [cx1, cz1] = this.worldToCanvas(24, -25);
-    const [cx2, cz2] = this.worldToCanvas(56, 5);
-    ctx.fillStyle = "rgba(70, 70, 70, 0.6)";
-    ctx.fillRect(cx1, cz1, cx2 - cx1, cz2 - cz1);
-
-    // Dock
-    const [dx1, dz1] = this.worldToCanvas(-20, 34);
-    const [dx2, dz2] = this.worldToCanvas(50, 42);
-    ctx.fillStyle = "rgba(110, 100, 80, 0.6)";
-    ctx.fillRect(dx1, dz1, dx2 - dx1, dz2 - dz1);
-
-    // Hunter spawn
-    const [hx1, hz1] = this.worldToCanvas(-49, -7);
-    const [hx2, hz2] = this.worldToCanvas(-35, 7);
-    ctx.fillStyle = "rgba(100, 90, 80, 0.6)";
-    ctx.fillRect(hx1, hz1, hx2 - hx1, hz2 - hz1);
+    // Zone rectangles for the current map
+    for (const zone of this.layout.zones) {
+      const [zx1, zz1] = this.worldToCanvas(zone.x1, zone.z1);
+      const [zx2, zz2] = this.worldToCanvas(zone.x2, zone.z2);
+      ctx.fillStyle = zone.color;
+      ctx.fillRect(zx1, zz1, zx2 - zx1, zz2 - zz1);
+    }
 
     // Zone divider lines
-    const [midX] = this.worldToCanvas(MAP_CX, 0);
-    const [, midZ] = this.worldToCanvas(0, MAP_CZ);
+    const L = this.layout;
+    const [midX] = this.worldToCanvas((L.minX + L.maxX) / 2, 0);
+    const [, midZ] = this.worldToCanvas(0, (L.minZ + L.maxZ) / 2);
     ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
     ctx.lineWidth = 1;
     ctx.setLineDash([4, 4]);
@@ -288,7 +307,7 @@ export class Minimap {
     }
 
     // Scan radius
-    const scanR = (10 / MAP_W) * S;
+    const scanR = (10 / (this.layout.maxX - this.layout.minX)) * S;
     ctx.beginPath();
     ctx.arc(plx, plz, scanR, 0, Math.PI * 2);
     ctx.strokeStyle = "rgba(100, 200, 255, 0.3)";

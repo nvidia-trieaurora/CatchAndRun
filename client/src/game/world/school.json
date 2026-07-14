@@ -1,0 +1,368 @@
+{
+  "id": "school",
+  "name": "Sunny School",
+  "bounds": {
+    "min": {
+      "x": -48,
+      "y": -5,
+      "z": -32
+    },
+    "max": {
+      "x": 48,
+      "y": 20,
+      "z": 40
+    }
+  },
+  "killZoneY": -5,
+  "hunterSpawnPoints": [
+    {
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 35
+      },
+      "rotation": 3.14159,
+      "zone": "hunterSpawn"
+    },
+    {
+      "position": {
+        "x": 4,
+        "y": 0,
+        "z": 35.5
+      },
+      "rotation": 3.14159,
+      "zone": "hunterSpawn"
+    },
+    {
+      "position": {
+        "x": -4,
+        "y": 0,
+        "z": 35.5
+      },
+      "rotation": 3.14159,
+      "zone": "hunterSpawn"
+    }
+  ],
+  "propSpawnPoints": [
+    {
+      "position": {
+        "x": -22,
+        "y": 0,
+        "z": -17
+      },
+      "rotation": 0,
+      "zone": "classroom"
+    },
+    {
+      "position": {
+        "x": -8,
+        "y": 0,
+        "z": -20
+      },
+      "rotation": 0,
+      "zone": "classroom"
+    },
+    {
+      "position": {
+        "x": 8,
+        "y": 0,
+        "z": -17
+      },
+      "rotation": 0,
+      "zone": "classroom"
+    },
+    {
+      "position": {
+        "x": 22,
+        "y": 0,
+        "z": -20
+      },
+      "rotation": 0,
+      "zone": "classroom"
+    },
+    {
+      "position": {
+        "x": -12,
+        "y": 0,
+        "z": -3
+      },
+      "rotation": 0,
+      "zone": "corridor"
+    },
+    {
+      "position": {
+        "x": 12,
+        "y": 0,
+        "z": -3
+      },
+      "rotation": 0,
+      "zone": "corridor"
+    },
+    {
+      "position": {
+        "x": -38,
+        "y": 0,
+        "z": 10
+      },
+      "rotation": 0,
+      "zone": "gym"
+    },
+    {
+      "position": {
+        "x": -38,
+        "y": 0,
+        "z": 24
+      },
+      "rotation": 0,
+      "zone": "gym"
+    },
+    {
+      "position": {
+        "x": 38,
+        "y": 0,
+        "z": 8
+      },
+      "rotation": 0,
+      "zone": "cafeteria"
+    },
+    {
+      "position": {
+        "x": 38,
+        "y": 0,
+        "z": 20
+      },
+      "rotation": 0,
+      "zone": "cafeteria"
+    },
+    {
+      "position": {
+        "x": -10,
+        "y": 0,
+        "z": 18
+      },
+      "rotation": 0,
+      "zone": "yard"
+    },
+    {
+      "position": {
+        "x": 14,
+        "y": 0,
+        "z": 22
+      },
+      "rotation": 0,
+      "zone": "yard"
+    }
+  ],
+  "props": [
+    {
+      "id": "locker",
+      "name": "Locker",
+      "meshType": "box",
+      "dimensions": {
+        "x": 0.8,
+        "y": 2.0,
+        "z": 0.5
+      },
+      "color": 4876938,
+      "rarity": "uncommon",
+      "minScale": 0.9,
+      "maxScale": 1.1,
+      "hp": 120
+    },
+    {
+      "id": "school-desk",
+      "name": "School Desk",
+      "meshType": "box",
+      "dimensions": {
+        "x": 1.2,
+        "y": 0.8,
+        "z": 0.6
+      },
+      "color": 12225098,
+      "rarity": "common",
+      "minScale": 0.9,
+      "maxScale": 1.1,
+      "hp": 80
+    },
+    {
+      "id": "school-chair",
+      "name": "Chair",
+      "meshType": "box",
+      "dimensions": {
+        "x": 0.5,
+        "y": 0.9,
+        "z": 0.5
+      },
+      "color": 9067050,
+      "rarity": "common",
+      "minScale": 0.9,
+      "maxScale": 1.1,
+      "hp": 60
+    },
+    {
+      "id": "backpack",
+      "name": "Backpack",
+      "meshType": "box",
+      "dimensions": {
+        "x": 0.5,
+        "y": 0.6,
+        "z": 0.3
+      },
+      "color": 12728890,
+      "rarity": "common",
+      "minScale": 0.9,
+      "maxScale": 1.1,
+      "hp": 50
+    },
+    {
+      "id": "trash-bin",
+      "name": "Trash Bin",
+      "meshType": "cylinder",
+      "dimensions": {
+        "x": 0.5,
+        "y": 0.8,
+        "z": 0.5
+      },
+      "color": 3832378,
+      "rarity": "common",
+      "minScale": 0.9,
+      "maxScale": 1.1,
+      "hp": 60
+    },
+    {
+      "id": "potted-plant",
+      "name": "Potted Plant",
+      "meshType": "cylinder",
+      "dimensions": {
+        "x": 0.5,
+        "y": 1.2,
+        "z": 0.5
+      },
+      "color": 2779690,
+      "rarity": "uncommon",
+      "minScale": 0.9,
+      "maxScale": 1.1,
+      "hp": 70
+    },
+    {
+      "id": "basketball",
+      "name": "Basketball",
+      "meshType": "sphere",
+      "dimensions": {
+        "x": 0.4,
+        "y": 0.4,
+        "z": 0.4
+      },
+      "color": 13789470,
+      "rarity": "rare",
+      "minScale": 0.9,
+      "maxScale": 1.1,
+      "hp": 40
+    },
+    {
+      "id": "gym-mat",
+      "name": "Gym Mat",
+      "meshType": "box",
+      "dimensions": {
+        "x": 2.0,
+        "y": 0.3,
+        "z": 1.0
+      },
+      "color": 2771594,
+      "rarity": "uncommon",
+      "minScale": 0.9,
+      "maxScale": 1.1,
+      "hp": 130
+    },
+    {
+      "id": "milk-carton",
+      "name": "Milk Carton",
+      "meshType": "box",
+      "dimensions": {
+        "x": 0.3,
+        "y": 0.4,
+        "z": 0.3
+      },
+      "color": 15263968,
+      "rarity": "rare",
+      "minScale": 0.9,
+      "maxScale": 1.1,
+      "hp": 30
+    },
+    {
+      "id": "fire-extinguisher",
+      "name": "Fire Extinguisher",
+      "meshType": "cylinder",
+      "dimensions": {
+        "x": 0.3,
+        "y": 0.7,
+        "z": 0.3
+      },
+      "color": 13378082,
+      "rarity": "rare",
+      "minScale": 0.9,
+      "maxScale": 1.1,
+      "hp": 45
+    },
+    {
+      "id": "bookshelf",
+      "name": "Bookshelf",
+      "meshType": "box",
+      "dimensions": {
+        "x": 1.6,
+        "y": 1.8,
+        "z": 0.4
+      },
+      "color": 6965802,
+      "rarity": "uncommon",
+      "minScale": 0.9,
+      "maxScale": 1.1,
+      "hp": 150
+    },
+    {
+      "id": "globe",
+      "name": "Globe",
+      "meshType": "sphere",
+      "dimensions": {
+        "x": 0.5,
+        "y": 0.5,
+        "z": 0.5
+      },
+      "color": 3828394,
+      "rarity": "rare",
+      "minScale": 0.9,
+      "maxScale": 1.1,
+      "hp": 40
+    },
+    {
+      "id": "cafeteria-table",
+      "name": "Cafeteria Table",
+      "meshType": "box",
+      "dimensions": {
+        "x": 1.8,
+        "y": 0.8,
+        "z": 0.9
+      },
+      "color": 13281392,
+      "rarity": "common",
+      "minScale": 0.9,
+      "maxScale": 1.1,
+      "hp": 120
+    },
+    {
+      "id": "traffic-cone",
+      "name": "Traffic Cone",
+      "meshType": "cylinder",
+      "dimensions": {
+        "x": 0.4,
+        "y": 0.8,
+        "z": 0.4
+      },
+      "color": 15761408,
+      "rarity": "common",
+      "minScale": 0.9,
+      "maxScale": 1.1,
+      "hp": 50
+    }
+  ]
+}

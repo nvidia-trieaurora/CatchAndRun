@@ -60,6 +60,9 @@ export const SCORE_PROP_SURVIVE_PER_SEC = 1;
 export const SCORE_HUNTER_WIN_BONUS = 200;
 export const SCORE_PROP_WIN_BONUS = 150;
 
+export const INFECTION_CONVERT_HEAL = 100;
+export const INFECTION_SURVIVOR_BONUS = 250;
+
 export const AOI_RADIUS = 50;
 
 export const ROOM_CODE_LENGTH = 6;

@@ -9,6 +9,11 @@ export class SpawnManager {
     this.mapData = mapData;
   }
 
+  setMapData(mapData: MapData) {
+    this.mapData = mapData;
+    this.resetSpawnCounters();
+  }
+
   getHunterSpawn(): SpawnPoint {
     const spawns = this.mapData.hunterSpawnPoints;
     const spawn = spawns[this.hunterSpawnIndex % spawns.length];

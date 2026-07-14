@@ -16,6 +16,8 @@ import { AnnouncementBanner } from "../ui/components/AnnouncementBanner";
 import { Minimap } from "../ui/components/Minimap";
 import { SoundMemePanel } from "../ui/components/SoundMemePanel";
 import { buildOldHarborFortniteMap } from "./world/maps/oldHarborFortnite";
+import { buildSchoolMap } from "./world/maps/schoolMap";
+import schoolDataJson from "./world/school.json";
 import { createFortniteLighting } from "./world/lighting/fortniteLighting";
 import { PropRegistry } from "./world/PropRegistry";
 import { HunterController } from "./controllers/HunterController";
@@ -422,6 +424,10 @@ export class GameManager {
       this.roomLobby.setRoomCode(data.roomCode);
     }
 
+    if (data.config) {
+      this.roomLobby.updateConfig(data.config);
+    }
+
     if (this.currentPhase === GamePhase.WAITING || this.currentPhase === GamePhase.COUNTDOWN) {
       const lobbyPlayers = (data.players || []).map((p: any) => ({
         sessionId: p.sessionId,
@@ -593,13 +599,48 @@ export class GameManager {
     }
   }
 
+  private builtMapId = "";
+  private mapObjects: THREE.Object3D[] = [];
+
+  /** Removes all scene objects created by the last map build (host switched maps). */
+  private teardownMap() {
+    for (const obj of this.mapObjects) {
+      this.scene.remove(obj);
+    }
+    this.mapObjects = [];
+    this.colliders = [];
+    this.ferrisWheel = null;
+    this.ferrisCabinColliders = [];
+    this.gateMesh = null;
+    this.gateCollider = null;
+    this.mapBuilt = false;
+  }
+
   private buildMapIfNeeded() {
-    if (this.mapBuilt) return;
+    const mapId = this.latestRoomState?.config?.mapId ?? "harbor-warehouse";
+    if (this.mapBuilt && this.builtMapId === mapId) return;
+    if (this.mapBuilt) this.teardownMap();
     this.mapBuilt = true;
+    this.builtMapId = mapId;
 
     this.removeMenuBackground();
+
+    // Track everything the lighting + map build adds so it can be torn down
+    const beforeChildren = new Set(this.scene.children);
     createFortniteLighting(this.scene, this.renderer);
-    const mapResult = buildOldHarborFortniteMap(this.scene, mapDataJson as any);
+
+    this.minimap.setMap(mapId);
+    this.propRegistry.clear();
+    let mapResult;
+    if (mapId === "school") {
+      this.propRegistry.loadFromMapData(schoolDataJson.props as any);
+      mapResult = buildSchoolMap(this.scene);
+    } else {
+      this.propRegistry.loadFromMapData(mapDataJson.props as any);
+      mapResult = buildOldHarborFortniteMap(this.scene, mapDataJson as any);
+    }
+    this.mapObjects = this.scene.children.filter((c) => !beforeChildren.has(c));
+
     this.colliders = mapResult.colliders;
     this.gateColliderIndex = mapResult.gateColliderIndex;
     this.gateCollider = this.colliders[this.gateColliderIndex] || null;
@@ -608,22 +649,27 @@ export class GameManager {
 
     // Store cabin collider references for dynamic updates (5 per cabin)
     this.ferrisCabinColliders = [];
-    const fwNumCabs = this.ferrisNumCabins;
-    const collidersPerCabin = 5;
-    const collidersLen = this.colliders.length;
-    for (let i = 0; i < fwNumCabs * collidersPerCabin; i++) {
-      const idx = collidersLen - fwNumCabs * collidersPerCabin + i;
-      if (idx >= 0 && idx < this.colliders.length) {
-        this.ferrisCabinColliders.push(this.colliders[idx]);
+    if (this.ferrisWheel) {
+      const fwNumCabs = this.ferrisNumCabins;
+      const collidersPerCabin = 5;
+      const collidersLen = this.colliders.length;
+      for (let i = 0; i < fwNumCabs * collidersPerCabin; i++) {
+        const idx = collidersLen - fwNumCabs * collidersPerCabin + i;
+        if (idx >= 0 && idx < this.colliders.length) {
+          this.ferrisCabinColliders.push(this.colliders[idx]);
+        }
       }
     }
 
-    this.weaponSystem = new WeaponSystem(this.scene);
-    this.propTransformSystem = new PropTransformSystem(this.scene, this.propRegistry);
-    this.audioSystem = new AudioSystem(this.camera);
-    // Music OFF by default
-    if (this.musicBtn) this.musicBtn.textContent = "[M] ♪ OFF";
-    this.particleSystem = new ParticleSystem(this.scene);
+    // Game systems persist across map rebuilds — create once
+    if (!this.weaponSystem) {
+      this.weaponSystem = new WeaponSystem(this.scene);
+      this.propTransformSystem = new PropTransformSystem(this.scene, this.propRegistry);
+      this.audioSystem = new AudioSystem(this.camera);
+      // Music OFF by default
+      if (this.musicBtn) this.musicBtn.textContent = "[M] ♪ OFF";
+      this.particleSystem = new ParticleSystem(this.scene);
+    }
   }
 
   private initControllers() {
@@ -838,6 +884,15 @@ export class GameManager {
       this.cameraShake.add(0.3);
       if (this.propController?.isInSoulMode()) {
         this.propController.exitSoulMode();
+      }
+    });
+
+    room.onMessage(ServerMessage.PLAYER_INFECTED, (data: any) => {
+      this.gameHUD.addKillfeed(data.killerNickname, data.victimNickname, true);
+      if (data.victimSessionId === this.network.getSessionId()) {
+        this.becomeInfectedHunter();
+      } else {
+        this.audioSystem?.playSound("kill");
       }
     });
 
@@ -2116,6 +2171,30 @@ export class GameManager {
       seq: ++this.inputSeq,
       timestamp: now,
     });
+  }
+
+  /** Infection mode: this player was downed as a prop and joins the hunt. */
+  private becomeInfectedHunter() {
+    const pos = this.propController?.getPosition() ?? new THREE.Vector3(0, 1, 0);
+    if (this.propController?.isInSoulMode()) {
+      this.propController.exitSoulMode();
+    }
+    this.gameHUD.setSoulModeVisible(false);
+
+    this.localRole = PlayerRole.HUNTER;
+    this.localPropId = "";
+    this.localIsLocked = false;
+    this.localHealth = HUNTER_MAX_HEALTH;
+    this.localAmmo = WEAPON_MAX_AMMO;
+
+    this.propTransformSystem?.dispose();
+    this.hunterController.setPosition(pos.x, pos.y, pos.z);
+    this.createFirstPersonGun();
+    this.gameHUD.updateRole(PlayerRole.HUNTER);
+    this.touchInput?.setRole("hunter");
+    this.announcer.showInfectedSplash();
+    playUISound("stinger");
+    this.speak("You are infected! Hunt them down!");
   }
 
   private showDamageNumberFor(sessionId: string, damage: number, killed: boolean) {

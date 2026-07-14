@@ -2,7 +2,7 @@ import { PlayerRole, WEAPON_DAMAGE, WEAPON_RANGE } from "@catch-and-run/shared";
 import type { GameRoom } from "../rooms/GameRoom";
 import type { SnapshotBuffer } from "../utils/SnapshotBuffer";
 import type { ShootData } from "@catch-and-run/shared";
-import mapData from "../data/maps/harbor-warehouse.json";
+import { getMapData } from "../data/maps";
 
 interface PropDimensions {
   x: number; y: number; z: number;
@@ -38,30 +38,37 @@ export class HitValidation {
   private snapshotBuffer: SnapshotBuffer;
   private wallBoxes: AABB[] = [];
   private propDimensions: Map<string, PropDimensions> = new Map();
+  private cachedMapId = "";
 
   constructor(room: GameRoom, snapshotBuffer: SnapshotBuffer) {
     this.room = room;
     this.snapshotBuffer = snapshotBuffer;
-    this.loadWallOcclusion();
-    this.loadPropDimensions();
   }
 
-  private loadPropDimensions() {
+  /** Map can change in the lobby — rebuild caches when mapId differs. */
+  private ensureMapCache() {
+    const mapId = this.room.state.config.mapId;
+    if (mapId === this.cachedMapId) return;
+    this.cachedMapId = mapId;
+    const mapData = getMapData(mapId);
+
+    this.propDimensions.clear();
     const props = (mapData as { props?: PropDef[] }).props;
-    if (!Array.isArray(props)) return;
-    for (const p of props) {
-      this.propDimensions.set(p.id, p.dimensions);
+    if (Array.isArray(props)) {
+      for (const p of props) {
+        this.propDimensions.set(p.id, p.dimensions);
+      }
     }
-  }
 
-  private loadWallOcclusion() {
+    this.wallBoxes = [];
     const occlusion = (mapData as { wallOcclusion?: WallOcclusionEntry[] }).wallOcclusion;
-    if (!Array.isArray(occlusion)) return;
-    for (const w of occlusion) {
-      this.wallBoxes.push({
-        minX: w.min.x, minY: w.min.y, minZ: w.min.z,
-        maxX: w.max.x, maxY: w.max.y, maxZ: w.max.z,
-      });
+    if (Array.isArray(occlusion)) {
+      for (const w of occlusion) {
+        this.wallBoxes.push({
+          minX: w.min.x, minY: w.min.y, minZ: w.min.z,
+          maxX: w.max.x, maxY: w.max.y, maxZ: w.max.z,
+        });
+      }
     }
   }
 
@@ -79,6 +86,7 @@ export class HitValidation {
   }
 
   processShot(shooterSessionId: string, data: ShootData): HitResult {
+    this.ensureMapCache();
     const snapshot = this.snapshotBuffer.getAtTime(data.timestamp) ??
       this.snapshotBuffer.getLatest();
 

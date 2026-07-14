@@ -12,4 +12,5 @@ export class RoomConfigSchema extends Schema {
   @type("number") totalRounds: number = DEFAULT_TOTAL_ROUNDS;
   @type("number") huntersPerPlayers: number = HUNTERS_PER_PLAYERS;
   @type("string") mapId: string = "harbor-warehouse";
+  @type("string") gameMode: string = "classic";
 }

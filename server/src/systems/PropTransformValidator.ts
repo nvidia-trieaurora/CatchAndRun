@@ -1,7 +1,7 @@
 import { PROP_TRANSFORM_COOLDOWN_MS } from "@catch-and-run/shared";
 import type { GameRoom } from "../rooms/GameRoom";
 import type { PlayerSchema } from "../schemas/PlayerSchema";
-import mapData from "../data/maps/harbor-warehouse.json";
+import { getMapData } from "../data/maps";
 
 interface TransformResult {
   success: boolean;
@@ -11,14 +11,22 @@ interface TransformResult {
 
 export class PropTransformValidator {
   private room: GameRoom;
-  private validPropIds: Set<string>;
+  private validPropIds = new Set<string>();
+  private cachedMapId = "";
 
   constructor(room: GameRoom) {
     this.room = room;
-    this.validPropIds = new Set(mapData.props.map((p) => p.id));
+  }
+
+  private ensureMapCache() {
+    const mapId = this.room.state.config.mapId;
+    if (mapId === this.cachedMapId) return;
+    this.cachedMapId = mapId;
+    this.validPropIds = new Set(getMapData(mapId).props.map((p) => p.id));
   }
 
   validate(player: PlayerSchema, propId: string): TransformResult {
+    this.ensureMapCache();
     if (!this.validPropIds.has(propId)) {
       return { success: false, reason: "Invalid prop ID" };
     }

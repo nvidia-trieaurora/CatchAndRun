@@ -148,7 +148,20 @@ export const vi: Record<TranslationKey, string> = {
   "results.props_win": "Đồ Vật Thắng!",
   "results.round": "Hiệp",
 
+  // Maps
+  "map.label": "Bản đồ",
+  "map.harbor": "Cảng Cũ",
+  "map.school": "Trường Học",
+
+  // Game modes
+  "mode.label": "Chế độ",
+  "mode.classic": "Cổ điển",
+  "mode.infection": "Lây nhiễm",
+  "mode.infection_desc": "Đồ vật bị hạ sẽ biến thành thợ săn. Sống sót đến hết hiệp để nhận thưởng lớn!",
+
   // Announcements
+  "splash.infected": "BẠN ĐÃ BỊ NHIỄM!",
+  "splash.infected_sub": "Đi săn đồng đội cũ của bạn!",
   "splash.you_are_hunter": "BẠN LÀ THỢ SĂN",
   "splash.you_are_prop": "BẠN LÀ ĐỒ VẬT",
   "splash.hunter_task": "Chờ cổng mở rồi săn hết chúng!",

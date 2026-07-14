@@ -8,6 +8,11 @@ export class PropRegistry {
     props.forEach((p) => this.definitions.set(p.id, p));
   }
 
+  /** Replace all definitions — used when switching maps. */
+  clear() {
+    this.definitions.clear();
+  }
+
   get(propId: string): PropDefinition | undefined {
     return this.definitions.get(propId);
   }
@@ -54,7 +59,14 @@ function addPart(group: THREE.Group, geo: THREE.BufferGeometry, material: THREE.
 
 function buildDefault(group: THREE.Group, def: PropDefinition) {
   const { x, y, z } = def.dimensions;
-  const geo = new THREE.BoxGeometry(x, y, z);
+  let geo: THREE.BufferGeometry;
+  if (def.meshType === "cylinder") {
+    geo = new THREE.CylinderGeometry(x / 2, x / 2, y, 12);
+  } else if (def.meshType === "sphere") {
+    geo = new THREE.SphereGeometry(x / 2, 12, 8);
+  } else {
+    geo = new THREE.BoxGeometry(x, y, z);
+  }
   addPart(group, geo, mat(def.color), 0, y / 2, 0);
 }
 

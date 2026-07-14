@@ -1,10 +1,12 @@
 import {
   GamePhase,
   PlayerRole,
+  GameMode,
   COUNTDOWN_DURATION,
   HIDE_PHASE_DURATION,
   ROUND_END_DURATION,
   MATCH_END_DURATION,
+  INFECTION_SURVIVOR_BONUS,
   ServerMessage,
 } from "@catch-and-run/shared";
 import type { GameRoom } from "../rooms/GameRoom";
@@ -100,9 +102,11 @@ export class MatchStateMachine {
   private endRound(winner: "hunters" | "props") {
     const state = this.room.state;
 
+    const isInfection = state.config.gameMode === GameMode.INFECTION;
     state.players.forEach((player) => {
       if (winner === "props" && player.role === PlayerRole.PROP && player.isAlive) {
-        player.score += 150;
+        // Surviving an infection round is harder — every downed prop joins the hunt
+        player.score += isInfection ? INFECTION_SURVIVOR_BONUS : 150;
       }
       if (winner === "hunters" && player.role === PlayerRole.HUNTER) {
         player.score += 200;

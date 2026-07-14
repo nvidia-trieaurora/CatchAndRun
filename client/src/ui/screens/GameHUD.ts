@@ -379,11 +379,12 @@ export class GameHUD {
     </div>`;
   }
 
-  addKillfeed(killer: string, victim: string) {
+  addKillfeed(killer: string, victim: string, infected = false) {
     if (!this.killfeedEl) return;
     const el = document.createElement("div");
-    el.className = "killfeed-entry";
-    el.innerHTML = `<span style="color:#ff6b6b">${killer}</span><span class="killfeed-skull">&#128128;</span><span style="color:#00d4ff">${victim}</span>`;
+    el.className = `killfeed-entry${infected ? " infected" : ""}`;
+    const icon = infected ? "&#129503;" : "&#128128;";
+    el.innerHTML = `<span style="color:#ff6b6b">${killer}</span><span class="killfeed-skull">${icon}</span><span style="color:#00d4ff">${victim}</span>`;
     this.killfeedEl.appendChild(el);
     this.killfeedEntries.push({ el, time: Date.now() });
 

@@ -865,6 +865,63 @@ body {
   gap: 8px;
 }
 
+.lobby-mode-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-mid);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.lobby-mode-badge.infection {
+  color: #7dff5a;
+  border-color: rgba(125, 255, 90, 0.4);
+  background: rgba(100, 255, 60, 0.1);
+  box-shadow: 0 0 10px rgba(100, 255, 60, 0.2);
+}
+
+.mode-toggle {
+  gap: 4px;
+}
+
+.mode-btn,
+.map-btn {
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-mid);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--dur-fast);
+  font-family: inherit;
+}
+
+.mode-btn:hover,
+.map-btn:hover {
+  border-color: var(--c-primary);
+}
+
+.mode-btn.active,
+.map-btn.active {
+  background: rgba(0, 212, 255, 0.18);
+  border-color: var(--c-primary);
+  color: var(--c-primary);
+}
+
+.mode-desc {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  padding: 2px 0 6px;
+  line-height: 1.4;
+}
+
 /* In-Game HUD */
 .game-hud {
   pointer-events: none;
@@ -1227,6 +1284,15 @@ body {
 .role-splash.prop .role-splash-title {
   color: var(--c-primary);
   text-shadow: 0 0 30px rgba(0, 212, 255, 0.6), 0 4px 24px rgba(0, 0, 0, 0.8);
+}
+
+.role-splash.infected .role-splash-title {
+  color: #7dff5a;
+  text-shadow: 0 0 30px rgba(100, 255, 60, 0.7), 0 4px 24px rgba(0, 0, 0, 0.8);
+}
+
+.killfeed-entry.infected {
+  border-left-color: #7dff5a;
 }
 
 .role-splash-sub {

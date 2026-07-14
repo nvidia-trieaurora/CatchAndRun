@@ -34,6 +34,16 @@ export class AnnouncementBanner {
     this.show(`<div class="countdown-number">${n}</div>`, 900);
   }
 
+  showInfectedSplash() {
+    this.show(`
+      <div class="role-splash infected">
+        <div class="role-splash-icon">&#129503;</div>
+        <div class="role-splash-title">${t("splash.infected")}</div>
+        <div class="role-splash-sub">${t("splash.infected_sub")}</div>
+      </div>
+    `, 3000);
+  }
+
   private show(html: string, duration: number) {
     if (this.hideTimer !== null) window.clearTimeout(this.hideTimer);
     this.element.innerHTML = html;

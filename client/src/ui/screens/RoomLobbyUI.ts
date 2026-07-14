@@ -43,7 +43,10 @@ export class RoomLobbyUI {
       <div class="lobby-wrapper">
         <div class="lobby-header">
           <h2>${t("lobby.title")}</h2>
-          <div class="room-code-display" id="room-code" title="${t("lobby.click_copy")}">------</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="lobby-mode-badge" id="lobby-mode-badge">${t("mode.classic")}</div>
+            <div class="room-code-display" id="room-code" title="${t("lobby.click_copy")}">------</div>
+          </div>
         </div>
 
         <div class="lobby-body">
@@ -70,6 +73,21 @@ export class RoomLobbyUI {
 
             <div class="lobby-panel lobby-settings" id="lobby-settings" style="display:none;">
               <h3>GAME SETTINGS</h3>
+              <div class="setting-item">
+                <label>${t("mode.label")}</label>
+                <div class="setting-control mode-toggle">
+                  <button class="mode-btn active" data-mode="classic" id="mode-btn-classic">${t("mode.classic")}</button>
+                  <button class="mode-btn" data-mode="infection" id="mode-btn-infection">${t("mode.infection")}</button>
+                </div>
+              </div>
+              <div class="mode-desc" id="mode-desc"></div>
+              <div class="setting-item">
+                <label>${t("map.label")}</label>
+                <div class="setting-control mode-toggle">
+                  <button class="map-btn active" data-map="harbor-warehouse">${t("map.harbor")}</button>
+                  <button class="map-btn" data-map="school">${t("map.school")}</button>
+                </div>
+              </div>
               <div class="setting-item">
                 <label>Max Players</label>
                 <div class="setting-control">
@@ -118,6 +136,22 @@ export class RoomLobbyUI {
       this.readyBtnEl = this.element.querySelector("#btn-ready")!;
       this.roomCodeEl = this.element.querySelector("#room-code")!;
       this.memeGridEl = this.element.querySelector("#meme-grid")!;
+
+      this.element.querySelectorAll(".mode-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const mode = (btn as HTMLElement).dataset.mode!;
+          callbacks.onConfigChange({ gameMode: mode });
+          this.setModeDisplay(mode);
+        });
+      });
+
+      this.element.querySelectorAll(".map-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const mapId = (btn as HTMLElement).dataset.map!;
+          callbacks.onConfigChange({ mapId });
+          this.setMapDisplay(mapId);
+        });
+      });
 
       const cfgState = { maxPlayers: 10, totalRounds: 5, roundTime: 240 };
       this.element.querySelectorAll(".setting-btn").forEach((btn) => {
@@ -194,6 +228,7 @@ export class RoomLobbyUI {
           ta.style.opacity = "0";
           document.body.appendChild(ta);
           ta.select();
+          // eslint-disable-next-line @typescript-eslint/no-deprecated -- deliberate fallback when Clipboard API is unavailable
           document.execCommand("copy");
           ta.remove();
           showFeedback();
@@ -298,6 +333,46 @@ export class RoomLobbyUI {
       })
       .join("");
     this.chatMessagesEl.scrollTop = this.chatMessagesEl.scrollHeight;
+  }
+
+  private currentMode = "classic";
+  private currentMapId = "harbor-warehouse";
+
+  /** Syncs mode badge, toggle highlights, and description from server config. */
+  updateConfig(cfg: { gameMode?: string; mapId?: string }) {
+    if (cfg.gameMode && cfg.gameMode !== this.currentMode) {
+      this.setModeDisplay(cfg.gameMode);
+    }
+    if (cfg.mapId && cfg.mapId !== this.currentMapId) {
+      this.setMapDisplay(cfg.mapId);
+    }
+  }
+
+  private setMapDisplay(mapId: string) {
+    this.currentMapId = mapId;
+    this.element.querySelectorAll(".map-btn").forEach((btn) => {
+      btn.classList.toggle("active", (btn as HTMLElement).dataset.map === mapId);
+    });
+  }
+
+  private setModeDisplay(mode: string) {
+    this.currentMode = mode;
+    const badge = this.element.querySelector("#lobby-mode-badge");
+    if (badge) {
+      badge.textContent = mode === "infection" ? `🧟 ${t("mode.infection")}` : t("mode.classic");
+      badge.classList.toggle("infection", mode === "infection");
+    }
+    this.element.querySelectorAll(".mode-btn").forEach((btn) => {
+      btn.classList.toggle("active", (btn as HTMLElement).dataset.mode === mode);
+    });
+    const desc = this.element.querySelector("#mode-desc");
+    if (desc) {
+      desc.textContent = mode === "infection" ? t("mode.infection_desc") : "";
+    }
+  }
+
+  getCurrentMode(): string {
+    return this.currentMode;
   }
 
   setRoomCode(code: string) {

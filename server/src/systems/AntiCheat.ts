@@ -8,7 +8,7 @@ import {
 import type { GameRoom } from "../rooms/GameRoom";
 import type { PlayerSchema } from "../schemas/PlayerSchema";
 import type { PlayerInputData } from "@catch-and-run/shared";
-import mapData from "../data/maps/harbor-warehouse.json";
+import { getMapData } from "../data/maps";
 
 export class AntiCheat {
   private room: GameRoom;
@@ -51,6 +51,7 @@ export class AntiCheat {
   }
 
   private checkBounds(x: number, y: number, z: number): boolean {
+    const mapData = getMapData(this.room.state.config.mapId);
     const bounds = mapData.bounds;
     return (
       x >= bounds.min.x &&

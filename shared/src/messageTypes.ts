@@ -24,6 +24,7 @@ export enum ServerMessage {
   HIT_CONFIRMED = "hitConfirmed",
   PLAYER_HIT = "playerHit",
   PLAYER_KILLED = "playerKilled",
+  PLAYER_INFECTED = "playerInfected",
   TRANSFORM_RESULT = "transformResult",
   ABILITY_RESULT = "abilityResult",
   RADAR_PING = "radarPing",
@@ -89,6 +90,15 @@ export interface SetConfigData {
   roundTime?: number;
   totalRounds?: number;
   huntersPerPlayers?: number;
+  gameMode?: string;
+  mapId?: string;
+}
+
+export interface PlayerInfectedData {
+  victimSessionId: string;
+  killerNickname: string;
+  victimNickname: string;
+  remainingProps: number;
 }
 
 export interface HitConfirmedData {

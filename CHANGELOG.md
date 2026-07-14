@@ -2,6 +2,30 @@
 
 Tracker các version của Catch & Run — mỗi version ghi rõ đã làm gì.
 
+## [0.3.0] — 2026-07-14 · Chế độ Lây Nhiễm + Map Trường Học
+
+Spec: `docs/superpowers/specs/2026-07-14-infection-mode-school-map-design.md`
+
+### Chế độ chơi mới: Infection (Lây nhiễm) 🧟
+- Host chọn mode trong Game Settings (Classic ⇄ Infection); badge mode hiển thị cho cả phòng
+- Prop bị hạ **không chết** mà biến thành Hunter ngay tại chỗ (hồi máu, đầy đạn) và đi săn đồng đội cũ
+- Splash "BẠN ĐÃ BỊ NHIỄM!" + killfeed 🧟 riêng cho lây nhiễm
+- Prop sống sót đến hết giờ nhận thưởng 250 điểm (thay 150 classic)
+- Logic tách vào `PropDownHandler` + **7 unit tests** (conversion, win conditions, classic không đổi)
+
+### Map mới: Trường Học (Sunny School) 🏫
+- Tòa nhà 2 tầng: 4 phòng học (bàn ghế, bảng, tủ khóa), hành lang, cầu thang 2 đầu, tầng 2 có kệ sách
+- Phòng gym trần cao (khán đài, nệm, bóng), căng tin (quầy, bàn tròn, tủ lạnh), sân trường (cột cờ, ghế đá, bồn cây, nhà xe)
+- Cổng trường = gate spawn hunter (cùng cơ chế cổng harbor)
+- 14 props mới để ẩn thân (tủ khóa, cặp sách, hộp sữa, bình cứu hỏa, quả địa cầu…)
+- Host chọn map trong Game Settings; minimap tự đổi layout theo map
+- Server: **map registry** (`getMapData`) — HitValidation/AntiCheat/SpawnManager/PropTransformValidator đều theo `config.mapId`, hỗ trợ đổi map giữa các trận (client tự teardown + rebuild map)
+
+### Fix kèm theo
+- ROOM_STATE gửi kèm `config` (mode/map/players/rounds) để lobby sync cho người không phải host
+- Solo explore dùng đúng spawn của map đang chọn (trước bị kẹt spawn harbor)
+- Prop vừa bị lây không còn nhận nhầm thông báo "STUNNED" từ lựu đạn
+
 ## [0.2.0] — 2026-07-14 · UI/UX + Game Feel Makeover
 
 Spec: `docs/superpowers/specs/2026-07-14-ui-gamefeel-makeover-design.md` · Commit: `317ea24`
