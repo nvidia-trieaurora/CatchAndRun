@@ -2,12 +2,17 @@ import * as THREE from "three";
 import { NetworkManager } from "../network/NetworkManager";
 import { InputManager } from "../input/InputManager";
 import { ClientConfig } from "../config/ClientConfig";
+import { QualityManager } from "../config/QualityManager";
+import { PostProcessing } from "./effects/PostProcessing";
+import { CameraShake } from "./effects/CameraShake";
 import { UIManager } from "../ui/UIManager";
+import { initUISounds, playUISound } from "../ui/UISounds";
 import { MainMenuUI } from "../ui/screens/MainMenuUI";
 import { RoomLobbyUI } from "../ui/screens/RoomLobbyUI";
 import { GameHUD } from "../ui/screens/GameHUD";
 import { ResultsUI } from "../ui/screens/ResultsUI";
 import { SettingsPanel } from "../ui/components/SettingsPanel";
+import { AnnouncementBanner } from "../ui/components/AnnouncementBanner";
 import { Minimap } from "../ui/components/Minimap";
 import { SoundMemePanel } from "../ui/components/SoundMemePanel";
 import { buildOldHarborFortniteMap } from "./world/maps/oldHarborFortnite";
@@ -23,6 +28,7 @@ import { ParticleSystem } from "./systems/ParticleSystem";
 import { PlayerEntity } from "./entities/PlayerEntity";
 import { loadMemeManifest, preloadMemeTextures } from "./entities/MemeTextureLoader";
 import { isMobile } from "../input/MobileDetect";
+import { t } from "../i18n/i18n";
 import { TouchInputProvider } from "../input/TouchInputProvider";
 import { VoiceChat } from "../voice/VoiceChat";
 import { VoiceUI } from "../voice/VoiceUI";
@@ -52,6 +58,9 @@ export class GameManager {
   private network: NetworkManager;
   private input: InputManager;
   private config: ClientConfig;
+  private quality!: QualityManager;
+  private post!: PostProcessing;
+  private cameraShake = new CameraShake();
   private uiManager: UIManager;
 
   private mainMenu!: MainMenuUI;
@@ -59,6 +68,7 @@ export class GameManager {
   private gameHUD!: GameHUD;
   private resultsUI!: ResultsUI;
   private settingsPanel!: SettingsPanel;
+  private announcer!: AnnouncementBanner;
 
   private propRegistry: PropRegistry;
   private weaponSystem!: WeaponSystem;
@@ -126,6 +136,9 @@ export class GameManager {
   private ferrisCabH = 2.2;
   private ferrisCabD = 1.4;
   private minimap: Minimap;
+  private menuBgGroup: THREE.Group | null = null;
+  private menuBgAngle = 0;
+  private lastCountdownShown = -1;
   private touchInput: TouchInputProvider | null = null;
   private voiceChat: VoiceChat | null = null;
   private voiceUI: VoiceUI | null = null;
@@ -150,6 +163,10 @@ export class GameManager {
     this.network = new NetworkManager();
     this.input = new InputManager(canvas);
     this.config = new ClientConfig();
+    this.quality = new QualityManager(this.config, this.renderer);
+    this.quality.apply();
+    this.post = new PostProcessing(this.renderer, this.scene, this.camera);
+    this.post.enabled = this.quality.bloomEnabled();
     this.uiManager = new UIManager();
     this.minimap = new Minimap();
     document.getElementById("ui-root")!.appendChild(this.minimap.element);
@@ -201,8 +218,55 @@ export class GameManager {
       });
     }
 
+    initUISounds(this.config.get().uiSounds);
+
+    this.setupMenuBackground();
     this.uiManager.showScreen("mainMenu");
     this.animate();
+  }
+
+  /** Slowly orbiting showcase of props behind the menu/lobby screens. */
+  private setupMenuBackground() {
+    const group = new THREE.Group();
+    group.add(new THREE.AmbientLight(0x99aacc, 1.6));
+    const dir = new THREE.DirectionalLight(0xffeedd, 2.4);
+    dir.position.set(5, 10, 3);
+    group.add(dir);
+    const rim = new THREE.PointLight(0x00d4ff, 30, 30);
+    rim.position.set(0, 6, 0);
+    group.add(rim);
+
+    const floor = new THREE.Mesh(
+      new THREE.CylinderGeometry(15, 15, 0.3, 48),
+      new THREE.MeshStandardMaterial({ color: 0x141426, roughness: 0.9 })
+    );
+    floor.position.y = -0.15;
+    group.add(floor);
+
+    const ids = this.propRegistry.getAll().map((p) => p.id);
+    const count = Math.min(ids.length, 10);
+    for (let i = 0; i < count; i++) {
+      const mesh = this.propRegistry.createMesh(ids[i]);
+      if (!mesh) continue;
+      const a = (i / count) * Math.PI * 2;
+      const r = 4 + (i % 3) * 2.2;
+      mesh.position.set(Math.cos(a) * r, 0, Math.sin(a) * r);
+      mesh.rotation.y = Math.random() * Math.PI * 2;
+      group.add(mesh);
+    }
+
+    this.scene.add(group);
+    this.scene.background = new THREE.Color(0x0b0b16);
+    this.scene.fog = new THREE.Fog(0x0b0b16, 20, 42);
+    this.menuBgGroup = group;
+  }
+
+  private removeMenuBackground() {
+    if (!this.menuBgGroup) return;
+    this.scene.remove(this.menuBgGroup);
+    this.menuBgGroup = null;
+    this.scene.background = null;
+    this.scene.fog = null;
   }
 
   private setupUI() {
@@ -212,6 +276,7 @@ export class GameManager {
       onJoinCode: (nickname, code) => this.joinByCode(nickname, code),
       onBrowseRooms: () => this.network.getAvailableRooms(),
       onJoinRoom: (nickname, roomId, passcode) => this.joinRoomById(nickname, roomId, passcode),
+      onOpenSettings: () => this.settingsPanel.toggle(),
     });
 
     this.roomLobby = new RoomLobbyUI({
@@ -230,7 +295,14 @@ export class GameManager {
     });
 
     this.settingsPanel = new SettingsPanel(this.config);
+    this.settingsPanel.onQualityChange = () => {
+      this.quality.apply(this.scene);
+      this.post.enabled = this.quality.bloomEnabled();
+    };
     document.getElementById("ui-root")!.appendChild(this.settingsPanel.element);
+
+    this.announcer = new AnnouncementBanner();
+    document.getElementById("ui-root")!.appendChild(this.announcer.element);
 
     this.uiManager.registerScreen("mainMenu", this.mainMenu.element);
     this.uiManager.registerScreen("roomLobby", this.roomLobby.element);
@@ -308,6 +380,18 @@ export class GameManager {
           this.playerEntities.delete(sid);
         }
       }
+    }
+
+    // Big countdown numbers for the last seconds before the round starts
+    if (this.currentPhase === GamePhase.COUNTDOWN) {
+      const sec = Math.ceil(data.timer || 0);
+      if (sec !== this.lastCountdownShown && sec > 0 && sec <= 5) {
+        this.lastCountdownShown = sec;
+        this.announcer.showCountdown(sec);
+        playUISound("tick");
+      }
+    } else {
+      this.lastCountdownShown = -1;
     }
 
     // Update lobby UI
@@ -400,18 +484,13 @@ export class GameManager {
           this.touchInput.setRole(this.localRole === PlayerRole.HUNTER ? "hunter" : "prop");
         }
         if (this.localRole === PlayerRole.PROP) {
-          this.uiManager.showNotification("You are a PROP! HIDE NOW!");
+          this.announcer.showRoleSplash("prop");
           this.speak("You are a prop! Hide quickly!");
-          if (!this.mobile) setTimeout(() => this.input.requestPointerLock(), 500);
         } else {
-          if (this.mobile) {
-            this.uiManager.showNotification("You are a HUNTER! Tap buttons to Shoot/Reload/Grenade/Scanner");
-          } else {
-            this.uiManager.showNotification("You are a HUNTER! Controls: LMB Shoot | R Reload | Q Grenade | E Scanner");
-          }
+          this.announcer.showRoleSplash("hunter");
           this.speak("You are a hunter. Wait for the hunt to begin.");
-          if (!this.mobile) setTimeout(() => this.input.requestPointerLock(), 500);
         }
+        if (!this.mobile) setTimeout(() => this.input.requestPointerLock(), 500);
         break;
 
       case GamePhase.ACTIVE:
@@ -446,19 +525,17 @@ export class GameManager {
           } else {
             this.hunterController.setPosition(-36, 0.1, 0);
           }
-          if (this.mobile) {
-            this.uiManager.showNotification("HUNT! Use buttons to Shoot/Grenade/Scanner");
-          } else {
-            this.uiManager.showNotification("HUNT! LMB:Shoot | R:Reload | Q:Grenade | E:Scanner (full map)");
-          }
           this.speak("Gate open! Hunt them down!");
         } else {
           this.speak("Hunters released! Stay hidden!");
         }
+        this.announcer.showBanner(t("banner.hunt_begins"), "danger");
+        playUISound("stinger");
         if (!this.mobile) setTimeout(() => this.input.requestPointerLock(), 500);
         break;
 
       case GamePhase.ROUND_END:
+        this.announcer.showBanner(t("banner.round_over"), "info");
         if (this.localRole === PlayerRole.HUNTER) {
           this.uiManager.showNotification("Round over! Press Y to spectate props. No killing!");
         } else {
@@ -520,6 +597,7 @@ export class GameManager {
     if (this.mapBuilt) return;
     this.mapBuilt = true;
 
+    this.removeMenuBackground();
     createFortniteLighting(this.scene, this.renderer);
     const mapResult = buildOldHarborFortniteMap(this.scene, mapDataJson as any);
     this.colliders = mapResult.colliders;
@@ -686,42 +764,55 @@ export class GameManager {
   }
 
   private async quickJoin(nickname: string) {
+    this.uiManager.showLoading();
     try {
       await this.network.quickJoin(nickname);
       this.attachToRoom();
       this.uiManager.showScreen("roomLobby");
     } catch (e: any) {
       this.uiManager.showNotification(`Failed: ${e.message}`);
+    } finally {
+      this.uiManager.hideLoading();
     }
   }
 
   private async createRoom(nickname: string, roomName: string, isPrivate: boolean, passcode?: string) {
+    this.uiManager.showLoading();
     try {
       await this.network.createRoom({ nickname, roomName, isPrivate, passcode });
       this.attachToRoom();
       this.uiManager.showScreen("roomLobby");
     } catch (e: any) {
       this.uiManager.showNotification(`Failed: ${e.message}`);
+    } finally {
+      this.uiManager.hideLoading();
     }
   }
 
   private async joinByCode(nickname: string, code: string) {
+    this.uiManager.showLoading();
     try {
       await this.network.joinByCode(code, nickname);
       this.attachToRoom();
       this.uiManager.showScreen("roomLobby");
     } catch (e: any) {
       this.uiManager.showNotification(`Failed: ${e.message}`);
+    } finally {
+      this.uiManager.hideLoading();
     }
   }
 
   private async joinRoomById(nickname: string, roomId: string, passcode?: string) {
+    this.uiManager.showLoading();
     try {
       await this.network.joinRoom(roomId, nickname, passcode);
       this.attachToRoom();
       this.uiManager.showScreen("roomLobby");
     } catch (e: any) {
       this.uiManager.showNotification(`Failed: ${e.message}`);
+      throw e;
+    } finally {
+      this.uiManager.hideLoading();
     }
   }
 
@@ -736,12 +827,15 @@ export class GameManager {
     room.onMessage(ServerMessage.HIT_CONFIRMED, (data: any) => {
       this.audioSystem?.playSound("hit");
       if (data.killed) this.audioSystem?.playSound("kill");
+      this.gameHUD.showHitMarker(!!data.killed);
+      this.showDamageNumberFor(data.targetSessionId, data.damage || 0, !!data.killed);
     });
 
     room.onMessage(ServerMessage.PLAYER_HIT, (data: any) => {
       this.localHealth = data.remainingHealth;
       this.audioSystem?.playSound("hit");
       this.gameHUD.flashDamage();
+      this.cameraShake.add(0.3);
       if (this.propController?.isInSoulMode()) {
         this.propController.exitSoulMode();
       }
@@ -786,6 +880,7 @@ export class GameManager {
           const pos = this.propController.getPosition();
           const mesh = this.propTransformSystem.transform(this.localPropId, pos);
           this.propController.setPropMesh(mesh);
+          this.particleSystem?.spawnImpact(pos.clone().add(new THREE.Vector3(0, 0.6, 0)), 14);
         }
         const propDef = this.propRegistry.get(this.localPropId);
         if (propDef) {
@@ -811,7 +906,7 @@ export class GameManager {
 
     room.onMessage(ServerMessage.ROUND_RESULTS, (data: any) => {
       this.resultsUI.showResults(
-        `Round ${data.round} - ${data.winner === "hunters" ? "Hunters Win!" : "Props Win!"}`,
+        `${t("results.round")} ${data.round} — ${data.winner === "hunters" ? t("results.hunters_win") : t("results.props_win")}`,
         data.scores
       );
     });
@@ -842,6 +937,15 @@ export class GameManager {
         this.particleSystem.spawnExplosion(new THREE.Vector3(data.x, (data.y || 0) + 0.3, data.z));
       }
       this.audioSystem?.playSound("kill");
+
+      // Shake proportional to blast distance
+      const myPos = this.localRole === PlayerRole.HUNTER
+        ? this.hunterController?.getPosition()
+        : this.propController?.getPosition();
+      if (myPos) {
+        const dist = Math.hypot(data.x - myPos.x, data.z - myPos.z);
+        this.cameraShake.add(Math.max(0, 0.55 - dist / 40));
+      }
 
       if (data.stunnedCount > 0) {
         this.uiManager.showNotification(`Grenade hit ${data.stunnedCount} prop(s)!`);
@@ -983,7 +1087,7 @@ export class GameManager {
     });
 
     room.onMessage(ServerMessage.MATCH_RESULTS, (data: any) => {
-      this.resultsUI.showResults("Match Results", data.scores);
+      this.resultsUI.showResults(t("results.title"), data.scores);
       this.uiManager.showScreen("results");
       if (!this.mobile) this.input.exitPointerLock();
       this.touchInput?.hide();
@@ -1335,6 +1439,17 @@ export class GameManager {
 
     const dt = Math.min(this.clock.getDelta(), 0.05);
 
+    // Menu background: slow orbit around the prop showcase
+    if (this.menuBgGroup && !this.mapBuilt) {
+      this.menuBgAngle += dt * 0.06;
+      this.camera.position.set(
+        Math.cos(this.menuBgAngle) * 13,
+        5.5,
+        Math.sin(this.menuBgAngle) * 13
+      );
+      this.camera.lookAt(0, 1, 0);
+    }
+
     // Update ferris wheel BEFORE gameplay so colliders are current for physics
     if (this.ferrisWheel) {
       this.updateFerrisWheel(dt);
@@ -1350,8 +1465,14 @@ export class GameManager {
     this.particleSystem?.update(dt);
     this.updateDuplicatePhysics(dt);
     this.updateGunViewmodel(dt);
+    this.updateFovKick(dt);
+    this.cameraShake.update(dt, this.camera);
 
-    this.renderer.render(this.scene, this.camera);
+    if (this.post.enabled) {
+      this.post.render();
+    } else {
+      this.renderer.render(this.scene, this.camera);
+    }
   }
 
   private prevCabinPositions: { x: number; y: number }[] = [];
@@ -1553,6 +1674,7 @@ export class GameManager {
       this.weaponSystem.fire(origin, dir);
       this.audioSystem?.playSound("shoot");
       this.triggerGunRecoil();
+      this.cameraShake.add(0.08);
 
       this.network.send(ClientMessage.SHOOT, {
         originX: origin.x,
@@ -1996,6 +2118,22 @@ export class GameManager {
     });
   }
 
+  private showDamageNumberFor(sessionId: string, damage: number, killed: boolean) {
+    let x = window.innerWidth / 2;
+    let y = window.innerHeight / 2 - 30;
+    const entity = this.playerEntities.get(sessionId);
+    if (entity) {
+      const p = entity.group.position.clone();
+      p.y += 1.2;
+      p.project(this.camera);
+      if (p.z < 1) {
+        x = (p.x * 0.5 + 0.5) * window.innerWidth;
+        y = (-p.y * 0.5 + 0.5) * window.innerHeight;
+      }
+    }
+    this.gameHUD.showDamageNumber(damage, x, y, killed);
+  }
+
   private speak(text: string) {
     try {
       const u = new SpeechSynthesisUtterance(text);
@@ -2111,9 +2249,21 @@ export class GameManager {
     );
   }
 
+  private updateFovKick(dt: number) {
+    if (this.scopeActive || !this.isGameActive() || !this.localIsAlive) return;
+    const now = Date.now();
+    const boosted = now < this.speedBoostEnd || now < this.hunterBoostEnd;
+    const targetFov = this.defaultFov + (boosted ? 10 : 0);
+    if (Math.abs(this.camera.fov - targetFov) > 0.05) {
+      this.camera.fov += (targetFov - this.camera.fov) * Math.min(1, dt * 8);
+      this.camera.updateProjectionMatrix();
+    }
+  }
+
   private onResize() {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.post.setSize(window.innerWidth, window.innerHeight);
   }
 }

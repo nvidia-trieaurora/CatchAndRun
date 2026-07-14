@@ -1,4 +1,13 @@
 import { t } from "../../i18n/i18n";
+import {
+  HUNTER_GRENADE_COOLDOWN_MS,
+  HUNTER_SCAN_COOLDOWN_MS,
+  HUNTER_PHASEWALK_COOLDOWN_MS,
+} from "@catch-and-run/shared";
+
+const PROP_INVIS_COOLDOWN_MS = 20000;
+const PROP_SPEED_COOLDOWN_MS = 20000;
+const HUNTER_BOOST_COOLDOWN_MS = 60000;
 
 export class GameHUD {
   readonly element: HTMLElement;
@@ -24,6 +33,7 @@ export class GameHUD {
   private scoreboardEl!: HTMLElement;
   private scoreboardBodyEl!: HTMLElement;
   private killfeedEntries: { el: HTMLElement; time: number }[] = [];
+  private currentPhase = "";
   private chatOpen = false;
   private scoreboardOpen = false;
   private onChatSend: ((message: string) => void) | null = null;
@@ -200,6 +210,24 @@ export class GameHUD {
     this.vignetteEl.style.opacity = String(Math.min(0.7, vignetteOpacity));
   }
 
+  showHitMarker(killed: boolean) {
+    const el = document.createElement("div");
+    el.className = `hit-marker${killed ? " kill" : ""}`;
+    el.innerHTML = `<span></span><span></span>`;
+    this.element.appendChild(el);
+    setTimeout(() => el.remove(), 350);
+  }
+
+  showDamageNumber(damage: number, screenX: number, screenY: number, killed: boolean) {
+    const el = document.createElement("div");
+    el.className = `damage-number${killed ? " kill" : ""}`;
+    el.textContent = killed ? `-${damage} 💀` : `-${damage}`;
+    el.style.left = `${screenX + (Math.random() - 0.5) * 30}px`;
+    el.style.top = `${screenY - 10}px`;
+    this.element.appendChild(el);
+    setTimeout(() => el.remove(), 900);
+  }
+
   flashDamage() {
     if (!this.flashEl) return;
     this.flashEl.style.opacity = "0.4";
@@ -213,10 +241,13 @@ export class GameHUD {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     this.timerEl.textContent = `${m}:${s.toString().padStart(2, "0")}`;
+    const urgent = this.currentPhase === "active" && seconds > 0 && seconds <= 30;
+    this.timerEl.classList.toggle("urgent", urgent);
   }
 
   updatePhase(phase: string) {
     if (!this.phaseEl || !phase) return;
+    this.currentPhase = phase;
     const labels: Record<string, string> = {
       waiting: t("hud.waiting"),
       countdown: t("hud.get_ready"),
@@ -284,23 +315,52 @@ export class GameHUD {
     }
   }
 
+  private abilityChip(opts: {
+    key: string;
+    name: string;
+    cdMs?: number;
+    maxMs?: number;
+    count?: string;
+    depleted?: boolean;
+    activeFx?: boolean;
+  }): string {
+    const cd = opts.cdMs ?? 0;
+    const cooling = cd > 0 && !opts.depleted;
+    const stateClass = opts.depleted
+      ? "depleted"
+      : opts.activeFx
+        ? "active-fx"
+        : cooling
+          ? "cooling"
+          : "ready";
+    const pct = cooling && opts.maxMs ? Math.min(100, (cd / opts.maxMs) * 100) : 0;
+    const ring = cooling
+      ? `<div class="ability-chip-ring" style="background:conic-gradient(rgba(0,0,0,0.78) ${pct}%, transparent 0)"></div>
+         <div class="ability-chip-cd">${Math.ceil(cd / 1000)}</div>`
+      : "";
+    const count = opts.count ? `<div class="ability-chip-count">${opts.count}</div>` : "";
+    return `
+      <div class="ability-chip ${stateClass}">
+        <div class="ability-chip-box">
+          <div class="ability-chip-key">${opts.key}</div>
+          ${ring}
+        </div>
+        ${count}
+        <div class="ability-chip-name">${opts.name}</div>
+      </div>
+    `;
+  }
+
   updatePropAbilities(invisCd: number, speedCd: number, transformsLeft: number, duplicatesLeft: number) {
     if (!this.abilityEl) return;
-    let html = "";
-    if (invisCd > 0) {
-      html += `<div class="hud-ability-name">${t("ability.invisible")} <span style="color:#ff9800">[Q] ${Math.ceil(invisCd / 1000)}s</span></div>`;
-    } else {
-      html += `<div class="hud-ability-name">${t("ability.invisible")} <span style="color:#4caf50">[Q]</span></div>`;
-    }
-    html += `<div class="hud-ability-name">${t("ability.transform")} <span style="color:${transformsLeft > 0 ? '#00d4ff' : '#ff5555'}">[E] ${transformsLeft}/2</span></div>`;
-    if (speedCd > 0) {
-      html += `<div class="hud-ability-name">${t("ability.speed")} <span style="color:#ff9800">[R] ${Math.ceil(speedCd / 1000)}s</span></div>`;
-    } else {
-      html += `<div class="hud-ability-name">${t("ability.speed")} <span style="color:#ffdd44">[R]</span></div>`;
-    }
-    html += `<div class="hud-ability-name">${t("ability.duplicate")} <span style="color:${duplicatesLeft > 0 ? '#00ffcc' : '#ff5555'}">[T] ${duplicatesLeft}/4</span></div>`;
-    html += `<div class="hud-ability-name">${t("ability.lock")} <span style="color:#aaa">[F]</span> &bull; ${t("ability.soul")} <span style="color:#c0a0ff">[1]</span></div>`;
-    this.abilityEl.innerHTML = html;
+    this.abilityEl.innerHTML = `<div class="ability-chips">
+      ${this.abilityChip({ key: "Q", name: t("ability.invisible"), cdMs: invisCd, maxMs: PROP_INVIS_COOLDOWN_MS })}
+      ${this.abilityChip({ key: "E", name: t("ability.transform"), count: `${transformsLeft}/2`, depleted: transformsLeft <= 0 })}
+      ${this.abilityChip({ key: "R", name: t("ability.speed"), cdMs: speedCd, maxMs: PROP_SPEED_COOLDOWN_MS })}
+      ${this.abilityChip({ key: "T", name: t("ability.duplicate"), count: `${duplicatesLeft}/4`, depleted: duplicatesLeft <= 0 })}
+      ${this.abilityChip({ key: "F", name: t("ability.lock") })}
+      ${this.abilityChip({ key: "1", name: t("ability.soul") })}
+    </div>`;
   }
 
   updateHunterAbilities(grenadeCd: number, scanCd: number, grenadeMode: boolean, boostCd = 0, phaseWalkCd = 0, inPhaseWalk = false, grenadesLeft = 3) {
@@ -311,39 +371,19 @@ export class GameHUD {
       `;
       return;
     }
-    let html = "";
-    if (grenadesLeft <= 0) {
-      html += `<div class="hud-ability-name">${t("ability.grenade")} <span style="color:#ff5555">[Q] 0/3</span></div>`;
-    } else if (grenadeCd > 0) {
-      html += `<div class="hud-ability-name">${t("ability.grenade")} <span style="color:#ff9800">[Q] ${Math.ceil(grenadeCd / 1000)}s (${grenadesLeft}/3)</span></div>`;
-    } else {
-      html += `<div class="hud-ability-name">${t("ability.grenade")} <span style="color:#4caf50">[Q] (${grenadesLeft}/3)</span></div>`;
-    }
-    if (scanCd > 0) {
-      html += `<div class="hud-ability-name">${t("ability.scanner")} <span style="color:#ff9800">[E] ${Math.ceil(scanCd / 1000)}s</span></div>`;
-    } else {
-      html += `<div class="hud-ability-name">${t("ability.scanner")} <span style="color:#00d4ff">[E]</span></div>`;
-    }
-    if (boostCd > 0) {
-      html += `<div class="hud-ability-name">${t("ability.boost")} <span style="color:#ff9800">[T] ${Math.ceil(boostCd / 1000)}s</span></div>`;
-    } else {
-      html += `<div class="hud-ability-name">${t("ability.boost")} <span style="color:#ffdd44">[T]</span></div>`;
-    }
-    if (inPhaseWalk) {
-      html += `<div class="hud-ability-name" style="color:#00ffcc;font-weight:bold">${t("ability.phase_walk_active")}</div>`;
-    } else if (phaseWalkCd > 0) {
-      html += `<div class="hud-ability-name">${t("ability.phase_walk")} <span style="color:#ff9800">[1] ${Math.ceil(phaseWalkCd / 1000)}s</span></div>`;
-    } else {
-      html += `<div class="hud-ability-name">${t("ability.phase_walk")} <span style="color:#00ffcc">[1]</span></div>`;
-    }
-    this.abilityEl.innerHTML = html;
+    this.abilityEl.innerHTML = `<div class="ability-chips">
+      ${this.abilityChip({ key: "Q", name: t("ability.grenade"), cdMs: grenadeCd, maxMs: HUNTER_GRENADE_COOLDOWN_MS, count: `${grenadesLeft}/3`, depleted: grenadesLeft <= 0 })}
+      ${this.abilityChip({ key: "E", name: t("ability.scanner"), cdMs: scanCd, maxMs: HUNTER_SCAN_COOLDOWN_MS })}
+      ${this.abilityChip({ key: "T", name: t("ability.boost"), cdMs: boostCd, maxMs: HUNTER_BOOST_COOLDOWN_MS })}
+      ${this.abilityChip({ key: "1", name: t("ability.phase_walk"), cdMs: phaseWalkCd, maxMs: HUNTER_PHASEWALK_COOLDOWN_MS, activeFx: inPhaseWalk })}
+    </div>`;
   }
 
   addKillfeed(killer: string, victim: string) {
     if (!this.killfeedEl) return;
     const el = document.createElement("div");
     el.className = "killfeed-entry";
-    el.innerHTML = `<span style="color:#ff6b6b">${killer}</span> ${t("hud.eliminated")} <span style="color:#00d4ff">${victim}</span>`;
+    el.innerHTML = `<span style="color:#ff6b6b">${killer}</span><span class="killfeed-skull">&#128128;</span><span style="color:#00d4ff">${victim}</span>`;
     this.killfeedEl.appendChild(el);
     this.killfeedEntries.push({ el, time: Date.now() });
 

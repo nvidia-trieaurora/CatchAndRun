@@ -2,8 +2,9 @@ export interface ClientConfigData {
   sensitivity: number;
   masterVolume: number;
   sfxVolume: number;
-  graphicsQuality: "low" | "medium" | "high";
+  graphicsQuality: "auto" | "low" | "medium" | "high";
   fov: number;
+  uiSounds: boolean;
 }
 
 const STORAGE_KEY = "catchandrun_config";
@@ -12,8 +13,9 @@ const defaults: ClientConfigData = {
   sensitivity: 0.002,
   masterVolume: 0.8,
   sfxVolume: 0.7,
-  graphicsQuality: "medium",
+  graphicsQuality: "auto",
   fov: 75,
+  uiSounds: true,
 };
 
 export class ClientConfig {

@@ -43,7 +43,7 @@ export class RoomLobbyUI {
       <div class="lobby-wrapper">
         <div class="lobby-header">
           <h2>${t("lobby.title")}</h2>
-          <div class="room-code-display" id="room-code">------</div>
+          <div class="room-code-display" id="room-code" title="${t("lobby.click_copy")}">------</div>
         </div>
 
         <div class="lobby-body">
@@ -174,6 +174,38 @@ export class RoomLobbyUI {
         if (e.key === "Enter") this.sendChat();
       });
 
+      this.roomCodeEl.addEventListener("click", () => {
+        const code = this.roomCodeEl.textContent?.trim();
+        if (!code || code === "------" || this.roomCodeEl.classList.contains("copied")) return;
+
+        const showFeedback = () => {
+          this.roomCodeEl.classList.add("copied");
+          this.roomCodeEl.textContent = `✓ ${t("lobby.copied")}`;
+          setTimeout(() => {
+            this.roomCodeEl.classList.remove("copied");
+            this.roomCodeEl.textContent = code;
+          }, 1200);
+        };
+
+        const fallbackCopy = () => {
+          const ta = document.createElement("textarea");
+          ta.value = code;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+          showFeedback();
+        };
+
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(code).then(showFeedback).catch(fallbackCopy);
+        } else {
+          fallbackCopy();
+        }
+      });
+
       void this.loadMemeGrid();
     }, 0);
   }
@@ -214,6 +246,14 @@ export class RoomLobbyUI {
     return this.selectedMemeId;
   }
 
+  private static nicknameHue(nickname: string): number {
+    let hash = 0;
+    for (let i = 0; i < nickname.length; i++) {
+      hash = (hash * 31 + nickname.charCodeAt(i)) | 0;
+    }
+    return Math.abs(hash) % 360;
+  }
+
   private sendChat() {
     const msg = this.chatInputEl.value.trim();
     if (!msg) return;
@@ -227,15 +267,19 @@ export class RoomLobbyUI {
       .map((p) => {
         const isSelf = p.sessionId === selfSessionId;
         const memePreview = p.memeId ? getMemePreviewDataURL(p.memeId, "") : "";
+        const hue = RoomLobbyUI.nicknameHue(p.nickname);
+        const avatar = memePreview
+          ? `<img class="player-meme-icon" src="${memePreview}" style="border:2px solid hsl(${hue}, 80%, 55%);" />`
+          : `<span class="player-avatar-dot" style="background:hsl(${hue}, 80%, 55%);">${p.nickname.charAt(0).toUpperCase()}</span>`;
         return `
           <div class="player-entry ${isSelf ? "self" : ""}">
             <span class="player-info">
-              ${memePreview ? `<img class="player-meme-icon" src="${memePreview}" />` : ""}
+              ${avatar}
               ${p.nickname}
               ${p.isHost ? `<span class="host-badge">${t("lobby.host")}</span>` : ""}
             </span>
             <span class="ready-status ${p.isReady ? "ready" : "not-ready"}">
-              ${p.isReady ? t("lobby.player_ready") : t("lobby.player_not_ready")}
+              <span class="ready-dot"></span>${p.isReady ? t("lobby.player_ready") : t("lobby.player_not_ready")}
             </span>
           </div>
         `;
@@ -258,6 +302,8 @@ export class RoomLobbyUI {
 
   setRoomCode(code: string) {
     if (!this.roomCodeEl) return;
+    // Don't stomp the "Copied!" feedback — state sync calls this at 20Hz
+    if (this.roomCodeEl.classList.contains("copied")) return;
     this.roomCodeEl.textContent = code;
   }
 

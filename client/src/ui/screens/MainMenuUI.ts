@@ -6,6 +6,7 @@ export interface MainMenuCallbacks {
   onJoinCode: (nickname: string, code: string) => Promise<void>;
   onBrowseRooms: () => Promise<any[]>;
   onJoinRoom: (nickname: string, roomId: string, passcode?: string) => Promise<void>;
+  onOpenSettings?: () => void;
 }
 
 export class MainMenuUI {
@@ -51,7 +52,8 @@ export class MainMenuUI {
   private buildHTML() {
     this.element.innerHTML = `
       <div class="menu-container">
-        <div style="text-align:right;margin-bottom:8px;">
+        <div class="menu-topbar">
+          <button class="btn-lang" id="btn-settings" title="${t("menu.settings")}">&#9881;</button>
           <button class="btn-lang" id="btn-lang">${getLang() === "en" ? "🇻🇳 Tiếng Việt" : "🇬🇧 English"}</button>
         </div>
         <h1 class="game-title">${t("menu.title")}</h1>
@@ -62,7 +64,7 @@ export class MainMenuUI {
           <input type="text" id="nickname-input" placeholder="${t("menu.nickname_placeholder")}" maxlength="20" inputmode="text" />
         </div>
 
-        <button class="btn btn-primary" id="btn-quick-join">${t("menu.quick_join")}</button>
+        <button class="btn btn-primary btn-hero" id="btn-quick-join">&#9654; ${t("menu.quick_join")}</button>
 
         <div class="room-browser">
           <div class="room-browser-header">
@@ -70,31 +72,36 @@ export class MainMenuUI {
             <button class="btn btn-small btn-secondary" id="btn-refresh-rooms">${t("menu.refresh")}</button>
           </div>
           <div class="room-list" id="room-list">
-            <div class="room-list-empty">${t("menu.click_refresh")}</div>
+            <div class="room-list-empty">${t("menu.loading")}</div>
           </div>
         </div>
 
-        <div class="input-group" style="margin-top: 1.5rem;">
-          <label>${t("menu.room_name")}</label>
-          <input type="text" id="room-name-input" placeholder="${t("menu.room_name_placeholder")}" maxlength="30" />
-        </div>
+        <details class="menu-collapsible" id="create-join-details">
+          <summary>${t("menu.create_join_title")}</summary>
+          <div class="menu-collapsible-body">
+            <div class="input-group">
+              <label>${t("menu.room_name")}</label>
+              <input type="text" id="room-name-input" placeholder="${t("menu.room_name_placeholder")}" maxlength="30" />
+            </div>
 
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.75rem;">
-          <input type="checkbox" id="private-check" />
-          <label for="private-check" style="font-size:0.9rem;color:#ccc;">${t("menu.private_room")}</label>
-        </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.75rem;">
+              <input type="checkbox" id="private-check" />
+              <label for="private-check" style="font-size:0.9rem;color:#ccc;">${t("menu.private_room")}</label>
+            </div>
 
-        <div class="input-group" id="passcode-group" style="display:none;margin-bottom:0.75rem;">
-          <label>${t("menu.passcode")}</label>
-          <input type="text" id="passcode-input" placeholder="${t("menu.passcode_placeholder")}" maxlength="10" style="text-transform:uppercase;letter-spacing:2px;font-family:monospace;" />
-        </div>
+            <div class="input-group" id="passcode-group" style="display:none;margin-bottom:0.75rem;">
+              <label>${t("menu.passcode")}</label>
+              <input type="text" id="passcode-input" placeholder="${t("menu.passcode_placeholder")}" maxlength="10" style="text-transform:uppercase;letter-spacing:2px;font-family:monospace;" />
+            </div>
 
-        <button class="btn btn-secondary" id="btn-create">${t("menu.create_room")}</button>
+            <button class="btn btn-secondary" id="btn-create">${t("menu.create_room")}</button>
 
-        <div class="join-code-row" style="margin-top: 1rem;">
-          <input type="text" id="code-input" placeholder="${t("menu.room_code")}" maxlength="6" style="text-transform:uppercase;letter-spacing:2px;font-family:monospace;" />
-          <button class="btn btn-secondary btn-small" id="btn-join-code">${t("menu.join")}</button>
-        </div>
+            <div class="join-code-row" style="margin-top: 1rem;">
+              <input type="text" id="code-input" placeholder="${t("menu.room_code")}" maxlength="6" style="text-transform:uppercase;letter-spacing:2px;font-family:monospace;" />
+              <button class="btn btn-secondary btn-small" id="btn-join-code">${t("menu.join")}</button>
+            </div>
+          </div>
+        </details>
       </div>
     `;
   }
@@ -111,6 +118,10 @@ export class MainMenuUI {
 
       this.element.querySelector("#btn-lang")?.addEventListener("click", () => {
         setLang(getLang() === "en" ? "vi" : "en");
+      });
+
+      this.element.querySelector("#btn-settings")?.addEventListener("click", () => {
+        callbacks.onOpenSettings?.();
       });
 
       this.privateCheckbox.addEventListener("change", () => {
@@ -155,14 +166,27 @@ export class MainMenuUI {
       });
 
       void this.refreshRoomList();
+      this.startAutoRefresh();
     }, 0);
 
     this.element.addEventListener("click", (e) => e.stopPropagation());
   }
 
-  async refreshRoomList() {
+  private refreshInterval: number | null = null;
+
+  private startAutoRefresh() {
+    if (this.refreshInterval !== null) return;
+    this.refreshInterval = window.setInterval(() => {
+      const visible = !this.element.classList.contains("hidden") && document.visibilityState === "visible";
+      if (visible && !this.busy) void this.refreshRoomList(true);
+    }, 5000);
+  }
+
+  async refreshRoomList(silent = false) {
     if (!this.roomListEl) return;
-    this.roomListEl.innerHTML = `<div class="room-list-empty">${t("menu.loading")}</div>`;
+    if (!silent) {
+      this.roomListEl.innerHTML = `<div class="room-list-empty">${t("menu.loading")}</div>`;
+    }
     try {
       const rooms = await this.callbacks.onBrowseRooms();
       if (rooms.length === 0) {

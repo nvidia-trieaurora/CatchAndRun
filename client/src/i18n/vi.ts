@@ -113,12 +113,48 @@ export const vi: Record<TranslationKey, string> = {
   "settings.fov": "Góc nhìn",
   "settings.close": "Đóng",
   "settings.language": "Ngôn ngữ",
+  "settings.quality": "Chất lượng đồ họa",
+  "settings.q_auto": "Tự động",
+  "settings.q_low": "Thấp",
+  "settings.q_medium": "Vừa",
+  "settings.q_high": "Cao",
+  "settings.ui_sounds": "Âm thanh giao diện",
 
   // Sound Meme
   "meme.title": "Meme Âm thanh",
   "meme.hint_next": "[2] tiếp",
   "meme.hint_play": "[Enter] phát",
   "meme.hint_close": "[Esc] đóng",
+
+  // Loading
+  "loading.connecting": "Đang kết nối máy chủ...",
+  "loading.cold_start": "Lần kết nối đầu có thể mất đến 1 phút để máy chủ khởi động — chờ chút nhé!",
+  "loading.tip_1": "Đồ vật: nhấn F để khóa tư thế, tránh bị trượt lung tung.",
+  "loading.tip_2": "Thợ săn: máy quét [E] hiện vị trí đồ vật trên bản đồ nhỏ.",
+  "loading.tip_3": "Đồ vật: phân thân [T] là mồi nhử hoàn hảo cho thợ săn tham lam.",
+  "loading.tip_4": "Thợ săn: bắn nhầm đồ thật sẽ tốn đạn — hãy để ý chuyển động!",
+  "loading.tip_5": "Đồ vật: phát meme âm thanh [2] để chọc tức thợ săn... nếu bạn dám.",
+
+  // Menu extras
+  "menu.create_join_title": "Tạo phòng hoặc vào bằng mã",
+  "menu.settings": "Cài đặt",
+
+  // Lobby extras
+  "lobby.click_copy": "Nhấn để copy",
+  "lobby.copied": "Đã copy!",
+
+  // Results extras
+  "results.hunters_win": "Thợ Săn Thắng!",
+  "results.props_win": "Đồ Vật Thắng!",
+  "results.round": "Hiệp",
+
+  // Announcements
+  "splash.you_are_hunter": "BẠN LÀ THỢ SĂN",
+  "splash.you_are_prop": "BẠN LÀ ĐỒ VẬT",
+  "splash.hunter_task": "Chờ cổng mở rồi săn hết chúng!",
+  "splash.prop_task": "Biến hình và trốn trước khi thợ săn tới!",
+  "banner.hunt_begins": "CUỘC SĂN BẮT ĐẦU!",
+  "banner.round_over": "HẾT HIỆP",
 
   // Results
   "results.title": "Kết quả trận đấu",

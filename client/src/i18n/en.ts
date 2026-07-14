@@ -111,12 +111,48 @@ export const en = {
   "settings.fov": "FOV",
   "settings.close": "Close",
   "settings.language": "Language",
+  "settings.quality": "Graphics Quality",
+  "settings.q_auto": "Auto",
+  "settings.q_low": "Low",
+  "settings.q_medium": "Medium",
+  "settings.q_high": "High",
+  "settings.ui_sounds": "UI Sounds",
 
   // Sound Meme
   "meme.title": "Sound Meme",
   "meme.hint_next": "[2] next",
   "meme.hint_play": "[Enter] play",
   "meme.hint_close": "[Esc] close",
+
+  // Loading
+  "loading.connecting": "Connecting to server...",
+  "loading.cold_start": "First connection can take up to a minute while the server wakes up — hang tight!",
+  "loading.tip_1": "Props: press F to lock your pose so you don't slide around.",
+  "loading.tip_2": "Hunters: the scanner [E] reveals props on the minimap.",
+  "loading.tip_3": "Props: duplicates [T] make perfect decoys for greedy hunters.",
+  "loading.tip_4": "Hunters: shooting the wrong object wastes ammo — watch for movement!",
+  "loading.tip_5": "Props: play sound memes [2] to taunt hunters... at your own risk.",
+
+  // Menu extras
+  "menu.create_join_title": "Create or join with code",
+  "menu.settings": "Settings",
+
+  // Lobby extras
+  "lobby.click_copy": "Click to copy",
+  "lobby.copied": "Copied!",
+
+  // Results extras
+  "results.hunters_win": "Hunters Win!",
+  "results.props_win": "Props Win!",
+  "results.round": "Round",
+
+  // Announcements
+  "splash.you_are_hunter": "YOU ARE THE HUNTER",
+  "splash.you_are_prop": "YOU ARE A PROP",
+  "splash.hunter_task": "Wait for the gate to open, then hunt them all!",
+  "splash.prop_task": "Transform and hide before the hunters arrive!",
+  "banner.hunt_begins": "THE HUNT BEGINS!",
+  "banner.round_over": "ROUND OVER",
 
   // Results
   "results.title": "Match Results",

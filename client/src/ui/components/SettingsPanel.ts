@@ -1,8 +1,10 @@
 import type { ClientConfig } from "../../config/ClientConfig";
+import { setUISoundsEnabled } from "../UISounds";
 import { t, getLang, setLang, onLangChange } from "../../i18n/i18n";
 
 export class SettingsPanel {
   readonly element: HTMLElement;
+  onQualityChange: (() => void) | null = null;
   private visible = false;
   private unsubLang?: () => void;
 
@@ -45,6 +47,22 @@ export class SettingsPanel {
         <input type="range" min="60" max="110" step="5" value="${data.fov}" id="setting-fov" />
       </div>
 
+      <div class="setting-row">
+        <label>${t("settings.quality")}</label>
+        <div style="display:flex;gap:4px;">
+          ${(["auto", "low", "medium", "high"] as const).map((q) => `
+            <button class="btn btn-small ${data.graphicsQuality === q ? "btn-primary" : "btn-secondary"} quality-btn" data-quality="${q}">
+              ${t(`settings.q_${q}`)}
+            </button>
+          `).join("")}
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label>${t("settings.ui_sounds")}</label>
+        <input type="checkbox" id="setting-ui-sounds" ${data.uiSounds ? "checked" : ""} />
+      </div>
+
       <button class="btn btn-secondary" id="btn-close-settings">${t("settings.close")}</button>
     `;
 
@@ -67,6 +85,21 @@ export class SettingsPanel {
 
       this.element.querySelector("#setting-fov")!.addEventListener("input", (e) => {
         this.config.set("fov", parseInt((e.target as HTMLInputElement).value));
+      });
+
+      this.element.querySelector("#setting-ui-sounds")!.addEventListener("change", (e) => {
+        const checked = (e.target as HTMLInputElement).checked;
+        this.config.set("uiSounds", checked);
+        setUISoundsEnabled(checked);
+      });
+
+      this.element.querySelectorAll(".quality-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const q = (btn as HTMLElement).dataset.quality as "auto" | "low" | "medium" | "high";
+          this.config.set("graphicsQuality", q);
+          this.onQualityChange?.();
+          this.render();
+        });
       });
 
       this.element.querySelector("#btn-close-settings")!.addEventListener("click", () => {
