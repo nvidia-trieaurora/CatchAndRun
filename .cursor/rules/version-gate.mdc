@@ -1,0 +1,16 @@
+---
+description: Mandatory version and changelog checkpoint before CatchAndRun feature or bug-fix work
+alwaysApply: true
+---
+
+# Version Gate
+
+- Before implementing any feature or bug fix, invoke `.cursor/skills/version-tracker/SKILL.md`.
+- Read-only investigation is allowed before approval.
+- Report the current version, change type, proposed SemVer version, tracker path, and planned changelog entry.
+- Ask the required approval question and stop until the user explicitly approves.
+- Do not edit implementation code, execute mutating commands, or delegate implementation before approval.
+- After approval, update `CHANGELOG.md` `[Unreleased]` before implementation code.
+- Root `package.json` is the canonical active version.
+- Run `npm run version:check` after version or tracker changes.
+- Never commit, push, tag, or publish unless the user explicitly asks.

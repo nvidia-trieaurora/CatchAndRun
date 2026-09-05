@@ -1,5 +1,7 @@
 # Release Notes
 
+> Historical detailed notes for the public `v1.0.0` release. The current development version and unreleased changes are tracked in `CHANGELOG.md`.
+
 ---
 
 ## v1.0.0 — First Public Release (2026-03-19)

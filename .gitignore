@@ -10,3 +10,4 @@ server/dist/
 shared/dist/
 data/
 *.db
+.gstack/
