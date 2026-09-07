@@ -1,0 +1,730 @@
+{
+  "asset": "art-source/harbor-v2/_staging/construction-ad-candidate.glb",
+  "zone": "CONSTRUCTION",
+  "payloadBytes": 2442968,
+  "textureBytes": 592968,
+  "images": [
+    {
+      "name": "concrete_slab_normal",
+      "mimeType": "image/webp",
+      "bytes": 3834
+    },
+    {
+      "name": "concrete_slab_orm",
+      "mimeType": "image/webp",
+      "bytes": 650
+    },
+    {
+      "name": "concrete_slab_base",
+      "mimeType": "image/webp",
+      "bytes": 72440
+    },
+    {
+      "name": "soil_normal",
+      "mimeType": "image/webp",
+      "bytes": 28976
+    },
+    {
+      "name": "soil_orm",
+      "mimeType": "image/webp",
+      "bytes": 12520
+    },
+    {
+      "name": "soil_base",
+      "mimeType": "image/webp",
+      "bytes": 25876
+    },
+    {
+      "name": "brick_normal",
+      "mimeType": "image/webp",
+      "bytes": 61010
+    },
+    {
+      "name": "brick_orm",
+      "mimeType": "image/webp",
+      "bytes": 8516
+    },
+    {
+      "name": "brick_base",
+      "mimeType": "image/webp",
+      "bytes": 75940
+    },
+    {
+      "name": "concrete_cast_normal",
+      "mimeType": "image/webp",
+      "bytes": 2452
+    },
+    {
+      "name": "concrete_cast_orm",
+      "mimeType": "image/webp",
+      "bytes": 1040
+    },
+    {
+      "name": "concrete_cast_base",
+      "mimeType": "image/webp",
+      "bytes": 7524
+    },
+    {
+      "name": "galvanized_normal",
+      "mimeType": "image/webp",
+      "bytes": 4962
+    },
+    {
+      "name": "galvanized_orm",
+      "mimeType": "image/webp",
+      "bytes": 20174
+    },
+    {
+      "name": "galvanized_base",
+      "mimeType": "image/webp",
+      "bytes": 42444
+    },
+    {
+      "name": "grating_normal",
+      "mimeType": "image/webp",
+      "bytes": 84
+    },
+    {
+      "name": "grating_orm",
+      "mimeType": "image/webp",
+      "bytes": 86
+    },
+    {
+      "name": "grating_base",
+      "mimeType": "image/webp",
+      "bytes": 2468
+    },
+    {
+      "name": "mat_palette",
+      "mimeType": "image/webp",
+      "bytes": 460
+    },
+    {
+      "name": "wood_interior_normal",
+      "mimeType": "image/webp",
+      "bytes": 4300
+    },
+    {
+      "name": "wood_interior_orm",
+      "mimeType": "image/webp",
+      "bytes": 2824
+    },
+    {
+      "name": "wood_interior_base",
+      "mimeType": "image/webp",
+      "bytes": 22772
+    },
+    {
+      "name": "roof_metal_dark_normal",
+      "mimeType": "image/webp",
+      "bytes": 2300
+    },
+    {
+      "name": "roof_metal_dark_orm",
+      "mimeType": "image/webp",
+      "bytes": 1870
+    },
+    {
+      "name": "roof_metal_dark_base",
+      "mimeType": "image/webp",
+      "bytes": 446
+    },
+    {
+      "name": "rust_dark_normal",
+      "mimeType": "image/webp",
+      "bytes": 2930
+    },
+    {
+      "name": "rust_dark_orm",
+      "mimeType": "image/webp",
+      "bytes": 1810
+    },
+    {
+      "name": "rust_dark_base",
+      "mimeType": "image/webp",
+      "bytes": 5640
+    },
+    {
+      "name": "safety_yellow_orm",
+      "mimeType": "image/webp",
+      "bytes": 15196
+    },
+    {
+      "name": "safety_yellow_base",
+      "mimeType": "image/webp",
+      "bytes": 54216
+    },
+    {
+      "name": "steel_navy_normal",
+      "mimeType": "image/webp",
+      "bytes": 2690
+    },
+    {
+      "name": "steel_navy_orm",
+      "mimeType": "image/webp",
+      "bytes": 2628
+    },
+    {
+      "name": "steel_navy_base",
+      "mimeType": "image/webp",
+      "bytes": 7122
+    },
+    {
+      "name": "steel_red_normal",
+      "mimeType": "image/webp",
+      "bytes": 1764
+    },
+    {
+      "name": "steel_red_orm",
+      "mimeType": "image/webp",
+      "bytes": 6334
+    },
+    {
+      "name": "steel_red_base",
+      "mimeType": "image/webp",
+      "bytes": 34834
+    },
+    {
+      "name": "tarp_blue_normal",
+      "mimeType": "image/webp",
+      "bytes": 1764
+    },
+    {
+      "name": "tarp_blue_orm",
+      "mimeType": "image/webp",
+      "bytes": 4208
+    },
+    {
+      "name": "tarp_blue_base",
+      "mimeType": "image/webp",
+      "bytes": 2552
+    },
+    {
+      "name": "wood_weathered_normal",
+      "mimeType": "image/webp",
+      "bytes": 15748
+    },
+    {
+      "name": "wood_weathered_orm",
+      "mimeType": "image/webp",
+      "bytes": 3848
+    },
+    {
+      "name": "wood_weathered_base",
+      "mimeType": "image/webp",
+      "bytes": 23716
+    }
+  ],
+  "estimatedGpuTextureBytes": 37278806,
+  "lod0": {
+    "renderMeshes": 19,
+    "triangles": 24054,
+    "estimatedDrawCalls": 19
+  },
+  "lod1": {
+    "renderMeshes": 11,
+    "triangles": 644,
+    "estimatedDrawCalls": 11
+  },
+  "budgets": {
+    "lod0Triangles": 36000,
+    "lod0DrawCalls": 30,
+    "lod1Triangles": 5000,
+    "lod1DrawCalls": 14,
+    "payloadBytes": 6291456,
+    "maxTextureSize": 1024,
+    "gpuTextureBytes": 44040192,
+    "zoneColliders": 40
+  },
+  "colliderParity": {
+    "colliders": 488,
+    "source": "buildOldHarborFortniteMap({ useWarehouseV2: true, cinematicVisuals: true, quality: 'high' })"
+  },
+  "zoneColliders": [
+    {
+      "name": "COL_LADDER_CONSTRUCTION_CRANE_LADDER",
+      "min": [
+        -48.3,
+        0.12,
+        -31.53
+      ],
+      "max": [
+        -47.7,
+        24.25,
+        -31.23
+      ],
+      "ladderApproach": "+z"
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CABLE_REEL",
+      "min": [
+        -44.9,
+        0.2,
+        -12.62
+      ],
+      "max": [
+        -44.1,
+        1.44,
+        -11.38
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_CAB",
+      "min": [
+        -47.5,
+        26.5,
+        -30.3
+      ],
+      "max": [
+        -45.8,
+        28.5,
+        -28.9
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_CJ_DECK",
+      "min": [
+        -55.5,
+        26.66,
+        -31.5
+      ],
+      "max": [
+        -48.5,
+        26.7,
+        -30.5
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_DECK_E",
+      "min": [
+        -47.33,
+        24.15,
+        -31.67
+      ],
+      "max": [
+        -46.2,
+        24.27,
+        -30.33
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_DECK_N",
+      "min": [
+        -49.8,
+        24.15,
+        -32.8
+      ],
+      "max": [
+        -46.2,
+        24.27,
+        -31.67
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_DECK_S",
+      "min": [
+        -49.8,
+        24.15,
+        -30.33
+      ],
+      "max": [
+        -46.2,
+        24.27,
+        -29.2
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_DECK_W",
+      "min": [
+        -49.8,
+        24.15,
+        -31.67
+      ],
+      "max": [
+        -48.67,
+        24.27,
+        -30.33
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_JIB_WALK",
+      "min": [
+        -47.5,
+        26.54,
+        -31.45
+      ],
+      "max": [
+        -21.5,
+        26.66,
+        -30.55
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_LEG_0",
+      "min": [
+        -48.67,
+        0.12,
+        -31.67
+      ],
+      "max": [
+        -48.53,
+        25.6,
+        -31.53
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_LEG_1",
+      "min": [
+        -47.47,
+        0.12,
+        -31.67
+      ],
+      "max": [
+        -47.33,
+        25.6,
+        -31.53
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_LEG_2",
+      "min": [
+        -47.47,
+        0.12,
+        -30.47
+      ],
+      "max": [
+        -47.33,
+        25.6,
+        -30.33
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_LEG_3",
+      "min": [
+        -48.67,
+        0.12,
+        -30.47
+      ],
+      "max": [
+        -48.53,
+        25.6,
+        -30.33
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_PAD",
+      "min": [
+        -49.7,
+        0.0,
+        -32.7
+      ],
+      "max": [
+        -47.3,
+        0.12,
+        -29.3
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_SHIP_STEP_1",
+      "min": [
+        -49.5,
+        24.15,
+        -29.55
+      ],
+      "max": [
+        -48.7,
+        24.6417,
+        -29.35
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_SHIP_STEP_2",
+      "min": [
+        -49.5,
+        24.15,
+        -29.75
+      ],
+      "max": [
+        -48.7,
+        25.0133,
+        -29.55
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_SHIP_STEP_3",
+      "min": [
+        -49.5,
+        24.15,
+        -29.95
+      ],
+      "max": [
+        -48.7,
+        25.385,
+        -29.75
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_SHIP_STEP_4",
+      "min": [
+        -49.5,
+        24.15,
+        -30.15
+      ],
+      "max": [
+        -48.7,
+        25.7567,
+        -29.95
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_SHIP_STEP_5",
+      "min": [
+        -49.5,
+        24.15,
+        -30.35
+      ],
+      "max": [
+        -48.7,
+        26.1283,
+        -30.15
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_SHIP_STEP_6",
+      "min": [
+        -49.5,
+        24.15,
+        -30.55
+      ],
+      "max": [
+        -48.7,
+        26.5,
+        -30.35
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_SLEW_RING",
+      "min": [
+        -48.67,
+        25.6,
+        -31.67
+      ],
+      "max": [
+        -47.33,
+        26.1,
+        -30.33
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_TURNTABLE",
+      "min": [
+        -48.67,
+        26.1,
+        -31.67
+      ],
+      "max": [
+        -47.33,
+        26.5,
+        -30.33
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_WALL_E",
+      "min": [
+        -47.41,
+        0.12,
+        -31.67
+      ],
+      "max": [
+        -47.33,
+        24.15,
+        -30.33
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_WALL_N",
+      "min": [
+        -48.67,
+        0.12,
+        -31.67
+      ],
+      "max": [
+        -47.33,
+        24.15,
+        -31.59
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_WALL_S",
+      "min": [
+        -48.67,
+        3.32,
+        -30.41
+      ],
+      "max": [
+        -47.33,
+        24.15,
+        -30.33
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_CRANE_WALL_W",
+      "min": [
+        -48.67,
+        0.12,
+        -31.67
+      ],
+      "max": [
+        -48.59,
+        24.15,
+        -30.33
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_FORMWORK_27",
+      "min": [
+        -28.2275,
+        0.2,
+        -28.6692
+      ],
+      "max": [
+        -24.9725,
+        0.93,
+        -27.3308
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_FORMWORK_31",
+      "min": [
+        -32.642,
+        0.2,
+        -12.916
+      ],
+      "max": [
+        -29.358,
+        0.93,
+        -11.484
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_REBAR_CAGE_252_322",
+      "min": [
+        -25.44,
+        0.2,
+        -32.44
+      ],
+      "max": [
+        -24.96,
+        2.4,
+        -31.96
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_REBAR_CAGE_290_125",
+      "min": [
+        -29.24,
+        0.2,
+        -12.74
+      ],
+      "max": [
+        -28.76,
+        2.4,
+        -12.26
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_REBAR_CAGE_436_125",
+      "min": [
+        -43.84,
+        0.2,
+        -12.74
+      ],
+      "max": [
+        -43.36,
+        2.4,
+        -12.26
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_REBAR_CAGE_454_125",
+      "min": [
+        -45.64,
+        0.2,
+        -12.74
+      ],
+      "max": [
+        -45.16,
+        2.4,
+        -12.26
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_SHELTER_POST_4275_1185",
+      "min": [
+        -42.83,
+        0.2,
+        -11.93
+      ],
+      "max": [
+        -42.67,
+        3.1,
+        -11.77
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_SHELTER_POST_4275_1575",
+      "min": [
+        -42.83,
+        0.2,
+        -15.83
+      ],
+      "max": [
+        -42.67,
+        3.1,
+        -15.67
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_SHELTER_POST_4585_1185",
+      "min": [
+        -45.93,
+        0.2,
+        -11.93
+      ],
+      "max": [
+        -45.77,
+        3.1,
+        -11.77
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_SHELTER_POST_4585_1575",
+      "min": [
+        -45.93,
+        0.2,
+        -15.83
+      ],
+      "max": [
+        -45.77,
+        3.1,
+        -15.67
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_SHELTER_ROOF",
+      "min": [
+        -46.3,
+        3.0,
+        -16.2
+      ],
+      "max": [
+        -42.3,
+        3.36,
+        -11.4
+      ]
+    }
+  ],
+  "warnings": [],
+  "passed": true,
+  "errors": []
+}

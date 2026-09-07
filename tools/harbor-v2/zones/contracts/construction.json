@@ -1,0 +1,46 @@
+{
+  "zone": "CONSTRUCTION",
+  "title": "AD - Waterfront Construction Site",
+  "harborZone": "construction",
+  "replacesCinematicZones": ["construction", "construction-detail"],
+  "carveBox": { "min": [-54, -1, -42], "max": [-23.6, 30, -8] },
+  "footprint": { "min": [-56, -0.5, -44], "max": [-20.5, 33, -7.0] },
+  "expectedProceduralColliders": 488,
+  "budgets": {
+    "lod0Triangles": 36000,
+    "lod0DrawCalls": 30,
+    "lod1Triangles": 5000,
+    "lod1DrawCalls": 14,
+    "payloadBytes": 6291456,
+    "maxTextureSize": 1024,
+    "gpuTextureBytes": 44040192,
+    "zoneColliders": 40
+  },
+  "clearance": [
+    {
+      "name": "warehouse-west-stair-approach",
+      "min": [-27.6, 0.25, -14.0],
+      "max": [-24.4, 2.3, -11.2]
+    },
+    {
+      "name": "scaffold-bridge-headroom",
+      "min": [-36.9, 5.2, -26.0],
+      "max": [-32.85, 7.1, -25.0]
+    },
+    {
+      "name": "tower-top-headroom",
+      "min": [-40.9, 7.35, -26.4],
+      "max": [-37.1, 9.4, -23.6]
+    },
+    {
+      "name": "silo-platform-headroom",
+      "min": [-49.9, 8.3, -23.9],
+      "max": [-46.5, 10.3, -20.1]
+    },
+    {
+      "name": "slab-south-corridor",
+      "min": [-40.4, 0.3, -13.6],
+      "max": [-34.7, 2.2, -11.6]
+    }
+  ]
+}

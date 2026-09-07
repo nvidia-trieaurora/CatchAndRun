@@ -1,0 +1,122 @@
+{
+  "plaster_old": {
+    "source": "worn_plaster_wall",
+    "base": "plaster_old_base.png",
+    "normal": "plaster_old_normal.png",
+    "orm": "plaster_old_orm.png",
+    "tile": 3.0,
+    "size": 1024
+  },
+  "wood_weathered": {
+    "source": "weathered_planks",
+    "base": "wood_weathered_base.png",
+    "normal": "wood_weathered_normal.png",
+    "orm": "wood_weathered_orm.png",
+    "tile": 2.0,
+    "size": 512
+  },
+  "lawn": {
+    "source": "leafy_grass",
+    "base": "lawn_base.png",
+    "normal": "lawn_normal.png",
+    "orm": "lawn_orm.png",
+    "tile": 3.0,
+    "size": 512
+  },
+  "stone_paving": {
+    "source": "stone_tiles_02",
+    "base": "stone_paving_base.png",
+    "normal": "stone_paving_normal.png",
+    "orm": "stone_paving_orm.png",
+    "tile": 2.0,
+    "size": 512
+  },
+  "rock": {
+    "source": "rock_boulder_dry",
+    "base": "rock_base.png",
+    "normal": "rock_normal.png",
+    "orm": "rock_orm.png",
+    "tile": 2.0,
+    "size": 512
+  },
+  "brick": {
+    "source": "red_brick_03",
+    "base": "brick_base.png",
+    "normal": "brick_normal.png",
+    "orm": "brick_orm.png",
+    "tile": 2.0,
+    "size": 512
+  },
+  "soil": {
+    "source": "brown_mud_leaves_01",
+    "base": "soil_base.png",
+    "normal": "soil_normal.png",
+    "orm": "soil_orm.png",
+    "tile": 2.0,
+    "size": 256
+  },
+  "bark": {
+    "source": "bark_brown_02",
+    "base": "bark_base.png",
+    "normal": "bark_normal.png",
+    "orm": "bark_orm.png",
+    "tile": 1.5,
+    "size": 512
+  },
+  "roof_metal_dark": {
+    "source": "box_profile_metal_sheet",
+    "base": "roof_metal_dark_base.png",
+    "normal": "roof_metal_dark_normal.png",
+    "orm": "roof_metal_dark_orm.png",
+    "tile": 2.0,
+    "size": 256
+  },
+  "wood_interior": {
+    "source": "wood_planks",
+    "base": "wood_interior_base.png",
+    "normal": "wood_interior_normal.png",
+    "orm": "wood_interior_orm.png",
+    "tile": 1.5,
+    "size": 512
+  },
+  "concrete": {
+    "source": "concrete_floor_worn_001",
+    "base": "concrete_base.png",
+    "normal": "concrete_normal.png",
+    "orm": "concrete_orm.png",
+    "tile": 3.0,
+    "size": 256
+  },
+  "leaf_cluster": {
+    "source": "procedural (foliage_cards.py)",
+    "base": "leaf_cluster_base.png",
+    "normal": "leaf_cluster_normal.png",
+    "orm": "leaf_cluster_orm.png",
+    "tile": 1.0,
+    "size": 512
+  },
+  "grass_tuft": {
+    "source": "procedural (foliage_cards.py)",
+    "base": "grass_tuft_base.png",
+    "normal": "grass_tuft_normal.png",
+    "orm": "grass_tuft_orm.png",
+    "tile": 1.0,
+    "size": 512
+  },
+  "reed": {
+    "source": "procedural (foliage_cards.py)",
+    "base": "reed_base.png",
+    "normal": "reed_normal.png",
+    "orm": "reed_orm.png",
+    "tile": 1.0,
+    "size": 512
+  },
+  "plaster_interior": {
+    "source": "worn_plaster_wall",
+    "base": "plaster_interior_base.png",
+    "normal": "plaster_interior_normal.png",
+    "orm": "plaster_interior_orm.png",
+    "tile": 3.0,
+    "size": 256
+  }
+}

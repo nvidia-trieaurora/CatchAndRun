@@ -1,0 +1,50 @@
+{
+  "concrete_slab": {
+    "source": "concrete_floor_worn_001",
+    "base": "concrete_slab_base.png",
+    "normal": "concrete_slab_normal.png",
+    "orm": "concrete_slab_orm.png",
+    "tile": 4.0,
+    "size": 1024
+  },
+  "steel_red": {
+    "source": "metal_plate_02",
+    "base": "steel_red_base.png",
+    "normal": "steel_red_normal.png",
+    "orm": "steel_red_orm.png",
+    "tile": 2.0,
+    "size": 512
+  },
+  "rust_dark": {
+    "source": "rusty_corrugated_iron",
+    "base": "rust_dark_base.png",
+    "normal": "rust_dark_normal.png",
+    "orm": "rust_dark_orm.png",
+    "tile": 1.0,
+    "size": 256
+  },
+  "tarp_blue": {
+    "source": "metal_plate_02",
+    "base": "tarp_blue_base.png",
+    "normal": "tarp_blue_normal.png",
+    "orm": "tarp_blue_orm.png",
+    "tile": 2.0,
+    "size": 256
+  },
+  "grating": {
+    "source": "procedural (foliage_cards.py)",
+    "base": "grating_base.png",
+    "normal": "grating_normal.png",
+    "orm": "grating_orm.png",
+    "tile": 0.5,
+    "size": 256
+  },
+  "concrete_cast": {
+    "source": "concrete_floor_worn_001",
+    "base": "concrete_cast_base.png",
+    "normal": "concrete_cast_normal.png",
+    "orm": "concrete_cast_orm.png",
+    "tile": 2.0,
+    "size": 512
+  }
+}

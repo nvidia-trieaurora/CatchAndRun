@@ -1,0 +1,46 @@
+{
+  "zone": "FERRIS_HARBOR",
+  "title": "Ferris Harbor District - wheel, working pier and boat fleet",
+  "harborZone": "ferris-harbor",
+  "replacesCinematicZones": ["ferris-static", "boats"],
+  "replacesCinematicNodePrefixes": [
+    "MESH_BOLLARD_", "MESH_PIER_PILE_", "MESH_BUOY_", "MESH_DOCK_FENDER_", "MESH_DOCK_LIFE_RING_",
+    "MESH_FISHING_NET_LINE_", "MESH_MOORING_CLEAT_", "MESH_PIER_CHAIR_", "MESH_PIER_TABLE_",
+    "MESH_PIER_UMBRELLA_"
+  ],
+  "carveBox": { "min": [-22.5, -3.5, 27.0], "max": [32.0, 24.0, 62.0] },
+  "boardwalkCarveBox": { "min": [-22.5, 0.05, 33.0], "max": [52.0, 0.6, 43.0] },
+  "footprint": { "min": [-24.0, -3.5, 26.5], "max": [52.0, 24.0, 63.0] },
+  "expectedProceduralColliders": 488,
+  "gameplay": {
+    "ferris": { "hub": [-10, 12, 34], "ringRadius": 8, "mountRadius": 8.5, "cabins": 8, "cabin": [1.8, 2.2, 1.4] },
+    "platform": { "min": [-17, 0, 29], "max": [-3, 0.35, 39] },
+    "boardwalk": { "min": [-20, 0, 34], "max": [50, 0.18, 42] },
+    "seawall": { "min": [-55, 0, 46.55], "max": [63, 0.9, 47.45] },
+    "waterY": -0.8
+  },
+  "budgets": {
+    "lod0Triangles": 60000,
+    "lod0DrawCalls": 96,
+    "lod1Triangles": 15000,
+    "lod1DrawCalls": 26,
+    "payloadBytes": 8388608,
+    "maxTextureSize": 1024,
+    "gpuTextureBytes": 33554432,
+    "zoneColliders": 40
+  },
+  "requiredRigNodes": [
+    "RIG_FERRIS_HARBOR_WHEEL_ROOT",
+    "RIG_FERRIS_HARBOR_CABIN_0", "RIG_FERRIS_HARBOR_CABIN_1", "RIG_FERRIS_HARBOR_CABIN_2", "RIG_FERRIS_HARBOR_CABIN_3",
+    "RIG_FERRIS_HARBOR_CABIN_4", "RIG_FERRIS_HARBOR_CABIN_5", "RIG_FERRIS_HARBOR_CABIN_6", "RIG_FERRIS_HARBOR_CABIN_7",
+    "RIG_FERRIS_HARBOR_BOAT_WORKBOAT", "RIG_FERRIS_HARBOR_BOAT_LAUNCH", "RIG_FERRIS_HARBOR_BOAT_BARGE",
+    "RIG_FERRIS_HARBOR_BOAT_SKIFF_GREEN", "RIG_FERRIS_HARBOR_BOAT_SKIFF_RED"
+  ],
+  "clearance": [
+    { "name": "promenade-route", "min": [-22.0, 0.2, 43.0], "max": [32.0, 2.3, 46.3] },
+    { "name": "ferris-platform-north-lane", "min": [-16.5, 0.5, 29.6], "max": [-3.5, 2.4, 30.6], "ignoreNameTokens": ["_CABIN_", "_WHEEL_ROOT_"] },
+    { "name": "ferris-platform-middle-lane", "min": [-16.5, 0.5, 32.3], "max": [-3.5, 2.1, 35.7], "ignoreNameTokens": ["_CABIN_", "_WHEEL_ROOT_"] },
+    { "name": "ferris-platform-south-lane", "min": [-16.5, 0.5, 36.7], "max": [-3.5, 2.4, 38.7], "ignoreNameTokens": ["_CABIN_", "_WHEEL_ROOT_"] },
+    { "name": "boardwalk-lane", "min": [-19.5, 0.3, 39.3], "max": [31.5, 2.3, 41.6] }
+  ]
+}

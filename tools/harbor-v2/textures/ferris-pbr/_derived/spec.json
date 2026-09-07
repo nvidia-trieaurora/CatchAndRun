@@ -1,0 +1,90 @@
+{
+  "steel_navy_weathered": {
+    "source": "rusty_painted_metal",
+    "base": "steel_navy_weathered_base.png",
+    "normal": "steel_navy_weathered_normal.png",
+    "orm": "steel_navy_weathered_orm.png",
+    "tile": 2.0,
+    "size": 1024
+  },
+  "rust_red_paint": {
+    "source": "rusty_painted_metal",
+    "base": "rust_red_paint_base.png",
+    "normal": "rust_red_paint_normal.png",
+    "orm": "rust_red_paint_orm.png",
+    "tile": 1.5,
+    "size": 512
+  },
+  "hull_navy": {
+    "source": "rusty_painted_metal",
+    "base": "hull_navy_base.png",
+    "normal": "hull_navy_normal.png",
+    "orm": "hull_navy_orm.png",
+    "tile": 2.0,
+    "size": 512
+  },
+  "hull_cream": {
+    "source": "rusty_painted_metal",
+    "base": "hull_cream_base.png",
+    "normal": "hull_cream_normal.png",
+    "orm": "hull_cream_orm.png",
+    "tile": 2.0,
+    "size": 512
+  },
+  "deck_timber": {
+    "source": "wood_floor_deck",
+    "base": "deck_timber_base.png",
+    "normal": "deck_timber_normal.png",
+    "orm": "deck_timber_orm.png",
+    "tile": 2.5,
+    "size": 1024
+  },
+  "plank_green": {
+    "source": "distressed_painted_planks",
+    "base": "plank_green_base.png",
+    "normal": "plank_green_normal.png",
+    "orm": "plank_green_orm.png",
+    "tile": 1.5,
+    "size": 256
+  },
+  "plank_red": {
+    "source": "distressed_painted_planks",
+    "base": "plank_red_base.png",
+    "normal": "plank_red_normal.png",
+    "orm": "plank_red_orm.png",
+    "tile": 1.5,
+    "size": 256
+  },
+  "machine_green": {
+    "source": "green_metal_rust",
+    "base": "machine_green_base.png",
+    "normal": "machine_green_normal.png",
+    "orm": "machine_green_orm.png",
+    "tile": 1.0,
+    "size": 256
+  },
+  "concrete_seawall": {
+    "source": "concrete_floor_worn_001",
+    "base": "concrete_seawall_base.png",
+    "normal": "concrete_seawall_normal.png",
+    "orm": "concrete_seawall_orm.png",
+    "tile": 3.0,
+    "size": 512
+  },
+  "galvanized": {
+    "source": "metal_plate_02",
+    "base": "galvanized_base.png",
+    "normal": "galvanized_normal.png",
+    "orm": "galvanized_orm.png",
+    "tile": 1.5,
+    "size": 512
+  },
+  "rust_dark": {
+    "source": "rusty_corrugated_iron",
+    "base": "rust_dark_base.png",
+    "normal": "rust_dark_normal.png",
+    "orm": "rust_dark_orm.png",
+    "tile": 1.0,
+    "size": 256
+  }
+}

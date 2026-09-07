@@ -1,0 +1,44 @@
+{
+  "MAT_CONCRETE": {
+    "base": "concrete_base.png",
+    "normal": "concrete_normal.png",
+    "orm": "concrete_orm.png",
+    "tile": 3.0
+  },
+  "MAT_CORRUGATED_RED": {
+    "base": "corrugated_red_base.png",
+    "normal": "corrugated_red_normal.png",
+    "orm": "corrugated_red_orm.png",
+    "tile": 2.0
+  },
+  "MAT_GALVANIZED": {
+    "base": "galvanized_base.png",
+    "normal": "galvanized_normal.png",
+    "orm": "galvanized_orm.png",
+    "tile": 2.0
+  },
+  "MAT_SAFETY_YELLOW": {
+    "base": "safety_yellow_base.png",
+    "normal": "galvanized_normal.png",
+    "orm": "safety_yellow_orm.png",
+    "tile": 2.0
+  },
+  "MAT_STEEL_NAVY": {
+    "base": "steel_navy_base.png",
+    "normal": "steel_navy_normal.png",
+    "orm": "steel_navy_orm.png",
+    "tile": 2.5
+  },
+  "MAT_ROOF_DARK": {
+    "base": "roof_dark_base.png",
+    "normal": "roof_dark_normal.png",
+    "orm": "roof_dark_orm.png",
+    "tile": 2.0
+  },
+  "MAT_WOOD": {
+    "base": "wood_base.png",
+    "normal": "wood_normal.png",
+    "orm": "wood_orm.png",
+    "tile": 1.5
+  }
+}

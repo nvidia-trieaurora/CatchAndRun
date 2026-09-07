@@ -1,0 +1,37 @@
+{
+  "zone": "GARDEN",
+  "title": "AC - Waterfront Residential Garden",
+  "harborZone": "residential",
+  "replacesCinematicZones": ["residential", "garden-detail"],
+  "replacesCinematicNodes": ["base_MESH_foliage_LOD0", "harbor_MESH_foliage_LOD1"],
+  "carveBox": { "min": [-56, -1, 11.5], "max": [-17.5, 20, 47.5] },
+  "footprint": { "min": [-56, -0.5, 11.5], "max": [-17.0, 20, 48] },
+  "expectedProceduralColliders": 488,
+  "budgets": {
+    "lod0Triangles": 30000,
+    "lod0DrawCalls": 40,
+    "lod1Triangles": 4000,
+    "lod1DrawCalls": 14,
+    "payloadBytes": 6291456,
+    "maxTextureSize": 1024,
+    "gpuTextureBytes": 44040192,
+    "zoneColliders": 24
+  },
+  "clearance": [
+    {
+      "name": "front-door-opening",
+      "min": [-36.35, 0.55, 25.76],
+      "max": [-33.65, 3.1, 26.4]
+    },
+    {
+      "name": "porch-walkway",
+      "min": [-40.5, 0.4, 26.45],
+      "max": [-29.5, 2.1, 27.9]
+    },
+    {
+      "name": "loggia-opening",
+      "min": [-37.4, 5.6, 25.76],
+      "max": [-32.6, 9.5, 26.26]
+    }
+  ]
+}

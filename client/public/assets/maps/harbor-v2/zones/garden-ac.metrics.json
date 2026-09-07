@@ -1,0 +1,265 @@
+{
+  "asset": "art-source/harbor-v2/_staging/garden-ac-candidate.glb",
+  "zone": "GARDEN",
+  "payloadBytes": 2166216,
+  "textureBytes": 1143790,
+  "images": [
+    {
+      "name": "bark_normal",
+      "mimeType": "image/webp",
+      "bytes": 26080
+    },
+    {
+      "name": "bark_orm",
+      "mimeType": "image/webp",
+      "bytes": 17594
+    },
+    {
+      "name": "bark_base",
+      "mimeType": "image/webp",
+      "bytes": 94056
+    },
+    {
+      "name": "concrete_normal",
+      "mimeType": "image/webp",
+      "bytes": 570
+    },
+    {
+      "name": "concrete_orm",
+      "mimeType": "image/webp",
+      "bytes": 638
+    },
+    {
+      "name": "concrete_base",
+      "mimeType": "image/webp",
+      "bytes": 2416
+    },
+    {
+      "name": "lawn_normal",
+      "mimeType": "image/webp",
+      "bytes": 122246
+    },
+    {
+      "name": "lawn_orm",
+      "mimeType": "image/webp",
+      "bytes": 12858
+    },
+    {
+      "name": "lawn_base",
+      "mimeType": "image/webp",
+      "bytes": 102978
+    },
+    {
+      "name": "soil_normal",
+      "mimeType": "image/webp",
+      "bytes": 28976
+    },
+    {
+      "name": "soil_orm",
+      "mimeType": "image/webp",
+      "bytes": 12520
+    },
+    {
+      "name": "soil_base",
+      "mimeType": "image/webp",
+      "bytes": 25876
+    },
+    {
+      "name": "stone_paving_normal",
+      "mimeType": "image/webp",
+      "bytes": 13338
+    },
+    {
+      "name": "stone_paving_orm",
+      "mimeType": "image/webp",
+      "bytes": 6208
+    },
+    {
+      "name": "stone_paving_base",
+      "mimeType": "image/webp",
+      "bytes": 53770
+    },
+    {
+      "name": "brick_normal",
+      "mimeType": "image/webp",
+      "bytes": 61010
+    },
+    {
+      "name": "brick_orm",
+      "mimeType": "image/webp",
+      "bytes": 8516
+    },
+    {
+      "name": "brick_base",
+      "mimeType": "image/webp",
+      "bytes": 75940
+    },
+    {
+      "name": "grass_tuft_normal",
+      "mimeType": "image/webp",
+      "bytes": 108
+    },
+    {
+      "name": "grass_tuft_orm",
+      "mimeType": "image/webp",
+      "bytes": 1822
+    },
+    {
+      "name": "grass_tuft_base",
+      "mimeType": "image/webp",
+      "bytes": 52132
+    },
+    {
+      "name": "leaf_cluster_normal",
+      "mimeType": "image/webp",
+      "bytes": 3784
+    },
+    {
+      "name": "leaf_cluster_orm",
+      "mimeType": "image/webp",
+      "bytes": 2640
+    },
+    {
+      "name": "leaf_cluster_base",
+      "mimeType": "image/webp",
+      "bytes": 39996
+    },
+    {
+      "name": "reed_normal",
+      "mimeType": "image/webp",
+      "bytes": 108
+    },
+    {
+      "name": "reed_orm",
+      "mimeType": "image/webp",
+      "bytes": 1496
+    },
+    {
+      "name": "reed_base",
+      "mimeType": "image/webp",
+      "bytes": 37880
+    },
+    {
+      "name": "mat_palette",
+      "mimeType": "image/webp",
+      "bytes": 434
+    },
+    {
+      "name": "plaster_interior_normal",
+      "mimeType": "image/webp",
+      "bytes": 504
+    },
+    {
+      "name": "plaster_interior_orm",
+      "mimeType": "image/webp",
+      "bytes": 1518
+    },
+    {
+      "name": "plaster_interior_base",
+      "mimeType": "image/webp",
+      "bytes": 1696
+    },
+    {
+      "name": "plaster_old_normal",
+      "mimeType": "image/webp",
+      "bytes": 7128
+    },
+    {
+      "name": "plaster_old_orm",
+      "mimeType": "image/webp",
+      "bytes": 1514
+    },
+    {
+      "name": "plaster_old_base",
+      "mimeType": "image/webp",
+      "bytes": 142704
+    },
+    {
+      "name": "rock_normal",
+      "mimeType": "image/webp",
+      "bytes": 39580
+    },
+    {
+      "name": "rock_orm",
+      "mimeType": "image/webp",
+      "bytes": 3102
+    },
+    {
+      "name": "rock_base",
+      "mimeType": "image/webp",
+      "bytes": 62230
+    },
+    {
+      "name": "roof_metal_dark_normal",
+      "mimeType": "image/webp",
+      "bytes": 2300
+    },
+    {
+      "name": "roof_metal_dark_orm",
+      "mimeType": "image/webp",
+      "bytes": 1870
+    },
+    {
+      "name": "roof_metal_dark_base",
+      "mimeType": "image/webp",
+      "bytes": 446
+    },
+    {
+      "name": "wood_interior_normal",
+      "mimeType": "image/webp",
+      "bytes": 4300
+    },
+    {
+      "name": "wood_interior_orm",
+      "mimeType": "image/webp",
+      "bytes": 2824
+    },
+    {
+      "name": "wood_interior_base",
+      "mimeType": "image/webp",
+      "bytes": 22772
+    },
+    {
+      "name": "wood_weathered_normal",
+      "mimeType": "image/webp",
+      "bytes": 15748
+    },
+    {
+      "name": "wood_weathered_orm",
+      "mimeType": "image/webp",
+      "bytes": 3848
+    },
+    {
+      "name": "wood_weathered_base",
+      "mimeType": "image/webp",
+      "bytes": 23716
+    }
+  ],
+  "estimatedGpuTextureBytes": 37234896,
+  "lod0": {
+    "renderMeshes": 21,
+    "triangles": 12558,
+    "estimatedDrawCalls": 21
+  },
+  "lod1": {
+    "renderMeshes": 11,
+    "triangles": 896,
+    "estimatedDrawCalls": 11
+  },
+  "budgets": {
+    "lod0Triangles": 30000,
+    "lod0DrawCalls": 40,
+    "lod1Triangles": 4000,
+    "lod1DrawCalls": 14,
+    "payloadBytes": 6291456,
+    "maxTextureSize": 1024,
+    "gpuTextureBytes": 44040192
+  },
+  "colliderParity": {
+    "colliders": 488,
+    "source": "buildOldHarborFortniteMap({ useWarehouseV2: true, cinematicVisuals: true, quality: 'high' })"
+  },
+  "warnings": [],
+  "passed": true,
+  "errors": []
+}
