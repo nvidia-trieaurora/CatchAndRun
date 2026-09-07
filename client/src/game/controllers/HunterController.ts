@@ -1,9 +1,20 @@
 import * as THREE from "three";
 import type { InputManager } from "../../input/InputManager";
 import type { ClientConfig } from "../../config/ClientConfig";
-import { HUNTER_SPEED } from "@catch-and-run/shared";
+import {
+  HUNTER_AIM_SPEED_MULTIPLIER,
+  HUNTER_SPEED,
+} from "@catch-and-run/shared";
+import {
+  dampGroundVisual,
+  findGroundSurface,
+  shouldResolveGround,
+  STAIR_STEP_DOWN,
+} from "./GroundCollision";
+import { LadderClimber, type LadderInput, type LadderVolume } from "./LadderClimb";
 
 const RADIUS = 0.35;
+const LADDER_HOP_SPEED = 4.5;
 const EYE_H = 1.6;
 const CROUCH_EYE_H = 0.9;
 const BODY_H = 1.8;
@@ -11,6 +22,12 @@ const CROUCH_BODY_H = 1.1;
 const GROUND_Y = 0.0;
 const STEP_UP = 0.55;
 const CROUCH_SPEED = 0.45;
+const STAIR_VISUAL_SMOOTHING = 22;
+
+export function getHunterMovementSpeed(isBoosted: boolean, isAiming: boolean): number {
+  if (isAiming) return HUNTER_SPEED * HUNTER_AIM_SPEED_MULTIPLIER;
+  return isBoosted ? HUNTER_SPEED * 2 : HUNTER_SPEED;
+}
 
 export class HunterController {
   private camera: THREE.PerspectiveCamera;
@@ -31,8 +48,15 @@ export class HunterController {
   private isCrouching = false;
   private currentEyeH = EYE_H;
   private smoothFeetY = 0;
+  private movementBounds = {
+    minX: -54,
+    maxX: 62,
+    minZ: -42,
+    maxZ: 46,
+  };
 
   private bobTimer = 0;
+  private readonly ladder = new LadderClimber();
 
   constructor(camera: THREE.PerspectiveCamera, input: InputManager, config: ClientConfig) {
     this.camera = camera;
@@ -50,6 +74,7 @@ export class HunterController {
     const sens = this.config.get().sensitivity;
     const mouseDelta = this.input.consumeMouseDelta();
     this.euler.setFromQuaternion(this.camera.quaternion);
+    this.euler.z = 0; // the climb sway rolls the camera per frame; never accumulate it
     this.euler.y -= mouseDelta.x * sens;
     this.euler.x -= mouseDelta.y * sens;
     this.euler.x = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, this.euler.x));
@@ -80,6 +105,30 @@ export class HunterController {
     // Update feet position
     this.feetY = this.position.y - this.currentEyeH;
 
+    // Ladders: grab when walking into a rung column, then climb instead of
+    // running the swept move / gravity passes for this frame.
+    const ladderInput: LadderInput = {
+      forward: state.forward,
+      backward: state.backward,
+      jump: state.jump,
+      moveX: this.velocity.x,
+      moveZ: this.velocity.z,
+    };
+    if (!this.ladder.isClimbing()) {
+      this.ladder.tick(dt);
+      if (
+        !this.isCrouching
+        && this.ladder.tryGrab(this.position.x, this.feetY, this.position.z, RADIUS, ladderInput)
+      ) {
+        this.verticalVelocity = 0;
+        this.onGround = false;
+      }
+    }
+    if (this.ladder.isClimbing()) {
+      this.updateClimb(dt, ladderInput);
+      return this.position.clone();
+    }
+
     // Move with slide collision (substeps to prevent tunneling)
     const dx = this.velocity.x, dz = this.velocity.z;
     const dist = Math.sqrt(dx * dx + dz * dz);
@@ -92,13 +141,19 @@ export class HunterController {
       for (let i = 0; i < steps; i++) this.moveAndSlide(sx, sz, colliders, bodyH);
     }
 
+    const wasGrounded = this.onGround;
+    let jumped = false;
+
     // Jump
     if (state.jump && this.onGround && !this.isCrouching) {
+      this.smoothFeetY = this.feetY;
       this.verticalVelocity = this.jumpSpeed;
       this.onGround = false;
+      jumped = true;
     }
 
     // Gravity
+    const previousFeetY = this.feetY;
     this.verticalVelocity += this.gravity * dt;
     this.position.y += this.verticalVelocity * dt;
     this.feetY = this.position.y - this.currentEyeH;
@@ -116,23 +171,42 @@ export class HunterController {
       }
     }
 
-    // Ground
-    const ground = this.findGround(colliders);
-    const eyeGround = ground + this.currentEyeH;
-    if (this.position.y <= eyeGround) {
-      const targetFeetY = ground;
-      const heightDiff = targetFeetY - this.smoothFeetY;
-      
-      if (heightDiff > 0.05 && heightDiff < STEP_UP + 0.2) {
-        this.smoothFeetY += heightDiff * Math.min(1, dt * 35);
-      } else {
-        this.smoothFeetY = targetFeetY;
-      }
-      
-      this.feetY = targetFeetY;
-      this.position.y = this.smoothFeetY + this.currentEyeH;
+    // Ground and stairs. Physics snaps to the supporting tread immediately;
+    // only the camera height is damped, so jump sweeps never start inside a step.
+    const allowStepTransition = wasGrounded && !jumped;
+    const ground = findGroundSurface(colliders, {
+      x: this.position.x,
+      z: this.position.z,
+      currentY: this.feetY,
+      previousY: previousFeetY,
+      radius: RADIUS * 0.8,
+      stepUp: STEP_UP,
+      stepDown: STAIR_STEP_DOWN,
+      allowStepTransition,
+      fallbackY: GROUND_Y,
+    });
+    if (shouldResolveGround(
+      ground,
+      this.feetY,
+      previousFeetY,
+      this.verticalVelocity,
+      allowStepTransition,
+      STEP_UP,
+      STAIR_STEP_DOWN,
+    )) {
+      this.feetY = ground;
+      this.position.y = ground + this.currentEyeH;
+      this.smoothFeetY = dampGroundVisual(
+        this.smoothFeetY,
+        ground,
+        dt,
+        STAIR_VISUAL_SMOOTHING,
+      );
       this.verticalVelocity = 0;
       this.onGround = true;
+    } else {
+      this.onGround = false;
+      this.smoothFeetY = this.feetY;
     }
 
     // Unstuck - only push horizontally, skip vertical to avoid roof jitter
@@ -141,21 +215,60 @@ export class HunterController {
 
     // Head bob
     const isMoving = this.direction.lengthSq() > 0 && this.onGround;
+    const visualEyeY = this.smoothFeetY + this.currentEyeH;
     if (isMoving) {
       const bobSpd = this.isCrouching ? 7 : 12;
       const bobAmt = this.isCrouching ? 0.015 : 0.035;
       this.bobTimer += dt * bobSpd;
       this.camera.position.set(
         this.position.x + Math.cos(this.bobTimer * 0.5) * bobAmt * 0.5,
-        this.position.y + Math.sin(this.bobTimer) * bobAmt,
+        visualEyeY + Math.sin(this.bobTimer) * bobAmt,
         this.position.z
       );
     } else {
       this.bobTimer = 0;
-      this.camera.position.copy(this.position);
+      this.camera.position.set(this.position.x, visualEyeY, this.position.z);
     }
 
     return this.position.clone();
+  }
+
+  private updateClimb(dt: number, input: LadderInput) {
+    const feet = new THREE.Vector3(this.position.x, this.feetY, this.position.z);
+    const result = this.ladder.step(dt, input, feet, RADIUS);
+    this.position.x = feet.x;
+    this.position.z = feet.z;
+    this.feetY = feet.y;
+    this.clampToBounds();
+    this.position.y = this.feetY + this.currentEyeH;
+    this.smoothFeetY = this.feetY;
+    if (result.detached) {
+      this.onGround = result.landed;
+      this.verticalVelocity = result.hop ? LADDER_HOP_SPEED : 0;
+    } else {
+      this.onGround = false;
+      this.verticalVelocity = 0;
+    }
+
+    // Rung-synchronised sway: lateral drift across the ladder, a small
+    // vertical bob and a touch of roll, all reset when the climb ends.
+    this.bobTimer = 0;
+    const visual = this.ladder.getVisual();
+    this.camera.position.set(
+      this.position.x + visual.x,
+      this.smoothFeetY + this.currentEyeH + visual.y,
+      this.position.z + visual.z,
+    );
+    if (visual.roll !== 0) this.camera.rotateZ(visual.roll);
+  }
+
+  /** Vertical ladders detected from the map colliders (see `detectLadderVolumes`). */
+  setLadders(ladders: readonly LadderVolume[]) {
+    this.ladder.setLadders(ladders);
+  }
+
+  isClimbingLadder(): boolean {
+    return this.ladder.isClimbing();
   }
 
   private moveAndSlide(dx: number, dz: number, colliders: THREE.Box3[], bodyH: number) {
@@ -199,21 +312,6 @@ export class HunterController {
       if (box.intersectsBox(c)) return true;
     }
     return false;
-  }
-
-  private findGround(colliders: THREE.Box3[]): number {
-    let best = GROUND_Y;
-    // Wider probe with more generous height tolerance for smoother stair climbing
-    const probe = new THREE.Box3(
-      new THREE.Vector3(this.position.x - RADIUS * 0.8, this.feetY - 0.3, this.position.z - RADIUS * 0.8),
-      new THREE.Vector3(this.position.x + RADIUS * 0.8, this.feetY + STEP_UP + 0.1, this.position.z + RADIUS * 0.8)
-    );
-    for (const c of colliders) {
-      if (probe.intersectsBox(c) && c.max.y > best && c.max.y <= this.feetY + STEP_UP + 0.35) {
-        best = c.max.y;
-      }
-    }
-    return best;
   }
 
   private findCeiling(colliders: THREE.Box3[], bodyH: number): number | null {
@@ -270,19 +368,39 @@ export class HunterController {
 
   getIsCrouching(): boolean { return this.isCrouching; }
 
+  setMovementTuning(speed: number, jumpSpeed: number) {
+    this.speed = speed;
+    this.jumpSpeed = jumpSpeed;
+  }
+
+  setMovementBounds(minX: number, maxX: number, minZ: number, maxZ: number) {
+    this.movementBounds = { minX, maxX, minZ, maxZ };
+  }
+
   private clampToBounds() {
-    const MIN_X = -54, MAX_X = 62, MIN_Z = -42, MAX_Z = 46;
-    this.position.x = Math.max(MIN_X, Math.min(MAX_X, this.position.x));
-    this.position.z = Math.max(MIN_Z, Math.min(MAX_Z, this.position.z));
+    this.position.x = Math.max(
+      this.movementBounds.minX,
+      Math.min(this.movementBounds.maxX, this.position.x),
+    );
+    this.position.z = Math.max(
+      this.movementBounds.minZ,
+      Math.min(this.movementBounds.maxZ, this.position.z),
+    );
   }
 
   setPosition(x: number, y: number, z: number) {
+    this.ladder.release();
     this.position.set(x, y + EYE_H, z);
     this.feetY = y;
     this.smoothFeetY = y;
     this.verticalVelocity = 0;
     this.onGround = true;
     this.camera.position.copy(this.position);
+  }
+
+  setRotation(pitch: number, yaw: number) {
+    this.euler.set(pitch, yaw, 0, "YXZ");
+    this.camera.quaternion.setFromEuler(this.euler);
   }
 
   getRotation(): { x: number; y: number } {

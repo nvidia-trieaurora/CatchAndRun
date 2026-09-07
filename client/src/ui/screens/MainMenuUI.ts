@@ -222,9 +222,10 @@ export class MainMenuUI {
       this.roomListEl.querySelectorAll(".room-join-btn:not([disabled])").forEach((btn) => {
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
-          const entry = (btn as HTMLElement).closest(".room-entry") as HTMLElement;
-          const roomId = entry?.dataset.roomId;
-          const isPrivate = entry?.dataset.private === "true";
+          const entry = btn.closest<HTMLElement>(".room-entry");
+          if (!entry) return;
+          const roomId = entry.dataset.roomId;
+          const isPrivate = entry.dataset.private === "true";
           if (!roomId) return;
           const nick = this.getNickname();
           if (!nick) return;
@@ -262,8 +263,9 @@ export class MainMenuUI {
     `;
     document.body.appendChild(modal);
 
-    const input = modal.querySelector(".passcode-modal-input") as HTMLInputElement;
-    const errorEl = modal.querySelector(".passcode-modal-error") as HTMLElement;
+    const input = modal.querySelector<HTMLInputElement>(".passcode-modal-input");
+    const errorEl = modal.querySelector<HTMLElement>(".passcode-modal-error");
+    if (!input || !errorEl) return;
     input.focus();
 
     const doJoin = () => {

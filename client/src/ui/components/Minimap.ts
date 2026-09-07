@@ -14,12 +14,17 @@ interface MinimapLayout {
 const MINIMAP_LAYOUTS: Record<string, MinimapLayout> = {
   "harbor-warehouse": {
     minX: -55, maxX: 63, minZ: -43, maxZ: 47,
-    bg: "rgba(60, 90, 40, 0.8)",
+    bg: "rgba(35, 42, 43, 0.92)",
     zones: [
-      { x1: -23, z1: -18, x2: 23, z2: 18, color: "rgba(140, 135, 120, 0.7)" },  // warehouse
-      { x1: 24, z1: -25, x2: 56, z2: 5, color: "rgba(70, 70, 70, 0.6)" },       // container yard
-      { x1: -20, z1: 34, x2: 50, z2: 42, color: "rgba(110, 100, 80, 0.6)" },    // dock
-      { x1: -49, z1: -7, x2: -35, z2: 7, color: "rgba(100, 90, 80, 0.6)" },     // hunter spawn
+      { x1: -23, z1: -18, x2: 23, z2: 18, color: "rgba(112, 104, 92, 0.88)" },  // warehouse
+      { x1: 24, z1: -29, x2: 59, z2: 5, color: "rgba(34, 74, 78, 0.82)" },       // container yard
+      { x1: -48, z1: -34, x2: -24, z2: -10, color: "rgba(139, 83, 40, 0.72)" }, // construction
+      { x1: -55, z1: 17, x2: -17, z2: 47, color: "rgba(65, 78, 55, 0.82)" },     // residence and garden
+      { x1: -20, z1: 34, x2: 50, z2: 42, color: "rgba(91, 69, 48, 0.88)" },      // pier
+      { x1: -20, z1: 25, x2: 0, z2: 45, color: "rgba(81, 61, 85, 0.78)" },       // Ferris district
+      { x1: -10, z1: -43, x2: 10, z2: -28, color: "rgba(71, 47, 76, 0.74)" },    // dockside bar
+      { x1: 37, z1: -43, x2: 53, z2: -31, color: "rgba(35, 103, 107, 0.76)" },   // neon mart
+      { x1: -49, z1: -7, x2: -35, z2: 7, color: "rgba(123, 70, 45, 0.82)" },     // hunter spawn
     ],
   },
   "school": {

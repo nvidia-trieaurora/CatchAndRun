@@ -385,7 +385,7 @@ export class RoomLobbyUI {
   setIsHost(isHost: boolean) {
     if (!this.startBtnEl) return;
     this.startBtnEl.style.display = isHost ? "block" : "none";
-    const settingsEl = this.element.querySelector("#lobby-settings") as HTMLElement;
+    const settingsEl = this.element.querySelector<HTMLElement>("#lobby-settings");
     if (settingsEl) settingsEl.style.display = isHost ? "block" : "none";
   }
 

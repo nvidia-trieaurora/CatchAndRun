@@ -26,7 +26,6 @@ interface GrenadeProjectile {
   velocity: THREE.Vector3;
   life: number;
   maxLife: number;
-  onExplode: ((pos: THREE.Vector3) => void) | null;
 }
 
 interface ExplosionFlash {
@@ -55,7 +54,11 @@ export class ParticleSystem {
 
     const geo = new THREE.SphereGeometry(0.03, 4, 4);
     for (let i = 0; i < 100; i++) {
-      const mat = new THREE.MeshBasicMaterial({ color: 0xffaa00, transparent: true });
+      const mat = new THREE.MeshBasicMaterial({
+        color: 0xffaa00,
+        transparent: true,
+        depthWrite: false,
+      });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.visible = false;
       this.scene.add(mesh);
@@ -70,6 +73,10 @@ export class ParticleSystem {
 
       mesh.visible = true;
       mesh.position.copy(position);
+      const material = mesh.material as THREE.MeshBasicMaterial;
+      material.color.setHex(0xffaa00);
+      material.opacity = 1;
+      material.blending = THREE.NormalBlending;
 
       const vel = new THREE.Vector3(
         (Math.random() - 0.5) * 4,
@@ -101,7 +108,6 @@ export class ParticleSystem {
     origin: THREE.Vector3,
     dir: THREE.Vector3,
     flightTime: number,
-    onExplode?: (pos: THREE.Vector3) => void
   ) {
     const grenadeMat = new THREE.MeshStandardMaterial({
       color: 0x3a5a2a, roughness: 0.6, metalness: 0.3,
@@ -137,7 +143,6 @@ export class ParticleSystem {
       velocity,
       life: 0,
       maxLife: flightTime,
-      onExplode: onExplode || null,
     });
   }
 
@@ -151,6 +156,8 @@ export class ParticleSystem {
       color: 0xffffcc,
       transparent: true,
       opacity: 1.0,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
     });
     const flashMesh = new THREE.Mesh(flashGeo, flashMat);
     flashMesh.position.copy(pos);
@@ -164,6 +171,8 @@ export class ParticleSystem {
       transparent: true,
       opacity: 0.8,
       side: THREE.DoubleSide,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
     });
     const ringMesh = new THREE.Mesh(ringGeo, ringMat);
     ringMesh.position.copy(pos);
@@ -180,8 +189,12 @@ export class ParticleSystem {
       mesh.visible = true;
       mesh.position.copy(pos);
       mesh.scale.setScalar(1 + Math.random() * 1.5);
+      const material = mesh.material as THREE.MeshBasicMaterial;
+      material.opacity = 0.9;
+      material.depthWrite = false;
+      material.blending = THREE.AdditiveBlending;
       const colors = [0xff4400, 0xff6600, 0xff8800, 0xffaa00, 0xffcc00];
-      (mesh.material as THREE.MeshBasicMaterial).color.setHex(
+      material.color.setHex(
         colors[Math.floor(Math.random() * colors.length)]
       );
 
@@ -197,16 +210,19 @@ export class ParticleSystem {
     }
 
     // Smoke particles (gray, slower, longer lasting)
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 10; i++) {
       const mesh = this.pool.find((p) => !p.visible);
       if (!mesh) break;
 
       mesh.visible = true;
       mesh.position.copy(pos);
       mesh.position.y += Math.random() * 0.5;
-      mesh.scale.setScalar(2 + Math.random() * 2);
-      const grayShade = 0x404040 + Math.floor(Math.random() * 0x404040);
-      (mesh.material as THREE.MeshBasicMaterial).color.setHex(grayShade);
+      mesh.scale.setScalar(0.8 + Math.random() * 0.6);
+      const material = mesh.material as THREE.MeshBasicMaterial;
+      material.color.setHex(0x7a7f84 + Math.floor(Math.random() * 0x181818));
+      material.opacity = 0.24;
+      material.depthWrite = false;
+      material.blending = THREE.NormalBlending;
 
       const angle = Math.random() * Math.PI * 2;
       const speed = 1 + Math.random() * 3;
@@ -216,7 +232,7 @@ export class ParticleSystem {
         Math.sin(angle) * speed
       );
 
-      this.particles.push({ mesh, velocity: vel, life: 0, maxLife: 1.0 + Math.random() * 0.5, type: 'smoke' });
+      this.particles.push({ mesh, velocity: vel, life: 0, maxLife: 0.8 + Math.random() * 0.4, type: 'smoke' });
     }
 
     // Debris particles (dark, falling fast)
@@ -227,7 +243,11 @@ export class ParticleSystem {
       mesh.visible = true;
       mesh.position.copy(pos);
       mesh.scale.setScalar(0.5 + Math.random() * 0.5);
-      (mesh.material as THREE.MeshBasicMaterial).color.setHex(0x333333);
+      const material = mesh.material as THREE.MeshBasicMaterial;
+      material.color.setHex(0x4b4038);
+      material.opacity = 0.8;
+      material.depthWrite = false;
+      material.blending = THREE.NormalBlending;
 
       const angle = Math.random() * Math.PI * 2;
       const speed = 6 + Math.random() * 8;
@@ -248,7 +268,11 @@ export class ParticleSystem {
       mesh.visible = true;
       mesh.position.copy(pos);
       mesh.scale.setScalar(0.3 + Math.random() * 0.3);
-      (mesh.material as THREE.MeshBasicMaterial).color.setHex(0xffff88);
+      const material = mesh.material as THREE.MeshBasicMaterial;
+      material.color.setHex(0xffff88);
+      material.opacity = 1;
+      material.depthWrite = false;
+      material.blending = THREE.AdditiveBlending;
 
       const angle = Math.random() * Math.PI * 2;
       const elevation = Math.random() * Math.PI * 0.5;
@@ -281,8 +305,8 @@ export class ParticleSystem {
       p.mesh.position.addScaledVector(p.velocity, dt);
 
       if (p.type === 'smoke') {
-        p.mesh.scale.multiplyScalar(1 + dt * 2);
-        (p.mesh.material as THREE.MeshBasicMaterial).opacity = 0.5 * (1 - t);
+        p.mesh.scale.multiplyScalar(1 + dt * 0.7);
+        (p.mesh.material as THREE.MeshBasicMaterial).opacity = 0.24 * (1 - t);
       } else if (p.type === 'fire') {
         p.mesh.scale.multiplyScalar(1 - dt * 1.5);
         (p.mesh.material as THREE.MeshBasicMaterial).opacity = 1 - t * t;
@@ -358,10 +382,6 @@ export class ParticleSystem {
       g.mesh.rotation.z += dt * 5;
 
       if (g.life >= g.maxLife || g.mesh.position.y <= 0) {
-        const pos = g.mesh.position.clone();
-        if (pos.y < 0) pos.y = 0;
-        this.spawnExplosion(pos);
-        g.onExplode?.(pos);
         this.scene.remove(g.mesh);
         this.scene.remove(g.trail);
         g.mesh.geometry.dispose();

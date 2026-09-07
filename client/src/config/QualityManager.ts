@@ -1,6 +1,10 @@
 import * as THREE from "three";
 import type { ClientConfig } from "./ClientConfig";
 import { isMobile } from "../input/MobileDetect";
+import type {
+  GameRenderer,
+  RendererBackend,
+} from "../game/rendering/RendererFactory";
 
 export type QualityTier = "low" | "medium" | "high";
 
@@ -11,13 +15,15 @@ export type QualityTier = "low" | "medium" | "high";
 export class QualityManager {
   constructor(
     private config: ClientConfig,
-    private renderer: THREE.WebGLRenderer
+    private renderer: GameRenderer,
+    private backend: RendererBackend,
   ) {}
 
   getTier(): QualityTier {
     const setting = this.config.get().graphicsQuality;
     if (setting !== "auto") return setting;
     if (isMobile()) return "low";
+    if (this.backend === "webgl2") return "medium";
     const cores = navigator.hardwareConcurrency || 4;
     return cores <= 4 ? "medium" : "high";
   }

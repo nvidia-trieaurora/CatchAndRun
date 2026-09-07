@@ -2046,6 +2046,11 @@ body {
   right: 110px;
 }
 
+#tb-aim {
+  bottom: 100px;
+  right: 180px;
+}
+
 /* Prop layout: E/F/Q/R spread on right side */
 #tb-transform {
   bottom: 155px;
@@ -2235,4 +2240,53 @@ body {
     width: 90%;
     max-width: 350px;
   }
+}
+
+.fatal-renderer-error {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  color: #f4e8d4;
+  background: #11181d;
+  font: 600 18px/1.5 "Be Vietnam Pro", sans-serif;
+  text-align: center;
+}
+
+.water-proximity-warning {
+  position: fixed;
+  left: 50%;
+  bottom: 112px;
+  z-index: 180;
+  display: none;
+  max-width: min(620px, calc(100vw - 32px));
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  border: 1px solid rgba(255, 202, 87, 0.72);
+  border-radius: 6px;
+  color: #fff0c2;
+  background: rgba(49, 35, 12, 0.88);
+  font: 700 13px/1.35 "Be Vietnam Pro", sans-serif;
+  letter-spacing: 0.05em;
+  text-align: center;
+  pointer-events: none;
+}
+
+.water-proximity-warning[data-level="warning"] {
+  display: block;
+}
+
+.water-proximity-warning[data-level="critical"] {
+  display: block;
+  border-color: rgba(255, 90, 75, 0.82);
+  color: #ffe3dc;
+  background: rgba(74, 13, 12, 0.9);
+  animation: water-danger-pulse 0.7s ease-in-out infinite alternate;
+}
+
+@keyframes water-danger-pulse {
+  from { transform: translateX(-50%) scale(1); }
+  to { transform: translateX(-50%) scale(1.025); }
 }

@@ -2,8 +2,16 @@ import * as THREE from "three";
 import type { InputManager } from "../../input/InputManager";
 import type { ClientConfig } from "../../config/ClientConfig";
 import { PROP_SPEED } from "@catch-and-run/shared";
+import {
+  dampGroundVisual,
+  findGroundSurface,
+  shouldResolveGround,
+  STAIR_STEP_DOWN,
+} from "./GroundCollision";
+import { LadderClimber, type LadderInput, type LadderVolume } from "./LadderClimb";
 
 const RADIUS = 0.35;
+const LADDER_HOP_SPEED = 4.5;
 const HEIGHT = 0.9;
 const GROUND_Y = 0.0;
 const STEP_UP = 0.55;
@@ -13,6 +21,7 @@ const THIRD_PERSON_HEIGHT = 2.0;
 const PITCH_MIN = -80 * THREE.MathUtils.DEG2RAD;
 const PITCH_MAX = 80 * THREE.MathUtils.DEG2RAD;
 const SMOOTH_K = 25;
+const STAIR_VISUAL_SMOOTHING = 22;
 
 export class PropController {
   private camera: THREE.PerspectiveCamera;
@@ -38,9 +47,17 @@ export class PropController {
   private onGround = true;
   private moveDir = new THREE.Vector3();
   private smoothY = 0;
+  private movementBounds = {
+    minX: -54,
+    maxX: 62,
+    minZ: -42,
+    maxZ: 46,
+  };
 
   // Camera mode
   private thirdPerson = true;
+
+  private readonly ladder = new LadderClimber();
 
   // Soul mode (out-of-body)
   private inSoulMode = false;
@@ -132,15 +149,48 @@ export class PropController {
     // Move with slide collision
     const moveX = this.moveDir.x * this.speed * dt;
     const moveZ = this.moveDir.z * this.speed * dt;
-    this.moveAndSlide(moveX, moveZ, colliders);
+
+    // Ladders: grab when pushing into a rung column, then climb instead of
+    // the swept move / gravity passes for this frame.
+    const ladderInput: LadderInput = {
+      forward: state.forward,
+      backward: state.backward,
+      jump: state.jump,
+      moveX,
+      moveZ,
+    };
+    if (!this.ladder.isClimbing()) {
+      this.ladder.tick(dt);
+      if (this.ladder.tryGrab(this.position.x, this.position.y, this.position.z, RADIUS, ladderInput)) {
+        this.verticalVelocity = 0;
+        this.onGround = false;
+      }
+    }
+    if (this.ladder.isClimbing()) {
+      this.updateClimb(dt, ladderInput);
+      return this.position.clone();
+    }
+
+    const distance = Math.hypot(moveX, moveZ);
+    const maxStep = RADIUS;
+    const steps = Math.max(1, Math.ceil(distance / maxStep));
+    for (let i = 0; i < steps; i++) {
+      this.moveAndSlide(moveX / steps, moveZ / steps, colliders);
+    }
+
+    const wasGrounded = this.onGround;
+    let jumped = false;
 
     // Jump
     if (state.jump && this.onGround) {
+      this.smoothY = this.position.y;
       this.verticalVelocity = this.jumpSpeed;
       this.onGround = false;
+      jumped = true;
     }
 
     // Gravity
+    const previousY = this.position.y;
     this.verticalVelocity += this.gravity * dt;
     this.position.y += this.verticalVelocity * dt;
 
@@ -153,20 +203,39 @@ export class PropController {
       }
     }
 
-    const ground = this.findGround(colliders);
-    if (this.position.y <= ground) {
-      const targetY = ground;
-      const heightDiff = targetY - this.smoothY;
-      
-      if (heightDiff > 0.05 && heightDiff < STEP_UP + 0.2) {
-        this.smoothY += heightDiff * Math.min(1, dt * 35);
-      } else {
-        this.smoothY = targetY;
-      }
-      
-      this.position.y = this.smoothY;
+    const allowStepTransition = wasGrounded && !jumped;
+    const ground = findGroundSurface(colliders, {
+      x: this.position.x,
+      z: this.position.z,
+      currentY: this.position.y,
+      previousY,
+      radius: RADIUS * 0.8,
+      stepUp: STEP_UP,
+      stepDown: STAIR_STEP_DOWN,
+      allowStepTransition,
+      fallbackY: GROUND_Y,
+    });
+    if (shouldResolveGround(
+      ground,
+      this.position.y,
+      previousY,
+      this.verticalVelocity,
+      allowStepTransition,
+      STEP_UP,
+      STAIR_STEP_DOWN,
+    )) {
+      this.position.y = ground;
+      this.smoothY = dampGroundVisual(
+        this.smoothY,
+        ground,
+        dt,
+        STAIR_VISUAL_SMOOTHING,
+      );
       this.verticalVelocity = 0;
       this.onGround = true;
+    } else {
+      this.onGround = false;
+      this.smoothY = this.position.y;
     }
 
     this.pushOutHorizontal(colliders);
@@ -174,7 +243,7 @@ export class PropController {
 
     // Update prop mesh: only yaw rotation (no pitch/roll)
     if (this.propMesh) {
-      this.propMesh.position.copy(this.position);
+      this.propMesh.position.set(this.position.x, this.smoothY, this.position.z);
       this.propMesh.rotation.set(0, this.currentYaw, 0);
     }
 
@@ -182,7 +251,43 @@ export class PropController {
     return this.position.clone();
   }
 
+  private updateClimb(dt: number, input: LadderInput) {
+    const result = this.ladder.step(dt, input, this.position, RADIUS);
+    this.clampToBounds();
+    this.smoothY = this.position.y;
+    if (result.detached) {
+      this.onGround = result.landed;
+      this.verticalVelocity = result.hop ? LADDER_HOP_SPEED : 0;
+    } else {
+      this.onGround = false;
+      this.verticalVelocity = 0;
+    }
+
+    // The prop shimmies up the rungs: lateral sway, vertical bob and a little
+    // roll, all driven by the climb phase so it stops when the climb stops.
+    if (this.propMesh) {
+      const visual = this.ladder.getVisual();
+      this.propMesh.position.set(
+        this.position.x + visual.x,
+        this.smoothY + visual.y + Math.sin(Math.PI * visual.mantle) * 0.08,
+        this.position.z + visual.z,
+      );
+      this.propMesh.rotation.set(0, this.currentYaw, visual.roll * 2.5);
+    }
+    this.updateCamera();
+  }
+
+  /** Vertical ladders detected from the map colliders (see `detectLadderVolumes`). */
+  setLadders(ladders: readonly LadderVolume[]) {
+    this.ladder.setLadders(ladders);
+  }
+
+  isClimbingLadder(): boolean {
+    return this.ladder.isClimbing();
+  }
+
   private updateCamera() {
+    const visualY = this.smoothY;
     if (this.thirdPerson) {
       const camYaw = this.currentYaw;
       const camPitch = this.currentPitch;
@@ -193,10 +298,14 @@ export class PropController {
       const offY = THIRD_PERSON_HEIGHT - Math.sin(camPitch) * dist * 0.6;
 
       const targetX = this.position.x + offX;
-      const targetY = this.position.y + Math.max(1.0, offY);
+      const targetY = visualY + Math.max(1.0, offY);
       const targetZ = this.position.z + offZ;
 
-      const lookAt = new THREE.Vector3(this.position.x, this.position.y + EYE_HEIGHT, this.position.z);
+      const lookAt = new THREE.Vector3(
+        this.position.x,
+        visualY + EYE_HEIGHT,
+        this.position.z,
+      );
       const camPos = new THREE.Vector3(targetX, targetY, targetZ);
 
       const clipped = this.clipCameraToWalls(lookAt, camPos);
@@ -207,12 +316,12 @@ export class PropController {
         const shoulderOff = 0.4;
         this.camera.position.set(
           this.position.x + Math.sin(camYaw) * shoulderOff,
-          this.position.y + EYE_HEIGHT + 0.3,
+          visualY + EYE_HEIGHT + 0.3,
           this.position.z + Math.cos(camYaw) * shoulderOff
         );
         this.camera.lookAt(
           this.position.x - Math.sin(camYaw) * 2,
-          this.position.y + EYE_HEIGHT,
+          visualY + EYE_HEIGHT,
           this.position.z - Math.cos(camYaw) * 2
         );
       } else {
@@ -222,7 +331,7 @@ export class PropController {
     } else {
       this.camera.position.set(
         this.position.x,
-        this.position.y + EYE_HEIGHT,
+        visualY + EYE_HEIGHT,
         this.position.z
       );
       const q = new THREE.Quaternion();
@@ -311,21 +420,6 @@ export class PropController {
     return false;
   }
 
-  private findGround(colliders: THREE.Box3[]): number {
-    let best = GROUND_Y;
-    // Wider probe with more generous height tolerance for smoother stair climbing
-    const probe = new THREE.Box3(
-      new THREE.Vector3(this.position.x - RADIUS * 0.8, this.position.y - 0.3, this.position.z - RADIUS * 0.8),
-      new THREE.Vector3(this.position.x + RADIUS * 0.8, this.position.y + STEP_UP + 0.1, this.position.z + RADIUS * 0.8)
-    );
-    for (const c of colliders) {
-      if (probe.intersectsBox(c) && c.max.y > best && c.max.y <= this.position.y + STEP_UP + 0.35) {
-        best = c.max.y;
-      }
-    }
-    return best;
-  }
-
   private findCeiling(colliders: THREE.Box3[]): number | null {
     const headY = this.position.y + HEIGHT;
     const vUp = Math.max(2.5, this.verticalVelocity * 0.3);
@@ -377,13 +471,19 @@ export class PropController {
   }
 
   private clampToBounds() {
-    const MIN_X = -54, MAX_X = 62, MIN_Z = -42, MAX_Z = 46;
-    this.position.x = Math.max(MIN_X, Math.min(MAX_X, this.position.x));
-    this.position.z = Math.max(MIN_Z, Math.min(MAX_Z, this.position.z));
+    this.position.x = Math.max(
+      this.movementBounds.minX,
+      Math.min(this.movementBounds.maxX, this.position.x),
+    );
+    this.position.z = Math.max(
+      this.movementBounds.minZ,
+      Math.min(this.movementBounds.maxZ, this.position.z),
+    );
   }
 
   // --- Public API ---
   setPosition(x: number, y: number, z: number) {
+    this.ladder.release();
     this.position.set(x, y, z);
     this.smoothY = y;
     this.verticalVelocity = 0;
@@ -392,9 +492,14 @@ export class PropController {
     this.updateCamera();
   }
 
+  setMovementBounds(minX: number, maxX: number, minZ: number, maxZ: number) {
+    this.movementBounds = { minX, maxX, minZ, maxZ };
+  }
+
   setPropMesh(mesh: THREE.Mesh | null) { this.propMesh = mesh; }
   setLocked(locked: boolean) {
     this.isLocked = locked;
+    if (locked) this.ladder.release();
     if (!locked) this.exitSoulMode();
   }
   getIsLocked(): boolean { return this.isLocked; }

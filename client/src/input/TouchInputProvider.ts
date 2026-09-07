@@ -12,6 +12,7 @@ interface ButtonDef {
 
 const HUNTER_BUTTONS: ButtonDef[] = [
   { id: "tb-shoot", label: "FIRE", key: "__mouseDown__", className: "touch-btn touch-btn-shoot", hold: true },
+  { id: "tb-aim", label: "AIM", key: "__rightMouseDown__", className: "touch-btn touch-btn-action", hold: true },
   { id: "tb-reload", label: "R", key: "KeyR", className: "touch-btn touch-btn-action" },
   { id: "tb-grenade", label: "Q", key: "KeyQ", className: "touch-btn touch-btn-action" },
   { id: "tb-scan", label: "E", key: "KeyE", className: "touch-btn touch-btn-action" },
@@ -92,6 +93,8 @@ export class TouchInputProvider {
   hide() {
     this.container.style.display = "none";
     this.resetJoystick();
+    this.input.setMouseDown(false);
+    this.input.setRightMouseDown(false);
   }
 
   setRole(role: Role) {
@@ -254,6 +257,8 @@ export class TouchInputProvider {
   // --- Action Buttons ---
 
   private buildButtons(role: Role) {
+    this.input.setMouseDown(false);
+    this.input.setRightMouseDown(false);
     this.buttonsContainer.innerHTML = "";
     this.activeButtons.clear();
 
@@ -286,6 +291,9 @@ export class TouchInputProvider {
       if (def.key === "__mouseDown__") {
         this.input.setMouseDown(true);
         this.activeButtons.set(t.identifier, def.key);
+      } else if (def.key === "__rightMouseDown__") {
+        this.input.setRightMouseDown(true);
+        this.activeButtons.set(t.identifier, def.key);
       } else if (DOM_DISPATCH_KEYS.has(def.key)) {
         document.dispatchEvent(new KeyboardEvent("keydown", { code: def.key, key: def.key, bubbles: true }));
         this.activeButtons.set(t.identifier, def.key);
@@ -306,6 +314,8 @@ export class TouchInputProvider {
         if (key) {
           if (key === "__mouseDown__") {
             this.input.setMouseDown(false);
+          } else if (key === "__rightMouseDown__") {
+            this.input.setRightMouseDown(false);
           } else {
             this.input.injectKeyUp(key);
           }
@@ -321,6 +331,7 @@ export class TouchInputProvider {
         const key = this.activeButtons.get(tid);
         if (key) {
           if (key === "__mouseDown__") this.input.setMouseDown(false);
+          else if (key === "__rightMouseDown__") this.input.setRightMouseDown(false);
           else this.input.injectKeyUp(key);
           this.activeButtons.delete(tid);
         }

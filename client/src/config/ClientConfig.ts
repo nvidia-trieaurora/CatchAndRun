@@ -3,6 +3,7 @@ export interface ClientConfigData {
   masterVolume: number;
   sfxVolume: number;
   graphicsQuality: "auto" | "low" | "medium" | "high";
+  harborVisualVersion: "v1" | "v2";
   fov: number;
   uiSounds: boolean;
 }
@@ -14,6 +15,7 @@ const defaults: ClientConfigData = {
   masterVolume: 0.8,
   sfxVolume: 0.7,
   graphicsQuality: "auto",
+  harborVisualVersion: "v2",
   fov: 75,
   uiSounds: true,
 };

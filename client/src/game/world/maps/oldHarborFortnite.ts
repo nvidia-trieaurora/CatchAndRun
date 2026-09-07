@@ -2,12 +2,37 @@ import * as THREE from "three";
 import { getMaterial, getCustomMaterial, getEmissiveMaterial, PALETTE } from "../materials/materialLibrary";
 import { spawnClutterProps, MAP_SEED } from "../props/clutterSpawner";
 import type { MapData } from "@catch-and-run/shared";
+import type { QualityTier } from "../../../config/QualityManager";
+import {
+  createHarborWater,
+  type HarborWaterSurface,
+} from "../environment/harborWater";
+import { tagWeaponImpactSurface } from "../weaponImpactSurfaces";
 
-interface MapBuildResult {
+export interface MapBuildResult {
   colliders: THREE.Box3[];
+  /**
+   * Explicitly authored ladder columns (GLB `COL_LADDER_*` nodes). Stacked rung
+   * colliders from the procedural build are detected separately at runtime.
+   */
+  ladders: { box: THREE.Box3; approach?: string }[];
   gateColliderIndex: number;
   gateMesh: THREE.Mesh | null;
   ferrisWheel: THREE.Group | null;
+  ferrisCabinColliders: THREE.Box3[];
+  harborWater: HarborWaterSurface;
+}
+
+export interface OldHarborBuildOptions {
+  useWarehouseV2?: boolean;
+  cinematicVisuals?: boolean;
+  quality?: QualityTier;
+  /**
+   * False when the Ferris Harbor zone GLB supplies the wheel visuals: the
+   * procedural wheel keeps its pivot, mounts, hinges and every collider so the
+   * gameplay contract is untouched, but ships no meshes of its own.
+   */
+  ferrisVisuals?: boolean;
 }
 
 function makeSignTextMesh(
@@ -40,35 +65,61 @@ function makeSignTextMesh(
   return mesh;
 }
 
-export function buildOldHarborFortniteMap(scene: THREE.Scene, _mapData: MapData): MapBuildResult {
+export function buildOldHarborFortniteMap(
+  scene: THREE.Scene,
+  _mapData: MapData,
+  options: OldHarborBuildOptions = {},
+): MapBuildResult {
   const colliders: THREE.Box3[] = [];
-  const B = new MapBoxHelper(scene, colliders);
+  const useWarehouseV2 = options.useWarehouseV2 ?? false;
+  const cinematicVisuals = options.cinematicVisuals ?? false;
+  const quality = options.quality ?? "medium";
+  const buildScene = cinematicVisuals ? new THREE.Scene() : scene;
+  const B = new MapBoxHelper(buildScene, colliders);
 
-  buildGround(B);
-  buildWarehouseHall(B);
-  buildContainerYard(B);
-  buildHarborEdge(B, scene);
+  buildGround(B, !useWarehouseV2);
+  if (!useWarehouseV2) buildWarehouseHall(B);
+  buildContainerYard(B, !cinematicVisuals);
+  const harborWater = buildHarborEdge(B, buildScene, quality);
   buildConstructionZone(B);
-  buildCatwalkNetwork(B);
+  if (!useWarehouseV2) buildCatwalkNetwork(B);
   const { gateIdx: gateColliderIndex, gateMesh } = buildHunterSpawn(B);
-  buildLandmark(B, scene);
-  buildVegetation(scene, B);
-  buildStreetLamps(B, scene);
-  buildParkour(B);
-  buildBackgroundVista(B, scene);
+  buildLandmark(B, buildScene, !useWarehouseV2);
+  buildHarborMasterPlanDressing(B, buildScene);
+  buildVegetation(buildScene, B);
+  buildStreetLamps(B, buildScene);
+  if (!(useWarehouseV2 && cinematicVisuals)) {
+    buildParkour(B, !useWarehouseV2);
+  }
+  buildBackgroundVista(B, buildScene);
 
-  buildParkourStructures(B, scene);
-  buildBackyardHouse(B, scene);
-  buildBackyardGarden(B, scene);
-  buildDocksideMiniMart(B, scene);
-  buildDocksideCafeBar(B, scene);
+  buildParkourStructures(B, buildScene, !useWarehouseV2);
+  buildBackyardHouse(B, buildScene);
+  buildBackyardGarden(B, buildScene);
+  buildDocksideMiniMart(B, buildScene);
+  buildDocksideCafeBar(B, buildScene);
 
-  const clutterColliders = spawnClutterProps(scene, MAP_SEED);
+  const clutterColliders = spawnClutterProps(buildScene, MAP_SEED);
   colliders.push(...clutterColliders);
 
-  const ferrisWheel = buildFerrisWheel(scene, colliders);
+  const { wheel: ferrisWheel, cabinColliders: ferrisCabinColliders } =
+    buildFerrisWheel(buildScene, colliders, options.ferrisVisuals ?? true);
 
-  return { colliders, gateColliderIndex, gateMesh, ferrisWheel };
+  if (cinematicVisuals) {
+    harborWater.root.removeFromParent();
+    ferrisWheel.removeFromParent();
+    scene.add(harborWater.root, ferrisWheel);
+  }
+
+  return {
+    colliders,
+    ladders: [],
+    gateColliderIndex,
+    gateMesh,
+    ferrisWheel,
+    ferrisCabinColliders,
+    harborWater,
+  };
 }
 
 class MapBoxHelper {
@@ -115,17 +166,33 @@ class MapBoxHelper {
 }
 
 // ========== ZONE 1: GROUND ==========
-function buildGround(B: MapBoxHelper) {
-  // Grass
-  const grass = new THREE.Mesh(new THREE.PlaneGeometry(200, 160), getMaterial("grass"));
+function buildGround(B: MapBoxHelper, includeWarehouseFloor: boolean) {
+  const LAND_MIN_X = -55;
+  const LAND_MAX_X = 63;
+  const LAND_MIN_Z = -43;
+  const LAND_MAX_Z = 47;
+  const LAND_WIDTH = LAND_MAX_X - LAND_MIN_X;
+  const LAND_DEPTH = LAND_MAX_Z - LAND_MIN_Z;
+  const LAND_CENTER_X = (LAND_MIN_X + LAND_MAX_X) / 2;
+  const LAND_CENTER_Z = (LAND_MIN_Z + LAND_MAX_Z) / 2;
+
+  // One finite island surface. The ocean is rendered beneath and beyond it.
+  const grass = new THREE.Mesh(
+    new THREE.PlaneGeometry(LAND_WIDTH, LAND_DEPTH),
+    getMaterial("grass"),
+  );
   grass.rotation.x = -Math.PI / 2;
+  grass.position.x = LAND_CENTER_X;
   grass.position.y = -0.02;
+  grass.position.z = LAND_CENTER_Z;
   grass.receiveShadow = true;
   (B as any).scene.add(grass);
 
-  // Warehouse concrete floor (with collider to prevent sinking)
-  B.box(46, 0.2, 36, 0, 0.1, 0, "concreteFloor", false);
-  B.addCollider(-23, 0, -18, 23, 0.22, 18);
+  if (includeWarehouseFloor) {
+    // Warehouse concrete floor (with collider to prevent sinking)
+    B.box(46, 0.2, 36, 0, 0.1, 0, "concreteFloor", false);
+    B.addCollider(-23, 0, -18, 23, 0.22, 18);
+  }
   // Container yard asphalt
   B.box(32, 0.1, 30, 40, 0.04, -10, "asphalt", false);
   // Dock planks (with collider)
@@ -134,56 +201,47 @@ function buildGround(B: MapBoxHelper) {
   // Construction zone ground (expanded for redesigned zone)
   B.box(24, 0.1, 24, -35, 0.04, -22, "concreteDark", false);
   // Backyard grass ground collider (prevents sinking in the yard area)
-  B.addCollider(-56, -0.1, 18, -16, 0.05, 48);
+  B.addCollider(-55, -0.1, 18, -16, 0.05, 47);
 
-  // ===== BOUNDARY WALLS (prevent leaving play area) =====
-  // Map bounds: x from -55 to 63, z from -43 to 47
-  const BW = 2.0, BH = 8; // Thicker walls, taller to prevent any escape
-  const MAP_MIN_X = -55, MAP_MAX_X = 63;
-  const MAP_MIN_Z = -43, MAP_MAX_Z = 47;
-  const MAP_WIDTH = MAP_MAX_X - MAP_MIN_X;
-  const MAP_DEPTH = MAP_MAX_Z - MAP_MIN_Z;
-  const MAP_CENTER_X = (MAP_MIN_X + MAP_MAX_X) / 2;
-  const MAP_CENTER_Z = (MAP_MIN_Z + MAP_MAX_Z) / 2;
+  // Layered seawall: a wet concrete skirt, walkable cap, and slim metal rail.
+  // The 0.9 m collider blocks accidental walking but can be deliberately jumped.
+  const wallThickness = 0.7;
+  const skirtHeight = 2.2;
+  const skirtY = -0.25;
+  const capY = 0.72;
+  const railY = 1.35;
+  const postSpacing = 5;
 
-  // North wall (z = MAP_MIN_Z)
-  B.colorBox(MAP_WIDTH + BW * 2, BH, BW, MAP_CENTER_X, BH / 2, MAP_MIN_Z - BW / 2, PALETTE.concreteDark, 0.9, 0.03, true);
-  // South wall (z = MAP_MAX_Z)
-  B.colorBox(MAP_WIDTH + BW * 2, BH, BW, MAP_CENTER_X, BH / 2, MAP_MAX_Z + BW / 2, PALETTE.concreteDark, 0.9, 0.03, true);
-  // West wall (x = MAP_MIN_X)
-  B.colorBox(BW, BH, MAP_DEPTH + BW * 2, MAP_MIN_X - BW / 2, BH / 2, MAP_CENTER_Z, PALETTE.concreteDark, 0.9, 0.03, true);
-  // East wall (x = MAP_MAX_X)
-  B.colorBox(BW, BH, MAP_DEPTH + BW * 2, MAP_MAX_X + BW / 2, BH / 2, MAP_CENTER_Z, PALETTE.concreteDark, 0.9, 0.03, true);
+  B.colorBox(LAND_WIDTH + wallThickness * 2, skirtHeight, wallThickness, LAND_CENTER_X, skirtY, LAND_MIN_Z, 0x686b69, 0.96, 0.02, false);
+  B.colorBox(LAND_WIDTH + wallThickness * 2, skirtHeight, wallThickness, LAND_CENTER_X, skirtY, LAND_MAX_Z, 0x686b69, 0.96, 0.02, false);
+  B.colorBox(wallThickness, skirtHeight, LAND_DEPTH, LAND_MIN_X, skirtY, LAND_CENTER_Z, 0x686b69, 0.96, 0.02, false);
+  B.colorBox(wallThickness, skirtHeight, LAND_DEPTH, LAND_MAX_X, skirtY, LAND_CENTER_Z, 0x686b69, 0.96, 0.02, false);
 
-  // Visual fence on top of boundary walls
-  const fenceH = 2.0;
-  const postSpacing = 4;
-  // North & South fence posts
-  for (let x = MAP_MIN_X; x <= MAP_MAX_X; x += postSpacing) {
-    B.colorBox(0.08, fenceH, 0.08, x, BH + fenceH / 2, MAP_MIN_Z, PALETTE.steel, 0.5, 0.5, false);
-    B.colorBox(0.08, fenceH, 0.08, x, BH + fenceH / 2, MAP_MAX_Z, PALETTE.steel, 0.5, 0.5, false);
+  B.colorBox(LAND_WIDTH, 0.22, 0.9, LAND_CENTER_X, capY, LAND_MIN_Z, PALETTE.concreteWarm, 0.88, 0.03, false);
+  B.colorBox(LAND_WIDTH, 0.22, 0.9, LAND_CENTER_X, capY, LAND_MAX_Z, PALETTE.concreteWarm, 0.88, 0.03, false);
+  B.colorBox(0.9, 0.22, LAND_DEPTH, LAND_MIN_X, capY, LAND_CENTER_Z, PALETTE.concreteWarm, 0.88, 0.03, false);
+  B.colorBox(0.9, 0.22, LAND_DEPTH, LAND_MAX_X, capY, LAND_CENTER_Z, PALETTE.concreteWarm, 0.88, 0.03, false);
+
+  B.addCollider(LAND_MIN_X, 0, LAND_MIN_Z - 0.45, LAND_MAX_X, 0.9, LAND_MIN_Z + 0.45);
+  B.addCollider(LAND_MIN_X, 0, LAND_MAX_Z - 0.45, LAND_MAX_X, 0.9, LAND_MAX_Z + 0.45);
+  B.addCollider(LAND_MIN_X - 0.45, 0, LAND_MIN_Z, LAND_MIN_X + 0.45, 0.9, LAND_MAX_Z);
+  B.addCollider(LAND_MAX_X - 0.45, 0, LAND_MIN_Z, LAND_MAX_X + 0.45, 0.9, LAND_MAX_Z);
+
+  for (let x = LAND_MIN_X; x <= LAND_MAX_X; x += postSpacing) {
+    B.colorBox(0.07, 1.05, 0.07, x, railY, LAND_MIN_Z, PALETTE.steelDark, 0.45, 0.65, false);
+    B.colorBox(0.07, 1.05, 0.07, x, railY, LAND_MAX_Z, PALETTE.steelDark, 0.45, 0.65, false);
   }
-  // East & West fence posts
-  for (let z = MAP_MIN_Z; z <= MAP_MAX_Z; z += postSpacing) {
-    B.colorBox(0.08, fenceH, 0.08, MAP_MIN_X, BH + fenceH / 2, z, PALETTE.steel, 0.5, 0.5, false);
-    B.colorBox(0.08, fenceH, 0.08, MAP_MAX_X, BH + fenceH / 2, z, PALETTE.steel, 0.5, 0.5, false);
+  for (let z = LAND_MIN_Z; z <= LAND_MAX_Z; z += postSpacing) {
+    B.colorBox(0.07, 1.05, 0.07, LAND_MIN_X, railY, z, PALETTE.steelDark, 0.45, 0.65, false);
+    B.colorBox(0.07, 1.05, 0.07, LAND_MAX_X, railY, z, PALETTE.steelDark, 0.45, 0.65, false);
   }
 
-  // Fence rails - all 4 sides (upper and lower)
-  B.colorBox(MAP_WIDTH, 0.06, 0.06, MAP_CENTER_X, BH + fenceH * 0.8, MAP_MIN_Z, PALETTE.steel, 0.5, 0.5, false);
-  B.colorBox(MAP_WIDTH, 0.06, 0.06, MAP_CENTER_X, BH + fenceH * 0.8, MAP_MAX_Z, PALETTE.steel, 0.5, 0.5, false);
-  B.colorBox(0.06, 0.06, MAP_DEPTH, MAP_MIN_X, BH + fenceH * 0.8, MAP_CENTER_Z, PALETTE.steel, 0.5, 0.5, false);
-  B.colorBox(0.06, 0.06, MAP_DEPTH, MAP_MAX_X, BH + fenceH * 0.8, MAP_CENTER_Z, PALETTE.steel, 0.5, 0.5, false);
-  B.colorBox(MAP_WIDTH, 0.06, 0.06, MAP_CENTER_X, BH + fenceH * 0.3, MAP_MIN_Z, PALETTE.steel, 0.5, 0.5, false);
-  B.colorBox(MAP_WIDTH, 0.06, 0.06, MAP_CENTER_X, BH + fenceH * 0.3, MAP_MAX_Z, PALETTE.steel, 0.5, 0.5, false);
-  B.colorBox(0.06, 0.06, MAP_DEPTH, MAP_MIN_X, BH + fenceH * 0.3, MAP_CENTER_Z, PALETTE.steel, 0.5, 0.5, false);
-  B.colorBox(0.06, 0.06, MAP_DEPTH, MAP_MAX_X, BH + fenceH * 0.3, MAP_CENTER_Z, PALETTE.steel, 0.5, 0.5, false);
-
-  // Fence top colliders to prevent jumping over (all 4 sides) - extended to be thicker
-  B.addCollider(MAP_MIN_X - BW, BH, MAP_MIN_Z - BW, MAP_MAX_X + BW, BH + fenceH + 2, MAP_MIN_Z + BW);
-  B.addCollider(MAP_MIN_X - BW, BH, MAP_MAX_Z - BW, MAP_MAX_X + BW, BH + fenceH + 2, MAP_MAX_Z + BW);
-  B.addCollider(MAP_MIN_X - BW, BH, MAP_MIN_Z - BW, MAP_MIN_X + BW, BH + fenceH + 2, MAP_MAX_Z + BW);
-  B.addCollider(MAP_MAX_X - BW, BH, MAP_MIN_Z - BW, MAP_MAX_X + BW, BH + fenceH + 2, MAP_MAX_Z + BW);
+  for (const y of [1.1, 1.62]) {
+    B.colorBox(LAND_WIDTH, 0.06, 0.06, LAND_CENTER_X, y, LAND_MIN_Z, PALETTE.steelDark, 0.45, 0.65, false);
+    B.colorBox(LAND_WIDTH, 0.06, 0.06, LAND_CENTER_X, y, LAND_MAX_Z, PALETTE.steelDark, 0.45, 0.65, false);
+    B.colorBox(0.06, 0.06, LAND_DEPTH, LAND_MIN_X, y, LAND_CENTER_Z, PALETTE.steelDark, 0.45, 0.65, false);
+    B.colorBox(0.06, 0.06, LAND_DEPTH, LAND_MAX_X, y, LAND_CENTER_Z, PALETTE.steelDark, 0.45, 0.65, false);
+  }
 }
 
 // ========== ZONE 2: WAREHOUSE HALL ==========
@@ -290,15 +348,22 @@ function buildShelfRack(B: MapBoxHelper, x: number, z: number) {
 }
 
 // ========== ZONE 3: CONTAINER YARD ==========
-function buildContainerYard(B: MapBoxHelper) {
-  buildContainer(B, 38, 0, -8, PALETTE.containerRed, 0);
-  buildContainer(B, 38, 0, -12.5, PALETTE.containerBlue, 0);
-  buildContainer(B, 40, 2.6, -8, PALETTE.containerGreen, 0);
-  buildContainer(B, 46, 0, -3, PALETTE.containerYlow, Math.PI / 2);
-  buildContainer(B, 32, 0, -18, PALETTE.containerRed, 0.15);
+function buildContainerYard(B: MapBoxHelper, includeColliders = true) {
+  buildContainer(B, 38, 0, -8, PALETTE.containerRed, 0, includeColliders);
+  buildContainer(B, 38, 0, -12.5, PALETTE.containerBlue, 0, includeColliders);
+  buildContainer(B, 40, 2.6, -8, PALETTE.containerGreen, 0, includeColliders);
+  buildContainer(B, 46, 0, -3, PALETTE.containerYlow, Math.PI / 2, includeColliders);
+  buildContainer(B, 32, 0, -18, PALETTE.containerRed, 0.15, includeColliders);
+  buildContainer(B, 42, 0, -19, PALETTE.containerBlue, 0, includeColliders);
+  buildContainer(B, 49, 0, -19, PALETTE.containerGreen, 0, includeColliders);
+  buildContainer(B, 45.5, 2.6, -19, PALETTE.containerRed, 0, includeColliders);
+  buildContainer(B, 55, 0, -13, PALETTE.containerBlue, Math.PI / 2, includeColliders);
+  buildContainer(B, 55, 2.6, -13, PALETTE.containerYlow, Math.PI / 2, includeColliders);
+  buildContainer(B, 28, 0, -27, PALETTE.containerGreen, 0.08, includeColliders);
+  buildContainer(B, 35, 0, -27, PALETTE.containerRed, -0.06, includeColliders);
 
   // Platform on top of stacked container
-  B.addCollider(36.9, 5.1, -10.2, 43.1, 5.2, -5.8);
+  if (includeColliders) B.addCollider(36.9, 5.1, -10.2, 43.1, 5.2, -5.8);
 
   // Fence - extended to cover full yard boundary
   for (let i = 0; i < 14; i++) {
@@ -308,10 +373,10 @@ function buildContainerYard(B: MapBoxHelper) {
   B.colorBox(38, 0.05, 0.05, 41, 1.1, 2, PALETTE.steel, 0.5, 0.5, false);
   B.colorBox(38, 0.05, 0.05, 41, 0.4, 2, PALETTE.steel, 0.5, 0.5, false);
   // Full fence collider from warehouse edge to east boundary
-  B.addCollider(22, 0, 1.5, 58, 2.5, 2.5);
+  if (includeColliders) B.addCollider(22, 0, 1.5, 58, 2.5, 2.5);
 }
 
-function buildContainer(B: MapBoxHelper, x: number, y: number, z: number, color: number, rotY: number) {
+function buildContainer(B: MapBoxHelper, x: number, y: number, z: number, color: number, rotY: number, collide = true) {
   const g = new THREE.Group();
   const bodyMat = getCustomMaterial(color, 0.65, 0.2);
   const body = new THREE.Mesh(new THREE.BoxGeometry(6.2, 2.5, 2.4), bodyMat);
@@ -343,11 +408,15 @@ function buildContainer(B: MapBoxHelper, x: number, y: number, z: number, color:
   cm.position.set(x, y + 1.25, z);
   cm.rotation.y = rotY;
   cm.updateMatrixWorld();
-  (B as any).colliders.push(new THREE.Box3().setFromObject(cm));
+  if (collide) (B as any).colliders.push(new THREE.Box3().setFromObject(cm));
 }
 
 // ========== ZONE 4: HARBOR EDGE ==========
-function buildHarborEdge(B: MapBoxHelper, scene: THREE.Scene) {
+function buildHarborEdge(
+  B: MapBoxHelper,
+  scene: THREE.Scene,
+  quality: QualityTier,
+): HarborWaterSurface {
   // Dock edge
   B.box(70, 0.5, 0.4, 15, 0.25, 42, "concreteDark");
 
@@ -356,15 +425,21 @@ function buildHarborEdge(B: MapBoxHelper, scene: THREE.Scene) {
     B.cyl(0.12, 0.16, 0.7, -12 + i * 8, 0.35, 39, "accentYellow");
   }
 
-  // Water
-  const waterMat = new THREE.MeshStandardMaterial({
-    color: PALETTE.water, roughness: 0.1, metalness: 0.15, transparent: true, opacity: 0.82,
-  });
-  const water = new THREE.Mesh(new THREE.PlaneGeometry(100, 40), waterMat);
-  water.rotation.x = -Math.PI / 2;
-  water.position.set(15, -0.4, 62);
-  water.receiveShadow = true;
-  scene.add(water);
+  const harborWater = createHarborWater(quality);
+  scene.add(harborWater.root);
+
+  // Repeating pier supports and safety ladders make the island read as a
+  // constructed waterfront instead of a floating terrain plane.
+  for (let x = -18; x <= 48; x += 6) {
+    B.cyl(0.16, 0.2, 1.8, x, -0.25, 42.35, "steelDark");
+  }
+  for (const x of [-8, 24, 44]) {
+    B.colorBox(0.08, 1.45, 0.08, x - 0.28, 0.05, 42.55, PALETTE.accentYellow, 0.65, 0.2, false);
+    B.colorBox(0.08, 1.45, 0.08, x + 0.28, 0.05, 42.55, PALETTE.accentYellow, 0.65, 0.2, false);
+    for (let rung = 0; rung < 4; rung++) {
+      B.colorBox(0.62, 0.06, 0.06, x, -0.42 + rung * 0.34, 42.55, PALETTE.accentYellow, 0.65, 0.2, false);
+    }
+  }
 
   // Rope coils, buoys
   B.cyl(0.25, 0.25, 0.15, 5, 0.15, 39, "rope");
@@ -372,6 +447,72 @@ function buildHarborEdge(B: MapBoxHelper, scene: THREE.Scene) {
 
   // Anchor
   B.colorBox(0.6, 0.8, 0.15, 15, 0.4, 39, PALETTE.steelDark, 0.5, 0.5, false);
+
+  return harborWater;
+}
+
+function buildHarborMasterPlanDressing(
+  B: MapBoxHelper,
+  scene: THREE.Scene,
+) {
+  const asphalt = 0x454847;
+  const marking = 0xd8c979;
+
+  // A readable service-road loop ties the districts together from an
+  // isometric view, matching the reference's planned industrial layout.
+  B.colorBox(94, 0.035, 6, 5, 0.04, -22, asphalt, 0.97, 0.01, false);
+  B.colorBox(6, 0.035, 68, 27, 0.045, 8, asphalt, 0.97, 0.01, false);
+  B.colorBox(86, 0.035, 6, 7, 0.05, 24, asphalt, 0.97, 0.01, false);
+  for (let x = -36; x <= 46; x += 6) {
+    B.colorBox(2.8, 0.012, 0.13, x, 0.066, -22, marking, 0.78, 0.02, false);
+  }
+  for (let z = -18; z <= 38; z += 6) {
+    B.colorBox(0.13, 0.012, 2.8, 27, 0.071, z, marking, 0.78, 0.02, false);
+  }
+  for (let stripe = 0; stripe < 7; stripe++) {
+    B.colorBox(0.55, 0.018, 3.4, -5 + stripe * 1.4, 0.08, 21.5, 0xe8e5d9, 0.82, 0, false);
+  }
+
+  // Pier market: compact tables and umbrellas add the lively waterfront
+  // silhouette shown beside the Ferris wheel in the master plan.
+  const umbrellaColors = [0xb6453b, 0x2d7180, 0xd0a83c, 0x6e547d];
+  const marketPositions: [number, number][] = [
+    [5, 36],
+    [13, 36],
+    [21, 36],
+    [29, 36],
+  ];
+  for (let i = 0; i < marketPositions.length; i++) {
+    const [x, z] = marketPositions[i];
+    B.cyl(0.08, 0.1, 2.5, x, 1.25, z, "steelDark");
+    B.cyl(0.7, 0.7, 0.12, x, 0.8, z, "wood");
+    const canopy = new THREE.Mesh(
+      new THREE.ConeGeometry(1.35, 0.45, 10),
+      getCustomMaterial(umbrellaColors[i], 0.76, 0.03),
+    );
+    canopy.position.set(x, 2.5, z);
+    canopy.castShadow = true;
+    scene.add(canopy);
+    for (const side of [-1, 1]) {
+      B.colorBox(0.7, 0.42, 0.28, x + side * 1.05, 0.25, z, PALETTE.woodWarm, 0.86, 0.02, false);
+    }
+  }
+
+  // Small service props create scale around the container district.
+  B.colorBox(1.8, 0.35, 1.2, 51, 0.3, -29, PALETTE.accentYellow, 0.66, 0.18, false);
+  B.colorBox(1.1, 1.3, 1.0, 51, 1.1, -29, PALETTE.accentYellow, 0.66, 0.18, false);
+  B.colorBox(0.18, 2.2, 0.18, 50.4, 1.4, -29, PALETTE.steelDark, 0.46, 0.6, false);
+  B.colorBox(0.18, 2.2, 0.18, 51.6, 1.4, -29, PALETTE.steelDark, 0.46, 0.6, false);
+  B.colorBox(2.7, 0.1, 0.12, 51, 0.18, -27.8, PALETTE.steelDark, 0.46, 0.6, false);
+  for (const x of [50.25, 51.75]) {
+    const wheel = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.36, 0.36, 0.24, 10),
+      getCustomMaterial(0x252728, 0.94, 0.01),
+    );
+    wheel.position.set(x, 0.35, -29.55);
+    wheel.rotation.z = Math.PI / 2;
+    scene.add(wheel);
+  }
 }
 
 // ========== ZONE 5: CONSTRUCTION ZONE (Stylized Fortnite) ==========
@@ -843,14 +984,15 @@ function buildHunterSpawn(B: MapBoxHelper): { gateIdx: number; gateMesh: THREE.M
 }
 
 // ========== LANDMARK ==========
-function buildLandmark(B: MapBoxHelper, scene: THREE.Scene) {
-  // Crane silhouette
-  const craneMat = getCustomMaterial(PALETTE.steelDark, 0.6, 0.4);
+function buildLandmark(B: MapBoxHelper, scene: THREE.Scene, includeWarehouseSign: boolean) {
+  // Hero crane anchors the construction district inside the island silhouette.
+  const craneMat = getCustomMaterial(PALETTE.scaffoldYellow, 0.58, 0.42);
   [
-    [0.8, 28, 0.8, 72, 14, -25],
-    [22, 0.6, 0.8, 72, 27, -25],
-    [0.5, 6, 0.5, 60, 24, -25],
-    [0.3, 10, 0.3, 80, 22, -25],
+    [0.8, 28, 0.8, -47, 14, -31],
+    [28, 0.6, 0.8, -34, 27, -31],
+    [0.5, 6, 0.5, -49, 24, -31],
+    [0.18, 10, 0.18, -22, 22, -31],
+    [3.5, 0.45, 1.2, -48.5, 26.5, -31],
   ].forEach(([w, h, d, x, y, z]) => {
     const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), craneMat);
     m.position.set(x, y, z);
@@ -858,12 +1000,14 @@ function buildLandmark(B: MapBoxHelper, scene: THREE.Scene) {
     scene.add(m);
   });
 
-  // "OLD HARBOR" sign on warehouse facade
-  B.colorBox(8, 1.2, 0.12, 0, 7.0, 18.3, PALETTE.steelDark, 0.5, 0.5, false);
-  B.colorBox(7.5, 0.8, 0.06, 0, 7.0, 18.4, PALETTE.offWhite, 0.8, 0.02, false);
-  const harborText = makeSignTextMesh("OLD HARBOR", 7.0, 0.7, 42, "#1a1a2e", null);
-  harborText.position.set(0, 7.0, 18.47);
-  scene.add(harborText);
+  if (includeWarehouseSign) {
+    // "OLD HARBOR" sign on warehouse facade
+    B.colorBox(8, 1.2, 0.12, 0, 7.0, 18.3, PALETTE.steelDark, 0.5, 0.5, false);
+    B.colorBox(7.5, 0.8, 0.06, 0, 7.0, 18.4, PALETTE.offWhite, 0.8, 0.02, false);
+    const harborText = makeSignTextMesh("OLD HARBOR", 7.0, 0.7, 42, "#1a1a2e", null);
+    harborText.position.set(0, 7.0, 18.47);
+    scene.add(harborText);
+  }
 }
 
 // ========== VEGETATION ==========
@@ -885,20 +1029,39 @@ function buildVegetation(scene: THREE.Scene, B: MapBoxHelper) {
 
   for (const [tx, tz] of trees) {
     const h = 4 + Math.sin(tx * 13.37) * 2;
+    const tree = new THREE.Group();
+    tree.position.set(tx, 0, tz);
+    tree.name = "harbor-tree";
+    tagWeaponImpactSurface(tree, "foliage");
+
     const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.18, h, 8), trunkMat);
-    trunk.position.set(tx, h / 2, tz);
+    trunk.position.set(0, h / 2, 0);
+    trunk.rotation.z = Math.sin(tx * 0.37) * 0.025;
     trunk.castShadow = true;
-    scene.add(trunk);
+    tree.add(trunk);
 
     // Short trunk collider (waist-height only) -- prevents walking through but allows shooting over
     B.addCollider(tx - 0.25, 0, tz - 0.25, tx + 0.25, 1.5, tz + 0.25);
 
     const crownR = 1.8 + Math.sin(tz * 7.13) * 0.6;
-    const crown = new THREE.Mesh(new THREE.SphereGeometry(crownR, 8, 6), leafMats[Math.abs(Math.floor(tx)) % 3]);
-    crown.position.set(tx, h + crownR * 0.35, tz);
-    crown.scale.y = 0.65 + Math.abs(Math.sin(tx * 3.7)) * 0.3;
-    crown.castShadow = true;
-    scene.add(crown);
+    for (let cluster = 0; cluster < 4; cluster++) {
+      const angle = cluster * Math.PI * 0.5 + tx * 0.03;
+      const radius = cluster === 0 ? 0 : crownR * 0.42;
+      const canopy = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(crownR * (cluster === 0 ? 0.85 : 0.62), 1),
+        leafMats[(Math.abs(Math.floor(tx)) + cluster) % leafMats.length],
+      );
+      canopy.position.set(
+        Math.cos(angle) * radius,
+        h + crownR * (0.25 + (cluster % 2) * 0.16),
+        Math.sin(angle) * radius,
+      );
+      canopy.scale.y = 0.72 + Math.abs(Math.sin(tx * 3.7 + cluster)) * 0.2;
+      canopy.rotation.y = angle;
+      canopy.castShadow = true;
+      tree.add(canopy);
+    }
+    scene.add(tree);
   }
 
   // Bushes
@@ -910,6 +1073,7 @@ function buildVegetation(scene: THREE.Scene, B: MapBoxHelper) {
     bush.position.set(bx, s * 0.45, bz);
     bush.scale.y = 0.6;
     bush.castShadow = true;
+    tagWeaponImpactSurface(bush, "foliage");
     scene.add(bush);
   }
 
@@ -948,6 +1112,7 @@ function buildVegetation(scene: THREE.Scene, B: MapBoxHelper) {
       const blade = new THREE.Mesh(new THREE.ConeGeometry(0.05 + j * 0.008, h, 4), grassMat2);
       blade.position.set(ox, h / 2, oz);
       blade.rotation.y = j * 1.2;
+      tagWeaponImpactSurface(blade, "foliage");
       scene.add(blade);
     }
   }
@@ -991,7 +1156,7 @@ function buildStreetLamps(B: MapBoxHelper, scene: THREE.Scene) {
 
 // ========== BACKGROUND VISTA ==========
 // ========== PARKOUR PLATFORMS ==========
-function buildParkour(B: MapBoxHelper) {
+function buildParkour(B: MapBoxHelper, includeWarehouseDecor: boolean) {
   const ROOF_Y = 8.0; // Warehouse roof height
 
   // ===== WAREHOUSE ROOFTOP ACCESS =====
@@ -1048,29 +1213,33 @@ function buildParkour(B: MapBoxHelper) {
     B.colorBox(0.05, 1.0, 0.05, stairX2 + stairW / 2, postY2, postZ2, PALETTE.steelLight, 0.5, 0.5, false);
   }
 
-  // ===== ROOFTOP OBSTACLES & DETAILS =====
-  // Air conditioning units on warehouse roof
-  B.colorBox(2, 1.2, 1.5, -10, ROOF_Y + 0.75, -5, PALETTE.steelLight, 0.6, 0.3, true);
-  B.colorBox(2, 1.2, 1.5, 5, ROOF_Y + 0.75, 5, PALETTE.steelLight, 0.6, 0.3, true);
-  B.colorBox(1.5, 0.8, 1, 15, ROOF_Y + 0.55, 10, PALETTE.steelLight, 0.6, 0.3, true);
-  // Skylight frames
-  B.colorBox(3, 0.25, 3, 0, ROOF_Y + 0.2, -8, 0x88bbdd, 0.1, 0.4, true);
-  // Roof edge safety railings (visual only)
-  B.colorBox(46, 0.06, 0.06, 0, ROOF_Y + 1.0, -17.5, PALETTE.steelLight, 0.5, 0.5, false);
-  B.colorBox(46, 0.06, 0.06, 0, ROOF_Y + 1.0, 17.5, PALETTE.steelLight, 0.5, 0.5, false);
-  B.colorBox(0.06, 0.06, 36, -23, ROOF_Y + 1.0, 0, PALETTE.steelLight, 0.5, 0.5, false);
-  B.colorBox(0.06, 0.06, 36, 23, ROOF_Y + 1.0, 0, PALETTE.steelLight, 0.5, 0.5, false);
+  if (includeWarehouseDecor) {
+    // ===== ROOFTOP OBSTACLES & DETAILS =====
+    // Air conditioning units on warehouse roof
+    B.colorBox(2, 1.2, 1.5, -10, ROOF_Y + 0.75, -5, PALETTE.steelLight, 0.6, 0.3, true);
+    B.colorBox(2, 1.2, 1.5, 5, ROOF_Y + 0.75, 5, PALETTE.steelLight, 0.6, 0.3, true);
+    B.colorBox(1.5, 0.8, 1, 15, ROOF_Y + 0.55, 10, PALETTE.steelLight, 0.6, 0.3, true);
+    // Skylight frames
+    B.colorBox(3, 0.25, 3, 0, ROOF_Y + 0.2, -8, 0x88bbdd, 0.1, 0.4, true);
+    // Roof edge safety railings (visual only)
+    B.colorBox(46, 0.06, 0.06, 0, ROOF_Y + 1.0, -17.5, PALETTE.steelLight, 0.5, 0.5, false);
+    B.colorBox(46, 0.06, 0.06, 0, ROOF_Y + 1.0, 17.5, PALETTE.steelLight, 0.5, 0.5, false);
+    B.colorBox(0.06, 0.06, 36, -23, ROOF_Y + 1.0, 0, PALETTE.steelLight, 0.5, 0.5, false);
+    B.colorBox(0.06, 0.06, 36, 23, ROOF_Y + 1.0, 0, PALETTE.steelLight, 0.5, 0.5, false);
 
-  // (Extra containers removed to clear area near Mini Mart)
-
-  // ===== WAREHOUSE INTERIOR BEAM TOPS =====
-  B.colorBox(1.5, 0.15, 1.5, -8, 5.0, -12, PALETTE.steel, 0.5, 0.5, true);
-  B.colorBox(1.5, 0.15, 1.5, 0, 5.0, -4, PALETTE.steel, 0.5, 0.5, true);
-  B.colorBox(1.5, 0.15, 1.5, 8, 5.0, 4, PALETTE.steel, 0.5, 0.5, true);
+    // ===== WAREHOUSE INTERIOR BEAM TOPS =====
+    B.colorBox(1.5, 0.15, 1.5, -8, 5.0, -12, PALETTE.steel, 0.5, 0.5, true);
+    B.colorBox(1.5, 0.15, 1.5, 0, 5.0, -4, PALETTE.steel, 0.5, 0.5, true);
+    B.colorBox(1.5, 0.15, 1.5, 8, 5.0, 4, PALETTE.steel, 0.5, 0.5, true);
+  }
 }
 
 // ========== PARKOUR STRUCTURES & ARCHITECTURE ==========
-function buildParkourStructures(B: MapBoxHelper, scene: THREE.Scene) {
+function buildParkourStructures(
+  B: MapBoxHelper,
+  scene: THREE.Scene,
+  includeWarehouseStructures: boolean,
+) {
   // ===== WATCHTOWER near dock (climbable) =====
   const twX = 40, twZ = 30;
   // 4 legs (with colliders)
@@ -1140,12 +1309,14 @@ function buildParkourStructures(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(3, 0.06, 0.4, gzX, 0.45, gzZ - 1.2, PALETTE.woodWarm, 0.85, 0.02, true);
   B.colorBox(3, 0.5, 0.06, gzX, 0.7, gzZ - 1.4, PALETTE.woodDark, 0.85, 0.02, false);
 
-  // ===== WALL-RUN PLATFORMS inside warehouse =====
-  // Thin ledges on warehouse walls for skilled movement
-  B.colorBox(8, 0.15, 0.6, -18, 2.5, -17, PALETTE.steel, 0.5, 0.5, true);
-  B.colorBox(8, 0.15, 0.6, 18, 2.5, -17, PALETTE.steel, 0.5, 0.5, true);
-  B.colorBox(0.6, 0.15, 8, -22, 3.0, -8, PALETTE.steel, 0.5, 0.5, true);
-  B.colorBox(0.6, 0.15, 8, 22, 3.0, 8, PALETTE.steel, 0.5, 0.5, true);
+  if (includeWarehouseStructures) {
+    // ===== WALL-RUN PLATFORMS inside warehouse =====
+    // Thin ledges on warehouse walls for skilled movement
+    B.colorBox(8, 0.15, 0.6, -18, 2.5, -17, PALETTE.steel, 0.5, 0.5, true);
+    B.colorBox(8, 0.15, 0.6, 18, 2.5, -17, PALETTE.steel, 0.5, 0.5, true);
+    B.colorBox(0.6, 0.15, 8, -22, 3.0, -8, PALETTE.steel, 0.5, 0.5, true);
+    B.colorBox(0.6, 0.15, 8, 22, 3.0, 8, PALETTE.steel, 0.5, 0.5, true);
+  }
 
   // ===== CARGO NET FRAME (visual + climbable ladder) =====
   const netX = -45, netZ = -30;
@@ -1188,23 +1359,25 @@ function buildParkourStructures(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(0.04, 8, 0.04, -46.25, 4, -22, PALETTE.steelLight, 0.5, 0.5, false);
   B.colorBox(0.04, 8, 0.04, -45.75, 4, -22, PALETTE.steelLight, 0.5, 0.5, false);
 
-  // ===== SUSPENDED PLATFORMS (warehouse ceiling) =====
-  // Chain-suspended metal platforms hanging from roof beams
-  const chainMat = getCustomMaterial(PALETTE.steelLight, 0.4, 0.6);
-  const suspPositions: [number, number, number][] = [[-15, 5.5, 0], [0, 5.8, 8], [12, 5.3, -5]];
-  for (const [sx, sy, sz] of suspPositions) {
-    B.colorBox(2.5, 0.12, 2.5, sx, sy, sz, PALETTE.steel, 0.5, 0.5, true);
-    // Chains (4 corners)
-    for (const [cdx, cdz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
-      const chain = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.015, 0.015, 8 - sy + 0.5, 4),
-        chainMat
-      );
-      chain.position.set(sx + cdx, (8 + sy) / 2, sz + cdz);
-      scene.add(chain);
+  if (includeWarehouseStructures) {
+    // ===== SUSPENDED PLATFORMS (warehouse ceiling) =====
+    // Chain-suspended metal platforms hanging from roof beams
+    const chainMat = getCustomMaterial(PALETTE.steelLight, 0.4, 0.6);
+    const suspPositions: [number, number, number][] = [[-15, 5.5, 0], [0, 5.8, 8], [12, 5.3, -5]];
+    for (const [sx, sy, sz] of suspPositions) {
+      B.colorBox(2.5, 0.12, 2.5, sx, sy, sz, PALETTE.steel, 0.5, 0.5, true);
+      // Chains (4 corners)
+      for (const [cdx, cdz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+        const chain = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.015, 0.015, 8 - sy + 0.5, 4),
+          chainMat
+        );
+        chain.position.set(sx + cdx, (8 + sy) / 2, sz + cdz);
+        scene.add(chain);
+      }
+      // Hazard stripe on platform edge
+      B.colorBox(2.5, 0.02, 0.12, sx, sy + 0.07, sz - 1.2, PALETTE.accentYellow, 0.7, 0.1, false);
     }
-    // Hazard stripe on platform edge
-    B.colorBox(2.5, 0.02, 0.12, sx, sy + 0.07, sz - 1.2, PALETTE.accentYellow, 0.7, 0.1, false);
   }
 
   // ===== TIRE STACK (inside container yard) =====
@@ -1423,6 +1596,43 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   // Accent trim line
   B.colorBox(HW + roofOverhang * 2 + 0.3, 0.08, 0.2, hx, roofTopY - 0.1, hz - HD / 2 - roofOverhang, trimColor, 0.85, 0.02, false);
   B.colorBox(HW + roofOverhang * 2 + 0.3, 0.08, 0.2, hx, roofTopY - 0.1, hz + HD / 2 + roofOverhang, trimColor, 0.85, 0.02, false);
+
+  // Pitched shingle shell gives the residence a recognizable coastal-house
+  // silhouette while the existing split ceiling preserves the interior.
+  const gableRise = 2.7;
+  const gableRun = HD / 2 + roofOverhang;
+  const roofSlopeLength = Math.hypot(gableRun, gableRise);
+  const roofPitch = Math.atan2(gableRise, gableRun);
+  for (const side of [-1, 1]) {
+    const slab = new THREE.Mesh(
+      new THREE.BoxGeometry(HW + roofOverhang * 2.3, 0.28, roofSlopeLength),
+      getCustomMaterial(0x3f4548, 0.78, 0.16),
+    );
+    slab.position.set(
+      hx,
+      roofTopY + gableRise / 2 + 0.35,
+      hz + side * gableRun / 2,
+    );
+    slab.rotation.x = side * roofPitch;
+    slab.castShadow = true;
+    slab.receiveShadow = true;
+    scene.add(slab);
+  }
+  B.colorBox(HW + roofOverhang * 2.5, 0.24, 0.28, hx, roofTopY + gableRise + 0.38, hz, 0x303638, 0.7, 0.28, false);
+  for (let step = 0; step < 8; step++) {
+    const segmentDepth = (gableRun * 2) / 8;
+    const localZ = -gableRun + segmentDepth * (step + 0.5);
+    const roofY = roofTopY + 0.25
+      + gableRise * (1 - Math.abs(localZ) / gableRun);
+    B.addCollider(
+      hx - HW / 2 - roofOverhang,
+      roofTopY + 0.2,
+      hz + localZ - segmentDepth / 2,
+      hx + HW / 2 + roofOverhang,
+      roofY + 0.35,
+      hz + localZ + segmentDepth / 2,
+    );
+  }
 
   // === INTERIOR STAIRCASE (clean, along left wall) ===
   const stairW = 1.4;
@@ -1732,6 +1942,7 @@ function buildBackyardGarden(B: MapBoxHelper, scene: THREE.Scene) {
   B.addCollider(gx - pondR - 0.5, 0, gz - pondR - 0.5, gx + pondR + 0.5, 0.4, gz + pondR + 0.5);
   const water = new THREE.Mesh(new THREE.CylinderGeometry(pondR, pondR, 0.05, 16), getCustomMaterial(0x2277aa, 0.1, 0.4));
   water.position.set(gx, 0.15, gz);
+  tagWeaponImpactSurface(water, "water");
   scene.add(water);
 
   // Lily pads + flowers
@@ -1811,10 +2022,12 @@ function buildBackyardGarden(B: MapBoxHelper, scene: THREE.Scene) {
   for (const [tx, ty, tz, th, cr] of [[0.08, 2.35, -0.1, 0.3, 0.18], [0.42, 1.85, 0.25, 0.25, 0.14], [-0.3, 0.6, -0.35, 0.2, 0.1]] as [number, number, number, number, number][]) {
     const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.04, th, 4), bonsaiTrunkMat);
     trunk.position.set(hnbX + tx, ty + th / 2, hnbZ + tz);
+    tagWeaponImpactSurface(trunk, "foliage");
     scene.add(trunk);
     const canopy = new THREE.Mesh(new THREE.SphereGeometry(cr, 6, 5), bonsaiLeafMat);
     canopy.position.set(hnbX + tx, ty + th + cr * 0.5, hnbZ + tz);
     canopy.scale.set(1.2, 0.7, 1.2);
+    tagWeaponImpactSurface(canopy, "foliage");
     scene.add(canopy);
   }
   // Waterfall
@@ -1822,10 +2035,12 @@ function buildBackyardGarden(B: MapBoxHelper, scene: THREE.Scene) {
   const waterfall = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.8), waterfallMat);
   waterfall.position.set(hnbX + 0.15, 1.0, hnbZ - 0.35);
   waterfall.rotation.y = -0.3;
+  tagWeaponImpactSurface(waterfall, "water");
   scene.add(waterfall);
   // Mini pond at waterfall base
   const miniPond = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.03, 8), getCustomMaterial(0x33aabb, 0.1, 0.3));
   miniPond.position.set(hnbX + 0.15, 0.57, hnbZ - 0.35);
+  tagWeaponImpactSurface(miniPond, "water");
   scene.add(miniPond);
 
   // === FLAT KOI POND (separate small pond near garden edge) ===
@@ -1840,6 +2055,7 @@ function buildBackyardGarden(B: MapBoxHelper, scene: THREE.Scene) {
   // Water surface
   const kpWater = new THREE.Mesh(new THREE.CylinderGeometry(kpR, kpR, 0.04, 12), getCustomMaterial(0x1a6699, 0.08, 0.35));
   kpWater.position.set(kpX, 0.1, kpZ);
+  tagWeaponImpactSurface(kpWater, "water");
   scene.add(kpWater);
   // Lily pads
   for (const la of [0.5, 2.0, 3.8, 5.0]) {
@@ -1899,10 +2115,12 @@ function buildBackyardGarden(B: MapBoxHelper, scene: THREE.Scene) {
 
   // Bamboo clusters
   for (const [bx, bz, bh] of [[gx + 5.5, gz - 2, 3.5], [gx + 5.8, gz - 1.5, 4.0], [gx + 5.3, gz - 1, 3.2], [gx - 5.5, gz + 2, 3.0], [gx - 5.2, gz + 2.5, 3.5]] as [number, number, number][]) {
-    B.cyl(0.04, 0.05, bh, bx, bh / 2, bz, "woodDark");
+    const bamboo = B.cyl(0.04, 0.05, bh, bx, bh / 2, bz, "woodDark");
+    tagWeaponImpactSurface(bamboo, "foliage");
     const leaves = new THREE.Mesh(new THREE.SphereGeometry(0.3, 5, 4), getCustomMaterial(0x2a7a2a, 0.85, 0));
     leaves.position.set(bx, bh + 0.15, bz);
     leaves.scale.set(0.8, 1.2, 0.8);
+    tagWeaponImpactSurface(leaves, "foliage");
     scene.add(leaves);
   }
 
@@ -1933,8 +2151,13 @@ function buildBackyardGarden(B: MapBoxHelper, scene: THREE.Scene) {
 // Hierarchy: ferrisRoot -> wheelPivot -> [rings, spokes, cabinMounts -> hinge -> cabin]
 // Cabins are mounted OUTSIDE the ring with CLEARANCE so they never intersect the blue ring.
 // Hinge groups counter-rotate so cabins stay upright during wheel rotation.
-function buildFerrisWheel(scene: THREE.Scene, colliders: THREE.Box3[]): THREE.Group {
+export function buildFerrisWheel(
+  scene: THREE.Scene,
+  colliders: THREE.Box3[],
+  visuals = true,
+): { wheel: THREE.Group; cabinColliders: THREE.Box3[] } {
   const wheelPivot = new THREE.Group();
+  const cabinColliders: THREE.Box3[] = [];
   const fwX = -10, fwZ = 34;
   const RING_R = 8;
   const CLEARANCE = 0.5;
@@ -1977,6 +2200,7 @@ function buildFerrisWheel(scene: THREE.Scene, colliders: THREE.Box3[]): THREE.Gr
 
   // === WHEEL PIVOT (rotates around Z axis) ===
   wheelPivot.position.set(fwX, hubY, fwZ);
+  wheelPivot.userData.dynamicWeaponRaycast = true;
   scene.add(wheelPivot);
 
   // Hub
@@ -2074,16 +2298,17 @@ function buildFerrisWheel(scene: THREE.Scene, colliders: THREE.Box3[]): THREE.Gr
     const cx = fwX + Math.cos(a) * MOUNT_R;
     const cy = hubY + Math.sin(a) * MOUNT_R;
     // Floor (thick to prevent sinking)
-    colliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2, cy - cabH / 2 - 0.2, fwZ - cabD / 2), new THREE.Vector3(cx + cabW / 2, cy - cabH / 2 + 0.15, fwZ + cabD / 2)));
+    cabinColliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2, cy - cabH / 2 - 0.2, fwZ - cabD / 2), new THREE.Vector3(cx + cabW / 2, cy - cabH / 2 + 0.15, fwZ + cabD / 2)));
     // Roof
-    colliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2 - 0.1, cy + cabH / 2 - 0.1, fwZ - cabD / 2 - 0.1), new THREE.Vector3(cx + cabW / 2 + 0.1, cy + cabH / 2 + 0.1, fwZ + cabD / 2 + 0.1)));
+    cabinColliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2 - 0.1, cy + cabH / 2 - 0.1, fwZ - cabD / 2 - 0.1), new THREE.Vector3(cx + cabW / 2 + 0.1, cy + cabH / 2 + 0.1, fwZ + cabD / 2 + 0.1)));
     // Back wall
-    colliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2, cy - cabH / 2, fwZ - cabD / 2 - 0.15), new THREE.Vector3(cx + cabW / 2, cy + cabH / 2, fwZ - cabD / 2 + 0.15)));
+    cabinColliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2, cy - cabH / 2, fwZ - cabD / 2 - 0.15), new THREE.Vector3(cx + cabW / 2, cy + cabH / 2, fwZ - cabD / 2 + 0.15)));
     // Left wall
-    colliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2 - 0.15, cy - cabH / 2, fwZ - cabD / 2), new THREE.Vector3(cx - cabW / 2 + 0.15, cy + cabH / 2, fwZ + cabD / 2)));
+    cabinColliders.push(new THREE.Box3(new THREE.Vector3(cx - cabW / 2 - 0.15, cy - cabH / 2, fwZ - cabD / 2), new THREE.Vector3(cx - cabW / 2 + 0.15, cy + cabH / 2, fwZ + cabD / 2)));
     // Right wall
-    colliders.push(new THREE.Box3(new THREE.Vector3(cx + cabW / 2 - 0.15, cy - cabH / 2, fwZ - cabD / 2), new THREE.Vector3(cx + cabW / 2 + 0.15, cy + cabH / 2, fwZ + cabD / 2)));
+    cabinColliders.push(new THREE.Box3(new THREE.Vector3(cx + cabW / 2 - 0.15, cy - cabH / 2, fwZ - cabD / 2), new THREE.Vector3(cx + cabW / 2 + 0.15, cy + cabH / 2, fwZ + cabD / 2)));
   }
+  colliders.push(...cabinColliders);
 
   // Ground shadow
   const shadowMesh = new THREE.Mesh(new THREE.PlaneGeometry(platW + 2, platD + 2), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.15 }));
@@ -2091,7 +2316,22 @@ function buildFerrisWheel(scene: THREE.Scene, colliders: THREE.Box3[]): THREE.Gr
   shadowMesh.position.set(fwX, 0.02, fwZ);
   scene.add(shadowMesh);
 
-  return wheelPivot;
+  if (!visuals) {
+    // The Ferris Harbor zone GLB renders the wheel; keep the pivot / mount / hinge
+    // groups (GameManager rotates and counter-rotates them) but drop every mesh.
+    const meshes: THREE.Mesh[] = [];
+    wheelPivot.traverse((object) => {
+      if (object instanceof THREE.Mesh) meshes.push(object);
+    });
+    for (const mesh of meshes) {
+      mesh.removeFromParent();
+      mesh.geometry.dispose();
+    }
+    shadowMesh.removeFromParent();
+    shadowMesh.geometry.dispose();
+  }
+
+  return { wheel: wheelPivot, cabinColliders };
 }
 
 // ========== DOCKSIDE CAFE & BAR ==========
@@ -2517,7 +2757,6 @@ function buildDocksideCafeBar(B: MapBoxHelper, scene: THREE.Scene) {
   const stairHoleX = 6, stairHoleZ = -38, stairClear = 2.8;
   const luxWood = 0x7a5230;
   const luxDark = 0x1a1a2e;
-  const luxGold = 0xc9a84c;
   const luxCushion = 0x2c3e50;
 
   // === ZONE A: LOUNGE AREA (left side) ===

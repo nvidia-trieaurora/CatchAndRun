@@ -15,18 +15,74 @@ import { SettingsPanel } from "../ui/components/SettingsPanel";
 import { AnnouncementBanner } from "../ui/components/AnnouncementBanner";
 import { Minimap } from "../ui/components/Minimap";
 import { SoundMemePanel } from "../ui/components/SoundMemePanel";
-import { buildOldHarborFortniteMap } from "./world/maps/oldHarborFortnite";
+import {
+  createCompressedMapLoader,
+  disposeMapAsset,
+  disposeObjectResources,
+  MapAssetLoader,
+  type CompressedMapLoader,
+} from "./world/assets/MapAssetLoader";
+import { buildHarborV2Map } from "./world/maps/harborV2Map";
 import { buildSchoolMap } from "./world/maps/schoolMap";
+import {
+  HARBOR_WATER_Y,
+  type HarborWaterSurface,
+} from "./world/environment/harborWater";
+import { HarborAmbientMotion } from "./world/environment/HarborAmbientMotion";
+import {
+  activeHarborZoneAssets,
+  resolveHarborZoneSource,
+  zoneAssetUrl,
+  type HarborZoneAsset,
+} from "./world/zones/harborZones";
+import { ZoneAmbientMotion } from "./world/zones/ZoneAmbientMotion";
+import type { FerrisHarborRig } from "./world/zones/FerrisHarborRig";
+import type { MooringRopes } from "./world/zones/MooringRopes";
 import schoolDataJson from "./world/school.json";
-import { createFortniteLighting } from "./world/lighting/fortniteLighting";
+import {
+  applyHarborEnvironment,
+  createFortniteLighting,
+} from "./world/lighting/fortniteLighting";
+import { HarborEnvironmentLoader } from "./world/lighting/HarborEnvironmentLoader";
+import { disposeMaterialLibrary } from "./world/materials/materialLibrary";
 import { PropRegistry } from "./world/PropRegistry";
-import { HunterController } from "./controllers/HunterController";
+import { setHunterGateOpen } from "./world/HunterGateState";
+import {
+  getHunterMovementSpeed,
+  HunterController,
+} from "./controllers/HunterController";
 import { PropController } from "./controllers/PropController";
+import {
+  detectLadderVolumes,
+  ladderVolumeFromBox,
+  type LadderAuthoring,
+  type LadderVolume,
+} from "./controllers/LadderClimb";
 import { SpectatorController } from "./controllers/SpectatorController";
 import { WeaponSystem } from "./systems/WeaponSystem";
 import { PropTransformSystem } from "./systems/PropTransformSystem";
 import { AudioSystem } from "./systems/AudioSystem";
 import { ParticleSystem } from "./systems/ParticleSystem";
+import { WaterProximityWarning } from "./systems/WaterProximityWarning";
+import { collectNearbyColliders } from "./world/collisionBroadphase";
+import {
+  enterLobbyPresentation as applyLobbyPresentation,
+  type LobbyScreen,
+} from "./lifecycle/LobbyPresentation";
+import type {
+  GameRenderer,
+  RendererBackend,
+  RendererContext,
+} from "./rendering/RendererFactory";
+import {
+  RuntimeMetricsCollector,
+  type DevViewPose,
+} from "./rendering/RuntimeMetrics";
+import { configureFirstPersonViewmodel } from "./rendering/FirstPersonViewmodel";
+import {
+  sampleDrowningCinematic,
+  type DrowningCinematicState,
+} from "./cinematics/DrowningCinematic";
 import { PlayerEntity } from "./entities/PlayerEntity";
 import { loadMemeManifest, preloadMemeTextures } from "./entities/MemeTextureLoader";
 import { isMobile } from "../input/MobileDetect";
@@ -48,11 +104,21 @@ import {
   HUNTER_GRENADE_STUN_MS,
   HUNTER_PHASEWALK_DURATION_MS,
   HUNTER_PHASEWALK_COOLDOWN_MS,
+  type PlayerDrownedData,
 } from "@catch-and-run/shared";
 import mapDataJson from "./world/harbor-warehouse.json";
 
 export class GameManager {
-  private renderer: THREE.WebGLRenderer;
+  private renderer: GameRenderer;
+  private rendererBackend: RendererBackend;
+  private readonly runtimeMetrics = new RuntimeMetricsCollector();
+  private metricsFrame = 0;
+  private debugCameraPose: {
+    position: THREE.Vector3;
+    target: THREE.Vector3;
+  } | null = null;
+  private devFogBaseDensity: number | null = null;
+  private drowningCinematic: DrowningCinematicState | null = null;
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
   private clock: THREE.Clock;
@@ -85,11 +151,19 @@ export class GameManager {
   private hunterController!: HunterController;
   private propController!: PropController;
   private spectatorController!: SpectatorController;
+  /**
+   * Player role/alive patches can arrive a few frames before the phase change
+   * that builds the map and controllers; gameplay updates must wait for them.
+   */
+  private controllersReady = false;
 
   private playerEntities = new Map<string, PlayerEntity>();
   private colliders: THREE.Box3[] = [];
+  /** Vertical ladders derived from the stacked rung colliders of the current map. */
+  private ladderVolumes: LadderVolume[] = [];
   private gateColliderIndex = -1;
   private gateCollider: THREE.Box3 | null = null;
+  private gateColliderTemplate: THREE.Box3 | null = null;
   private gateMesh: THREE.Mesh | null = null;
 
   private localRole: string = PlayerRole.PROP;
@@ -113,6 +187,18 @@ export class GameManager {
   private duplicates: { mesh: THREE.Mesh; collider: THREE.Box3; hp: number; vy: number; onGround: boolean }[] = [];
   private currentPhase: string = GamePhase.WAITING;
   private mapBuilt = false;
+  private readonly mapLoaderResources: CompressedMapLoader;
+  private readonly harborV2Loader: MapAssetLoader;
+  private readonly harborCinematicLoader: MapAssetLoader;
+  private readonly harborEnvironmentLoader = new HarborEnvironmentLoader();
+  private activeWarehouseV2: THREE.Group | null = null;
+  private activeHarborCinematic: THREE.Group | null = null;
+  private harborAmbientMotion: HarborAmbientMotion | null = null;
+  /** Edge-zone GLB loaders (AC garden, AD construction) keyed by zone id. */
+  private readonly harborZoneLoaders: { asset: HarborZoneAsset; loader: MapAssetLoader }[] = [];
+  private activeHarborZones: THREE.Group[] = [];
+  private zoneAmbientMotion: ZoneAmbientMotion | null = null;
+  private harborWater: HarborWaterSurface | null = null;
   private invisibleProps = new Set<string>();
   private grenadeMode = false;
   private fpGrenade: THREE.Group | null = null;
@@ -129,6 +215,9 @@ export class GameManager {
   private sendInterval = 1000 / CLIENT_SEND_RATE;
   private ferrisWheel: THREE.Group | null = null;
   private ferrisCabinColliders: THREE.Box3[] = [];
+  /** Authored wheel from the Ferris Harbor zone GLB, driven by the procedural pivot's angle. */
+  private ferrisRig: FerrisHarborRig | null = null;
+  private mooringRopes: MooringRopes | null = null;
   private ferrisR = 8.5;
   private ferrisHubY = 12;
   private ferrisX = -10;
@@ -138,6 +227,7 @@ export class GameManager {
   private ferrisCabH = 2.2;
   private ferrisCabD = 1.4;
   private minimap: Minimap;
+  private waterProximity: WaterProximityWarning;
   private menuBgGroup: THREE.Group | null = null;
   private menuBgAngle = 0;
   private lastCountdownShown = -1;
@@ -146,8 +236,26 @@ export class GameManager {
   private voiceUI: VoiceUI | null = null;
   private mobile: boolean;
 
-  constructor(canvas: HTMLCanvasElement) {
-    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
+  constructor(canvas: HTMLCanvasElement, rendererContext: RendererContext) {
+    this.renderer = rendererContext.renderer;
+    this.rendererBackend = rendererContext.backend;
+    console.info(`[Renderer] Initialized ${this.rendererBackend}`);
+    this.mapLoaderResources = createCompressedMapLoader(this.renderer);
+    this.harborV2Loader = new MapAssetLoader(
+      "/assets/maps/harbor-v2/warehouse.glb?v=20260907-sc04",
+      this.mapLoaderResources.loader,
+    );
+    this.harborCinematicLoader = new MapAssetLoader(
+      "/assets/maps/harbor-v2/cinematic/harbor-cinematic.glb?v=20260907-detail03",
+      this.mapLoaderResources.loader,
+    );
+    const zoneSource = resolveHarborZoneSource(window.location.search);
+    for (const asset of activeHarborZoneAssets(zoneSource)) {
+      this.harborZoneLoaders.push({
+        asset,
+        loader: new MapAssetLoader(zoneAssetUrl(asset, zoneSource), this.mapLoaderResources.loader),
+      });
+    }
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
@@ -161,17 +269,98 @@ export class GameManager {
     this.camera.position.set(0, 10, 20);
     this.scene.add(this.camera);
     this.clock = new THREE.Clock();
+    if (import.meta.env.DEV) {
+      const v = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
+      // Development-only snapshot presets. The six-angle sets per edge zone
+      // (AC garden, AD construction) are the before/after gate for zone
+      // asset passes; keep their poses stable so snapshots stay comparable.
+      const views: Record<string, DevViewPose> = {
+        overview: { position: v(72, 66, 84), target: v(4, 0, 2) },
+        warehouse: { position: v(48, 17, 34), target: v(0, 4, 0) },
+        dock: { position: v(68, 13, 62), target: v(15, 1, 38) },
+        fleet: { position: v(58, 9, 72), target: v(24, 1, 52) },
+        // AC — Waterfront Residential Garden (house -40..-30 × 18..29, pond @ -48,38)
+        acGarden: { position: v(-12, 28, 8), target: v(-44, 0, 35), fov: 55 },
+        acGardenRoute: { position: v(-52, 1.7, 44.5), target: v(-33, 4, 24) },
+        acGardenReverse: { position: v(-37, 2.1, 29.5), target: v(-47, 0.3, 42) },
+        acGardenTop: { position: v(-35.5, 140, 30), target: v(-36, 0, 30), fov: 18, fogScale: 0.15 },
+        acGardenDetail: { position: v(-44.2, 1.6, 42.5), target: v(-48.5, 0.6, 38) },
+        // AD — Waterfront Construction Site (slab -47..-23 × -34..-10)
+        adConstruction: { position: v(-6, 30, -48), target: v(-38, 2, -22), fov: 55 },
+        // route: standing in the site gate opening (-30..-26 × -15) looking NW across the slab
+        adConstructionRoute: { position: v(-28, 1.7, -15), target: v(-39, 3.5, -27) },
+        // reverse: from the water west of the seawall, aimed between the crane mast and the silo
+        adConstructionReverse: { position: v(-62, 7, -34), target: v(-30, 4, -19) },
+        adConstructionTop: { position: v(-35.5, 140, -22), target: v(-36, 0, -22), fov: 18, fogScale: 0.15 },
+        // detail: silo plinth, legs, hopper and ladder cage from the slab
+        adConstructionDetail: { position: v(-44.2, 1.7, -18.6), target: v(-47.8, 4.2, -22) },
+        // crane: the mast door with the interior ladder, and the view from the ring
+        adCraneDoor: { position: v(-48, 1.7, -28.3), target: v(-48, 5, -31.4) },
+        adCraneTop: { position: v(-48.6, 25.85, -32.6), target: v(-10, 4, 0), fov: 70 },
+        // Ferris Harbor District (wheel hub -10,12,34; pier 34..42; seawall 47; fleet z 48..60)
+        ferrisHarbor: { position: v(24, 16, 64), target: v(-6, 7, 40), fov: 55 },
+        ferrisHarborRoute: { position: v(-19, 1.7, 44.6), target: v(10, 3, 46) },
+        ferrisHarborWater: { position: v(2, 5, 66), target: v(-8, 9, 40) },
+        ferrisHarborTop: { position: v(4, 140, 44), target: v(4, 0, 44), fov: 18, fogScale: 0.15 },
+        ferrisHubDetail: { position: v(-16.5, 10.4, 38.5), target: v(-10.5, 11.6, 33.5), fov: 50 },
+        // 6.6 m off the wheel plane at the 3 o'clock station: with eight cabins on a
+        // 8.5 m radius the frame always holds at least one gondola whatever the angle
+        ferrisCabinDetail: { position: v(0.2, 12.4, 41.8), target: v(-2.2, 12.0, 34.0), fov: 55 },
+        workboatDetail: { position: v(11.5, 3.2, 44.2), target: v(6.5, 0.6, 50), fov: 50 },
+        fleetDetail: { position: v(-20, 4.5, 56), target: v(0, -0.2, 52), fov: 55 },
+      };
+      window.__catchAndRunView = (preset) => {
+        this.input.exitPointerLock();
+        const view = typeof preset === "string"
+          ? views[preset]
+          : {
+            position: v(...preset.position),
+            target: v(...preset.target),
+            fov: preset.fov,
+            fogScale: preset.fogScale,
+          };
+        if (!view) {
+          console.warn(
+            `[DevView] unknown preset '${typeof preset === "string" ? preset : JSON.stringify(preset)}'`,
+            Object.keys(views),
+          );
+          return;
+        }
+        this.debugCameraPose = {
+          position: view.position.clone(),
+          target: view.target.clone(),
+        };
+        if (this.fpGun) this.fpGun.visible = false;
+        this.camera.fov = view.fov ?? 75;
+        this.camera.updateProjectionMatrix();
+        if (this.scene.fog instanceof THREE.FogExp2) {
+          if (this.devFogBaseDensity === null) this.devFogBaseDensity = this.scene.fog.density;
+          this.scene.fog.density = this.devFogBaseDensity * (view.fogScale ?? 1);
+        }
+        this.camera.position.copy(view.position);
+        this.camera.lookAt(view.target);
+      };
+      window.__catchAndRunViewPresets = () => Object.keys(views);
+      window.__catchAndRunOverview = () =>
+        window.__catchAndRunView?.("overview");
+    }
 
     this.network = new NetworkManager();
     this.input = new InputManager(canvas);
     this.config = new ClientConfig();
-    this.quality = new QualityManager(this.config, this.renderer);
+    this.quality = new QualityManager(
+      this.config,
+      this.renderer,
+      this.rendererBackend,
+    );
     this.quality.apply();
     this.post = new PostProcessing(this.renderer, this.scene, this.camera);
     this.post.enabled = this.quality.bloomEnabled();
     this.uiManager = new UIManager();
     this.minimap = new Minimap();
-    document.getElementById("ui-root")!.appendChild(this.minimap.element);
+    const uiRoot = document.getElementById("ui-root")!;
+    uiRoot.appendChild(this.minimap.element);
+    this.waterProximity = new WaterProximityWarning(uiRoot);
     this.propRegistry = new PropRegistry();
     this.propRegistry.loadFromMapData(mapDataJson.props as any);
 
@@ -189,6 +378,20 @@ export class GameManager {
     }
 
     void loadMemeManifest().then((memes) => preloadMemeTextures(memes));
+    void this.harborV2Loader.preload();
+    void this.harborCinematicLoader.preload();
+    for (const zone of this.harborZoneLoaders) void zone.loader.preload();
+    void this.harborEnvironmentLoader.preload().then((loaded) => {
+      const environment = this.harborEnvironmentLoader.getTexture();
+      if (
+        loaded
+        && environment
+        && this.mapBuilt
+        && this.builtMapId === "harbor-warehouse"
+      ) {
+        applyHarborEnvironment(this.scene, environment);
+      }
+    });
 
     this.setupUI();
     this.setupChat();
@@ -200,8 +403,17 @@ export class GameManager {
     window.addEventListener("beforeunload", (e) => {
       if (this.isGameActive()) {
         e.preventDefault();
-        e.returnValue = "";
       }
+    });
+    window.addEventListener("pagehide", (event) => {
+      if (event.persisted) return;
+      delete window.__catchAndRunOverview;
+      delete window.__catchAndRunView;
+      this.weaponSystem?.dispose();
+      this.mapLoaderResources.dispose();
+      this.harborEnvironmentLoader.dispose();
+      this.post.dispose();
+      this.renderer.dispose();
     });
 
     if (!this.mobile) {
@@ -293,7 +505,7 @@ export class GameManager {
     this.gameHUD = new GameHUD();
 
     this.resultsUI = new ResultsUI(() => {
-      this.uiManager.showScreen("roomLobby");
+      this.enterLobbyPresentation("roomLobby");
     });
 
     this.settingsPanel = new SettingsPanel(this.config);
@@ -457,12 +669,14 @@ export class GameManager {
   private onPhaseChange(oldPhase: string, newPhase: string) {
     switch (newPhase) {
       case GamePhase.COUNTDOWN:
-        this.uiManager.showScreen("roomLobby");
+        this.enterLobbyPresentation("roomLobby");
         this.uiManager.showNotification("Match starting!");
         this.speak("Game starting. Get ready!");
         break;
 
       case GamePhase.HIDING:
+        this.drowningCinematic = null;
+        this.waterProximity.hide();
         this.invisibleProps.clear();
         this.localTransformCount = 0;
         this.grenadesUsed = 0;
@@ -470,6 +684,7 @@ export class GameManager {
         this.disableScope();
         this.lastScanTime = 0;
         this.lastHunterBoostTime = 0;
+        this.hunterBoostEnd = 0;
         this.lastPhaseWalkTime = 0;
         this.phaseWalkEnd = 0;
         this.lastAbilityTime = 0;
@@ -480,6 +695,8 @@ export class GameManager {
         this.minimap.setGhostMode(false);
         this.showGuideHint();
         this.buildMapIfNeeded();
+        this.closeHunterGate();
+        this.weaponSystem.clearRoundEffects();
         this.initControllers();
         this.setHudButtonsVisible(true);
         this.startVoiceConnections();
@@ -512,16 +729,7 @@ export class GameManager {
           this.touchInput.show();
           this.touchInput.setRole(this.localRole === PlayerRole.HUNTER ? "hunter" : "prop");
         }
-        // Open the gate -- remove gate collider so hunters can leave
-        if (this.gateCollider && this.gateColliderIndex >= 0) {
-          const idx = this.colliders.indexOf(this.gateCollider);
-          if (idx >= 0) this.colliders.splice(idx, 1);
-          this.gateCollider = null;
-        }
-        if (this.gateMesh) {
-          this.gateMesh.visible = false;
-          this.gateMesh = null;
-        }
+        this.openHunterGate();
         if (this.localRole === PlayerRole.HUNTER) {
           const selfNow = this.latestRoomState?.players?.find(
             (p: any) => p.sessionId === this.network.getSessionId()
@@ -556,12 +764,7 @@ export class GameManager {
         break;
 
       case GamePhase.WAITING:
-        this.uiManager.showScreen("roomLobby");
-        if (!this.mobile) this.input.exitPointerLock();
-        this.setHudButtonsVisible(false);
-        this.clearGameEntities();
-        this.touchInput?.hide();
-        this.stopVoice();
+        this.enterLobbyPresentation("roomLobby");
         break;
     }
   }
@@ -573,16 +776,8 @@ export class GameManager {
     this.localRole = PlayerRole.SPECTATOR;
     this.localIsAlive = false;
 
-    // Remove gate so spectator can see freely (gate is already open in ACTIVE)
-    if (this.gateCollider && this.gateColliderIndex >= 0) {
-      const idx = this.colliders.indexOf(this.gateCollider);
-      if (idx >= 0) this.colliders.splice(idx, 1);
-      this.gateCollider = null;
-    }
-    if (this.gateMesh) {
-      this.gateMesh.visible = false;
-      this.gateMesh = null;
-    }
+    // Spectators joining an active round see the gate in its open state.
+    this.openHunterGate();
 
     this.spectatorController.setPosition(0, 15, 20);
     this.uiManager.showScreen("gameHUD");
@@ -604,21 +799,59 @@ export class GameManager {
 
   /** Removes all scene objects created by the last map build (host switched maps). */
   private teardownMap() {
+    this.weaponSystem?.clearRoundEffects();
+    this.weaponSystem?.invalidateImpactSurfaces();
+    this.harborWater?.dispose();
+    this.harborWater = null;
+    this.harborAmbientMotion = null;
+    this.ferrisRig = null;
+    this.mooringRopes?.dispose();
+    this.mooringRopes = null;
+    if (this.activeHarborCinematic) {
+      disposeMapAsset(this.activeHarborCinematic);
+      this.activeHarborCinematic = null;
+    }
+    for (const zoneRoot of this.activeHarborZones) disposeMapAsset(zoneRoot);
+    this.activeHarborZones = [];
+    this.zoneAmbientMotion = null;
+    if (this.activeWarehouseV2) {
+      disposeMapAsset(this.activeWarehouseV2);
+      this.activeWarehouseV2 = null;
+    }
     for (const obj of this.mapObjects) {
+      if (obj.parent) disposeObjectResources(obj);
       this.scene.remove(obj);
     }
+    disposeMaterialLibrary();
     this.mapObjects = [];
     this.colliders = [];
     this.ferrisWheel = null;
     this.ferrisCabinColliders = [];
     this.gateMesh = null;
     this.gateCollider = null;
+    this.gateColliderTemplate = null;
+    this.scene.environment = null;
     this.mapBuilt = false;
+    this.controllersReady = false;
   }
 
   private buildMapIfNeeded() {
     const mapId = this.latestRoomState?.config?.mapId ?? "harbor-warehouse";
-    if (this.mapBuilt && this.builtMapId === mapId) return;
+    const forceLegacyHarbor =
+      new URLSearchParams(window.location.search).get("harbor") === "v1";
+    const cinematicEnabled =
+      this.config.get().harborVisualVersion === "v2"
+      && !forceLegacyHarbor;
+    const zonesPending = this.harborZoneLoaders.some((zone) => zone.loader.isReady())
+      && this.activeHarborZones.length < this.harborZoneLoaders.filter((zone) => zone.loader.isReady()).length;
+    const canUpgradeHarbor = mapId === "harbor-warehouse"
+      && cinematicEnabled
+      && (
+        (this.harborV2Loader.isReady() && !this.activeWarehouseV2)
+        || (this.harborCinematicLoader.isReady() && !this.activeHarborCinematic)
+        || (this.activeHarborCinematic !== null && zonesPending)
+      );
+    if (this.mapBuilt && this.builtMapId === mapId && !canUpgradeHarbor) return;
     if (this.mapBuilt) this.teardownMap();
     this.mapBuilt = true;
     this.builtMapId = mapId;
@@ -627,7 +860,13 @@ export class GameManager {
 
     // Track everything the lighting + map build adds so it can be torn down
     const beforeChildren = new Set(this.scene.children);
-    createFortniteLighting(this.scene, this.renderer);
+    createFortniteLighting(
+      this.scene,
+      this.renderer,
+      mapId === "harbor-warehouse"
+        ? this.harborEnvironmentLoader.getTexture()
+        : null,
+    );
 
     this.minimap.setMap(mapId);
     this.propRegistry.clear();
@@ -637,45 +876,154 @@ export class GameManager {
       mapResult = buildSchoolMap(this.scene);
     } else {
       this.propRegistry.loadFromMapData(mapDataJson.props as any);
-      mapResult = buildOldHarborFortniteMap(this.scene, mapDataJson as any);
+      const assetOptions = { maxAnisotropy: this.renderer.getMaxAnisotropy() };
+      const warehouseV2 = cinematicEnabled
+        ? this.harborV2Loader.createInstance(this.quality.getTier(), assetOptions)
+        : null;
+      // Zone GLBs that are ready replace their part of the cinematic Harbor;
+      // the cinematic instance is carved so the two never overlap.
+      const readyZones = warehouseV2
+        ? this.harborZoneLoaders.filter((zone) => zone.loader.isReady())
+        : [];
+      const cinematicV2 = warehouseV2
+        ? this.harborCinematicLoader.createInstance(this.quality.getTier(), {
+          ...assetOptions,
+          zoneOverrides: readyZones.map((zone) => zone.asset.override),
+        })
+        : null;
+      const zoneInstances = cinematicV2
+        ? readyZones
+          .map((zone) => zone.loader.createInstance(this.quality.getTier(), assetOptions))
+          .filter((instance): instance is NonNullable<typeof instance> => instance !== null)
+        : [];
+      mapResult = buildHarborV2Map(
+        this.scene,
+        mapDataJson as any,
+        warehouseV2,
+        this.quality.getTier(),
+        cinematicV2,
+        zoneInstances,
+      );
+      this.activeWarehouseV2 = mapResult.warehouseV2Root;
+      this.activeHarborCinematic = mapResult.cinematicV2Root;
+      this.activeHarborZones = mapResult.zoneRoots;
+      this.zoneAmbientMotion = mapResult.zoneRoots.length > 0
+        ? new ZoneAmbientMotion(
+          mapResult.zoneRoots,
+          this.renderer,
+          this.quality.getTier() !== "low",
+        )
+        : null;
+      this.harborAmbientMotion = mapResult.cinematicV2Root
+        ? new HarborAmbientMotion(
+          [mapResult.cinematicV2Root, ...mapResult.zoneRoots],
+          this.quality.getTier() === "high",
+        )
+        : null;
+      this.ferrisRig = mapResult.ferrisRig;
+      this.mooringRopes = mapResult.mooringRopes;
+      this.harborWater = mapResult.harborWater;
     }
     this.mapObjects = this.scene.children.filter((c) => !beforeChildren.has(c));
 
     this.colliders = mapResult.colliders;
     this.gateColliderIndex = mapResult.gateColliderIndex;
     this.gateCollider = this.colliders[this.gateColliderIndex] || null;
+    this.gateColliderTemplate = this.gateCollider;
     this.gateMesh = mapResult.gateMesh;
     this.ferrisWheel = mapResult.ferrisWheel;
 
-    // Store cabin collider references for dynamic updates (5 per cabin)
-    this.ferrisCabinColliders = [];
-    if (this.ferrisWheel) {
-      const fwNumCabs = this.ferrisNumCabins;
-      const collidersPerCabin = 5;
-      const collidersLen = this.colliders.length;
-      for (let i = 0; i < fwNumCabs * collidersPerCabin; i++) {
-        const idx = collidersLen - fwNumCabs * collidersPerCabin + i;
-        if (idx >= 0 && idx < this.colliders.length) {
-          this.ferrisCabinColliders.push(this.colliders[idx]);
-        }
-      }
+    this.ferrisCabinColliders = mapResult.ferrisCabinColliders;
+
+    // Stacked rung colliders (silo, scaffolds, watchtower) become climbable
+    // ladders, plus any COL_LADDER_* column authored in a GLB (crane mast);
+    // controllers may already exist when a map is rebuilt mid-session.
+    const authoredLadders: LadderAuthoring[] = (mapResult as { ladders?: LadderAuthoring[] }).ladders ?? [];
+    this.ladderVolumes = [
+      ...detectLadderVolumes(this.colliders),
+      ...authoredLadders.map((ladder) => ladderVolumeFromBox(ladder.box, ladder.approach)),
+    ];
+    if (this.controllersReady) {
+      this.hunterController.setLadders(this.ladderVolumes);
+      this.propController.setLadders(this.ladderVolumes);
     }
 
     // Game systems persist across map rebuilds — create once
     if (!this.weaponSystem) {
-      this.weaponSystem = new WeaponSystem(this.scene);
+      this.weaponSystem = new WeaponSystem(
+        this.scene,
+        () => this.mapObjects,
+        (position, strength) => {
+          this.harborWater?.addRipple?.(
+            position.x,
+            position.z,
+            strength,
+          );
+        },
+      );
       this.propTransformSystem = new PropTransformSystem(this.scene, this.propRegistry);
       this.audioSystem = new AudioSystem(this.camera);
       // Music OFF by default
       if (this.musicBtn) this.musicBtn.textContent = "[M] ♪ OFF";
       this.particleSystem = new ParticleSystem(this.scene);
     }
+    // Build the broad-phase once while the map is loading, never on the first shot.
+    this.weaponSystem.prepareImpactSurfaces();
+  }
+
+  private closeHunterGate() {
+    this.gateCollider = setHunterGateOpen(
+      this.colliders,
+      this.gateColliderTemplate,
+      this.gateMesh,
+      false,
+    );
+  }
+
+  private openHunterGate() {
+    this.gateCollider = setHunterGateOpen(
+      this.colliders,
+      this.gateColliderTemplate,
+      this.gateMesh,
+      true,
+    );
+  }
+
+  /** Leave any development snapshot pose and restore gameplay optics. */
+  private clearDevView() {
+    if (!this.debugCameraPose && this.devFogBaseDensity === null) return;
+    this.debugCameraPose = null;
+    this.camera.fov = 75;
+    this.camera.updateProjectionMatrix();
+    if (this.devFogBaseDensity !== null && this.scene.fog instanceof THREE.FogExp2) {
+      this.scene.fog.density = this.devFogBaseDensity;
+    }
+    this.devFogBaseDensity = null;
   }
 
   private initControllers() {
     this.hunterController = new HunterController(this.camera, this.input, this.config);
     this.propController = new PropController(this.camera, this.input, this.config);
     this.spectatorController = new SpectatorController(this.camera, this.input);
+    this.controllersReady = true;
+    const bounds = this.builtMapId === "school"
+      ? schoolDataJson.bounds
+      : mapDataJson.bounds;
+    const margin = 0.25;
+    this.hunterController.setMovementBounds(
+      bounds.min.x + margin,
+      bounds.max.x - margin,
+      bounds.min.z + margin,
+      bounds.max.z - margin,
+    );
+    this.propController.setMovementBounds(
+      bounds.min.x + margin,
+      bounds.max.x - margin,
+      bounds.min.z + margin,
+      bounds.max.z - margin,
+    );
+    this.hunterController.setLadders(this.ladderVolumes);
+    this.propController.setLadders(this.ladderVolumes);
 
     // Clean up old transform mesh
     this.propTransformSystem?.dispose();
@@ -699,6 +1047,10 @@ export class GameManager {
 
     if (actualRole === PlayerRole.HUNTER) {
       this.hunterController.setPosition(spawnX, spawnY, spawnZ);
+      this.hunterController.setRotation(
+        selfData?.rotX ?? 0,
+        selfData?.rotY ?? -Math.PI / 2,
+      );
       this.createFirstPersonGun();
     } else {
       // Extra safety: ensure no gun for prop
@@ -791,14 +1143,8 @@ export class GameManager {
     g.position.set(0.32, -0.28, -0.55);
     g.rotation.set(0, 0.05, 0);
 
-    // Render gun on top of everything -- no wall clipping
-    g.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
-        child.renderOrder = 999;
-        (child.material as THREE.MeshStandardMaterial).depthTest = false;
-        (child.material as THREE.MeshStandardMaterial).depthWrite = false;
-      }
-    });
+    // Keep the gun after world transparency as well as opaque geometry.
+    configureFirstPersonViewmodel(g);
 
     this.camera.add(g);
     this.fpGun = g;
@@ -899,29 +1245,25 @@ export class GameManager {
     room.onMessage(ServerMessage.PLAYER_KILLED, (data: any) => {
       this.gameHUD.addKillfeed(data.killerNickname, data.victimNickname);
       if (data.victimSessionId === this.network.getSessionId()) {
-        // Get position before changing role
-        const wasHunter = this.localRole === PlayerRole.HUNTER;
-        const pos = wasHunter
-          ? this.hunterController.getPosition()
-          : this.propController.getPosition();
+        this.enterSpectatorAfterElimination();
+      }
+    });
 
-        if (this.propController?.isInSoulMode()) {
-          this.propController.exitSoulMode();
-        }
-        this.gameHUD.setSoulModeVisible(false);
-
-        this.localIsAlive = false;
-        this.localRole = PlayerRole.SPECTATOR;
-        this.exitGrenadeMode();
-        if (this.fpGun) {
-          this.camera.remove(this.fpGun);
-          this.fpGun = null;
-        }
-        this.gameHUD.updateRole("ghost");
-        this.touchInput?.setRole("spectator");
-        this.minimap.setGhostMode(true);
-        this.disableScope();
-        this.spectatorController.setPosition(pos.x, pos.y + 2, pos.z);
+    room.onMessage(ServerMessage.PLAYER_DROWNED, (data: PlayerDrownedData) => {
+      this.gameHUD.addKillfeed("🌊 Harbor", data.victimNickname);
+      const sampledHeight = this.harborWater?.sampleHeight(data.x, data.z);
+      const waterY = typeof sampledHeight === "number"
+        ? sampledHeight
+        : HARBOR_WATER_Y;
+      this.weaponSystem?.spawnWaterImpact(
+        new THREE.Vector3(data.x, waterY, data.z),
+        1.8,
+      );
+      if (data.victimSessionId === this.network.getSessionId()) {
+        this.enterSpectatorAfterElimination(
+          new THREE.Vector3(data.x, waterY, data.z),
+        );
+        this.startDrowningCinematic(data, waterY);
       }
     });
 
@@ -971,6 +1313,10 @@ export class GameManager {
         this.speedBoostEnd = Date.now() + (data.duration || 3000);
         this.audioSystem?.playSound("ability");
         this.uiManager.showNotification("SPEED BOOST! [3s]");
+      } else if (data.type === "hunterBoost") {
+        this.hunterBoostEnd = Date.now() + (data.duration || 5000);
+        this.audioSystem?.playSound("ability");
+        this.uiManager.showNotification("HUNTER BOOST! Speed + Jump [5s]");
       } else if (data.type === "invisibility") {
         this.invisibleEnd = Date.now() + (data.duration || 7000);
         this.audioSystem?.playSound("ability");
@@ -979,7 +1325,6 @@ export class GameManager {
     });
 
     room.onMessage(ServerMessage.GRENADE_THROWN, (data: any) => {
-      if (data.throwerSessionId === this.network.getSessionId()) return;
       if (this.particleSystem) {
         const origin = new THREE.Vector3(data.originX, data.originY, data.originZ);
         const dir = new THREE.Vector3(data.dirX, data.dirY, data.dirZ);
@@ -1470,21 +1815,42 @@ export class GameManager {
 
   private leaveRoom() {
     this.network.leaveRoom();
-    this.uiManager.showScreen("mainMenu");
-    if (!this.mobile) this.input.exitPointerLock();
-    this.minimap.hide();
-    this.touchInput?.hide();
-    this.stopVoice();
-    this.clearGameEntities();
+    this.enterLobbyPresentation("mainMenu");
     this.currentPhase = GamePhase.WAITING;
     this.latestRoomState = null;
+  }
+
+  private enterLobbyPresentation(screen: LobbyScreen) {
+    this.clearDevView();
+    this.drowningCinematic = null;
+    this.waterProximity.hide();
+    applyLobbyPresentation({
+      hideMinimap: () => this.minimap.hide(),
+      hideHudButtons: () => this.setHudButtonsVisible(false),
+      hideTouchInput: () => this.touchInput?.hide(),
+      exitPointerLock: () => {
+        if (!this.mobile) this.input.exitPointerLock();
+      },
+      disableScope: () => this.disableScope(),
+      exitGrenadeMode: () => this.exitGrenadeMode(),
+      stopVoice: () => this.stopVoice(),
+      hasActiveMap: () => this.mapBuilt,
+      clearGameEntities: () => this.clearGameEntities(),
+      teardownMap: () => this.teardownMap(),
+      hasMenuBackground: () => this.menuBgGroup !== null,
+      setupMenuBackground: () => this.setupMenuBackground(),
+      resetMenuCamera: () => {
+        this.menuBgAngle = 0;
+      },
+      showScreen: (target) => this.uiManager.showScreen(target),
+    }, screen);
   }
 
   private clearGameEntities() {
     this.playerEntities.forEach((entity) => entity.dispose(this.scene));
     this.playerEntities.clear();
     this.invisibleProps.clear();
-    this.weaponSystem?.dispose();
+    this.weaponSystem?.clearRoundEffects();
     this.propTransformSystem?.dispose();
     this.particleSystem?.dispose();
   }
@@ -1493,6 +1859,7 @@ export class GameManager {
     requestAnimationFrame(() => this.animate());
 
     const dt = Math.min(this.clock.getDelta(), 0.05);
+    this.runtimeMetrics.recordFrame(dt);
 
     // Menu background: slow orbit around the prop showcase
     if (this.menuBgGroup && !this.mapBuilt) {
@@ -1509,10 +1876,19 @@ export class GameManager {
     if (this.ferrisWheel) {
       this.updateFerrisWheel(dt);
     }
+    this.harborWater?.update(dt);
+    this.harborAmbientMotion?.update(dt, this.harborWater);
+    this.zoneAmbientMotion?.update(dt);
+    // ropes follow the boats that just bobbed (socket world matrices refresh here)
+    if (this.mooringRopes) {
+      for (const root of this.activeHarborZones) root.updateMatrixWorld(true);
+      this.mooringRopes.update();
+    }
 
     if (this.isGameActive()) {
       this.updateGameplay(dt);
     }
+    this.updateDrowningCinematic(dt);
 
     this.playerEntities.forEach((entity) => entity.updateVisual(dt));
 
@@ -1528,6 +1904,17 @@ export class GameManager {
     } else {
       this.renderer.render(this.scene, this.camera);
     }
+
+    this.metricsFrame++;
+    if (this.mapBuilt && this.metricsFrame % 60 === 0) {
+      window.__catchAndRunMetrics = this.runtimeMetrics.collect(
+        this.renderer,
+        this.scene,
+        this.rendererBackend,
+        this.activeHarborCinematic ? "v2" : "v1",
+        this.colliders.length,
+      );
+    }
   }
 
   private prevCabinPositions: { x: number; y: number }[] = [];
@@ -1536,6 +1923,9 @@ export class GameManager {
     if (!this.ferrisWheel) return;
 
     this.ferrisWheel.rotation.z += dt * 0.08;
+    // The authored wheel (Ferris Harbor zone) follows the same angle: rims and
+    // yokes turn with the root, cabin pivots counter-rotate to hang upright.
+    this.ferrisRig?.setAngle(this.ferrisWheel.rotation.z);
     // Counter-rotate hinge groups inside mount groups so cabins stay upright
     // Hierarchy: wheelPivot -> mount (Group) -> hinge (Group, child[1]) -> cabin meshes
     this.ferrisWheel.children.forEach((child) => {
@@ -1620,14 +2010,28 @@ export class GameManager {
   }
 
   private updateGameplay(dt: number) {
+    if (this.debugCameraPose) {
+      this.camera.position.copy(this.debugCameraPose.position);
+      this.camera.lookAt(this.debugCameraPose.target);
+      return;
+    }
+    if (!this.controllersReady) return;
     if (!this.localIsAlive) {
-      this.spectatorController?.update(dt);
+      this.spectatorController.update(dt);
       this.updateGhostMinimap();
       return;
     }
 
-    // Build collider list with other player bodies so they can't walk through each other
-    const allColliders = [...this.colliders];
+    // Controllers perform several swept/ground/ceiling passes per frame. Keep
+    // those hot loops local instead of rescanning the full Harbor collider set.
+    const controllerPosition = this.localRole === PlayerRole.HUNTER
+      ? this.hunterController.getPosition()
+      : this.propController.getPosition();
+    const allColliders = collectNearbyColliders(
+      this.colliders,
+      controllerPosition,
+      16,
+    );
     const myId = this.network.getSessionId();
     this.playerEntities.forEach((entity, sid) => {
       if (sid === myId) return;
@@ -1642,14 +2046,21 @@ export class GameManager {
     let pos: THREE.Vector3;
 
     if (this.localRole === PlayerRole.HUNTER) {
-      const hunterBoosted = Date.now() < this.hunterBoostEnd;
-      if (hunterBoosted) {
-        (this.hunterController as any).speed = 20;
-        (this.hunterController as any).jumpSpeed = 18;
-      } else {
-        (this.hunterController as any).speed = 10;
-        (this.hunterController as any).jumpSpeed = 13;
+      const wantsScope =
+        this.currentPhase === GamePhase.ACTIVE
+        && !this.grenadeMode
+        && this.input.isRightMouseDown();
+      if (wantsScope && !this.scopeActive) {
+        this.enableScope();
+      } else if (!wantsScope && this.scopeActive) {
+        this.disableScope();
       }
+
+      const hunterBoosted = Date.now() < this.hunterBoostEnd;
+      this.hunterController.setMovementTuning(
+        getHunterMovementSpeed(hunterBoosted, this.scopeActive),
+        hunterBoosted ? 18 : 13,
+      );
 
       const now = Date.now();
       const inPhaseWalk = now < this.phaseWalkEnd;
@@ -1685,19 +2096,18 @@ export class GameManager {
       this.updatePropHUD();
     }
 
+    const waterWarning = this.waterProximity.update(this.builtMapId, pos);
+    if (
+      waterWarning.changed
+      && waterWarning.level !== "safe"
+    ) {
+      this.audioSystem?.playSound("waterWarning");
+    }
     this.sendInputToServer(pos!);
   }
 
   private handleHunterActions(_dt: number) {
     if (this.currentPhase !== GamePhase.ACTIVE) return;
-
-    // Right-click hold = scope
-    const wantsScope = this.input.isRightMouseDown();
-    if (wantsScope && !this.scopeActive) {
-      this.enableScope();
-    } else if (!wantsScope && this.scopeActive) {
-      this.disableScope();
-    }
 
     const state = this.input.getState();
 
@@ -1709,9 +2119,6 @@ export class GameManager {
           originX: origin.x, originY: origin.y, originZ: origin.z,
           dirX: dir.x, dirY: dir.y, dirZ: dir.z,
         });
-        if (this.particleSystem) {
-          this.particleSystem.spawnGrenade(origin.clone(), dir.clone(), 1.2);
-        }
         this.audioSystem?.playSound("ability");
         this.exitGrenadeMode();
         this.lastGrenadeTime = Date.now();
@@ -1768,9 +2175,7 @@ export class GameManager {
       const cdBoost = Date.now() - this.lastHunterBoostTime;
       if (cdBoost >= 60000) {
         this.lastHunterBoostTime = Date.now();
-        this.hunterBoostEnd = Date.now() + 5000;
-        this.audioSystem?.playSound("ability");
-        this.uiManager.showNotification("HUNTER BOOST! Speed + Jump [5s]");
+        this.network.send(ClientMessage.USE_ABILITY_2);
       }
     }
 
@@ -1830,13 +2235,7 @@ export class GameManager {
     g.add(arm);
 
     g.position.set(0.25, -0.2, -0.45);
-    g.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
-        child.renderOrder = 999;
-        (child.material as THREE.MeshStandardMaterial).depthTest = false;
-        (child.material as THREE.MeshStandardMaterial).depthWrite = false;
-      }
-    });
+    configureFirstPersonViewmodel(g);
 
     this.camera.add(g);
     this.fpGrenade = g;
@@ -1982,7 +2381,6 @@ export class GameManager {
     this.scopeActive = true;
     this.camera.fov = 30;
     this.camera.updateProjectionMatrix();
-    (this.hunterController as any).speed = 3;
 
     if (!this.scopeOverlay) {
       this.scopeOverlay = document.createElement("div");
@@ -2004,7 +2402,6 @@ export class GameManager {
     this.scopeActive = false;
     this.camera.fov = this.defaultFov;
     this.camera.updateProjectionMatrix();
-    (this.hunterController as any).speed = 10;
     if (this.scopeOverlay) this.scopeOverlay.style.display = "none";
     if (this.fpGun) this.fpGun.visible = true;
   }
@@ -2170,7 +2567,75 @@ export class GameManager {
       rotY: rot.y,
       seq: ++this.inputSeq,
       timestamp: now,
+      isAiming: this.localRole === PlayerRole.HUNTER && this.scopeActive,
     });
+  }
+
+  private startDrowningCinematic(
+    data: PlayerDrownedData,
+    waterY: number,
+  ) {
+    this.input.exitPointerLock();
+    this.waterProximity.hide();
+    this.audioSystem?.playSound("drown");
+    this.cameraShake.add(0.45);
+    this.announcer.showBanner("DROWNED", "danger");
+    this.uiManager.showNotification(
+      "You fell into lethal water. You will return next round.",
+    );
+
+    this.drowningCinematic = {
+      elapsed: 0,
+      duration: Math.max(0.8, data.cinematicMs / 1000),
+      start: this.camera.position.clone(),
+      end: new THREE.Vector3(data.cameraX, data.cameraY, data.cameraZ),
+      target: new THREE.Vector3(data.x, waterY, data.z),
+    };
+  }
+
+  private updateDrowningCinematic(dt: number) {
+    const cinematic = this.drowningCinematic;
+    if (!cinematic) return;
+
+    cinematic.elapsed += dt;
+    const frame = sampleDrowningCinematic(cinematic);
+    this.camera.position.copy(frame.position);
+    this.camera.lookAt(frame.target);
+
+    if (frame.completed) {
+      this.spectatorController.setPosition(
+        cinematic.end.x,
+        cinematic.end.y,
+        cinematic.end.z,
+      );
+      this.drowningCinematic = null;
+    }
+  }
+
+  private enterSpectatorAfterElimination(positionOverride?: THREE.Vector3) {
+    const wasHunter = this.localRole === PlayerRole.HUNTER;
+    const pos = positionOverride ?? (
+      wasHunter
+        ? this.hunterController.getPosition()
+        : this.propController.getPosition()
+    );
+
+    if (this.propController?.isInSoulMode()) {
+      this.propController.exitSoulMode();
+    }
+    this.gameHUD.setSoulModeVisible(false);
+    this.localIsAlive = false;
+    this.localRole = PlayerRole.SPECTATOR;
+    this.exitGrenadeMode();
+    if (this.fpGun) {
+      this.camera.remove(this.fpGun);
+      this.fpGun = null;
+    }
+    this.gameHUD.updateRole("ghost");
+    this.touchInput?.setRole("spectator");
+    this.minimap.setGhostMode(true);
+    this.disableScope();
+    this.spectatorController.setPosition(pos.x, pos.y + 2, pos.z);
   }
 
   /** Infection mode: this player was downed as a prop and joins the hunt. */
@@ -2330,6 +2795,7 @@ export class GameManager {
 
   private updateFovKick(dt: number) {
     if (this.scopeActive || !this.isGameActive() || !this.localIsAlive) return;
+    if (this.debugCameraPose) return; // dev snapshot poses own the FOV
     const now = Date.now();
     const boosted = now < this.speedBoostEnd || now < this.hunterBoostEnd;
     const targetFov = this.defaultFov + (boosted ? 10 : 0);

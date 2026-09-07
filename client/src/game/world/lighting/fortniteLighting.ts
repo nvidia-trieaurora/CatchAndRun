@@ -1,25 +1,33 @@
 import * as THREE from "three";
-import { PALETTE } from "../materials/materialLibrary";
+import type { GameRenderer } from "../../rendering/RendererFactory";
 
-export function createFortniteLighting(scene: THREE.Scene, renderer: THREE.WebGLRenderer) {
+export function createFortniteLighting(
+  scene: THREE.Scene,
+  renderer: GameRenderer,
+  environment: THREE.Texture | null = null,
+) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.12;
+  renderer.toneMappingExposure = 0.9;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  scene.fog = new THREE.FogExp2(PALETTE.fogColor, 0.0035);
+  scene.fog = new THREE.FogExp2(0x8d8982, 0.0042);
 
-  createGradientSky(scene);
-  createSun(scene);
+  if (environment) {
+    applyHarborEnvironment(scene, environment);
+  } else {
+    createGradientSky(scene);
+    createSun(scene);
+  }
 
-  // Hemisphere: bright sky + warm ground bounce
-  const hemi = new THREE.HemisphereLight(0x99bbdd, 0x997755, 1.0);
+  // Restrained ambient light keeps material roughness and normal detail visible.
+  const hemi = new THREE.HemisphereLight(0x91a5ad, 0x5a4938, 0.42);
   scene.add(hemi);
 
-  // Main sun -- only shadow caster
-  const sun = new THREE.DirectionalLight(0xffecc8, 3.0);
-  sun.position.set(-25, 40, 35);
+  // Low late-afternoon sun is the only shadow caster.
+  const sun = new THREE.DirectionalLight(0xffc982, 3.4);
+  sun.position.set(-55, 38, -32);
   sun.castShadow = true;
   sun.shadow.mapSize.width = 2048;
   sun.shadow.mapSize.height = 2048;
@@ -33,15 +41,45 @@ export function createFortniteLighting(scene: THREE.Scene, renderer: THREE.WebGL
   sun.shadow.normalBias = 0.02;
   scene.add(sun);
 
-  // Cool fill from opposite side (no shadow)
-  const fill = new THREE.DirectionalLight(0x8899cc, 0.6);
+  // Cool maritime fill from the opposite side, without flattening the scene.
+  const fill = new THREE.DirectionalLight(0x6f8fa5, 0.24);
   fill.position.set(30, 15, -25);
   scene.add(fill);
 
-  // Warm bounce from below/front
-  const bounce = new THREE.DirectionalLight(0xddccaa, 0.3);
+  const bounce = new THREE.DirectionalLight(0xd7a86d, 0.1);
   bounce.position.set(0, -5, 20);
   scene.add(bounce);
+}
+
+export function applyHarborEnvironment(
+  scene: THREE.Scene,
+  environment: THREE.Texture,
+) {
+  const fallbackObjects = scene.children.filter((object) =>
+    object.name.startsWith("harbor-fallback-")
+  );
+  for (const object of fallbackObjects) {
+    object.removeFromParent();
+    object.traverse((child) => {
+      if (!(child instanceof THREE.Mesh)) return;
+      child.geometry.dispose();
+      const materials = Array.isArray(child.material)
+        ? child.material
+        : [child.material];
+      for (const material of materials) {
+        const map = (
+          material as THREE.Material & { map?: THREE.Texture | null }
+        ).map;
+        if (map instanceof THREE.Texture) map.dispose();
+        material.dispose();
+      }
+    });
+  }
+  scene.environment = environment;
+  scene.background = environment;
+  scene.backgroundBlurriness = 0.12;
+  scene.backgroundIntensity = 0.68;
+  scene.environmentIntensity = 0.82;
 }
 
 function makeSolidTexture(color: string): THREE.CanvasTexture {
@@ -84,7 +122,9 @@ function createGradientSky(scene: THREE.Scene) {
     new THREE.MeshBasicMaterial({ map: sideTexture, side: THREE.BackSide, depthWrite: false }),
     new THREE.MeshBasicMaterial({ map: sideTexture, side: THREE.BackSide, depthWrite: false }),
   ];
-  scene.add(new THREE.Mesh(skyGeo, skyMats));
+  const sky = new THREE.Mesh(skyGeo, skyMats);
+  sky.name = "harbor-fallback-sky";
+  scene.add(sky);
 }
 
 function createSun(scene: THREE.Scene) {
@@ -96,6 +136,7 @@ function createSun(scene: THREE.Scene) {
     new THREE.MeshBasicMaterial({ color: 0xfff5d0, transparent: true, opacity: 0.25, depthWrite: false })
   );
   glow.position.copy(sunPos);
+  glow.name = "harbor-fallback-sun-glow";
   scene.add(glow);
 
   // Core
@@ -104,6 +145,7 @@ function createSun(scene: THREE.Scene) {
     new THREE.MeshBasicMaterial({ color: 0xfffff5, transparent: true, opacity: 0.95 })
   );
   core.position.copy(sunPos);
+  core.name = "harbor-fallback-sun-core";
   scene.add(core);
 
   // Halo ring
@@ -113,5 +155,6 @@ function createSun(scene: THREE.Scene) {
   );
   ring.position.copy(sunPos);
   ring.lookAt(0, 0, 0);
+  ring.name = "harbor-fallback-sun-ring";
   scene.add(ring);
 }

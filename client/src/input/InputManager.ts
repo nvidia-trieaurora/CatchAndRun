@@ -146,6 +146,7 @@ export class InputManager {
     if (active) {
       this.keys.clear();
       this.mouseDown = false;
+      this.rightMouseDown = false;
       if (this.scoreboardActive) {
         this.scoreboardActive = false;
         this.onScoreboardHide?.();
@@ -178,6 +179,7 @@ export class InputManager {
     if (!enabled) {
       this.keys.clear();
       this.mouseDown = false;
+      this.rightMouseDown = false;
     }
   }
 
@@ -196,6 +198,10 @@ export class InputManager {
 
   setMouseDown(down: boolean) {
     this.mouseDown = down;
+  }
+
+  setRightMouseDown(down: boolean) {
+    this.rightMouseDown = down;
   }
 
   isRightMouseDown(): boolean {

@@ -182,6 +182,51 @@ const SOUND_GENERATORS: Record<string, (ctx: AudioContext) => void> = {
     }
   },
 
+  waterWarning: (ctx) => {
+    const t = ctx.currentTime;
+    for (let i = 0; i < 2; i++) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(260, t + i * 0.18);
+      osc.frequency.exponentialRampToValueAtTime(180, t + i * 0.18 + 0.14);
+      gain.gain.setValueAtTime(0.07, t + i * 0.18);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.18 + 0.16);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t + i * 0.18);
+      osc.stop(t + i * 0.18 + 0.18);
+    }
+  },
+
+  drown: (ctx) => {
+    const t = ctx.currentTime;
+    const duration = 0.9;
+    const buffer = ctx.createBuffer(
+      1,
+      Math.floor(ctx.sampleRate * duration),
+      ctx.sampleRate,
+    );
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      const envelope = Math.exp(-i / (data.length * 0.5));
+      data[i] = (Math.random() * 2 - 1) * envelope;
+    }
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(1200, t);
+    filter.frequency.exponentialRampToValueAtTime(180, t + duration);
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.14, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    source.start(t);
+  },
+
   ability: (ctx) => {
     const t = ctx.currentTime;
     const osc = ctx.createOscillator();

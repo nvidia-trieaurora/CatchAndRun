@@ -109,3 +109,8 @@ export function getEmissiveMaterial(color: number, emissive: number, intensity =
     metalness: 0.1,
   });
 }
+
+export function disposeMaterialLibrary() {
+  for (const material of materialCache.values()) material.dispose();
+  materialCache.clear();
+}

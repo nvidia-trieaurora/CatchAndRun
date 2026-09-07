@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { tagWeaponImpactSurface } from "../weaponImpactSurfaces";
 
 /**
  * Sunny School map — coordinates must stay in sync with
@@ -50,6 +51,7 @@ interface MapBuildResult {
   gateColliderIndex: number;
   gateMesh: THREE.Mesh | null;
   ferrisWheel: THREE.Group | null;
+  ferrisCabinColliders: THREE.Box3[];
 }
 
 class B {
@@ -87,7 +89,13 @@ export function buildSchoolMap(scene: THREE.Scene): MapBuildResult {
   buildYard(b, scene);
   const { gateIdx, gateMesh } = buildGateAndFence(b, scene, colliders);
 
-  return { colliders, gateColliderIndex: gateIdx, gateMesh, ferrisWheel: null };
+  return {
+    colliders,
+    gateColliderIndex: gateIdx,
+    gateMesh,
+    ferrisWheel: null,
+    ferrisCabinColliders: [],
+  };
 }
 
 function buildGround(b: B, scene: THREE.Scene) {
@@ -257,10 +265,12 @@ function buildYard(b: B, scene: THREE.Scene) {
   // Planters with small trees
   for (const [px, pz] of [[-25, 5], [25, 5], [-6, 28], [6, 28]] as const) {
     b.box(1.6, 0.8, 1.6, px, 0.4, pz, C.planter);
-    b.cyl(0.12, 0.16, 1.6, px, 1.6, pz, C.trunk, false);
+    const trunk = b.cyl(0.12, 0.16, 1.6, px, 1.6, pz, C.trunk, false);
+    tagWeaponImpactSurface(trunk, "foliage");
     const leaf = new THREE.Mesh(new THREE.SphereGeometry(1.1, 8, 6), mat(C.leaf, 0.9));
     leaf.position.set(px, 2.9, pz);
     leaf.castShadow = true;
+    tagWeaponImpactSurface(leaf, "foliage");
     scene.add(leaf);
   }
 

@@ -465,7 +465,7 @@ export class GameHUD {
         ? `<span style="color:#4caf50;">${t("hud.alive")}</span>`
         : `<span style="color:#999;">${t("hud.dead")}</span>`;
       const youMark = p.isLocal ? ` <span style="color:#ffd700;">(${t("hud.you")})</span>` : "";
-      const nameSafe = String(p.nickname).replace(/[<>&]/g, "");
+      const nameSafe = p.nickname.replace(/[<>&]/g, "");
       return `
         <tr>
           <td style="text-align:left;">${nameSafe}${youMark}</td>

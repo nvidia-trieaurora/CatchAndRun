@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
-import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
+import { PostProcessing as WebGPUPostProcessing } from "three/webgpu";
+import { pass } from "three/tsl";
+import { bloom } from "three/addons/tsl/display/BloomNode.js";
+import type { GameRenderer } from "../rendering/RendererFactory";
 
 /**
  * Bloom post-processing pipeline. Only used on the HIGH quality tier;
@@ -10,26 +10,23 @@ import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
  */
 export class PostProcessing {
   enabled = false;
-  private composer: EffectComposer;
+  private pipeline: WebGPUPostProcessing;
 
-  constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera) {
-    this.composer = new EffectComposer(renderer);
-    this.composer.addPass(new RenderPass(scene, camera));
-    const bloom = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
-      0.4,   // strength — subtle glow on emissive/bright spots
-      0.5,   // radius
-      0.85   // threshold — only bright pixels bloom
-    );
-    this.composer.addPass(bloom);
-    this.composer.addPass(new OutputPass());
+  constructor(renderer: GameRenderer, scene: THREE.Scene, camera: THREE.Camera) {
+    this.pipeline = new WebGPUPostProcessing(renderer);
+    const scenePass = pass(scene, camera);
+    const sceneColor = scenePass.getTextureNode("output");
+    const bloomPass = bloom(sceneColor, 0.22, 0.28, 0.92);
+    this.pipeline.outputNode = sceneColor.add(bloomPass);
   }
 
-  setSize(width: number, height: number) {
-    this.composer.setSize(width, height);
-  }
+  setSize(_width: number, _height: number) {}
 
   render() {
-    this.composer.render();
+    this.pipeline.render();
+  }
+
+  dispose() {
+    this.pipeline.dispose();
   }
 }
