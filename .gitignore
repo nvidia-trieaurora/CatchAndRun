@@ -6,8 +6,29 @@ dist/
 client/node_modules/
 client/dist/
 client/node_modules/.vite/
+client/vendor-private/
 server/dist/
 shared/dist/
 data/
 *.db
 .gstack/
+
+# Blender authoring scratch files. Keep the source .blend files tracked.
+*.blend1
+*.blend2
+*.blend@
+*.blend~
+art-source/harbor-v2/_staging/
+.gitnexus
+
+# Python bytecode from the Blender MCP sessions and agent scratch context
+__pycache__/
+*.pyc
+.context/
+
+# Poly Haven source downloads: re-fetch per tools/harbor-v2/textures/ATTRIBUTION.md.
+# The game-ready sets under */_derived/ stay tracked so zones rebuild offline.
+tools/harbor-v2/textures/**/*.jpg
+
+# Runtime / Blender screenshots are regenerated from the dev snapshot presets
+docs/v2/**/*.png
