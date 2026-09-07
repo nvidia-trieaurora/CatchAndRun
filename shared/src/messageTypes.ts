@@ -25,6 +25,7 @@ export enum ServerMessage {
   PLAYER_HIT = "playerHit",
   PLAYER_KILLED = "playerKilled",
   PLAYER_INFECTED = "playerInfected",
+  PLAYER_DROWNED = "playerDrowned",
   TRANSFORM_RESULT = "transformResult",
   ABILITY_RESULT = "abilityResult",
   RADAR_PING = "radarPing",
@@ -65,6 +66,7 @@ export interface PlayerInputData {
   rotY: number;
   seq: number;
   timestamp: number;
+  isAiming: boolean;
 }
 
 export interface ShootData {
@@ -99,6 +101,18 @@ export interface PlayerInfectedData {
   killerNickname: string;
   victimNickname: string;
   remainingProps: number;
+}
+
+export interface PlayerDrownedData {
+  victimSessionId: string;
+  victimNickname: string;
+  x: number;
+  y: number;
+  z: number;
+  cinematicMs: number;
+  cameraX: number;
+  cameraY: number;
+  cameraZ: number;
 }
 
 export interface HitConfirmedData {

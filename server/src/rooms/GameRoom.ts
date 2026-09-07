@@ -13,6 +13,8 @@ import { ScoringSystem } from "../systems/ScoringSystem";
 import { RoleAssigner } from "../systems/RoleAssigner";
 import { SpawnManager } from "../systems/SpawnManager";
 import { handlePropDown } from "../systems/PropDownHandler";
+import { findWaterHazard } from "../systems/EnvironmentalHazards";
+import { eliminatePlayerInWater } from "../systems/EnvironmentalEliminationHandler";
 import { SnapshotBuffer } from "../utils/SnapshotBuffer";
 import {
   GamePhase,
@@ -309,6 +311,8 @@ export class GameRoom extends Room<GameState> {
     }
 
     this.state.players.delete(client.sessionId);
+    this.lastAbility2Time.delete(client.sessionId);
+    this.hunterBoostEnd.delete(client.sessionId);
 
     if (wasHost && this.state.players.size > 0) {
       const newHostId = Array.from(this.state.players.keys())[0];
@@ -410,6 +414,7 @@ export class GameRoom extends Room<GameState> {
   private handlePlayerInput(client: Client, data: PlayerInputData) {
     const player = this.state.players.get(client.sessionId);
     if (!player?.isAlive) return;
+    if (typeof data.isAiming !== "boolean") return;
 
     // During HIDING, hunters can move but only inside the jail (-49 to -35 on X, -7 to 7 on Z)
     if (this.state.phase === GamePhase.HIDING && player.role === PlayerRole.HUNTER) {
@@ -422,7 +427,10 @@ export class GameRoom extends Room<GameState> {
 
     if (player.isLocked && player.role === PlayerRole.PROP) return;
 
-    if (!this.antiCheat.validateMovement(player, data)) return;
+    const hunterBoosted =
+      player.role === PlayerRole.HUNTER &&
+      Date.now() < (this.hunterBoostEnd.get(client.sessionId) ?? 0);
+    if (!this.antiCheat.validateMovement(player, data, hunterBoosted)) return;
 
     player.x = data.x;
     player.y = data.y;
@@ -431,6 +439,18 @@ export class GameRoom extends Room<GameState> {
     player.rotY = data.rotY;
     player.lastInputSeq = data.seq;
     player.lastPositionTime = Date.now();
+
+    if (
+      this.state.phase === GamePhase.ACTIVE
+      && findWaterHazard(
+        getMapData(this.state.config.mapId),
+        player.x,
+        player.y,
+        player.z,
+      ) !== null
+    ) {
+      eliminatePlayerInWater(this, client.sessionId, player);
+    }
   }
 
   private handleShoot(client: Client, data: ShootData) {
@@ -528,6 +548,7 @@ export class GameRoom extends Room<GameState> {
   }
 
   private lastAbility2Time = new Map<string, number>();
+  private hunterBoostEnd = new Map<string, number>();
 
   private handleUseAbility(client: Client) {
     const player = this.state.players.get(client.sessionId);
@@ -707,13 +728,15 @@ export class GameRoom extends Room<GameState> {
     const player = this.state.players.get(client.sessionId);
     if (!player?.isAlive) return;
     if (this.state.phase !== GamePhase.ACTIVE && this.state.phase !== GamePhase.HIDING) return;
-    if (player.role !== PlayerRole.PROP) return;
 
     const now = Date.now();
     const lastUse = this.lastAbility2Time.get(client.sessionId) || 0;
-    const cd = 20000;
+    const isHunter = player.role === PlayerRole.HUNTER;
+    const cd = isHunter ? 60000 : 20000;
     if (now - lastUse < cd) return;
     this.lastAbility2Time.set(client.sessionId, now);
+
+    if (isHunter) this.hunterBoostEnd.set(client.sessionId, now + 5000);
 
     this.broadcast(ServerMessage.SPEED_BOOST, {
       sessionId: client.sessionId,
@@ -721,8 +744,8 @@ export class GameRoom extends Room<GameState> {
     });
 
     client.send(ServerMessage.ABILITY_RESULT, {
-      type: "speedBoost",
-      duration: 3000,
+      type: isHunter ? "hunterBoost" : "speedBoost",
+      duration: isHunter ? 5000 : 3000,
     });
   }
 
@@ -788,6 +811,7 @@ export class GameRoom extends Room<GameState> {
     player.x = spawn.position.x;
     player.y = spawn.position.y;
     player.z = spawn.position.z;
+    player.rotY = spawn.rotation;
 
     this.state.phase = GamePhase.ACTIVE;
     this.state.timer = 9999;
@@ -880,6 +904,8 @@ export class GameRoom extends Room<GameState> {
 
   public initRound() {
     this.grenadeCount.clear();
+    this.lastAbility2Time.clear();
+    this.hunterBoostEnd.clear();
     const mapData = getMapData(this.state.config.mapId);
     this.spawnManager.setMapData(mapData as any);
 

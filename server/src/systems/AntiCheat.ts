@@ -1,5 +1,6 @@
 import {
   HUNTER_SPEED,
+  HUNTER_AIM_SPEED_MULTIPLIER,
   PROP_SPEED,
   ANTI_CHEAT_SPEED_TOLERANCE,
   ANTI_CHEAT_MIN_FIRE_INTERVAL_MS,
@@ -17,7 +18,11 @@ export class AntiCheat {
     this.room = room;
   }
 
-  validateMovement(player: PlayerSchema, input: PlayerInputData): boolean {
+  validateMovement(
+    player: PlayerSchema,
+    input: PlayerInputData,
+    hunterBoosted = false,
+  ): boolean {
     if (!this.checkBounds(input.x, input.y, input.z)) {
       return false;
     }
@@ -29,8 +34,11 @@ export class AntiCheat {
         const dy = input.y - player.y;
         const dz = input.z - player.z;
         const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        const hunterSpeed = input.isAiming
+          ? HUNTER_SPEED * HUNTER_AIM_SPEED_MULTIPLIER
+          : hunterBoosted ? HUNTER_SPEED * 2 : HUNTER_SPEED;
         const maxSpeed =
-          player.role === PlayerRole.HUNTER ? HUNTER_SPEED : PROP_SPEED;
+          player.role === PlayerRole.HUNTER ? hunterSpeed : PROP_SPEED;
         const maxDist = maxSpeed * ANTI_CHEAT_SPEED_TOLERANCE * dt;
 
         if (dist > maxDist + 1) {

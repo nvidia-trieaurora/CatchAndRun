@@ -8,7 +8,8 @@ export const authRouter = Router();
 
 export function requireAdmin(req: Request, res: Response, next: NextFunction) {
   if ((req.session as any)?.adminUser) {
-    return next();
+    next();
+    return;
   }
   res.redirect("/admin/login");
 }
@@ -31,13 +32,13 @@ authRouter.get("/callback", async (req, res) => {
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({ client_id: GITHUB_CLIENT_ID, client_secret: GITHUB_CLIENT_SECRET, code }),
     });
-    const tokenData = await tokenRes.json() as any;
+    const tokenData = await tokenRes.json();
     if (!tokenData.access_token) return res.status(401).send("OAuth failed");
 
     const userRes = await fetch("https://api.github.com/user", {
       headers: { Authorization: `Bearer ${tokenData.access_token}`, "User-Agent": "CatchAndRun" },
     });
-    const userData = await userRes.json() as any;
+    const userData = await userRes.json();
 
     if (userData.login !== ADMIN_GITHUB_USERNAME) {
       return res.status(403).send(`Access denied. Only ${ADMIN_GITHUB_USERNAME} can access the admin panel.`);

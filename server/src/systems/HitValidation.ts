@@ -37,7 +37,7 @@ export class HitValidation {
   private room: GameRoom;
   private snapshotBuffer: SnapshotBuffer;
   private wallBoxes: AABB[] = [];
-  private propDimensions: Map<string, PropDimensions> = new Map();
+  private propDimensions = new Map<string, PropDimensions>();
   private cachedMapId = "";
 
   constructor(room: GameRoom, snapshotBuffer: SnapshotBuffer) {

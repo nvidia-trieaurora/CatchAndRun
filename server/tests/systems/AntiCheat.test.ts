@@ -4,6 +4,7 @@ import { createMockRoom, createPlayer, type MockGameRoom } from "../helpers/fact
 import {
   PlayerRole,
   HUNTER_SPEED,
+  HUNTER_AIM_SPEED_MULTIPLIER,
   PROP_SPEED,
   ANTI_CHEAT_SPEED_TOLERANCE,
   ANTI_CHEAT_MIN_FIRE_INTERVAL_MS,
@@ -21,21 +22,21 @@ describe("AntiCheat", () => {
   describe("validateMovement", () => {
     it("should accept movement within map bounds", () => {
       const player = createPlayer({ x: 0, y: 1, z: 0, lastPositionTime: 0 });
-      const input = { x: 5, y: 1, z: 5, rotX: 0, rotY: 0, seq: 1, timestamp: 0 };
+      const input = { x: 5, y: 1, z: 5, rotX: 0, rotY: 0, seq: 1, timestamp: 0, isAiming: false };
 
       expect(antiCheat.validateMovement(player, input)).toBe(true);
     });
 
     it("should reject movement outside map bounds", () => {
       const player = createPlayer({ x: 0, y: 1, z: 0, lastPositionTime: 0 });
-      const input = { x: 9999, y: 1, z: 0, rotX: 0, rotY: 0, seq: 1, timestamp: 0 };
+      const input = { x: 9999, y: 1, z: 0, rotX: 0, rotY: 0, seq: 1, timestamp: 0, isAiming: false };
 
       expect(antiCheat.validateMovement(player, input)).toBe(false);
     });
 
     it("should reject movement below killzone Y", () => {
       const player = createPlayer({ x: 0, y: 1, z: 0, lastPositionTime: 0 });
-      const input = { x: 0, y: -999, z: 0, rotX: 0, rotY: 0, seq: 1, timestamp: 0 };
+      const input = { x: 0, y: -999, z: 0, rotX: 0, rotY: 0, seq: 1, timestamp: 0, isAiming: false };
 
       expect(antiCheat.validateMovement(player, input)).toBe(false);
     });
@@ -51,7 +52,7 @@ describe("AntiCheat", () => {
 
       vi.spyOn(Date, "now").mockReturnValue(now);
       const maxDist = HUNTER_SPEED * ANTI_CHEAT_SPEED_TOLERANCE * dt;
-      const input = { x: maxDist - 0.5, y: 1, z: 0, rotX: 0, rotY: 0, seq: 1, timestamp: 0 };
+      const input = { x: maxDist - 0.5, y: 1, z: 0, rotX: 0, rotY: 0, seq: 1, timestamp: 0, isAiming: false };
 
       expect(antiCheat.validateMovement(player, input)).toBe(true);
       vi.restoreAllMocks();
@@ -67,9 +68,106 @@ describe("AntiCheat", () => {
       });
 
       vi.spyOn(Date, "now").mockReturnValue(now);
-      const input = { x: 30, y: 1, z: 0, rotX: 0, rotY: 0, seq: 1, timestamp: 0 };
+      const input = { x: 30, y: 1, z: 0, rotX: 0, rotY: 0, seq: 1, timestamp: 0, isAiming: false };
 
       expect(antiCheat.validateMovement(player, input)).toBe(false);
+      vi.restoreAllMocks();
+    });
+
+    it("should enforce the reduced hunter speed while aiming", () => {
+      const now = Date.now();
+      const player = createPlayer({
+        role: PlayerRole.HUNTER,
+        x: 0, y: 1, z: 0,
+        lastPositionTime: now - 1000,
+      });
+
+      vi.spyOn(Date, "now").mockReturnValue(now);
+      const aimSpeed = HUNTER_SPEED * HUNTER_AIM_SPEED_MULTIPLIER;
+      const input = {
+        x: aimSpeed * ANTI_CHEAT_SPEED_TOLERANCE + 1.1,
+        y: 1,
+        z: 0,
+        rotX: 0,
+        rotY: 0,
+        seq: 1,
+        timestamp: 0,
+        isAiming: true,
+      };
+
+      expect(antiCheat.validateMovement(player, input)).toBe(false);
+      vi.restoreAllMocks();
+    });
+
+    it("should accept Hunter movement within the aiming speed limit", () => {
+      const now = Date.now();
+      const player = createPlayer({
+        role: PlayerRole.HUNTER,
+        x: 0, y: 1, z: 0,
+        lastPositionTime: now - 1000,
+      });
+
+      vi.spyOn(Date, "now").mockReturnValue(now);
+      const input = {
+        x: HUNTER_SPEED * HUNTER_AIM_SPEED_MULTIPLIER,
+        y: 1,
+        z: 0,
+        rotX: 0,
+        rotY: 0,
+        seq: 1,
+        timestamp: 0,
+        isAiming: true,
+      };
+
+      expect(antiCheat.validateMovement(player, input)).toBe(true);
+      vi.restoreAllMocks();
+    });
+
+    it("should accept an authorized Hunter boost while not aiming", () => {
+      const now = Date.now();
+      const player = createPlayer({
+        role: PlayerRole.HUNTER,
+        x: 0, y: 1, z: 0,
+        lastPositionTime: now - 1000,
+      });
+
+      vi.spyOn(Date, "now").mockReturnValue(now);
+      const input = {
+        x: HUNTER_SPEED * 2,
+        y: 1,
+        z: 0,
+        rotX: 0,
+        rotY: 0,
+        seq: 1,
+        timestamp: 0,
+        isAiming: false,
+      };
+
+      expect(antiCheat.validateMovement(player, input, true)).toBe(true);
+      vi.restoreAllMocks();
+    });
+
+    it("keeps an authorized boosted Hunter at the aiming speed cap", () => {
+      const now = Date.now();
+      const player = createPlayer({
+        role: PlayerRole.HUNTER,
+        x: 0, y: 1, z: 0,
+        lastPositionTime: now - 1000,
+      });
+
+      vi.spyOn(Date, "now").mockReturnValue(now);
+      const input = {
+        x: HUNTER_SPEED * HUNTER_AIM_SPEED_MULTIPLIER,
+        y: 1,
+        z: 0,
+        rotX: 0,
+        rotY: 0,
+        seq: 1,
+        timestamp: 0,
+        isAiming: true,
+      };
+
+      expect(antiCheat.validateMovement(player, input, true)).toBe(true);
       vi.restoreAllMocks();
     });
 
@@ -84,7 +182,7 @@ describe("AntiCheat", () => {
 
       vi.spyOn(Date, "now").mockReturnValue(now);
       const maxDist = PROP_SPEED * ANTI_CHEAT_SPEED_TOLERANCE * dt;
-      const input = { x: maxDist - 0.5, y: 1, z: 0, rotX: 0, rotY: 0, seq: 1, timestamp: 0 };
+      const input = { x: maxDist - 0.5, y: 1, z: 0, rotX: 0, rotY: 0, seq: 1, timestamp: 0, isAiming: false };
 
       expect(antiCheat.validateMovement(player, input)).toBe(true);
       vi.restoreAllMocks();
@@ -92,7 +190,7 @@ describe("AntiCheat", () => {
 
     it("should allow first movement (lastPositionTime === 0)", () => {
       const player = createPlayer({ x: 0, y: 1, z: 0, lastPositionTime: 0 });
-      const input = { x: 5, y: 1, z: 5, rotX: 0, rotY: 0, seq: 1, timestamp: 0 };
+      const input = { x: 5, y: 1, z: 5, rotX: 0, rotY: 0, seq: 1, timestamp: 0, isAiming: false };
 
       expect(antiCheat.validateMovement(player, input)).toBe(true);
     });

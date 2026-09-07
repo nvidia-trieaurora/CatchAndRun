@@ -42,14 +42,25 @@ export interface SpawnPoint {
   zone: string;
 }
 
+export interface AxisAlignedBox {
+  min: Vector3;
+  max: Vector3;
+}
+
+export interface WaterHazardRegion extends AxisAlignedBox {
+  id: string;
+}
+
 export interface MapData {
   id: string;
   name: string;
-  bounds: { min: Vector3; max: Vector3 };
+  bounds: AxisAlignedBox;
   hunterSpawnPoints: SpawnPoint[];
   propSpawnPoints: SpawnPoint[];
   props: PropDefinition[];
   killZoneY: number;
+  wallOcclusion?: AxisAlignedBox[];
+  waterHazards?: WaterHazardRegion[];
 }
 
 export interface RoomListEntry {
