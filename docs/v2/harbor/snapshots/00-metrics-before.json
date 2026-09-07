@@ -1,0 +1,76 @@
+{
+  "asset": "client/public/assets/maps/harbor-v2/cinematic/harbor-cinematic.glb",
+  "payloadBytes": 1472876,
+  "lod0": {
+    "triangles": 39740,
+    "renderMeshes": 72,
+    "drawCalls": 72
+  },
+  "lod1": {
+    "triangles": 14890,
+    "renderMeshes": 72,
+    "drawCalls": 72
+  },
+  "common": {
+    "triangles": 17504,
+    "renderMeshes": 251,
+    "drawCalls": 251
+  },
+  "estimatedRuntimeCommonDrawCalls": 44,
+  "cinematicColliders": 28,
+  "boatMotionGroups": [
+    "boat-barge",
+    "boat-skiff_east",
+    "boat-skiff_west",
+    "boat-workboat"
+  ],
+  "runtimeInstanceGroups": [
+    "cargo-crate",
+    "cargo-pallet",
+    "construction-fence-panel",
+    "construction-rebar",
+    "dock-bollard",
+    "dock-fender",
+    "harbor-buoy",
+    "lily-pad",
+    "loose-pallet",
+    "loose-tire",
+    "mooring-cleat",
+    "oil-barrel",
+    "pier-pile",
+    "pier-table",
+    "pier-umbrella-container_red",
+    "pier-umbrella-container_teal",
+    "pier-umbrella-neon_violet",
+    "pier-umbrella-safety",
+    "rope-coil",
+    "seawall-rail-post",
+    "street-lamp-arm",
+    "street-lamp-light",
+    "street-lamp-post",
+    "traffic-cone"
+  ],
+  "extensions": [
+    "EXT_meshopt_compression",
+    "EXT_texture_webp",
+    "KHR_materials_emissive_strength",
+    "KHR_mesh_quantization"
+  ],
+  "requiredZones": [
+    "base",
+    "construction",
+    "container-yard",
+    "dock",
+    "dock-detail",
+    "boats",
+    "garden-detail",
+    "construction-detail",
+    "restored-landmarks",
+    "ferris-static",
+    "hunter-spawn",
+    "residential",
+    "shared-props"
+  ],
+  "passed": true,
+  "errors": []
+}

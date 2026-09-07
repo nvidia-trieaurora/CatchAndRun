@@ -1,0 +1,47 @@
+{
+  "asset": "client/public/assets/maps/harbor-v2/warehouse.glb",
+  "payloadBytes": 4963220,
+  "lod0": {
+    "renderMeshes": 21,
+    "triangles": 60216,
+    "estimatedDrawCalls": 21
+  },
+  "lod1": {
+    "renderMeshes": 19,
+    "triangles": 1004,
+    "estimatedDrawCalls": 19
+  },
+  "sharedRender": {
+    "renderMeshes": 3,
+    "triangles": 812,
+    "estimatedDrawCalls": 3
+  },
+  "rp01": {
+    "renderMeshes": 5,
+    "triangles": 21004,
+    "estimatedDrawCalls": 5
+  },
+  "rp01Required": true,
+  "sc02": {
+    "renderMeshes": 5,
+    "triangles": 10412,
+    "estimatedDrawCalls": 5
+  },
+  "sc02Required": true,
+  "structuralSupportRequired": true,
+  "facadeCoherenceViolations": {},
+  "collisionMeshes": 86,
+  "markers": 7,
+  "transformToleranceMeters": 0.001,
+  "desktopBudgets": {
+    "triangles": 120000,
+    "drawCalls": 100
+  },
+  "mobileBudgets": {
+    "triangles": 60000,
+    "drawCalls": 60,
+    "payloadBytes": 6291456
+  },
+  "passed": true,
+  "errors": []
+}

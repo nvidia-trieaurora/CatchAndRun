@@ -1,0 +1,27 @@
+{
+  "asset": "client/public/assets/maps/harbor-v2/warehouse.glb",
+  "payloadBytes": 2960432,
+  "lod0": {
+    "renderMeshes": 10,
+    "triangles": 34816,
+    "estimatedDrawCalls": 10
+  },
+  "lod1": {
+    "renderMeshes": 16,
+    "triangles": 192,
+    "estimatedDrawCalls": 16
+  },
+  "collisionMeshes": 86,
+  "markers": 7,
+  "desktopBudgets": {
+    "triangles": 120000,
+    "drawCalls": 100
+  },
+  "mobileBudgets": {
+    "triangles": 60000,
+    "drawCalls": 60,
+    "payloadBytes": 6291456
+  },
+  "passed": true,
+  "errors": []
+}

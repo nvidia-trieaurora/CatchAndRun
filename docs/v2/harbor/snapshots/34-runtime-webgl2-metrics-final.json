@@ -1,0 +1,16 @@
+{
+  "capturedAt": "2026-09-07",
+  "backend": "webgl2",
+  "qualityTier": "medium",
+  "visualVersion": "v2",
+  "fpsAverage": 83.8,
+  "frameTimeP95Ms": 14.6,
+  "drawCalls": 239,
+  "triangles": 117072,
+  "geometries": 283,
+  "textures": 133,
+  "sceneMeshes": 239,
+  "instancedMeshes": 25,
+  "colliderCount": 616,
+  "estimatedTextureMemoryBytes": 39174144
+}
