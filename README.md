@@ -102,13 +102,15 @@ CatchAndRun/
 
 ## Game Rules
 
-1. Each round, players are randomly assigned as Hunters or Props (1 hunter per 4 players)
+1. Each round, roles are randomized using the current balance tiers: 1 Hunter
+   for 1–3 players, 2 for 4–5, and 3 for 6–10
 2. **Hide Phase (20s)**: Props can move and transform; Hunters are locked in spawn
 3. **Active Phase (5min)**: Hunters search and shoot Props; Props try to survive
 4. **Hunters win** if they eliminate all Props before time runs out
 5. **Props win** if at least one Prop survives until the timer expires
 6. Hunters lose HP for shooting non-player objects (anti-spam)
 7. Roles swap between rounds
+8. Living Props earn 1 survival point every 2 seconds during the active hunt
 
 ## Configuration
 

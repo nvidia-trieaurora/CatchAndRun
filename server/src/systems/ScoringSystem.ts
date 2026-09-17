@@ -2,6 +2,7 @@ import {
   PlayerRole,
   SCORE_PROP_KILL,
   SCORE_PROP_SURVIVE_PER_SEC,
+  SCORE_PROP_SURVIVAL_INTERVAL_SECONDS,
 } from "@catch-and-run/shared";
 import type { GameRoom } from "../rooms/GameRoom";
 
@@ -23,9 +24,12 @@ export class ScoringSystem {
   updateSurvivalScores(dt: number) {
     this.survivalAccumulator += dt / 1000;
 
-    if (this.survivalAccumulator >= 2) {
-      const ticks = Math.floor(this.survivalAccumulator / 2);
-      this.survivalAccumulator -= ticks * 2;
+    if (this.survivalAccumulator >= SCORE_PROP_SURVIVAL_INTERVAL_SECONDS) {
+      const ticks = Math.floor(
+        this.survivalAccumulator / SCORE_PROP_SURVIVAL_INTERVAL_SECONDS,
+      );
+      this.survivalAccumulator -=
+        ticks * SCORE_PROP_SURVIVAL_INTERVAL_SECONDS;
 
       this.room.state.players.forEach((player) => {
         if (player.role === PlayerRole.PROP && player.isAlive) {

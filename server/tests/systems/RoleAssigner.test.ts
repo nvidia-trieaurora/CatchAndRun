@@ -23,16 +23,27 @@ describe("RoleAssigner", () => {
     }
   });
 
-  it("should calculate hunter count as floor(playerCount / huntersPerPlayers)", () => {
+  it("should use the balanced 1/2/3 hunter tiers", () => {
     const assigner = new RoleAssigner();
+    const cases = [
+      { playerCount: 1, expectedHunters: 1 },
+      { playerCount: 3, expectedHunters: 1 },
+      { playerCount: 4, expectedHunters: 2 },
+      { playerCount: 5, expectedHunters: 2 },
+      { playerCount: 6, expectedHunters: 3 },
+      { playerCount: 10, expectedHunters: 3 },
+    ];
 
-    const roles4 = assigner.assignRoles(["p1", "p2", "p3", "p4"], 4);
-    const hunterCount4 = [...roles4.values()].filter((r) => r === PlayerRole.HUNTER).length;
-    expect(hunterCount4).toBe(1);
-
-    const roles8 = assigner.assignRoles(["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"], 4);
-    const hunterCount8 = [...roles8.values()].filter((r) => r === PlayerRole.HUNTER).length;
-    expect(hunterCount8).toBe(2);
+    for (const { playerCount, expectedHunters } of cases) {
+      const players = Array.from(
+        { length: playerCount },
+        (_, index) => `p${index + 1}`,
+      );
+      const roles = assigner.assignRoles(players, 4);
+      const hunterCount = [...roles.values()]
+        .filter((role) => role === PlayerRole.HUNTER).length;
+      expect(hunterCount).toBe(expectedHunters);
+    }
   });
 
   it("should always assign at least 1 hunter even with 2 players", () => {
@@ -52,7 +63,7 @@ describe("RoleAssigner", () => {
 
     expect(r2.size).toBe(4);
     const hunterCount = [...r2.values()].filter((r) => r === PlayerRole.HUNTER).length;
-    expect(hunterCount).toBe(1);
+    expect(hunterCount).toBe(2);
   });
 
   it("should handle single player", () => {

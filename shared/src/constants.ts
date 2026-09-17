@@ -66,6 +66,7 @@ export const ANTI_CHEAT_MIN_FIRE_INTERVAL_MS = 100;
 
 export const SCORE_PROP_KILL = 100;
 export const SCORE_PROP_SURVIVE_PER_SEC = 1;
+export const SCORE_PROP_SURVIVAL_INTERVAL_SECONDS = 2;
 export const SCORE_HUNTER_WIN_BONUS = 200;
 export const SCORE_PROP_WIN_BONUS = 150;
 

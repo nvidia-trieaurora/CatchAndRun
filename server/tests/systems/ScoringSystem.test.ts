@@ -1,7 +1,12 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { ScoringSystem } from "../../src/systems/ScoringSystem";
 import { createMockRoom, addPlayerToRoom, type MockGameRoom } from "../helpers/factories";
-import { PlayerRole, SCORE_PROP_KILL, SCORE_PROP_SURVIVE_PER_SEC } from "@catch-and-run/shared";
+import {
+  PlayerRole,
+  SCORE_PROP_KILL,
+  SCORE_PROP_SURVIVE_PER_SEC,
+  SCORE_PROP_SURVIVAL_INTERVAL_SECONDS,
+} from "@catch-and-run/shared";
 
 describe("ScoringSystem", () => {
   let room: MockGameRoom;
@@ -35,12 +40,14 @@ describe("ScoringSystem", () => {
   });
 
   describe("updateSurvivalScores", () => {
-    it("should award survival points to alive props after 1 second", () => {
+    it("should award survival points after the configured interval", () => {
       addPlayerToRoom(room, "prop-1", { role: PlayerRole.PROP, isAlive: true });
       addPlayerToRoom(room, "prop-2", { role: PlayerRole.PROP, isAlive: true });
       addPlayerToRoom(room, "hunter-1", { role: PlayerRole.HUNTER, isAlive: true });
 
-      scoring.updateSurvivalScores(1000);
+      scoring.updateSurvivalScores(
+        SCORE_PROP_SURVIVAL_INTERVAL_SECONDS * 1000,
+      );
 
       expect(room.state.players.get("prop-1")!.score).toBe(SCORE_PROP_SURVIVE_PER_SEC);
       expect(room.state.players.get("prop-2")!.score).toBe(SCORE_PROP_SURVIVE_PER_SEC);
@@ -51,26 +58,32 @@ describe("ScoringSystem", () => {
       addPlayerToRoom(room, "prop-dead", { role: PlayerRole.PROP, isAlive: false });
       addPlayerToRoom(room, "prop-alive", { role: PlayerRole.PROP, isAlive: true });
 
-      scoring.updateSurvivalScores(1000);
+      scoring.updateSurvivalScores(
+        SCORE_PROP_SURVIVAL_INTERVAL_SECONDS * 1000,
+      );
 
       expect(room.state.players.get("prop-dead")!.score).toBe(0);
       expect(room.state.players.get("prop-alive")!.score).toBe(SCORE_PROP_SURVIVE_PER_SEC);
     });
 
-    it("should accumulate fractional time and only award on full seconds", () => {
+    it("should accumulate fractional time and award only on a full interval", () => {
       addPlayerToRoom(room, "prop-1", { role: PlayerRole.PROP, isAlive: true });
 
-      scoring.updateSurvivalScores(500);
+      const halfIntervalMs =
+        SCORE_PROP_SURVIVAL_INTERVAL_SECONDS * 1000 / 2;
+      scoring.updateSurvivalScores(halfIntervalMs);
       expect(room.state.players.get("prop-1")!.score).toBe(0);
 
-      scoring.updateSurvivalScores(500);
+      scoring.updateSurvivalScores(halfIntervalMs);
       expect(room.state.players.get("prop-1")!.score).toBe(SCORE_PROP_SURVIVE_PER_SEC);
     });
 
-    it("should handle multiple seconds at once", () => {
+    it("should handle multiple scoring intervals at once", () => {
       addPlayerToRoom(room, "prop-1", { role: PlayerRole.PROP, isAlive: true });
 
-      scoring.updateSurvivalScores(3000);
+      scoring.updateSurvivalScores(
+        SCORE_PROP_SURVIVAL_INTERVAL_SECONDS * 3 * 1000,
+      );
       expect(room.state.players.get("prop-1")!.score).toBe(SCORE_PROP_SURVIVE_PER_SEC * 3);
     });
   });

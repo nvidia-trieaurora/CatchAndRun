@@ -47,6 +47,7 @@ export interface MockGameRoom {
   broadcast: ReturnType<typeof vi.fn>;
   clients: { sessionId: string; send: ReturnType<typeof vi.fn> }[];
   initRound: ReturnType<typeof vi.fn>;
+  setMetadata: ReturnType<typeof vi.fn>;
 }
 
 export function createMockRoom(overrides: Partial<MockGameRoom> = {}): MockGameRoom {
@@ -55,6 +56,7 @@ export function createMockRoom(overrides: Partial<MockGameRoom> = {}): MockGameR
     broadcast: overrides.broadcast ?? vi.fn(),
     clients: overrides.clients ?? [],
     initRound: overrides.initRound ?? vi.fn(),
+    setMetadata: overrides.setMetadata ?? vi.fn().mockResolvedValue(undefined),
   };
 }
 

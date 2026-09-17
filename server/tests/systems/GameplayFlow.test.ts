@@ -13,6 +13,7 @@ import {
   HIDE_PHASE_DURATION,
   SCORE_PROP_KILL,
   SCORE_PROP_SURVIVE_PER_SEC,
+  SCORE_PROP_SURVIVAL_INTERVAL_SECONDS,
 } from "@catch-and-run/shared";
 
 describe("Full Gameplay Flow", () => {
@@ -49,7 +50,9 @@ describe("Full Gameplay Flow", () => {
 
       expect(room.state.phase).toBe(GamePhase.ACTIVE);
 
-      scoring.updateSurvivalScores(3000);
+      scoring.updateSurvivalScores(
+        SCORE_PROP_SURVIVAL_INTERVAL_SECONDS * 3 * 1000,
+      );
       expect(prop1.score).toBe(SCORE_PROP_SURVIVE_PER_SEC * 3);
       expect(prop2.score).toBe(SCORE_PROP_SURVIVE_PER_SEC * 3);
       expect(hunter.score).toBe(0);
@@ -71,11 +74,15 @@ describe("Full Gameplay Flow", () => {
       advancePhase(COUNTDOWN_DURATION);
       advancePhase(HIDE_PHASE_DURATION);
 
-      scoring.updateSurvivalScores(2000);
+      scoring.updateSurvivalScores(
+        SCORE_PROP_SURVIVAL_INTERVAL_SECONDS * 2 * 1000,
+      );
       expect(prop.score).toBe(SCORE_PROP_SURVIVE_PER_SEC * 2);
 
       prop.isAlive = false;
-      scoring.updateSurvivalScores(5000);
+      scoring.updateSurvivalScores(
+        SCORE_PROP_SURVIVAL_INTERVAL_SECONDS * 5 * 1000,
+      );
       expect(prop.score).toBe(SCORE_PROP_SURVIVE_PER_SEC * 2);
     });
   });
@@ -138,7 +145,7 @@ describe("Full Gameplay Flow", () => {
   });
 
   describe("phase transition edge cases", () => {
-    it("should handle player disconnect during active phase", () => {
+    it("should keep solo exploration active after the other player disconnects", () => {
       addPlayerToRoom(room, "h1", { role: PlayerRole.HUNTER, isAlive: true });
       addPlayerToRoom(room, "p1", { role: PlayerRole.PROP, isAlive: true });
 
@@ -150,7 +157,7 @@ describe("Full Gameplay Flow", () => {
 
       room.state.players.delete("p1");
       sm.checkRoundEndCondition();
-      expect(room.state.phase).toBe(GamePhase.ROUND_END);
+      expect(room.state.phase).toBe(GamePhase.ACTIVE);
     });
 
     it("should not transition when both sides have alive players", () => {

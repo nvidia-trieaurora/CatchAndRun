@@ -4,7 +4,8 @@ Tracker các version của Catch & Run — mỗi version ghi rõ đã làm gì.
 
 ## [Unreleased]
 
-No changes yet.
+### Fixed
+- Restore the green CI gate by aligning stale server tests with the established Hunter tiers, two-second survival scoring and solo-exploration rule, and by completing the GameRoom metadata mock; runtime gameplay behavior is unchanged.
 
 ## [2.0.0] — 2026-09-17 · Harbor V2
 

@@ -39,7 +39,7 @@ Last synchronized with `origin/main`: 2026-09-17.
 
 ## V2 validation status
 
-At release preparation:
+At the `v2.0.0` release preparation:
 
 - Client suite: 382/382 tests passed.
 - Harbor asset gate: 36 Node tests and 23 client integration tests passed.
@@ -47,8 +47,17 @@ At release preparation:
 - Server suite: 99 tests passed and 10 pre-existing baseline tests failed in
   RoleAssigner, ScoringSystem, GameplayFlow and MatchStateMachine.
 
-The server failures remain explicit release caveats; no gameplay rules were
-changed merely to force old expectations green.
+The follow-up CI repair for `v2.0.1` traced those failures to stale test
+expectations and one incomplete room mock:
+
+- Role tests now match the intentional 1/2/3 Hunter balance tiers.
+- Survival-score tests now match the established two-second scoring interval.
+- Solo-disconnect coverage now matches the intentional solo-exploration rule.
+- The MatchStateMachine room mock now implements `setMetadata`.
+
+The exact GitHub Actions sequence now passes with 382/382 client tests and
+109/109 server tests. Gameplay balance and runtime behavior were not changed to
+force the suite green.
 
 Detailed release tracking lives in `CHANGELOG.md`. Harbor-specific evidence and
 rebuild instructions live under `docs/v2/harbor/`.
