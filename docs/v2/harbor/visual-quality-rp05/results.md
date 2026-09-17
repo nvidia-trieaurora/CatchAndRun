@@ -2,8 +2,9 @@
 
 > **Trạng thái repository (2026-09-17):** source, scripts và asset RP05 đã được
 > hợp nhất từ branch thử nghiệm vào `main` trong snapshot `d796c8f`. Các câu
-> “chưa commit/deploy” bên dưới ghi lại gate tại thời điểm đánh giá; blocker
-> release và các giới hạn đo vẫn còn hiệu lực.
+> “chưa commit/deploy” bên dưới ghi lại gate tại thời điểm đánh giá. Chủ dự án
+> sau đó đã duyệt nhãn `v2.0.0`; các giới hạn đo và 10 lỗi server baseline vẫn
+> là caveat công khai của release, không bị che hoặc đổi kết quả.
 
 Ngày kiểm tra: 2026-09-17. Đã tích hợp **trạm xuất phát Hunter và cửa mở theo phase**
 vào bản Three.js hiện có, không chuyển engine, không thay toàn đảo. Branch

@@ -11,8 +11,9 @@ request (2026-09-07, 16:40)**: the byte-identical candidates now live at
 and `.../zones/construction-ad.glb` (sha256 1445 a376…, 2,211,672 B) with their
 validator `.metrics.json`, and `promoted: true` (+ `?v=20260907-ac01|ad01`) in
 `client/src/game/world/zones/harborZones.ts` makes production clients load them.
-Nothing was committed or pushed. Version gate: package version 1.1.0, work
-recorded under `CHANGELOG.md` → `[Unreleased]` (v1.2.0).
+Nothing was committed or pushed during this candidate session. The work was
+tracked from package version 1.1.0 under `[Unreleased]`, initially proposed as
+v1.2.0 and ultimately released as `v2.0.0` on 2026-09-17.
 
 ## Sources and candidates
 

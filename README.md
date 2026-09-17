@@ -4,9 +4,9 @@ A real-time multiplayer Prop Hunt game where **Hunters** search for **Props** (p
 
 **Live**: [Client](https://catch-and-run-client.vercel.app) | [Server](https://catchandrun.onrender.com/health)
 
-**Stable version**: `v1.1.0` · **Next release**: `v1.2.0` (`[Unreleased]`)
+**Stable version**: `v2.0.0` · **Next changes**: `[Unreleased]`
 
-**Development snapshot**: `d796c8f` (2026-09-17)
+**V2 release date**: 2026-09-17
 
 ## Features
 
@@ -175,5 +175,5 @@ entries remain in [`CHANGELOG.md`](CHANGELOG.md).
 - **2026-09-07:** Harbor V2 renderer, water, Blender/GLB pipeline and edge zones.
 - **2026-09-08–10:** Ferris Harbor, Container Yard, Market, Operations, Rescue,
   Response Station and RP03/RP04 quality passes.
-- **2026-09-17:** Harbor visual/physics/asset-QA snapshot merged at `d796c8f`;
-  work remains tracked toward `v1.2.0`.
+- **2026-09-17:** `v2.0.0` — Harbor V2 visuals, physics, authored districts
+  and reproducible asset QA released from the merged `d796c8f` snapshot.

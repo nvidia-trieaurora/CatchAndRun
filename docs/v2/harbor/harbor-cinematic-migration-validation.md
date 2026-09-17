@@ -1,7 +1,9 @@
 # Harbor Cinematic Migration Validation
 
-Date: 2026-09-06  
-Target tracker: v1.2.0 `[Unreleased]`
+Date: 2026-09-06
+
+Original target tracker: v1.2.0 `[Unreleased]`; the completed Harbor V2 scope
+was ultimately released as `v2.0.0` on 2026-09-17.
 
 ## Result
 
