@@ -1,5 +1,10 @@
 # RP05 — kết quả, bằng chứng và giới hạn
 
+> **Trạng thái repository (2026-09-17):** source, scripts và asset RP05 đã được
+> hợp nhất từ branch thử nghiệm vào `main` trong snapshot `d796c8f`. Các câu
+> “chưa commit/deploy” bên dưới ghi lại gate tại thời điểm đánh giá; blocker
+> release và các giới hạn đo vẫn còn hiệu lực.
+
 Ngày kiểm tra: 2026-09-17. Đã tích hợp **trạm xuất phát Hunter và cửa mở theo phase**
 vào bản Three.js hiện có, không chuyển engine, không thay toàn đảo. Branch
 `codex/visual-quality-rp05`, HEAD `708d368`, giữ nguyên công việc chưa commit trước đó.

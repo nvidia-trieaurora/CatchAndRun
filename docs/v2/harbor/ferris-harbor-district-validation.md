@@ -1,5 +1,11 @@
 # Harbor V2 — Ferris Harbor District validation (2026-09-07)
 
+> **Repository status (2026-09-17):** the district and subsequent fleet/ticket
+> quality passes are merged into `main` at `d796c8f`. The current production
+> token in `harborZones.ts` supersedes the initial token below. Candidate-phase
+> assertions such as `promoted: false` and “not committed” are retained as
+> historical validation context.
+
 Status: validated as a staging candidate, then **promoted on request (2026-09-07,
 20:50, "apply vào code luôn")**: the byte-identical candidate now lives at
 `client/public/assets/maps/harbor-v2/zones/ferris-harbor.glb` (sha256 `c992b15c…bd8377`,

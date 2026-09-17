@@ -1,5 +1,10 @@
 # Harbor RP03 — cửa hàng, mặt đảo, tàu và nước
 
+> **Trạng thái repository (2026-09-17):** RP03, các asset production và bằng
+> chứng liên quan đã được hợp nhất vào `main` trong `d796c8f`. Câu “chưa
+> commit/push/deploy” ở cuối tài liệu là trạng thái lịch sử của phiên kiểm tra;
+> deployment online chưa được xác minh lại tại đây.
+
 Đây là thay đổi **code + GLB dùng trong game**, không chỉ là ảnh concept. Không chuyển engine, không dùng HY-World và không khởi chạy GPU cloud.
 
 ## Những phần đã thay đổi

@@ -1,5 +1,10 @@
 # Harbor V2 edge zones — AC garden / AD construction validation (2026-09-07)
 
+> **Repository status (2026-09-17):** AC/AD and their subsequent RP updates are
+> merged into `main` at `d796c8f`. Current production tokens and collider
+> contracts supersede the initial values below; “not committed” describes the
+> original candidate session.
+
 Status: both zones were validated as staging candidates and then **promoted on
 request (2026-09-07, 16:40)**: the byte-identical candidates now live at
 `client/public/assets/maps/harbor-v2/zones/garden-ac.glb` (sha256 0885 0727…, 2,166,216 B)

@@ -1,5 +1,10 @@
 # Harbor V2 — AB Harbor Operations & Repair Lane validation (2026-09-08)
 
+> **Repository status (2026-09-17):** this pass and its later RP updates are
+> merged into `main` at `d796c8f`. Current production URLs/tokens in
+> `harborZones.ts` supersede the initial token recorded below. “Not committed”
+> statements describe the original candidate session only.
+
 Status: validated as a staging candidate on 2026-09-08/09, then **promoted on request
 (2026-09-09, "apply")**: the byte-identical candidate `art-source/harbor-v2/_staging/
 operations-ab-candidate.glb` (sha256 `b9ec1918…`, 2,732,204 B) now lives at

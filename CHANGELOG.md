@@ -4,6 +4,12 @@ Tracker các version của Catch & Run — mỗi version ghi rõ đã làm gì.
 
 ## [Unreleased]
 
+Target release: `v1.2.0`
+
+Development snapshot: `d796c8f` (2026-09-17)
+
+Status: merged to `main`; release/tag not yet approved.
+
 ### Added
 - Harbor RP03 native Market and metric island-surface pass, moving boat support for Hunters/Props/dropped objects, precise low-skiff dry contact on client/server, shore-contact foam and filtered ripples. Versioned Blender sources, asset backups and verification notes: `docs/v2/harbor/island-review/README.md`.
 - Harbor RL01 across six production GLBs: non-destructive Blender sources, contact shading in vertex colours, 20 supported bolt plates in three batches, preserved gameplay colliders/rigs, colour-only compression, six native 4K review renders and a separately labelled concept board. Reproduction and rollback records: `docs/v2/harbor/realism-review/README.md`.

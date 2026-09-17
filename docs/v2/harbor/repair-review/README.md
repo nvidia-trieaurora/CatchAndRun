@@ -1,5 +1,10 @@
 # Harbor RP02 — sửa gameplay và ba khu vực Blender
 
+> **Trạng thái repository (2026-09-17):** mã nguồn, GLB và tài liệu RP02 đã
+> được hợp nhất vào `main` trong snapshot `d796c8f`. Các câu “chưa commit/push”
+> bên dưới ghi lại trạng thái tại thời điểm kiểm tra RP02; không còn mô tả
+> working tree hiện tại. Trạng thái deploy online chưa được xác minh trong tài liệu này.
+
 Ngày kiểm tra: 09/09/2026. Đây là bản sửa trên game Three.js hiện tại, không phải
 migration sang Unreal và không dùng ảnh concept thay cho asset trong game.
 

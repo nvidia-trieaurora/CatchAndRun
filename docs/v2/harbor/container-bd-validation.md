@@ -1,5 +1,10 @@
 # Harbor V2 — BD Eastern Container Yard validation (2026-09-07/08)
 
+> **Repository status (2026-09-17):** Container BD, Harbor Market and their
+> subsequent RP updates are merged into `main` at `d796c8f`. Current production
+> URLs/tokens in `harborZones.ts` supersede the initial tokens below. “Not
+> committed” statements describe the candidate/promotion sessions at that time.
+
 Status: validated as a staging candidate on 2026-09-07, then **promoted on request
 (2026-09-08 00:50, "apply")**: the byte-identical candidate now lives at
 `client/public/assets/maps/harbor-v2/zones/container-bd.glb` (sha256 `975bc659…b714c`,

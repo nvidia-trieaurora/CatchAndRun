@@ -4,6 +4,10 @@ A real-time multiplayer Prop Hunt game where **Hunters** search for **Props** (p
 
 **Live**: [Client](https://catch-and-run-client.vercel.app) | [Server](https://catchandrun.onrender.com/health)
 
+**Stable version**: `v1.1.0` · **Next release**: `v1.2.0` (`[Unreleased]`)
+
+**Development snapshot**: `d796c8f` (2026-09-17)
+
 ## Features
 
 - **Multiplayer rooms**: Create public/private rooms, join by code, quick join
@@ -13,6 +17,8 @@ A real-time multiplayer Prop Hunt game where **Hunters** search for **Props** (p
 - **Abilities**: Hunter Radar Ping, Prop Decoy Sound
 - **Real-time chat** in lobby and game
 - **Scoring system**: Kill points, survival time, round/match bonuses
+- **Harbor V2**: authored Blender/GLB districts, WebGPU/TSL water, moving boats,
+  climbable structures and WebGL2 fallback
 
 ## Quick Start
 
@@ -40,7 +46,7 @@ Open **http://localhost:5173** in two or more browser tabs to test multiplayer.
 ```bash
 npm run lint          # ESLint strict-type-checked
 npm run lint:fix      # Auto-fix lint issues
-npm test              # Run all unit tests (72 tests)
+npm test              # Run client and server regression suites
 npm run test:watch    # Watch mode
 npm run test:coverage # Coverage report
 ```
@@ -78,7 +84,7 @@ CatchAndRun/
 │   │   ├── schemas/         # Colyseus state schemas
 │   │   ├── systems/         # Match SM, hit validation, anti-cheat, scoring
 │   │   └── utils/           # SnapshotBuffer, RoomCodeGenerator
-│   └── tests/               # Vitest unit tests (72 tests)
+│   └── tests/               # Vitest server regression suite
 │       ├── systems/         # Tests for all game systems
 │       ├── utils/           # Tests for utilities
 │       └── helpers/         # Test factories and mocks
@@ -117,7 +123,7 @@ All gameplay parameters are in `shared/src/constants.ts`:
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
 | Language | TypeScript 5.7 | Toilet-strict, shared across all 3 workspaces |
-| 3D Rendering | Three.js 0.170 | WebGL renderer, PBR materials, shadow maps |
+| 3D Rendering | Three.js 0.181 | WebGPURenderer, WebGPU/WebGL2 fallback, TSL/PBR |
 | Game Server | Colyseus 0.15 | Authoritative multiplayer, room management, schema sync |
 | Client Bundler | Vite 6 | ESM dev server with HMR, production bundling |
 | Network | WebSocket (ws/wss) | Real-time bidirectional communication |
@@ -137,7 +143,7 @@ git push origin main
         |
         v
  GitHub Actions CI ──── lint (ESLint strict) ─┐
-        |                test (72 Vitest)      ├── must all pass
+        |                test (client/server) ├── must all pass
         |                build (full)         ─┘
         |
         ├──> Vercel (auto-deploy client)
@@ -160,11 +166,14 @@ git push origin main
 
 ## Development History
 
-| Date | Milestone |
-|------|-----------|
-| 2026-03-01 | Initial development: ThreeJS client + Colyseus server, multiplayer Prop Hunt gameplay |
-| 2026-03-02 | Added test suite: Vitest with 72 unit tests covering all server-side game systems |
-| 2026-03-02 | Added CI/CD: GitHub Actions pipeline (lint + test + build) |
-| 2026-03-02 | Added ESLint: strict-type-checked config with typescript-eslint, 0 errors |
-| 2026-03-02 | Production deployment: Client on Vercel (CDN) + Server on Render.com (WebSocket) |
-| 2026-03-02 | Production NetworkManager: VITE_SERVER_URL env var, auto wss:// detection |
+The canonical timeline is maintained in
+[`docs/DEVELOPMENT_HISTORY.md`](docs/DEVELOPMENT_HISTORY.md). Detailed release
+entries remain in [`CHANGELOG.md`](CHANGELOG.md).
+
+- **2026-03-19:** `v1.0.0` first public release.
+- **2026-07-14:** `v1.1.0` feature set — Infection, Sunny School and UI/game-feel.
+- **2026-09-07:** Harbor V2 renderer, water, Blender/GLB pipeline and edge zones.
+- **2026-09-08–10:** Ferris Harbor, Container Yard, Market, Operations, Rescue,
+  Response Station and RP03/RP04 quality passes.
+- **2026-09-17:** Harbor visual/physics/asset-QA snapshot merged at `d796c8f`;
+  work remains tracked toward `v1.2.0`.

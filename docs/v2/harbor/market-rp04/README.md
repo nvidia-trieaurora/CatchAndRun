@@ -1,5 +1,10 @@
 # Harbor Market RP04 — Blender → game
 
+> **Trạng thái repository (2026-09-17):** RP04 và các quality pass kế tiếp đã
+> được hợp nhất vào `main` tại `d796c8f`. Nội dung “chưa commit/deploy” bên dưới
+> là ghi chú lịch sử của lần promotion local; deployment online chưa được tài
+> liệu này xác minh.
+
 Đợt triển khai khu mẫu đầu tiên sau khi duyệt 12 concept. Phạm vi mỹ thuật là cửa hàng Market; không phải 12 khu đã được dựng lại và không chuyển game sang Unreal.
 
 **Đã tích hợp vào game local ngày 10/09/2026.** `client/public/assets/maps/harbor-v2/zones/container-bd.glb` hiện là RP04, SHA256 `3e593113f9e820e80d24430b736adda7e22ae9f28ed350065a85be26db1a8ca5`. URL trong code có version mới để tránh dùng lại cache. [Biên bản thay asset và bản sao khôi phục](promotion.json) · [Đối chiếu bytes URL production trả về](served-production.json). Chỉ thay GLB Market/container-bd; tám GLB khác không đổi. Chưa commit hoặc deploy.
