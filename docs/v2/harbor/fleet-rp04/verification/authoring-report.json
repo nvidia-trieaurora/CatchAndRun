@@ -1,0 +1,82 @@
+{
+  "source": "art-source/harbor-v2/ferris-harbor/ferris-harbor-fleet-rp03.blend",
+  "sourceSHA256": "ce21621ab80a1ed4c91283973b16966f65684e412bdb41cdd29e727e9feca9ac",
+  "sourcePreserved": true,
+  "output": "art-source/harbor-v2/ferris-harbor/ferris-harbor-fleet-rp04.blend",
+  "originalObjectsUnchanged": 659,
+  "addedDrawsHigh": 5,
+  "addedDrawsLow": 0,
+  "newTextures": 0,
+  "boats": [
+    {
+      "boat": "WORKBOAT",
+      "parts": 140,
+      "triangles": 5296,
+      "batch": "MESH_FERRIS_HARBOR_RP04_WORKBOAT_FITTINGS_LOD0",
+      "contactChecks": []
+    },
+    {
+      "boat": "LAUNCH",
+      "parts": 137,
+      "triangles": 3628,
+      "batch": "MESH_FERRIS_HARBOR_RP04_LAUNCH_FITTINGS_LOD0",
+      "contactChecks": []
+    },
+    {
+      "boat": "SKIFF_RED",
+      "parts": 12,
+      "triangles": 680,
+      "batch": "MESH_FERRIS_HARBOR_RP04_SKIFF_RED_FITTINGS_LOD0",
+      "contactChecks": [
+        {
+          "part": "skiff_rowlock",
+          "nearestOriginalSurfaceMeters": 0.0005513731157407165
+        },
+        {
+          "part": "skiff_rowlock.001",
+          "nearestOriginalSurfaceMeters": 0.0005510919145308435
+        },
+        {
+          "part": "skiff_rope",
+          "nearestOriginalSurfaceMeters": 0.0007419586181640625
+        },
+        {
+          "part": "skiff_rope.001",
+          "nearestOriginalSurfaceMeters": 2.0415091057657264e-05
+        }
+      ]
+    },
+    {
+      "boat": "SKIFF_GREEN",
+      "parts": 12,
+      "triangles": 680,
+      "batch": "MESH_FERRIS_HARBOR_RP04_SKIFF_GREEN_FITTINGS_LOD0",
+      "contactChecks": [
+        {
+          "part": "skiff_rowlock",
+          "nearestOriginalSurfaceMeters": 0.0011896807700395584
+        },
+        {
+          "part": "skiff_rowlock.001",
+          "nearestOriginalSurfaceMeters": 0.0011898790253326297
+        },
+        {
+          "part": "skiff_rope",
+          "nearestOriginalSurfaceMeters": 0.00074005126953125
+        },
+        {
+          "part": "skiff_rope.001",
+          "nearestOriginalSurfaceMeters": 2.448670238663908e-05
+        }
+      ]
+    },
+    {
+      "boat": "BARGE",
+      "parts": 127,
+      "triangles": 3840,
+      "batch": "MESH_FERRIS_HARBOR_RP04_BARGE_FITTINGS_LOD0",
+      "contactChecks": []
+    }
+  ],
+  "scope": "Cosmetic fittings only; original sealed wheelhouses/decks/cargo and their colliders remain authoritative."
+}

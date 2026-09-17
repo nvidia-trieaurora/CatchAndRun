@@ -1,0 +1,1223 @@
+{
+  "capturedAt": "2026-09-10T14:57:29.107Z",
+  "viewport": {
+    "width": 1600,
+    "height": 900,
+    "deviceScaleFactor": 1
+  },
+  "headless": true,
+  "gpuFlags": [
+    "enable-unsafe-webgpu",
+    "enable-features=Vulkan,WebGPU",
+    "ignore-gpu-blocklist",
+    "use-angle=metal"
+  ],
+  "audioMuted": true,
+  "profileDirectory": "/var/folders/21/jnt5qrg12nzcbgh9msb8q9280000gp/T/cr-cdp-catchandrun-CCTo6I",
+  "url": "http://localhost:5174/?renderer=webgl2",
+  "backend": "webgl2",
+  "quality": "high",
+  "presets": [
+    {
+      "preset": "workboatDetail",
+      "view": "view-workboatDetail",
+      "file": "docs/v2/harbor/fleet-rp04/final-webgl2-high/final-webgl2-high-workboatDetail.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 59.99880002442866,
+        "frameTimeP95Ms": 18.30000001192093,
+        "drawCalls": 262,
+        "triangles": 301021,
+        "geometries": 335,
+        "textures": 326,
+        "sceneMeshes": 262,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 215466240,
+        "environmentTransferBytes": 33711096
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00150003750097,
+        "p95Ms": 16.799999999999272,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "panSample": {
+        "frames": 240,
+        "fps": 60.00300015000746,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0,
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 20727,
+          "frameCalls": 15,
+          "drawCalls": 246,
+          "triangles": 300358,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "fleetDetail",
+      "view": "view-fleetDetail",
+      "file": "docs/v2/harbor/fleet-rp04/final-webgl2-high/final-webgl2-high-fleetDetail.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00720086438986,
+        "frameTimeP95Ms": 18.099999964237213,
+        "drawCalls": 262,
+        "triangles": 301021,
+        "geometries": 335,
+        "textures": 326,
+        "sceneMeshes": 262,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 215466240,
+        "environmentTransferBytes": 33711096
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.003000150007566,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "panSample": {
+        "frames": 240,
+        "fps": 60.00300015000746,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0,
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 31437,
+          "frameCalls": 15,
+          "drawCalls": 338,
+          "triangles": 450632,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "ferrisHarborWater",
+      "view": "view-ferrisHarborWater",
+      "file": "docs/v2/harbor/fleet-rp04/final-webgl2-high/final-webgl2-high-ferrisHarborWater.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00960153638889,
+        "frameTimeP95Ms": 18.19999998807907,
+        "drawCalls": 262,
+        "triangles": 301021,
+        "geometries": 335,
+        "textures": 326,
+        "sceneMeshes": 262,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 215466240,
+        "environmentTransferBytes": 33711096
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.003000150007566,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "panSample": {
+        "frames": 240,
+        "fps": 60.00450033752536,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0,
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 42132,
+          "frameCalls": 15,
+          "drawCalls": 434,
+          "triangles": 531951,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    }
+  ],
+  "shooting": [],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "[warning] [VoiceChat] Mic access denied"
+  ],
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[info] [Renderer] Initialized webgl2",
+    "[debug] [vite] connected.",
+    "[warning] [VoiceChat] Mic access denied",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock.",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock."
+  ],
+  "repair": null,
+  "water": null,
+  "boats": null,
+  "shorelineSequence": {
+    "observationalOnly": true,
+    "manualVisualReviewPending": true,
+    "view": {
+      "position": [
+        40,
+        1.8,
+        51.5
+      ],
+      "target": [
+        36,
+        -0.65,
+        47.5
+      ],
+      "fov": 55,
+      "fogScale": 1
+    },
+    "waterKind": "gerstner",
+    "targetFrameIntervalMs": 1000,
+    "sampleMethod": "Actual harborWater.sampleHeight(x,z); CPU surface samples bracket each native CDP screenshot, not pixel-height measurements",
+    "scope": "Six close south-quay waterline frames during natural animation; no shader time, boat pose, live physics or materials were changed",
+    "samplePoints": [
+      {
+        "x": 32,
+        "z": 47.515
+      },
+      {
+        "x": 32,
+        "z": 47.9
+      },
+      {
+        "x": 32,
+        "z": 48.7
+      },
+      {
+        "x": 36,
+        "z": 47.515
+      },
+      {
+        "x": 36,
+        "z": 47.9
+      },
+      {
+        "x": 36,
+        "z": 48.7
+      },
+      {
+        "x": 40,
+        "z": 47.515
+      },
+      {
+        "x": 40,
+        "z": 47.9
+      },
+      {
+        "x": 40,
+        "z": 48.7
+      }
+    ],
+    "frames": [
+      {
+        "index": 0,
+        "targetElapsedMs": 0,
+        "observedElapsedMs": 0,
+        "captureStartedAt": "2026-09-10T14:57:23.706Z",
+        "captureCompletedAt": "2026-09-10T14:57:24.116Z",
+        "before": {
+          "performanceMs": 62130.69999998808,
+          "timeOriginMs": 1789052181575,
+          "timestamp": "2026-09-10T14:57:23.705Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.8822312214811072,
+              "performanceMs": 62130.60000002384
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.879505676215741,
+              "performanceMs": 62130.60000002384
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.868133572153954,
+              "performanceMs": 62130.60000002384
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -1.1080176058448612,
+              "performanceMs": 62130.60000002384
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -1.0652745128571495,
+              "performanceMs": 62130.60000002384
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.9933239253589676,
+              "performanceMs": 62130.60000002384
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -1.0088336801693707,
+              "performanceMs": 62130.60000002384
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -1.0104253306503699,
+              "performanceMs": 62130.69999998808
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -1.0004964877456535,
+              "performanceMs": 62130.69999998808
+            }
+          ]
+        },
+        "after": {
+          "performanceMs": 62542.19999998808,
+          "timeOriginMs": 1789052181575,
+          "timestamp": "2026-09-10T14:57:24.117Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.7955243871861235,
+              "performanceMs": 62542.10000002384
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.7926049794067932,
+              "performanceMs": 62542.10000002384
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.7809473070893909,
+              "performanceMs": 62542.10000002384
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -1.1128768162504663,
+              "performanceMs": 62542.10000002384
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -1.071721948717144,
+              "performanceMs": 62542.10000002384
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.9966463986595023,
+              "performanceMs": 62542.10000002384
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -1.0610308586786008,
+              "performanceMs": 62542.10000002384
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -1.063012978105271,
+              "performanceMs": 62542.10000002384
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -1.053760071112308,
+              "performanceMs": 62542.10000002384
+            }
+          ]
+        },
+        "file": "docs/v2/harbor/fleet-rp04/final-webgl2-high/final-webgl2-high-shore-sequence-00.png"
+      },
+      {
+        "index": 1,
+        "targetElapsedMs": 1000,
+        "observedElapsedMs": 998.9000000357628,
+        "captureStartedAt": "2026-09-10T14:57:24.705Z",
+        "captureCompletedAt": "2026-09-10T14:57:25.089Z",
+        "before": {
+          "performanceMs": 63129.60000002384,
+          "timeOriginMs": 1789052181575,
+          "timestamp": "2026-09-10T14:57:24.704Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.6736747987971975,
+              "performanceMs": 63129.60000002384
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.672257263154496,
+              "performanceMs": 63129.60000002384
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.664358336944976,
+              "performanceMs": 63129.60000002384
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -1.0327827863830314,
+              "performanceMs": 63129.60000002384
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.9987697385677053,
+              "performanceMs": 63129.60000002384
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.9292299367871302,
+              "performanceMs": 63129.60000002384
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -1.0361439399045727,
+              "performanceMs": 63129.60000002384
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -1.0405288036247402,
+              "performanceMs": 63129.60000002384
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -1.0364265417058967,
+              "performanceMs": 63129.60000002384
+            }
+          ]
+        },
+        "after": {
+          "performanceMs": 63514.89999997616,
+          "timeOriginMs": 1789052181575,
+          "timestamp": "2026-09-10T14:57:25.089Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.6195023602876836,
+              "performanceMs": 63514.89999997616
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.6199538008982711,
+              "performanceMs": 63514.89999997616
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.6168871453119654,
+              "performanceMs": 63514.89999997616
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.9479139981870485,
+              "performanceMs": 63514.89999997616
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.920964105690701,
+              "performanceMs": 63514.89999997616
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.8603741672707287,
+              "performanceMs": 63514.89999997616
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.9635357624035011,
+              "performanceMs": 63514.89999997616
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.9703690235654132,
+              "performanceMs": 63514.89999997616
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.9718875081189862,
+              "performanceMs": 63514.89999997616
+            }
+          ]
+        },
+        "file": "docs/v2/harbor/fleet-rp04/final-webgl2-high/final-webgl2-high-shore-sequence-01.png"
+      },
+      {
+        "index": 2,
+        "targetElapsedMs": 2000,
+        "observedElapsedMs": 1998.9000000357628,
+        "captureStartedAt": "2026-09-10T14:57:25.705Z",
+        "captureCompletedAt": "2026-09-10T14:57:26.116Z",
+        "before": {
+          "performanceMs": 64129.60000002384,
+          "timeOriginMs": 1789052181575,
+          "timestamp": "2026-09-10T14:57:25.704Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.6095108500000578,
+              "performanceMs": 64129.5
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.6138674361554131,
+              "performanceMs": 64129.5
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.6216015457597437,
+              "performanceMs": 64129.5
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.8113280992204521,
+              "performanceMs": 64129.5
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.7980208856872709,
+              "performanceMs": 64129.5
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.758160125339297,
+              "performanceMs": 64129.5
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.792455318434102,
+              "performanceMs": 64129.5
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.8037966072255873,
+              "performanceMs": 64129.5
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.816627902974561,
+              "performanceMs": 64129.5
+            }
+          ]
+        },
+        "after": {
+          "performanceMs": 64543.10000002384,
+          "timeOriginMs": 1789052181575,
+          "timestamp": "2026-09-10T14:57:26.118Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.6615735268618979,
+              "performanceMs": 64543.10000002384
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.6687767973600571,
+              "performanceMs": 64543.10000002384
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.6850843612885654,
+              "performanceMs": 64543.10000002384
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.7490966399529704,
+              "performanceMs": 64543.10000002384
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.7455065177959056,
+              "performanceMs": 64543.10000002384
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.7222461284831304,
+              "performanceMs": 64543.10000002384
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.6741223989648227,
+              "performanceMs": 64543.10000002384
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.688299624949927,
+              "performanceMs": 64543.10000002384
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.7092600472086407,
+              "performanceMs": 64543.10000002384
+            }
+          ]
+        },
+        "file": "docs/v2/harbor/fleet-rp04/final-webgl2-high/final-webgl2-high-shore-sequence-02.png"
+      },
+      {
+        "index": 3,
+        "targetElapsedMs": 3000,
+        "observedElapsedMs": 2998.100000023842,
+        "captureStartedAt": "2026-09-10T14:57:26.704Z",
+        "captureCompletedAt": "2026-09-10T14:57:27.144Z",
+        "before": {
+          "performanceMs": 65128.80000001192,
+          "timeOriginMs": 1789052181575,
+          "timestamp": "2026-09-10T14:57:26.703Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.791968209372187,
+              "performanceMs": 65128.80000001192
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.8026847972302348,
+              "performanceMs": 65128.80000001192
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.8309263971529705,
+              "performanceMs": 65128.80000001192
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.7290824798134826,
+              "performanceMs": 65128.80000001192
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.7381074791525718,
+              "performanceMs": 65128.80000001192
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.738502675195375,
+              "performanceMs": 65128.80000001192
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.5589509480548273,
+              "performanceMs": 65128.80000001192
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.5759687510824223,
+              "performanceMs": 65128.80000001192
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.6072454746381399,
+              "performanceMs": 65128.80000001192
+            }
+          ]
+        },
+        "after": {
+          "performanceMs": 65576.69999998808,
+          "timeOriginMs": 1789052181575,
+          "timestamp": "2026-09-10T14:57:27.151Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.9065019749343619,
+              "performanceMs": 65576.69999998808
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.919005384514209,
+              "performanceMs": 65576.69999998808
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.9549456783033035,
+              "performanceMs": 65576.69999998808
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.7650169377103061,
+              "performanceMs": 65576.69999998808
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.7820515350287598,
+              "performanceMs": 65576.69999998808
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.7990369759334331,
+              "performanceMs": 65576.69999998808
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.5352065995949389,
+              "performanceMs": 65576.69999998808
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.553111168556091,
+              "performanceMs": 65576.69999998808
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.5905337573335137,
+              "performanceMs": 65576.69999998808
+            }
+          ]
+        },
+        "file": "docs/v2/harbor/fleet-rp04/final-webgl2-high/final-webgl2-high-shore-sequence-03.png"
+      },
+      {
+        "index": 4,
+        "targetElapsedMs": 4000,
+        "observedElapsedMs": 4000.199999988079,
+        "captureStartedAt": "2026-09-10T14:57:27.706Z",
+        "captureCompletedAt": "2026-09-10T14:57:28.116Z",
+        "before": {
+          "performanceMs": 66130.89999997616,
+          "timeOriginMs": 1789052181575,
+          "timestamp": "2026-09-10T14:57:27.705Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -1.0141882414774217,
+              "performanceMs": 66130.89999997616
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -1.0270910197047771,
+              "performanceMs": 66130.89999997616
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -1.0686322786218065,
+              "performanceMs": 66130.89999997616
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.843581211875164,
+              "performanceMs": 66130.89999997616
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.8673871115137025,
+              "performanceMs": 66130.89999997616
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.9002897342899171,
+              "performanceMs": 66130.89999997616
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.5896652573293705,
+              "performanceMs": 66130.89999997616
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.6068263138689274,
+              "performanceMs": 66130.89999997616
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.6486402513451768,
+              "performanceMs": 66130.89999997616
+            }
+          ]
+        },
+        "after": {
+          "performanceMs": 66542.89999997616,
+          "timeOriginMs": 1789052181575,
+          "timestamp": "2026-09-10T14:57:28.117Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -1.0452732398469486,
+              "performanceMs": 66542.80000001192
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -1.056813437369354,
+              "performanceMs": 66542.80000001192
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -1.0986246883057544,
+              "performanceMs": 66542.80000001192
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.901872825623713,
+              "performanceMs": 66542.80000001192
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.9281701933686075,
+              "performanceMs": 66542.80000001192
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.9686506874118218,
+              "performanceMs": 66542.80000001192
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.6780534522208206,
+              "performanceMs": 66542.80000001192
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.6932769468189159,
+              "performanceMs": 66542.80000001192
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.7356876944244887,
+              "performanceMs": 66542.80000001192
+            }
+          ]
+        },
+        "file": "docs/v2/harbor/fleet-rp04/final-webgl2-high/final-webgl2-high-shore-sequence-04.png"
+      },
+      {
+        "index": 5,
+        "targetElapsedMs": 5000,
+        "observedElapsedMs": 4998.900000035763,
+        "captureStartedAt": "2026-09-10T14:57:28.704Z",
+        "captureCompletedAt": "2026-09-10T14:57:29.101Z",
+        "before": {
+          "performanceMs": 67129.60000002384,
+          "timeOriginMs": 1789052181575,
+          "timestamp": "2026-09-10T14:57:28.704Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.9956298208913267,
+              "performanceMs": 67129.5
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -1.0025824273946937,
+              "performanceMs": 67129.5
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -1.0377913973622808,
+              "performanceMs": 67129.5
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.9399438575199888,
+              "performanceMs": 67129.60000002384
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.9656230352377219,
+              "performanceMs": 67129.60000002384
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -1.0088645327358043,
+              "performanceMs": 67129.60000002384
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.8269154718992787,
+              "performanceMs": 67129.60000002384
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.8375513382119165,
+              "performanceMs": 67129.60000002384
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.8763973733502273,
+              "performanceMs": 67129.60000002384
+            }
+          ]
+        },
+        "after": {
+          "performanceMs": 67526.89999997616,
+          "timeOriginMs": 1789052181575,
+          "timestamp": "2026-09-10T14:57:29.101Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.9042724983691683,
+              "performanceMs": 67526.89999997616
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.9063817687813454,
+              "performanceMs": 67526.89999997616
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.9322452138781705,
+              "performanceMs": 67526.89999997616
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.9198391216301911,
+              "performanceMs": 67526.89999997616
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.9424181390991285,
+              "performanceMs": 67526.89999997616
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.9819673562243247,
+              "performanceMs": 67526.89999997616
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.9146963248660356,
+              "performanceMs": 67526.89999997616
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.9210831018543403,
+              "performanceMs": 67526.89999997616
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.9544089360076832,
+              "performanceMs": 67526.89999997616
+            }
+          ]
+        },
+        "file": "docs/v2/harbor/fleet-rp04/final-webgl2-high/final-webgl2-high-shore-sequence-05.png"
+      }
+    ]
+  },
+  "sourceSHA256": "bb72714637efb0309bd70d668548e43a41bab4e2d0b0940cced3d167a99bbb14",
+  "candidateRoot": "fleet-rp04/assets",
+  "candidateRequests": [
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/zones/garden-ac.glb?v=20260910-rp03",
+      "relative": "zones/garden-ac.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/zones/garden-ac.glb",
+      "bytes": 2418196,
+      "sha256": "eba957f86623f8921d7e10dd426a6c88c3e074b9681200abf33a7a4e0dfbe762"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/cinematic/harbor-cinematic.glb?v=20260910-rp03",
+      "relative": "cinematic/harbor-cinematic.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/cinematic/harbor-cinematic.glb",
+      "bytes": 5206904,
+      "sha256": "3bf4b229e928e52488aaf90154686c466b7e5a84b2f61febd2ac16e5018d5fcc"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/warehouse.glb?v=20260909-rl01",
+      "relative": "warehouse.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/warehouse.glb",
+      "bytes": 5620760,
+      "sha256": "d41a9ac251d9ea7116e192d3d7be4a0bffcd9b249621da1ed6806282afb086f5"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/zones/construction-ad.glb?v=20260910-rp03",
+      "relative": "zones/construction-ad.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/zones/construction-ad.glb",
+      "bytes": 2685880,
+      "sha256": "cbae198daf1de59fcc51d57c6899cd8f89ddcd685bfc3bd1228189aa04628049"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/zones/ferris-harbor.glb?v=20260910-rp04-b51a69ec",
+      "relative": "zones/ferris-harbor.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/zones/ferris-harbor.glb",
+      "bytes": 3990856,
+      "sha256": "b51a69ec535d54b440f35a9aa11fe69b8fc7adc8ba777e840daf75bfa3cc08bc"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/zones/container-bd.glb?v=20260910-rp04-3e593113",
+      "relative": "zones/container-bd.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/zones/container-bd.glb",
+      "bytes": 6001596,
+      "sha256": "3e593113f9e820e80d24430b736adda7e22ae9f28ed350065a85be26db1a8ca5"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/zones/operations-ab.glb?v=20260910-rp03",
+      "relative": "zones/operations-ab.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/zones/operations-ab.glb",
+      "bytes": 3143904,
+      "sha256": "539236b2f4f5988bcb4d1b28f4c6c53de7c2b6a5c6ce740f1659315d7e8a1239"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/zones/response-station.glb?v=20260909-rp02",
+      "relative": "zones/response-station.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/zones/response-station.glb",
+      "bytes": 1623596,
+      "sha256": "8f8aaf89f4e4a93e34a5be9a67dc63ba2f6b83d6fed445074dfac7887c07af1f"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/zones/rescue-quay.glb?v=20260909-rp02",
+      "relative": "zones/rescue-quay.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/zones/rescue-quay.glb",
+      "bytes": 1375540,
+      "sha256": "e077c85bee11cb3b912172d03b0f6a89d5058b97c21c64a82fdfe1b82f27e71e"
+    }
+  ]
+}

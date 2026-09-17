@@ -1,0 +1,100 @@
+{
+  "date": "2026-09-10",
+  "phase": "Approved concept set. Market RP04 and bounded Fleet RP04 fittings/water pass applied to the local Three.js game; other zones pending. Not full photorealistic completion.",
+  "implementationUpdate": {
+    "date": "2026-09-10",
+    "market": "../market-rp04/README.md",
+    "fleet": "../fleet-rp04/README.md",
+    "fleetPromotion": "../fleet-rp04/promotion.json",
+    "fleetSHA256": "b51a69ec535d54b440f35a9aa11fe69b8fc7adc8ba777e840daf75bfa3cc08bc",
+    "nextZone": "warehouse",
+    "deployed": false,
+    "unrealUsed": false,
+    "scope": "Local Blender assets, existing Three.js runtime and bounded verification. Concept images remain design references, not runtime screenshots."
+  },
+  "imageMode": "Built-in image_gen; no CLI/API fallback used",
+  "imagesGenerated": 12,
+  "unreal": {
+    "version": "5.8.2",
+    "changelist": 56702186,
+    "editor": "/Users/Shared/Epic Games/UE_5.8/Engine/Binaries/Mac/UnrealEditor.app/Contents/MacOS/UnrealEditor",
+    "launched": false
+  },
+  "host": {
+    "chip": "Apple M4",
+    "ramGiB": 24,
+    "macOS": "26.5.2",
+    "xcode": "26.6",
+    "macSDK": "26.5",
+    "freeDiskGiBApprox": 93
+  },
+  "checks": {
+    "xcodeFirstLaunch": "passed",
+    "metalCompiler": "failed: missing Metal Toolchain",
+    "engineSDKVersionRange": "local Apple_SDK.json accepts Xcode 15.2 through 27.9; not proof of editor compatibility"
+  },
+  "notPerformedDuringConceptPass": [
+    "Runtime asset replacement",
+    "Runtime gameplay/collision behavior changes",
+    "Unreal editor launch",
+    "Metal Toolchain download",
+    "Paid image API",
+    "Cloud GPU provisioning"
+  ],
+  "imageManifest": "generation-manifest.json",
+  "gallery": "GALLERY.md",
+  "priorAttemptBatches": [
+    {
+      "asset": "01-island-master + 02-market",
+      "mode": "concurrent calls with references",
+      "status": "batch failed HTTP 500; neither output confirmed",
+      "requestId": "e2bd576f-bfd7-4e97-ba6e-6a53e7957f22"
+    },
+    {
+      "asset": "02-market",
+      "mode": "sequential retry with references",
+      "status": "HTTP 500",
+      "requestId": "7d9531e7-a36b-4a0a-ad04-9d5c3206fde1"
+    },
+    {
+      "asset": "02-market",
+      "mode": "simplified new generation without references",
+      "prompt": "Photorealistic architectural concept image for a small working harbor convenience store named HARBOR MARKET, before implementation in a 3D game. One wide landscape street-level photograph in natural late-afternoon coastal daylight. A compact single-story 14 by 10 meter store, flat roof, navy painted metal fascia, understated white HARBOR MARKET letters, a central wide open sliding-glass entrance, real aluminum window frames. See actual stocked shelves, refrigerated drink cabinets and a checkout counter inside. Restrained warm shop lighting, realistic packaging silhouettes without brand names. Salt-worn concrete paving and a slim drain outside, weathered timber accents and a bench beside the shop. The clear entrance and walking route are unobstructed. Sea visible behind the shop. Physically plausible assembly details, realistic material scale, local weathering and soft reflected light. Cinematic but bright and believable, like a real photographed place, not cartoon, not miniature, not overly glossy. No people, no HUD, no weapons, no watermark.",
+      "status": "HTTP 500",
+      "requestId": "0572dce5-876f-423e-9654-cf8890b9f288"
+    }
+  ],
+  "currentAttempt": {
+    "status": "success",
+    "files": [
+      "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/01-island-master.png",
+      "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/02-market-exterior.png",
+      "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/03-market-interior.png",
+      "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/04-warehouse.png",
+      "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/05-construction.png",
+      "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/06-operations.png",
+      "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/07-garden.png",
+      "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/08-ferris-ticket.png",
+      "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/09-working-fleet.png",
+      "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/10-response-rescue.png",
+      "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/11-container-yard.png",
+      "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/12-response-station.png"
+    ],
+    "resolution": [
+      1672,
+      941
+    ],
+    "paidApiFallback": false,
+    "blenderOrUnrealRenders": false
+  },
+  "hostSnapshotFromEarlierPreflight": true,
+  "verification": {
+    "implementation": "tools/harbor-v2/verify_asset_pipeline.mjs",
+    "command": "npm run harbor:v2:verify-assets",
+    "scope": "Bounded headless geometry and controller checks; browser/visual/performance QA remains separate",
+    "conceptPassReport": "../asset-verification-rp04/review-02/summary.json",
+    "latestReport": "../fleet-rp04/post-promotion-gate/summary.json",
+    "conceptSetFullyApplied": false,
+    "localImplementationPasses": ["Market RP04", "Fleet RP04 fittings and shoreline foam"]
+  }
+}

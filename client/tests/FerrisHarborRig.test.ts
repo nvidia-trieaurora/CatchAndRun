@@ -158,7 +158,8 @@ describe("MooringRopes", () => {
     expect(midY).toBeLessThan((firstY + lastY) / 2 - 0.1);
 
     boat.position.y += 0.3;
-    root.updateMatrixWorld(true);
+    // The hot path refreshes just the socket's ancestry. A whole-zone forced
+    // traversal is unnecessary even if the boat changed since the last render.
     const sameArray = attribute.array;
     ropes.update();
     expect(attribute.array).toBe(sameArray); // rewritten in place

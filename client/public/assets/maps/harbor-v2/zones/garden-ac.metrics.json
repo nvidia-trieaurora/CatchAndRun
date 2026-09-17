@@ -1,7 +1,7 @@
 {
-  "asset": "art-source/harbor-v2/_staging/garden-ac-candidate.glb",
+  "asset": "art-source/harbor-v2/_staging/structural-rp03/garden-ac-runtime.glb",
   "zone": "GARDEN",
-  "payloadBytes": 2166216,
+  "payloadBytes": 2418196,
   "textureBytes": 1143790,
   "images": [
     {
@@ -237,14 +237,18 @@
   ],
   "estimatedGpuTextureBytes": 37234896,
   "lod0": {
-    "renderMeshes": 21,
-    "triangles": 12558,
-    "estimatedDrawCalls": 21
+    "renderMeshes": 22,
+    "triangles": 13620,
+    "estimatedDrawCalls": 22,
+    "instancedMeshes": 0,
+    "instanceKeys": 0
   },
   "lod1": {
-    "renderMeshes": 11,
-    "triangles": 896,
-    "estimatedDrawCalls": 11
+    "renderMeshes": 13,
+    "triangles": 3270,
+    "estimatedDrawCalls": 13,
+    "instancedMeshes": 0,
+    "instanceKeys": 0
   },
   "budgets": {
     "lod0Triangles": 30000,
@@ -253,12 +257,15 @@
     "lod1DrawCalls": 14,
     "payloadBytes": 6291456,
     "maxTextureSize": 1024,
-    "gpuTextureBytes": 44040192
+    "gpuTextureBytes": 44040192,
+    "zoneColliders": 24
   },
   "colliderParity": {
-    "colliders": 488,
+    "colliders": 493,
     "source": "buildOldHarborFortniteMap({ useWarehouseV2: true, cinematicVisuals: true, quality: 'high' })"
   },
+  "zoneColliders": [],
+  "rigNodes": [],
   "warnings": [],
   "passed": true,
   "errors": []

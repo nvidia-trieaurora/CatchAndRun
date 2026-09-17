@@ -1,0 +1,916 @@
+{
+  "mimeType": "model/gltf-binary",
+  "validatorVersion": "2.0.0-dev.3.10",
+  "validatedAt": "2026-09-10T14:36:16.655Z",
+  "issues": {
+    "numErrors": 0,
+    "numWarnings": 0,
+    "numInfos": 78,
+    "numHints": 0,
+    "messages": [
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/50/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/51/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/52/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/53/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/54/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/55/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/56/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/56/primitives/0/attributes/TEXCOORD_1"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/167/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/171/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/172/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/173/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/174/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/178/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/179/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/184/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/185/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/190/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/190/primitives/0/attributes/TEXCOORD_1"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/195/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/197/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/201/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/206/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/212/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/212/primitives/0/attributes/TEXCOORD_1"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/217/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/218/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/222/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/223/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/224/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/225/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/226/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/227/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/228/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/229/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/232/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/233/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/238/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/238/primitives/0/attributes/TEXCOORD_1"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/239/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/240/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/241/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/242/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/242/primitives/0/attributes/TEXCOORD_1"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/243/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/244/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/245/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/246/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/246/primitives/0/attributes/TEXCOORD_1"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/247/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/248/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/249/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/250/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/250/primitives/0/attributes/TEXCOORD_1"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/251/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/252/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/253/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/254/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/254/primitives/0/attributes/TEXCOORD_1"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/255/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/256/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/257/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/258/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/258/primitives/0/attributes/TEXCOORD_1"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/259/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/260/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/261/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/262/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/262/primitives/0/attributes/TEXCOORD_1"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/263/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/264/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/265/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/266/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/266/primitives/0/attributes/TEXCOORD_1"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/267/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/268/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/meshes/269/primitives/0/attributes/TEXCOORD_0"
+      },
+      {
+        "code": "IMAGE_NPOT_DIMENSIONS",
+        "message": "Image has non-power-of-two dimensions: 320x320.",
+        "severity": 2,
+        "pointer": "/images/9"
+      }
+    ],
+    "truncated": false
+  },
+  "info": {
+    "version": "2.0",
+    "generator": "glTF-Transform v4.5.0",
+    "extensionsUsed": [
+      "EXT_texture_webp",
+      "KHR_materials_emissive_strength"
+    ],
+    "extensionsRequired": [
+      "EXT_texture_webp"
+    ],
+    "resources": [
+      {
+        "pointer": "/buffers/0",
+        "mimeType": "application/gltf-buffer",
+        "storage": "glb",
+        "byteLength": 3769256
+      },
+      {
+        "pointer": "/images/0",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 512,
+          "height": 512,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/1",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/2",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 512,
+          "height": 512,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/3",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/4",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 512,
+          "height": 512,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/5",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 1024,
+          "height": 1024,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/6",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/7",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/8",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 512,
+          "height": 512,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/9",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 320,
+          "height": 320,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/10",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/11",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/12",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/13",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/14",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/15",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/16",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/17",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 512,
+          "height": 512,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/18",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/19",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 512,
+          "height": 512,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/20",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 512,
+          "height": 512,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/21",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/22",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 1024,
+          "height": 1024,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/23",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/24",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/25",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/26",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/27",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/28",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/29",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      },
+      {
+        "pointer": "/images/30",
+        "mimeType": "image/webp",
+        "storage": "buffer-view",
+        "image": {
+          "width": 256,
+          "height": 256,
+          "format": "rgb",
+          "primaries": "srgb",
+          "transfer": "srgb",
+          "bits": 8
+        }
+      }
+    ],
+    "animationCount": 0,
+    "materialCount": 22,
+    "hasMorphTargets": false,
+    "hasSkins": false,
+    "hasTextures": true,
+    "hasDefaultScene": true,
+    "drawCallCount": 270,
+    "totalVertexCount": 88336,
+    "totalTriangleCount": 54572,
+    "maxUVs": 2,
+    "maxInfluences": 0,
+    "maxAttributes": 5
+  }
+}

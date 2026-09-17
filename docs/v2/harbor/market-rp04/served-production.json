@@ -1,0 +1,9 @@
+{
+  "at": "2026-09-10T10:52:03.354Z",
+  "url": "http://localhost:5174/assets/maps/harbor-v2/zones/container-bd.glb?v=20260910-rp04-3e593113",
+  "status": 200,
+  "bytes": 6001596,
+  "sha256": "3e593113f9e820e80d24430b736adda7e22ae9f28ed350065a85be26db1a8ca5",
+  "matchesLocal": true,
+  "cacheControl": "no-cache"
+}

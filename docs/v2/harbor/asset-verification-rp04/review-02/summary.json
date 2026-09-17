@@ -1,0 +1,1219 @@
+{
+  "schema": "HarborAssetVerification/v1",
+  "startedAt": "2026-09-10T08:39:57.800Z",
+  "status": "bounded-headless-pass",
+  "headlessPassed": true,
+  "readyToPromote": false,
+  "remaining": [
+    "Manual visual review in the actual game",
+    "Browser/backend and performance QA"
+  ],
+  "scope": "Bounded static probes and controller scenarios; not exhaustive island verification.",
+  "repoRoot": "/Users/tlle/Documents/PersonalProject/CatchAndRun",
+  "outDir": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/asset-verification-rp04/review-02",
+  "assetRoot": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2",
+  "productionRoot": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2",
+  "runtime": {
+    "node": "v22.22.1",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "children": [
+    {
+      "id": "static-audit",
+      "executable": "/Users/tlle/.nvm/versions/node/v22.22.1/bin/node",
+      "args": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/node_modules/vite-node/vite-node.mjs",
+        "--config",
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/vite.config.ts",
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/tools/harbor-v2/audit_structural_routes.ts",
+        "--asset-dir",
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2",
+        "--report",
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/asset-verification-rp04/review-02/static-audit.json",
+        "--negative-controls"
+      ],
+      "cwd": "/Users/tlle/Documents/PersonalProject/CatchAndRun",
+      "startedAt": 1789029597860,
+      "endedAt": 1789029598682,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "reportPath": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/asset-verification-rp04/review-02/static-audit.json",
+      "reportSHA256": "7918b9d88df784d6d49001f43385231cb6d1ecf5e669c38c0381bd62db047a2e",
+      "coverage": "Selected asset root, both quality tiers with in-memory negative controls.",
+      "verified": {
+        "probes": 86,
+        "controls": 6
+      }
+    },
+    {
+      "id": "candidate-movement",
+      "executable": "/Users/tlle/.nvm/versions/node/v22.22.1/bin/node",
+      "args": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/vitest.config.ts",
+        "tests/AssetMovementVerification.test.ts",
+        "--reporter=json",
+        "--outputFile",
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/asset-verification-rp04/review-02/candidate-movement.json"
+      ],
+      "cwd": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client",
+      "startedAt": 1789029598686,
+      "endedAt": 1789029599843,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "reportPath": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/asset-verification-rp04/review-02/candidate-movement.json",
+      "reportSHA256": "a44648436fd1d1c7853701756b0790f6cc45d8b8aee562d6db24431f2639840c",
+      "coverage": "Selected asset root: bounded High/Low Hunter/Prop route and negative-control scenarios. Not exhaustive.",
+      "verified": {
+        "suites": 1,
+        "tests": 24
+      }
+    },
+    {
+      "id": "production-regressions",
+      "executable": "/Users/tlle/.nvm/versions/node/v22.22.1/bin/node",
+      "args": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/vitest.config.ts",
+        "tests/MovementCollision.test.ts",
+        "tests/BoatCollisionRig.test.ts",
+        "tests/WaterSwim.test.ts",
+        "tests/harborWater.test.ts",
+        "tests/CollisionSpatialIndex.test.ts",
+        "tests/GameManagerCollisionLifecycle.test.ts",
+        "tests/AssetMovementProbe.test.ts",
+        "--reporter=json",
+        "--outputFile",
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/asset-verification-rp04/review-02/production-regressions.json"
+      ],
+      "cwd": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client",
+      "startedAt": 1789029599843,
+      "endedAt": 1789029601468,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "reportPath": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/asset-verification-rp04/review-02/production-regressions.json",
+      "reportSHA256": "25a87dee41589de05e8042c675e60e73cc5a957f40ed13b45bd0d83044025e4a",
+      "coverage": "Existing generic/default-production tests; NOT proof of the selected candidate GLBs.",
+      "verified": {
+        "suites": 7,
+        "tests": 81
+      }
+    },
+    {
+      "id": "server-water-regressions",
+      "executable": "/Users/tlle/.nvm/versions/node/v22.22.1/bin/node",
+      "args": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/server/vitest.config.ts",
+        "tests/systems/BoatWaterIntegration.test.ts",
+        "tests/systems/WaterMovementIntegration.test.ts",
+        "tests/systems/EnvironmentalHazards.test.ts",
+        "--reporter=json",
+        "--outputFile",
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/asset-verification-rp04/review-02/server-water-regressions.json"
+      ],
+      "cwd": "/Users/tlle/Documents/PersonalProject/CatchAndRun/server",
+      "startedAt": 1789029601468,
+      "endedAt": 1789029604889,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "reportPath": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/asset-verification-rp04/review-02/server-water-regressions.json",
+      "reportSHA256": "41d2999a05fc3f9ed5e21ba7b76c91f146900607bde7a9d74d6e10e469889ded",
+      "coverage": "Existing server movement/hazard integration on default map contracts; NOT candidate GLB or live multiplayer-network verification.",
+      "verified": {
+        "suites": 3,
+        "tests": 18
+      }
+    }
+  ],
+  "errors": [],
+  "assets": [
+    {
+      "relative": "warehouse.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/warehouse.glb",
+      "bytes": 5620760,
+      "sha256": "d41a9ac251d9ea7116e192d3d7be4a0bffcd9b249621da1ed6806282afb086f5"
+    },
+    {
+      "relative": "cinematic/harbor-cinematic.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/cinematic/harbor-cinematic.glb",
+      "bytes": 5206904,
+      "sha256": "3bf4b229e928e52488aaf90154686c466b7e5a84b2f61febd2ac16e5018d5fcc"
+    },
+    {
+      "relative": "zones/garden-ac.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/zones/garden-ac.glb",
+      "bytes": 2418196,
+      "sha256": "eba957f86623f8921d7e10dd426a6c88c3e074b9681200abf33a7a4e0dfbe762"
+    },
+    {
+      "relative": "zones/construction-ad.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/zones/construction-ad.glb",
+      "bytes": 2685880,
+      "sha256": "cbae198daf1de59fcc51d57c6899cd8f89ddcd685bfc3bd1228189aa04628049"
+    },
+    {
+      "relative": "zones/ferris-harbor.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/zones/ferris-harbor.glb",
+      "bytes": 2988060,
+      "sha256": "76a6bb0a733a5f1bcf692041336d772dc44b0d28f806b56c6aaf18c9738bd07f"
+    },
+    {
+      "relative": "zones/container-bd.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/zones/container-bd.glb",
+      "bytes": 5334504,
+      "sha256": "f6944872ccada70a276d94348cba03c99d6fe8c5ddb43558f0c0aad25f51c7e0"
+    },
+    {
+      "relative": "zones/operations-ab.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/zones/operations-ab.glb",
+      "bytes": 3143904,
+      "sha256": "539236b2f4f5988bcb4d1b28f4c6c53de7c2b6a5c6ce740f1659315d7e8a1239"
+    },
+    {
+      "relative": "zones/response-station.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/zones/response-station.glb",
+      "bytes": 1623596,
+      "sha256": "8f8aaf89f4e4a93e34a5be9a67dc63ba2f6b83d6fed445074dfac7887c07af1f"
+    },
+    {
+      "relative": "zones/rescue-quay.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/zones/rescue-quay.glb",
+      "bytes": 1375540,
+      "sha256": "e077c85bee11cb3b912172d03b0f6a89d5058b97c21c64a82fdfe1b82f27e71e"
+    }
+  ],
+  "productionAssets": [
+    {
+      "relative": "warehouse.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/warehouse.glb",
+      "bytes": 5620760,
+      "sha256": "d41a9ac251d9ea7116e192d3d7be4a0bffcd9b249621da1ed6806282afb086f5"
+    },
+    {
+      "relative": "cinematic/harbor-cinematic.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/cinematic/harbor-cinematic.glb",
+      "bytes": 5206904,
+      "sha256": "3bf4b229e928e52488aaf90154686c466b7e5a84b2f61febd2ac16e5018d5fcc"
+    },
+    {
+      "relative": "zones/garden-ac.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/zones/garden-ac.glb",
+      "bytes": 2418196,
+      "sha256": "eba957f86623f8921d7e10dd426a6c88c3e074b9681200abf33a7a4e0dfbe762"
+    },
+    {
+      "relative": "zones/construction-ad.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/zones/construction-ad.glb",
+      "bytes": 2685880,
+      "sha256": "cbae198daf1de59fcc51d57c6899cd8f89ddcd685bfc3bd1228189aa04628049"
+    },
+    {
+      "relative": "zones/ferris-harbor.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/zones/ferris-harbor.glb",
+      "bytes": 2988060,
+      "sha256": "76a6bb0a733a5f1bcf692041336d772dc44b0d28f806b56c6aaf18c9738bd07f"
+    },
+    {
+      "relative": "zones/container-bd.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/zones/container-bd.glb",
+      "bytes": 5334504,
+      "sha256": "f6944872ccada70a276d94348cba03c99d6fe8c5ddb43558f0c0aad25f51c7e0"
+    },
+    {
+      "relative": "zones/operations-ab.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/zones/operations-ab.glb",
+      "bytes": 3143904,
+      "sha256": "539236b2f4f5988bcb4d1b28f4c6c53de7c2b6a5c6ce740f1659315d7e8a1239"
+    },
+    {
+      "relative": "zones/response-station.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/zones/response-station.glb",
+      "bytes": 1623596,
+      "sha256": "8f8aaf89f4e4a93e34a5be9a67dc63ba2f6b83d6fed445074dfac7887c07af1f"
+    },
+    {
+      "relative": "zones/rescue-quay.glb",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/public/assets/maps/harbor-v2/zones/rescue-quay.glb",
+      "bytes": 1375540,
+      "sha256": "e077c85bee11cb3b912172d03b0f6a89d5058b97c21c64a82fdfe1b82f27e71e"
+    }
+  ],
+  "sources": {
+    "sha256": "ad5e465c4d73bf0d1dd5f41109e9cf8e00258719304a276613e84089b5cd5e76",
+    "files": [
+      {
+        "path": "client/package.json",
+        "sha256": "7e368534b124a0add13e6b129d474a236d7adc4539b33e2bbb64b3aa8b0163ed"
+      },
+      {
+        "path": "client/public/assets/maps/harbor-v2/warehouse.manifest.json",
+        "sha256": "dc81ae98eca888ed774741758dfbefd1aaecc9da89ba58a497e8a457f67a8214"
+      },
+      {
+        "path": "client/src/config/ClientConfig.ts",
+        "sha256": "1aedce453503d359dee53530c8df5f2ed85cb9de06b324399804206b75ace7f0"
+      },
+      {
+        "path": "client/src/config/QualityManager.ts",
+        "sha256": "cbf856188ad251558552f0589efcb4f3aacc78bb871e24fa63051c4d62063ab9"
+      },
+      {
+        "path": "client/src/debug.ts",
+        "sha256": "9f7779f3b7bb7635b507ab4160b572c6fe5332ce92688b0883a83d2e92f3bf1c"
+      },
+      {
+        "path": "client/src/env.d.ts",
+        "sha256": "2a1aaa08b68ac7fe856161158f87e59b6d7c00793c0e382239a3d46e5f596cb1"
+      },
+      {
+        "path": "client/src/game/GameManager.ts",
+        "sha256": "0924e06d704526b2a3e17a79a7d135278eb2da66a7b751fd1cb0798046f5b38d"
+      },
+      {
+        "path": "client/src/game/cinematics/DrowningCinematic.ts",
+        "sha256": "492f90a0224f5fb6c1e111fa4cfe3e63b8655906f6ef982232e073ec80eebab2"
+      },
+      {
+        "path": "client/src/game/controllers/GroundCollision.ts",
+        "sha256": "af4870f2018da76d82886d6abbd147f946e6532ebeda87646a72dfe7c8dc3fb8"
+      },
+      {
+        "path": "client/src/game/controllers/HunterController.ts",
+        "sha256": "52348626285504b97d5a019adea002c0567ecb108df642a8e46b566f8277d6e8"
+      },
+      {
+        "path": "client/src/game/controllers/LadderClimb.ts",
+        "sha256": "4dd9798ee5b1a54a465938c94a876fc4915c46a174a839ecb7ba097d0e363608"
+      },
+      {
+        "path": "client/src/game/controllers/PropController.ts",
+        "sha256": "2f533fadc9fd8faec1fe547f8ca32151547d40f06b7ed1f6333cd8dfc0d28278"
+      },
+      {
+        "path": "client/src/game/controllers/SpectatorController.ts",
+        "sha256": "bb61c5b0bcd8758f5bf5e71d733b18c9fcc444d575786c3fbf48857df768264a"
+      },
+      {
+        "path": "client/src/game/controllers/WaterSwim.ts",
+        "sha256": "b8855581f35c0b48fb89c576d52ec879dc51bfca6ce13278b482b7e7032c9ecd"
+      },
+      {
+        "path": "client/src/game/effects/CameraShake.ts",
+        "sha256": "b28ef3a55fa845c4b4a6c7cb3e380776e9b2e1df8e106ae77aa3de924abf1406"
+      },
+      {
+        "path": "client/src/game/effects/PostProcessing.ts",
+        "sha256": "28b58c7c0f684b6dccdae4eee89047851816f6b0b3b2ec93d4fef0ec372e645c"
+      },
+      {
+        "path": "client/src/game/entities/HunterModel.ts",
+        "sha256": "50b98ef1a91c4fba75432de688ef654c1afec26a9ce0e8b07c4e83128856f5fb"
+      },
+      {
+        "path": "client/src/game/entities/MemeTextureLoader.ts",
+        "sha256": "557f3ab0b3ccfe28a6e919f9f09f48e406fc6efbd9ac8695c9d5767fd4dbf142"
+      },
+      {
+        "path": "client/src/game/entities/PlayerEntity.ts",
+        "sha256": "e48f1e8bd9eb8a8be7cdfc86606bd52ef22de68dc4871510dad70a919c1d715f"
+      },
+      {
+        "path": "client/src/game/lifecycle/LobbyPresentation.ts",
+        "sha256": "f353aa820532875f7137f1ca5766ed256c557a3f4eabf46a3ad2d839f752a773"
+      },
+      {
+        "path": "client/src/game/rendering/FirstPersonViewmodel.ts",
+        "sha256": "717d0a0b382c04c641bc96863ebcd67a399476cbaded0a428142eca36204e651"
+      },
+      {
+        "path": "client/src/game/rendering/RendererFactory.ts",
+        "sha256": "ec6916c23e948f3c16d111ec121b8688fdb8022745bd027614a531648b04fa02"
+      },
+      {
+        "path": "client/src/game/rendering/RuntimeMetrics.ts",
+        "sha256": "27376704971d37edae6472b26b53355d9f609170665b55fd560f1417d25b0590"
+      },
+      {
+        "path": "client/src/game/systems/AudioSystem.ts",
+        "sha256": "3057065aebcd00a76e55f144d5f7cb371145d498b2b01474a2a2a911eb10e228"
+      },
+      {
+        "path": "client/src/game/systems/ParticleSystem.ts",
+        "sha256": "2e97d975a632c4b82dc87a6f7648b92ddb3b08155e6a459ddaf0677a7c0601eb"
+      },
+      {
+        "path": "client/src/game/systems/PropTransformSystem.ts",
+        "sha256": "b5ee9fcfba7563b4bbd6dd65ccfd7401db885eefc1bf0d55ebd51ff1834bb320"
+      },
+      {
+        "path": "client/src/game/systems/WaterProximityWarning.ts",
+        "sha256": "8e14c7ba17b3a3c99a136121535beebdff0a3cdfaa3c30d18100a9a076fe9f2d"
+      },
+      {
+        "path": "client/src/game/systems/WeaponSystem.ts",
+        "sha256": "6c59accdd8bd45f28f7b5cabcaf86b530ee2b5ace69940680b02ea0b4c62f649"
+      },
+      {
+        "path": "client/src/game/world/HunterGateState.ts",
+        "sha256": "652861e99b1a97272a9b9c05d8e88148f32febf64b54a396a55b82a4501cfe09"
+      },
+      {
+        "path": "client/src/game/world/LightingSetup.ts",
+        "sha256": "1207e68ffc908fb6ef875cd89d088b1c5d6169251d397bb1286827cc657e9a66"
+      },
+      {
+        "path": "client/src/game/world/MapBuilder.ts",
+        "sha256": "682853b32ade6204f396d1dd336c871d8f9e674b57b7da24ebd828cd34a2ab43"
+      },
+      {
+        "path": "client/src/game/world/PropRegistry.ts",
+        "sha256": "c6b7873c9cdc27acddc12044bc3b6439bf5b382469cd23e46dde54f1a9f0b916"
+      },
+      {
+        "path": "client/src/game/world/assets/MapAssetLoader.ts",
+        "sha256": "9ce81d6427de1251a8bdac4950deeefc35a768012bcad6526273788b3363d037"
+      },
+      {
+        "path": "client/src/game/world/collisionBroadphase.ts",
+        "sha256": "5c0e38597b5f6c0bc2845bc715044ea924cfef889d95a7ba91b509da20ab12cd"
+      },
+      {
+        "path": "client/src/game/world/environment/HarborAmbientMotion.ts",
+        "sha256": "b6a4a7f362f662e7618d465ce449f71f3e65391b5c3b39be7d6b580679de03d2"
+      },
+      {
+        "path": "client/src/game/world/environment/OceanBackend.ts",
+        "sha256": "56ede2878e3c8d9d72686c1f25f187c51f8e8ebd2ebe21e4e741ee74f792db92"
+      },
+      {
+        "path": "client/src/game/world/environment/WaterProOceanBackend.ts",
+        "sha256": "8b166f4bd5ccc31c6e854304f9a2de3e2f590671a1e5943faec8c19f17f88a6f"
+      },
+      {
+        "path": "client/src/game/world/environment/harborShoreline.ts",
+        "sha256": "a4b7fd48c8781b46c6e1aa66dd44954b9c1556388d2a729f2667915b00943b3e"
+      },
+      {
+        "path": "client/src/game/world/environment/harborWater.ts",
+        "sha256": "268f6afb4013aecbac61c3d558f6e31e0bf86ee553f6c14008664b14adebdbe0"
+      },
+      {
+        "path": "client/src/game/world/harbor-warehouse.json",
+        "sha256": "56db8515f209e3d4288e2ae14aa6c7281c60f09740e168fcc1b537ec546ab7b4"
+      },
+      {
+        "path": "client/src/game/world/lighting/HarborEnvironmentLoader.ts",
+        "sha256": "5234af6e06b465aa19d949e106fa21742f4c51342e1bc0883b5679664d067257"
+      },
+      {
+        "path": "client/src/game/world/lighting/fortniteLighting.ts",
+        "sha256": "1208fa5cb1c1695069cce62b41b07f79baadcaf0b36fbcd0589613ca18b2ad56"
+      },
+      {
+        "path": "client/src/game/world/maps/harborV2Map.ts",
+        "sha256": "5dce638672f823a8d0aa596691e9ed5b9b91724d6828b2266d2e89ba742a744b"
+      },
+      {
+        "path": "client/src/game/world/maps/oldHarborFortnite.ts",
+        "sha256": "9b11d3097f350244e71c5d15695624d8a9ca059e00aa265d7aa9e14fb940f509"
+      },
+      {
+        "path": "client/src/game/world/maps/schoolMap.ts",
+        "sha256": "e6a7ac3328ca1fc7a828588c5be02b8250315fb6bfe3e58dd386a113e93d8e22"
+      },
+      {
+        "path": "client/src/game/world/materials/materialLibrary.ts",
+        "sha256": "c3ae7ff37277ff5a58f6e7b3193909a9431605a7d6362e3c8479fb04409fe9f3"
+      },
+      {
+        "path": "client/src/game/world/props/clutterSpawner.ts",
+        "sha256": "65e0dbbb5fc2f763071d28b95726dbf788e275dafba7a4a41c1c01d022855c8c"
+      },
+      {
+        "path": "client/src/game/world/school.json",
+        "sha256": "a7c2c2a4ad460d742c78386934f4b092f2994b887775d6a961166d9f2a841f29"
+      },
+      {
+        "path": "client/src/game/world/weaponImpactSurfaces.ts",
+        "sha256": "a0a22c9a10ad88fecd1d47232beb139f7fa22b36d732045ffb9eb581c4d67c07"
+      },
+      {
+        "path": "client/src/game/world/zones/BoatCollisionRig.ts",
+        "sha256": "b85227838d6e353bf65cf0e38d359cadb87d17c59c65cedff04192b8d986062e"
+      },
+      {
+        "path": "client/src/game/world/zones/FerrisHarborRig.ts",
+        "sha256": "e972b54abd4ea643683241acac55591512b7226ba85afffb93b341aaca4aed74"
+      },
+      {
+        "path": "client/src/game/world/zones/MooringRopes.ts",
+        "sha256": "cc7c7231e91bac3c95bf0c404c3bfb23339eb49a959e6d679d47c25d80097acc"
+      },
+      {
+        "path": "client/src/game/world/zones/ZoneAmbientMotion.ts",
+        "sha256": "07c49fc31dbfd71cdd9e7cd67441afdb1f6168e506a2c9d3066278426bf2e80c"
+      },
+      {
+        "path": "client/src/game/world/zones/harborZones.ts",
+        "sha256": "cc993cee3d9d0ab30d2e48ac7dc9dc729acc6ebfe1d02240874784458da7ba16"
+      },
+      {
+        "path": "client/src/i18n/en.ts",
+        "sha256": "1ca4e3ad97e826e11b197dd54fb511027aad50b48c353f4514165edcc6b97d21"
+      },
+      {
+        "path": "client/src/i18n/i18n.ts",
+        "sha256": "70c62dbacaa49518eedbdbed33c4a972d7fb4143936be2923378f4a880f23179"
+      },
+      {
+        "path": "client/src/i18n/vi.ts",
+        "sha256": "0ce320690db01b3a9ef11aa01ba55d6dbd60126984fd815075b247f7f71b380d"
+      },
+      {
+        "path": "client/src/input/InputManager.ts",
+        "sha256": "4501609ef2e901588a43c036ca03c76548b65ae523e0c369def26b3a2aec3cc2"
+      },
+      {
+        "path": "client/src/input/MobileDetect.ts",
+        "sha256": "d2450ab37dee582cfa84b3cad738ae71b651c12e812515c41a023efce96806eb"
+      },
+      {
+        "path": "client/src/input/TouchInputProvider.ts",
+        "sha256": "c560c273a3f3792ec58d59bbabaeb824c5b6e0b2f0222c50ed01f5a0750f66fd"
+      },
+      {
+        "path": "client/src/main.ts",
+        "sha256": "70a4fe3df999b2ed190c9084fb5e26e6cc47e98544e35d9188ae5b6ce7464747"
+      },
+      {
+        "path": "client/src/network/InterpolationBuffer.ts",
+        "sha256": "8477d88517bf44617c7ed6c24379c0b4c63b024850c06445164f5fff977441c5"
+      },
+      {
+        "path": "client/src/network/NetworkManager.ts",
+        "sha256": "3cd755c2b553b30de06fc7d16eab39a42bd6abec63763b5d264432173c8dc64f"
+      },
+      {
+        "path": "client/src/network/StateSync.ts",
+        "sha256": "16459b1a03e052bf625980fb317587a403ae1bc572d68e6170297be81bd68b3c"
+      },
+      {
+        "path": "client/src/types/threejs-water-pro.d.ts",
+        "sha256": "ce0f04ae2a823404cfa5712e23a0842d2ccd67913d722431b096e481ca957d02"
+      },
+      {
+        "path": "client/src/ui/UIManager.ts",
+        "sha256": "7ae7a7678953bb8bd5696ab879c22b1624303cc0b581222d1e53d8c85b5963e9"
+      },
+      {
+        "path": "client/src/ui/UISounds.ts",
+        "sha256": "ef24b214dfcf8dd87cfae8ab7a7ca8e1956231a6948d8e2de618c2e7e03e0d65"
+      },
+      {
+        "path": "client/src/ui/components/AnnouncementBanner.ts",
+        "sha256": "cceb3b5cdd1504f1c5bf8d0c273b3b3b5700c7c1fb260937071f421d454831cb"
+      },
+      {
+        "path": "client/src/ui/components/Minimap.ts",
+        "sha256": "ed5d0b2fd3fe5b7c8ac28eaea35d823406b5f64e1c2e2314eada456b443d9523"
+      },
+      {
+        "path": "client/src/ui/components/SettingsPanel.ts",
+        "sha256": "359119bccfa22e356036936bbbd5a5f16978e1c8558e7d8fcf64bab6d3c0e705"
+      },
+      {
+        "path": "client/src/ui/components/SoundMemePanel.ts",
+        "sha256": "a5090ecb99ccf419eadc04a94b93a533c831b27e7ad0cc0aa0e270140295a322"
+      },
+      {
+        "path": "client/src/ui/screens/GameHUD.ts",
+        "sha256": "ec9be88277837976921645889fef6f1e6914e3fa272abe73cba50c823d2bfb94"
+      },
+      {
+        "path": "client/src/ui/screens/MainMenuUI.ts",
+        "sha256": "92efa20d53a5c35f1d556d61ac1f541ab7614e649c8bb83009eed1a0d48ce2c3"
+      },
+      {
+        "path": "client/src/ui/screens/ResultsUI.ts",
+        "sha256": "2f1ff7f0d0dca0cef9546f32c1b8e7c2a131c0c42018880b2fc3cf341953b1f8"
+      },
+      {
+        "path": "client/src/ui/screens/RoomLobbyUI.ts",
+        "sha256": "734ff4583064559f8ea547728014bd412d5b4968887abbe13f7cdedda08fd695"
+      },
+      {
+        "path": "client/src/vendor/threejsWaterProStub.ts",
+        "sha256": "a1c289cad0b805fb333f9e8785db4d92b8cec704f603cfe15a2413ada7dd6b83"
+      },
+      {
+        "path": "client/src/voice/VoiceChat.ts",
+        "sha256": "fba774062fd03b31aa86d8b1399dd1659dfcd4f5010e02e0388a2814c8c61bdf"
+      },
+      {
+        "path": "client/src/voice/VoiceUI.ts",
+        "sha256": "6c92a9c3033e2fcb43d7d9b7ca46c52dcfbba695128daef7f485374970bce45e"
+      },
+      {
+        "path": "client/tests/AssetMovementProbe.test.ts",
+        "sha256": "b8202ffb953364ebf12c1de04051d0d40211ef8d8109b7136c58643de6945a14"
+      },
+      {
+        "path": "client/tests/AssetMovementVerification.test.ts",
+        "sha256": "95ef9b644d1ffad00ccd89bde8caa8afa2b4ac01d1024248f30325fc762cfab4"
+      },
+      {
+        "path": "client/tests/BoatCollisionRig.test.ts",
+        "sha256": "0b3704cc32511d49e5245d8ecd64baa9eed4c25865395cad38e1b60d7ae56b54"
+      },
+      {
+        "path": "client/tests/CinematicCollisionContract.test.ts",
+        "sha256": "e966e0a712e17afc6bc2f8239551d9188d4a66179728171521a302a16c7f39d4"
+      },
+      {
+        "path": "client/tests/CollisionSpatialIndex.test.ts",
+        "sha256": "e29391789183caba8a19b846156dad563ccb7053b63f981946da74bfdc5cba76"
+      },
+      {
+        "path": "client/tests/ContainerBDZone.test.ts",
+        "sha256": "36e664fbc4c433ca0e2476323852747e2d371c86dec5f0185d68d30ae9738e6c"
+      },
+      {
+        "path": "client/tests/DrowningCinematic.test.ts",
+        "sha256": "35bc3c6d8c0883661247eb182d9c667996837f2d1bf590e99a07997116c6547b"
+      },
+      {
+        "path": "client/tests/FerrisHarborRig.test.ts",
+        "sha256": "ce41c6f26b726d2049f63f83e1472b740fa8c98a992597750f07ceed686ae76b"
+      },
+      {
+        "path": "client/tests/FerrisTicketBooth.test.ts",
+        "sha256": "efd11d6c126eb0a5848689a3927e2057cbc501f6875940126d1f80403032866a"
+      },
+      {
+        "path": "client/tests/FirstPersonViewmodel.test.ts",
+        "sha256": "13171959b5e170cc13d2a2f336462f7063744efbf3405237ea20a9b36017c4bc"
+      },
+      {
+        "path": "client/tests/GameManagerCollisionLifecycle.test.ts",
+        "sha256": "7cb5ff3d85b5a735f57386202699a3a973a0b8f2b6bbe90e1698a065266c0a73"
+      },
+      {
+        "path": "client/tests/GameManagerLobbyPresentation.test.ts",
+        "sha256": "09ec0e8e6e371d55a72716e56547d0e02423291229b93549ea30cf352ca8dc63"
+      },
+      {
+        "path": "client/tests/GardenHouseRoutes.test.ts",
+        "sha256": "03d52bddb9f2e9cb7983f84955b3328e3d06a004f173bee2cce9d72324d4eb6a"
+      },
+      {
+        "path": "client/tests/HarborAmbientMotion.test.ts",
+        "sha256": "8d0344653a41c0f15d2b019849797beaa40cf98051d208a5b2f9a24481bcd8d0"
+      },
+      {
+        "path": "client/tests/HarborIslandSurfaces.test.ts",
+        "sha256": "47bd2701d514151dde2f732b7e2d8385a01f886ce82fac04d5e17f02212f663e"
+      },
+      {
+        "path": "client/tests/HarborMarket.test.ts",
+        "sha256": "77ee264653530ebf7737d2d5e2ab0284b8c55c4b9ca1603f8200b8fc0a694391"
+      },
+      {
+        "path": "client/tests/HarborMarketNative.test.ts",
+        "sha256": "55d8409c9661654b6cf6f03e20394c8d2eadc93a175739b75f6c1281d56bdcf1"
+      },
+      {
+        "path": "client/tests/HarborV2Map.test.ts",
+        "sha256": "fa094a2f0cdb453f93bc9edff144608bd284fa244ca8eb41da5eddb970cd4d3f"
+      },
+      {
+        "path": "client/tests/HunterController.test.ts",
+        "sha256": "382b47e61ef3556079e5ac1734506e2b57907a9aaf74d8fd29c08ab65a210449"
+      },
+      {
+        "path": "client/tests/HunterGateState.test.ts",
+        "sha256": "50450b9a7918a7695386b7043153c068024831304208975f315aa0682843ee65"
+      },
+      {
+        "path": "client/tests/LadderClimb.test.ts",
+        "sha256": "aa4eb224f583f4ee41ef5bc30895f08b43745cedbc14024b3dbf9bfef47433d4"
+      },
+      {
+        "path": "client/tests/MapAssetLoader.test.ts",
+        "sha256": "d1f196e1b4ec4a6bde9121ef313780e4009ca6c69860c439a63a380e6986dd97"
+      },
+      {
+        "path": "client/tests/MapAssetLoaderRealAssets.test.ts",
+        "sha256": "b9a44cbbf6777c20b299edf17b1d9971a8bd9b7b17796d253fccde90a326f6ef"
+      },
+      {
+        "path": "client/tests/MovementCollision.test.ts",
+        "sha256": "7031abe168222aacde81d947f0d757c785b70db2beff7e22b97c707ac13baa46"
+      },
+      {
+        "path": "client/tests/OperationsABZone.test.ts",
+        "sha256": "eb48561dea1d8ae2e5a0f300f5b9a33b4e71803778394e85ce9f01a9035be391"
+      },
+      {
+        "path": "client/tests/ParticleSystem.test.ts",
+        "sha256": "5986673c83a2d6b4269d54e18b5c5032a33b2114327c50d6d1679171d7a12a3c"
+      },
+      {
+        "path": "client/tests/RescueQuay.test.ts",
+        "sha256": "2a932d9e7d589debdb0c8c8a1c61a8a81dc4ba20b200216fc6f3dff44f6b12a5"
+      },
+      {
+        "path": "client/tests/ResponseStationIntegration.test.ts",
+        "sha256": "1972966146db6334e03a6c71fce91147483597c6405da886d706ff7173ed6b31"
+      },
+      {
+        "path": "client/tests/ShippedStructuralRoutes.test.ts",
+        "sha256": "ec17ec8112421a33a046324dfd56cb875742291fc18fe2241ea878e97df91c35"
+      },
+      {
+        "path": "client/tests/StaticAssetGate.test.ts",
+        "sha256": "971ccb55d352b5e1531ae0c2fb54da58a60d1c0c235f3042493e1103cec2421c"
+      },
+      {
+        "path": "client/tests/StaticAssetGateIntegration.test.ts",
+        "sha256": "18a2d219ee9fad00c6713d15c4823bd9c013a0b1cffda87c1eb129148a7e13cf"
+      },
+      {
+        "path": "client/tests/WarehouseCollisionContract.test.ts",
+        "sha256": "de20ec6dd1faca9b056626c977093605eecbb54f61f80188f6fa6140b88714ac"
+      },
+      {
+        "path": "client/tests/WaterProximityWarning.test.ts",
+        "sha256": "65fdc787e55430aa61a786aef4b7665cc92540f8208978bd0bd56d7001d76f0a"
+      },
+      {
+        "path": "client/tests/WaterSwim.test.ts",
+        "sha256": "6bca8738def3d18bbd90cc9ca6452c4724b65b181d4b27f144df0618daa0ec5c"
+      },
+      {
+        "path": "client/tests/WeaponSystem.test.ts",
+        "sha256": "fca42677b46aa51fcb994bff822d878533167ab982d58acdd95ab8c0eb024055"
+      },
+      {
+        "path": "client/tests/ZoneAmbientMotion.test.ts",
+        "sha256": "dae460e8bbd6067e268e02b2cf65bfd80c5bbc910734f6d0e8cb018c4d8b8717"
+      },
+      {
+        "path": "client/tests/ZoneAssets.test.ts",
+        "sha256": "9553667a6b55d6f84b3d1ac2171b0d619a9a8740caf49ff94531f4c60e6e8065"
+      },
+      {
+        "path": "client/tests/harborWater.test.ts",
+        "sha256": "02ae49721d5583696bb8b523a255a54b699790c52db8d6956dc66b3a4a02d7c5"
+      },
+      {
+        "path": "client/tests/helpers/actualHarborFleet.ts",
+        "sha256": "38fe1693ab77be76d716c5b90e6e25bb2016e3b7d5eacdb2fffdcfdbd1f8fad0"
+      },
+      {
+        "path": "client/tests/helpers/assetMovementProbe.ts",
+        "sha256": "0a10ed3d7b10c668763a258df09949698c8d3ae8544785413e258048852490a4"
+      },
+      {
+        "path": "client/tests/helpers/headlessDom.ts",
+        "sha256": "e1ff1e4ec2b5d933b18885156d9f019045d0d4ee24c05232eeacd73aea341f3c"
+      },
+      {
+        "path": "client/vite.config.ts",
+        "sha256": "543c2558e54c3dd4b83c4e830a940a7ce152bd3ec64b30eeddbcb9725f7fffe3"
+      },
+      {
+        "path": "client/vitest.config.ts",
+        "sha256": "f782e8be4c413432b978e50b1e793a7cd387c22861e357a3897fbc9ac4c36d25"
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "59ab2d0da953e5314e18dfc3606540bf0f1366476bb381c5ac1d0960dc85badc"
+      },
+      {
+        "path": "package.json",
+        "sha256": "787f241875f9a7c0139452ece743c511e849eb3beaa00bcde2cd8aac067af946"
+      },
+      {
+        "path": "server/package.json",
+        "sha256": "4fc0bacb01cc544792e1c2d6b5bc39d47594e0538fe3368513fb2716a92a3ae9"
+      },
+      {
+        "path": "server/src/admin/adminRoutes.ts",
+        "sha256": "ad097d5d178f19cb76edae257259c1d121a07db705812b21ee262d60b1093b98"
+      },
+      {
+        "path": "server/src/admin/auth.ts",
+        "sha256": "187d66e05422540a983413a51e9619f1e992e6c7bd2bfa7849c21bfcb0f60a51"
+      },
+      {
+        "path": "server/src/analytics/AnalyticsDB.ts",
+        "sha256": "4df120d3a599eafdbdad106cd1f9bce493e58c30f0e6d5a5204c9fff38dab2ba"
+      },
+      {
+        "path": "server/src/analytics/GeoIP.ts",
+        "sha256": "5affa0e4960fd393d49eaf1043c690857487ea6090dd54b8bb55bee098c00b55"
+      },
+      {
+        "path": "server/src/data/maps/harbor-warehouse.json",
+        "sha256": "56db8515f209e3d4288e2ae14aa6c7281c60f09740e168fcc1b537ec546ab7b4"
+      },
+      {
+        "path": "server/src/data/maps/index.ts",
+        "sha256": "113892f672dfb59da76fab4906c7c22710ec2d020448f6f34a9c57f06c3fde9b"
+      },
+      {
+        "path": "server/src/data/maps/school.json",
+        "sha256": "6ca768f93564a15c2214b559f1d41255ef2fa435c1a0f4faa1842603ef11e198"
+      },
+      {
+        "path": "server/src/index.ts",
+        "sha256": "e5c8825fa5fecf1ce897a8141fcafc0c4d9df4d7542dbbbddb8e2bcdc1738935"
+      },
+      {
+        "path": "server/src/rooms/GameRoom.ts",
+        "sha256": "7f02df26ef6a38d0ca61abd6aad5806551616b28d9f1bb820458f83653bd7a88"
+      },
+      {
+        "path": "server/src/schemas/ChatMessage.ts",
+        "sha256": "b6d134987d484b344fd0591158365fe8dfb8706d1feb6374a40b337e7f54c792"
+      },
+      {
+        "path": "server/src/schemas/GameState.ts",
+        "sha256": "480512df79c427a6ad63bd352924825c8757bbaf573da84db952fe633dd48d5a"
+      },
+      {
+        "path": "server/src/schemas/PlayerSchema.ts",
+        "sha256": "8256a1163df3185b8183b3c961f9df2d1578206ab6c70425f3db380be4383754"
+      },
+      {
+        "path": "server/src/schemas/RoomConfigSchema.ts",
+        "sha256": "a4b48ae22b8a9aae40f1486f73b50953f8ac700b0fe69d2ecf93b18f69ce686f"
+      },
+      {
+        "path": "server/src/systems/AntiCheat.ts",
+        "sha256": "01ee0b17333d6234f037b155db05145c82d6c5e496e1f0d70b28f076e426eee7"
+      },
+      {
+        "path": "server/src/systems/EnvironmentalEliminationHandler.ts",
+        "sha256": "2cf52951034c7cb8e4b55b96e2cbb68e8f3dd0b1a6daa184405a27b5a51f18e5"
+      },
+      {
+        "path": "server/src/systems/EnvironmentalHazards.ts",
+        "sha256": "7bbaac9893bebde6d08bf018b8cb3c11a9f25764eca27aca67871e7f3a376a7b"
+      },
+      {
+        "path": "server/src/systems/HitValidation.ts",
+        "sha256": "a90862be72328ea5ec24067498f50d2ff37980abcd520ac7dc02d5e7c3abe245"
+      },
+      {
+        "path": "server/src/systems/MatchStateMachine.ts",
+        "sha256": "cef6cdb05ffccb85164af33dfe05f94eba2afc1e0bde02141f68b617010cd750"
+      },
+      {
+        "path": "server/src/systems/PropDownHandler.ts",
+        "sha256": "dbab552e092e9f4b5915380d39cebe8584341f4df8c97f1e67c287f1178a1196"
+      },
+      {
+        "path": "server/src/systems/PropTransformValidator.ts",
+        "sha256": "0c8563b0fc7c41134c20a687cd8e83c1b091eb0f48442cacd5a9634dd3eba3aa"
+      },
+      {
+        "path": "server/src/systems/RoleAssigner.ts",
+        "sha256": "522d8fd1d4932705cf567e25c7620dc98b54c909fc5327160a5e6b03744467de"
+      },
+      {
+        "path": "server/src/systems/ScoringSystem.ts",
+        "sha256": "6699b8cc577175d1721dc3732ddf232bb01afe608c743ef4363c62795efc4b1d"
+      },
+      {
+        "path": "server/src/systems/SpawnManager.ts",
+        "sha256": "09e08242a97c0507a5025e04f8014353a2fbef11844cdef8232ebd6c5262b59a"
+      },
+      {
+        "path": "server/src/utils/RoomCodeGenerator.ts",
+        "sha256": "fadacdaca0a3b725492e097a1d3da3fa50713e5ed6084c3cb20cda6ac3da3084"
+      },
+      {
+        "path": "server/src/utils/SnapshotBuffer.ts",
+        "sha256": "e6469d6e65a29525ab9372720197686d20dd48358d39d2aa961755f4b1002c1d"
+      },
+      {
+        "path": "server/tests/helpers/factories.ts",
+        "sha256": "6aebb2e2cf63a0d78025a1dcb2b88c91ddf6d04c1bd18293c971a0a9e749dfc3"
+      },
+      {
+        "path": "server/tests/mapDataParity.test.ts",
+        "sha256": "7531188eaf52b5755cca64c606d8866b72d2d08e391babf52b956e8692a0e4f9"
+      },
+      {
+        "path": "server/tests/systems/AntiCheat.test.ts",
+        "sha256": "13340b9020d735af8e0c9866c8c0f76356238db4a12f6f4d0427950575a63fbb"
+      },
+      {
+        "path": "server/tests/systems/BoatWaterIntegration.test.ts",
+        "sha256": "bcb0babfa2be2372cbc83c251b00aa388e2e846c05c320e7af55b054722c2e35"
+      },
+      {
+        "path": "server/tests/systems/EnvironmentalHazards.test.ts",
+        "sha256": "6704e1fb72a016b5013134c3dc64a25667b4b7edefd722c1330d2830d6474c35"
+      },
+      {
+        "path": "server/tests/systems/GameplayFlow.test.ts",
+        "sha256": "13cfcb8db7d532259ef784bbbf42120e3380c1dd65f4d497a7053a4fd4055d2e"
+      },
+      {
+        "path": "server/tests/systems/HitValidation.test.ts",
+        "sha256": "ae05fc23df56ceac03cfc2e98faae8f100b7726d2c986e5ca9b199acec14bd24"
+      },
+      {
+        "path": "server/tests/systems/Infection.test.ts",
+        "sha256": "0a47239b146b4a434e7db7218e2710f96bc9fb0d050429a3d417f2f714a1bc24"
+      },
+      {
+        "path": "server/tests/systems/MatchStateMachine.test.ts",
+        "sha256": "7743f8ca08d2f3ccba073cbdad715e3fd6d4f7d19248e0f8a0481daf3cadba9a"
+      },
+      {
+        "path": "server/tests/systems/PropTransformValidator.test.ts",
+        "sha256": "9bf00373dbb90a74d9d8e3952a54b423a92ff2bb95bfb0c2b3b82a70e5baa819"
+      },
+      {
+        "path": "server/tests/systems/RoleAssigner.test.ts",
+        "sha256": "32c16fb8b4c4fac9743f89df358da7fd3e53bc0cb1e9b7efef20d646e9a0dceb"
+      },
+      {
+        "path": "server/tests/systems/ScoringSystem.test.ts",
+        "sha256": "53df3679bf83e85b9a011b0a7c34e683be976db2b82f757cb1f9830150e5ec5e"
+      },
+      {
+        "path": "server/tests/systems/SpawnManager.test.ts",
+        "sha256": "1793b0dcd0bdc6bec20d8afb6deb7effd08157e9f10c93d9784b240aeac3ce87"
+      },
+      {
+        "path": "server/tests/systems/WaterMovementIntegration.test.ts",
+        "sha256": "55904cc95fff745c2ec6b8ed23111f1166d28248aa502ea9fe7bfe42c09c1329"
+      },
+      {
+        "path": "server/tests/utils/RoomCodeGenerator.test.ts",
+        "sha256": "eb6a9f91e2eb298cd75751678c2e7cadbf3d17e90da1da11902d5c785f475819"
+      },
+      {
+        "path": "server/tests/utils/SnapshotBuffer.test.ts",
+        "sha256": "eafb94a9186706cf463060912958c2f2e028d589783f60b980102b9bc27a5649"
+      },
+      {
+        "path": "server/vitest.config.ts",
+        "sha256": "85365287e36b1488fc7934f2f212aec326845d49f10c3317ea242ba476c78c28"
+      },
+      {
+        "path": "shared/src/constants.ts",
+        "sha256": "23385f8f3dfc14d5f579b33dc4b586848cf7897c747689ca1979123199ccff94"
+      },
+      {
+        "path": "shared/src/gameConfig.ts",
+        "sha256": "d21344659741445259a47286480aedfb2290f4bcd6a6c4e6a58a8074911c0232"
+      },
+      {
+        "path": "shared/src/harborBoatDecks.ts",
+        "sha256": "e4130ff3cfcb599cb5795c22916aba14bb3ef5cc0961b67512cd78a41ebfbd0a"
+      },
+      {
+        "path": "shared/src/index.ts",
+        "sha256": "e72d886e57785e5bf885d70c251b389c3a5b28a8d4005bead83797f0d684f592"
+      },
+      {
+        "path": "shared/src/messageTypes.ts",
+        "sha256": "c42ae596f902dc515fed3e705e4a019e07e2b44540ddb2b22170f481eb856dbd"
+      },
+      {
+        "path": "shared/src/types.ts",
+        "sha256": "1e32caf97b3d7ef65b7455fe130515abc01eb1c6a9f4e94380ce3f860e75ae96"
+      },
+      {
+        "path": "tools/harbor-v2/StaticAssetGate.ts",
+        "sha256": "108e9f90270a1fe80feaa06644cb546e11c435d13c78e1dfd65744de4361891a"
+      },
+      {
+        "path": "tools/harbor-v2/StaticAssetGateContracts.ts",
+        "sha256": "e5a4b096ab4458994bb49d9061f43514ad448e49b8a2b5ece152388af472c74f"
+      },
+      {
+        "path": "tools/harbor-v2/StaticAssetGateCoverage.json",
+        "sha256": "761e3ce2de78fe9c28bdbae68785f3087fc991ad76e0a01448867211bf3a8350"
+      },
+      {
+        "path": "tools/harbor-v2/apply_warehouse_coherence_cleanup.py",
+        "sha256": "52b05f753af68aa262a146e4bd1c3f9ff702682e24eed168c2e963810059b66e"
+      },
+      {
+        "path": "tools/harbor-v2/apply_warehouse_realism_pass.py",
+        "sha256": "2745af82c8a97b303f621abdb609fddc1103016c8a0102664c07d5244f63cccc"
+      },
+      {
+        "path": "tools/harbor-v2/apply_warehouse_sign_pass.py",
+        "sha256": "086f404b89d34b27b019325339cd0aba92e6d3c76bda492b349ba5e19aa7187f"
+      },
+      {
+        "path": "tools/harbor-v2/apply_warehouse_structural_support.py",
+        "sha256": "13f9334014b51a0d511f8824f6d47f0bbd25ab7e9204de57b794a4f8cb1c1558"
+      },
+      {
+        "path": "tools/harbor-v2/apply_warehouse_window_pass.py",
+        "sha256": "9f5b21a5c16c43966eb34f324ee4653d975fe57f1d8643f3f8085518fe66b1bd"
+      },
+      {
+        "path": "tools/harbor-v2/audit_structural_routes.ts",
+        "sha256": "84c70bc964cc0c840b5331bc245f04708537ec19102bf8c01d6f848a7d90891d"
+      },
+      {
+        "path": "tools/harbor-v2/benchmark_collision_broadphase.ts",
+        "sha256": "74eb1661f30f7dbc9d3e831594e0ab9b440eb5390da2aff3d200c17c7a5ee6a4"
+      },
+      {
+        "path": "tools/harbor-v2/bootstrap_authoring_scene.py",
+        "sha256": "c4c9e00245da40c786e2c756e2a5120bbaf87fcd07c6eff0a88d84aafa693685"
+      },
+      {
+        "path": "tools/harbor-v2/build_cinematic_harbor.py",
+        "sha256": "6eb42d222da02606e3d1cab855eba6c0187157931695cb55c616c22956ab3e20"
+      },
+      {
+        "path": "tools/harbor-v2/build_island_surfaces.py",
+        "sha256": "6d74f50e25557071a2e034994c394fcee4fc7a678f08aabea0222e63d6f21f03"
+      },
+      {
+        "path": "tools/harbor-v2/build_warehouse.py",
+        "sha256": "0f68df16cc50915553d67e48e1f2ec83d359d412db071952d446063aed7f4487"
+      },
+      {
+        "path": "tools/harbor-v2/capture_runtime_review.mjs",
+        "sha256": "ef0f9d9f0c2b7e0e0c31977e722cf76e5b5cabeae8ff673b6a14af45ddfdfe18"
+      },
+      {
+        "path": "tools/harbor-v2/dump_procedural_colliders.ts",
+        "sha256": "28d0d09758a459f8df4cc0fa933cbf9220bfb1ff3e86a6f0f09ee0137269f6c9"
+      },
+      {
+        "path": "tools/harbor-v2/export_authoring_scene.py",
+        "sha256": "3913cb81deb353a4487ac22722f66774c0954b81e70f04ba5e16df70be5914e2"
+      },
+      {
+        "path": "tools/harbor-v2/export_zone_scene.py",
+        "sha256": "738bbb9acc45ab9df8c84bf0d4a9f7ffdb6b69c0c528ff25a49314b023d5948a"
+      },
+      {
+        "path": "tools/harbor-v2/finalize_harbor_fleet.mjs",
+        "sha256": "89ab86e41efb3f1120ef9cdf4d23c67b7c7c7bdfbaa0e9c0aa4655121e2bdc92"
+      },
+      {
+        "path": "tools/harbor-v2/finalize_harbor_market.mjs",
+        "sha256": "3e19d103bbf583f7f679f3cc423039f4ccdb7d6565089fc675f07dd28deefb07"
+      },
+      {
+        "path": "tools/harbor-v2/finalize_structural_routes.mjs",
+        "sha256": "15531757d210cb9870979d03b80044ea0f0f8add905fe0b7075df448218bfd3d"
+      },
+      {
+        "path": "tools/harbor-v2/finalize_ticket_booth.mjs",
+        "sha256": "fae093b06faa9248faa9fb6bec8706a100b0f75de771a8cf5a1ed559cee22d8b"
+      },
+      {
+        "path": "tools/harbor-v2/island_surfaces.mjs",
+        "sha256": "8f3e29e9f67a8e55d2ae90e3219c24e0df2dffb7e13c6c5d93bdf1fdbf4941ab"
+      },
+      {
+        "path": "tools/harbor-v2/measure_boat_supports.ts",
+        "sha256": "b155e1bb9903c0a44987d150305f46cc10dd655c43e4329979860985d00cea1c"
+      },
+      {
+        "path": "tools/harbor-v2/optimize_cinematic.mjs",
+        "sha256": "ef9f1e2f05feeed2bfa403be4a1a5d9e43a3f6232db953de3790362c8332f145"
+      },
+      {
+        "path": "tools/harbor-v2/polish_harbor_fleet.py",
+        "sha256": "08fc5f9b7ad88b153cae87378c5f02cb1cd42dcaf729847930c1076fcb2d43a9"
+      },
+      {
+        "path": "tools/harbor-v2/prepare_realism.mjs",
+        "sha256": "6449695a5fb3908ea393f0e104b9b5f48a99bb870a0f7fdeb9bc3bd1f9c5d170"
+      },
+      {
+        "path": "tools/harbor-v2/promote_rescue_assets.mjs",
+        "sha256": "8fc01ccacf25221bfb047da5d2129875abd210a96a053a5af2e83b3e913af12b"
+      },
+      {
+        "path": "tools/harbor-v2/realism_pass.py",
+        "sha256": "d35a6c1677c8d2d4701350dde5c46d216492d06dc1692c33f146ded88577305e"
+      },
+      {
+        "path": "tools/harbor-v2/render_realism_review.py",
+        "sha256": "986d0183936cb67df15a4f523e8f6eb922401df28adabb04fc97ce5ad38612de"
+      },
+      {
+        "path": "tools/harbor-v2/render_repair_review.py",
+        "sha256": "fea59c070daa1bc408b4f97821acbae395b7c1e6723b038cee08620ff55b869b"
+      },
+      {
+        "path": "tools/harbor-v2/render_warehouse_authoring_preview.py",
+        "sha256": "255985fd4ccec61679b6dc7cd5d7f417b5dea6d0a3e741f503bcd12f3b08aff1"
+      },
+      {
+        "path": "tools/harbor-v2/render_warehouse_coherence_audit.py",
+        "sha256": "240fe51f603c7cfd1818c27d09ded014faea2bb97e567b64458205367ab22c0e"
+      },
+      {
+        "path": "tools/harbor-v2/repair_structural_routes.py",
+        "sha256": "491b72c51288ef28c2875e24655497c8deae1433a114ba1609a1701d5da63fc5"
+      },
+      {
+        "path": "tools/harbor-v2/repair_ticket_booth.py",
+        "sha256": "947c0c231535313b8de7ca55d531c077839118ab0353438bc84853de8c101d54"
+      },
+      {
+        "path": "tools/harbor-v2/summarize_island_review.mjs",
+        "sha256": "bec63c484281447e7a224eda47499cd8abe6c892cd780a0768f6843a8dfb95ca"
+      },
+      {
+        "path": "tools/harbor-v2/tests/asset_pipeline.test.mjs",
+        "sha256": "4ab445de89f1c7214367d2ba2fbbe9a76d0ebac2e2d9fbb304a2fe922e35f35d"
+      },
+      {
+        "path": "tools/harbor-v2/textures/construction-pbr/_derived/spec.json",
+        "sha256": "39a80629308cf0ce653f0d5fa1ab70d32b1bb20dd6c6b9563e9c569fcfb129d3"
+      },
+      {
+        "path": "tools/harbor-v2/textures/container-bd-pbr/_derived/spec.json",
+        "sha256": "65769bec0096e8f9bbd4d0c4df93f6c4ad02801c31f6d88663b84c0f38ea42af"
+      },
+      {
+        "path": "tools/harbor-v2/textures/ferris-pbr/_derived/spec.json",
+        "sha256": "ac176de0aa482c00234f265271d07fae5a4733eed6afe858e2875904527118b2"
+      },
+      {
+        "path": "tools/harbor-v2/textures/garden-pbr/_derived/spec.json",
+        "sha256": "85bc3ffbc84ad57d6737ced7a2b833848837603dd16c5bbbf4a223a51e2414c6"
+      },
+      {
+        "path": "tools/harbor-v2/textures/warehouse-pbr/_derived/spec.json",
+        "sha256": "8508a25c6e8886197748eb50b2dbb88cceb3d4cd4292d12ea407703eaa651b2e"
+      },
+      {
+        "path": "tools/harbor-v2/tsconfig.StaticAssetGate.json",
+        "sha256": "a92ad8539a91a02808a2402efd35058a89d45ad3b22a0fea01072393749905b5"
+      },
+      {
+        "path": "tools/harbor-v2/upgrade_harbor_market.py",
+        "sha256": "f10088859a3fd3e0106ad045471a35ff397b53e4429dfaaa38e34141f8283337"
+      },
+      {
+        "path": "tools/harbor-v2/validate_cinematic_harbor.py",
+        "sha256": "a867f06b6d9b1964318fcd37bfa359cd4cd7045ad26f43d35ae0e9e5cf0acd10"
+      },
+      {
+        "path": "tools/harbor-v2/validate_cinematic_optimized.mjs",
+        "sha256": "60541149f63bd10c03eb138d41e850617c5c5da931e726c36da0bbd167e6201a"
+      },
+      {
+        "path": "tools/harbor-v2/validate_response_station.mjs",
+        "sha256": "2719801f5fc038219fcdf4e04c6707e09b68a5a2a87c196b1ea121d849cc609a"
+      },
+      {
+        "path": "tools/harbor-v2/validate_warehouse.py",
+        "sha256": "6c6e766fefde6a03f461869d58c9742affbfb178b7bfaab4c96c5185bbb26168"
+      },
+      {
+        "path": "tools/harbor-v2/validate_zone.py",
+        "sha256": "7385d98276efeacdedce5d8d64f12d20588ba146c948f406529d83598fb7bf5b"
+      },
+      {
+        "path": "tools/harbor-v2/verify_asset_pipeline.mjs",
+        "sha256": "6e3d44f441831d8ab0c3ebaf40fec1b81fa41ef9935ec37ae55c5bbb06fcc22c"
+      },
+      {
+        "path": "tools/harbor-v2/zones/build_construction_ad.py",
+        "sha256": "ba59d98a779f9c5c7f04db7263a6d7e74abaa3509049f337b2ec604db574a3d9"
+      },
+      {
+        "path": "tools/harbor-v2/zones/build_container_bd.py",
+        "sha256": "3982be73e41e1e30a8cfbcca25be711c4a4b23e869a53c475f3ecec0cc46b320"
+      },
+      {
+        "path": "tools/harbor-v2/zones/build_ferris_harbor.py",
+        "sha256": "3f2f970cf20d8d568cc0b5f99b1b764dd8d10191d18d03525eab80a3734566a6"
+      },
+      {
+        "path": "tools/harbor-v2/zones/build_garden_ac.py",
+        "sha256": "af98f720eaa370f53edcf076c19b738b74e46a7a34ef99d684153c98e43120f6"
+      },
+      {
+        "path": "tools/harbor-v2/zones/build_operations_ab.py",
+        "sha256": "ac6677e699bc17d29a8c3add7cf25febfc25489d01546830883b0483bda2a075"
+      },
+      {
+        "path": "tools/harbor-v2/zones/build_rescue_quay.py",
+        "sha256": "03664f955171830e7b30651d5fa83188f29d53969bfe1b598fbd6215466b322c"
+      },
+      {
+        "path": "tools/harbor-v2/zones/build_response_station.py",
+        "sha256": "e1790200b9391263a78ca7bf1a7063238990439b74a7462f7ee59978099f41f9"
+      },
+      {
+        "path": "tools/harbor-v2/zones/contracts/construction.json",
+        "sha256": "a17860aa0ee89d33172af239fc02b4dc15078cf887166d872e707639dfb1f17a"
+      },
+      {
+        "path": "tools/harbor-v2/zones/contracts/container_bd.json",
+        "sha256": "faafbb23cce8c378a493072fbc8b00ea631b2624409d208c66a9f96e283fee98"
+      },
+      {
+        "path": "tools/harbor-v2/zones/contracts/ferris_harbor.json",
+        "sha256": "7614470a55be9ba58d9114ad969dba827eb8d5880d04d8a0ffdd0ff904c6b0d7"
+      },
+      {
+        "path": "tools/harbor-v2/zones/contracts/garden.json",
+        "sha256": "3990064ad06f7f3fe8c9f8f4e36db6e8ca58ff373c25ed081c847bf66799497a"
+      },
+      {
+        "path": "tools/harbor-v2/zones/contracts/operations_ab.json",
+        "sha256": "0ccc5a3880340cd23eb8c7dc9e5eb5b92fd2340b13553609b91bc554c128fe21"
+      },
+      {
+        "path": "tools/harbor-v2/zones/foliage_cards.py",
+        "sha256": "830f783488dce201d960a68d609b8e67587062e25cbc7fcec8079607ea7a4f2e"
+      },
+      {
+        "path": "tools/harbor-v2/zones/harbor_market.py",
+        "sha256": "cd6fb93b752ac648d1a280554e9988972c78b8152add526df93e204df4e7b283"
+      },
+      {
+        "path": "tools/harbor-v2/zones/preview_render.py",
+        "sha256": "4d67b7a3050ba1d2b07efaeda659b8969e5a5cdfbb4ac93e65cf6ea174d0fb63"
+      },
+      {
+        "path": "tools/harbor-v2/zones/render_response_station.py",
+        "sha256": "c5a60f8d79ce00526506ad86770aace756c52af85d6f084de232de36451380f0"
+      },
+      {
+        "path": "tools/harbor-v2/zones/zone_kit.py",
+        "sha256": "78a6efb59e258362fd48081873c5d7d03b745248362e9037b2ea5712e66960c1"
+      },
+      {
+        "path": "tools/harbor-v2/zones/zone_textures.py",
+        "sha256": "07ee4f174d6465763604c8f8d0910a10806124bb4ae94a517e62060381d71959"
+      }
+    ]
+  },
+  "finishedAt": "2026-09-10T08:40:04.990Z"
+}

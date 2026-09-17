@@ -5,7 +5,7 @@
   "replacesCinematicZones": ["construction", "construction-detail"],
   "carveBox": { "min": [-54, -1, -42], "max": [-23.6, 30, -8] },
   "footprint": { "min": [-56, -0.5, -44], "max": [-20.5, 33, -7.0] },
-  "expectedProceduralColliders": 488,
+  "expectedProceduralColliders": 493,
   "budgets": {
     "lod0Triangles": 36000,
     "lod0DrawCalls": 30,

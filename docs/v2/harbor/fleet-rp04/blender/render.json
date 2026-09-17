@@ -1,0 +1,14 @@
+{
+  "source": "art-source/harbor-v2/ferris-harbor/ferris-harbor-fleet-rp04.blend",
+  "sourceSHA256": "25c3ddd30aa6179696dc0fea8f21108c4ebc476d549c4f68936e34b9d14e1dc6",
+  "rawExportSHA256": "db784df410f6fb5f92c4b536a2e2e169d2c9c932342fabb279fb4b60a2619e2d",
+  "image": "workboat-cycles-3840x2160.png",
+  "imageSHA256": "6b9654a7926ed4a63ca5e08bed8578c8bc4191fc9584d3bcb8ad5c465f6aa224",
+  "resolution": [
+    3840,
+    2160
+  ],
+  "renderer": "Blender Cycles",
+  "samples": 48,
+  "scope": "Offline native asset review. Preview-only sea and lighting, not Three.js runtime water or performance proof."
+}

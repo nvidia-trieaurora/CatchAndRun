@@ -1,0 +1,3802 @@
+{
+  "schema": "StaticAssetGate/v1",
+  "generatedAt": "2026-09-10T10:14:36.495Z",
+  "passed": true,
+  "scope": "Static geometry rays against real GLTFLoader/prepareMapAsset/buildHarborV2Map High/Low integration. Material opacity/culling retained; textures and alpha-map pixels not decoded. Not capsule, dynamic boat/water, screenshot, lighting or performance certification.",
+  "options": {
+    "root": "/Users/tlle/Documents/PersonalProject/CatchAndRun",
+    "assetDir": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets",
+    "report": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/market-rp04/gate-reviewed-02/static-audit.json",
+    "negativeControls": true
+  },
+  "inventory": [
+    {
+      "id": "warehouse",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/warehouse.glb",
+      "sha256": "d41a9ac251d9ea7116e192d3d7be4a0bffcd9b249621da1ed6806282afb086f5",
+      "bytes": 5620760,
+      "candidate": false
+    },
+    {
+      "id": "cinematic",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/cinematic/harbor-cinematic.glb",
+      "sha256": "3bf4b229e928e52488aaf90154686c466b7e5a84b2f61febd2ac16e5018d5fcc",
+      "bytes": 5206904,
+      "candidate": false
+    },
+    {
+      "id": "garden-ac",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/garden-ac.glb",
+      "sha256": "eba957f86623f8921d7e10dd426a6c88c3e074b9681200abf33a7a4e0dfbe762",
+      "bytes": 2418196,
+      "candidate": false
+    },
+    {
+      "id": "construction-ad",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+      "sha256": "cbae198daf1de59fcc51d57c6899cd8f89ddcd685bfc3bd1228189aa04628049",
+      "bytes": 2685880,
+      "candidate": false
+    },
+    {
+      "id": "ferris-harbor",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+      "sha256": "76a6bb0a733a5f1bcf692041336d772dc44b0d28f806b56c6aaf18c9738bd07f",
+      "bytes": 2988060,
+      "candidate": false
+    },
+    {
+      "id": "container-bd",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/container-bd.glb",
+      "sha256": "3e593113f9e820e80d24430b736adda7e22ae9f28ed350065a85be26db1a8ca5",
+      "bytes": 6001596,
+      "candidate": false
+    },
+    {
+      "id": "operations-ab",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/operations-ab.glb",
+      "sha256": "539236b2f4f5988bcb4d1b28f4c6c53de7c2b6a5c6ce740f1659315d7e8a1239",
+      "bytes": 3143904,
+      "candidate": false
+    },
+    {
+      "id": "response-station",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/response-station.glb",
+      "sha256": "8f8aaf89f4e4a93e34a5be9a67dc63ba2f6b83d6fed445074dfac7887c07af1f",
+      "bytes": 1623596,
+      "candidate": false
+    },
+    {
+      "id": "rescue-quay",
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+      "sha256": "e077c85bee11cb3b912172d03b0f6a89d5058b97c21c64a82fdfe1b82f27e71e",
+      "bytes": 1375540,
+      "candidate": false
+    }
+  ],
+  "sources": [
+    {
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/tools/harbor-v2/StaticAssetGate.ts",
+      "sha256": "108e9f90270a1fe80feaa06644cb546e11c435d13c78e1dfd65744de4361891a"
+    },
+    {
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/tools/harbor-v2/StaticAssetGateContracts.ts",
+      "sha256": "e5a4b096ab4458994bb49d9061f43514ad448e49b8a2b5ece152388af472c74f"
+    },
+    {
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/tools/harbor-v2/StaticAssetGateCoverage.json",
+      "sha256": "761e3ce2de78fe9c28bdbae68785f3087fc991ad76e0a01448867211bf3a8350"
+    },
+    {
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/tools/harbor-v2/audit_structural_routes.ts",
+      "sha256": "84c70bc964cc0c840b5331bc245f04708537ec19102bf8c01d6f848a7d90891d"
+    },
+    {
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/src/game/world/harbor-warehouse.json",
+      "sha256": "56db8515f209e3d4288e2ae14aa6c7281c60f09740e168fcc1b537ec546ab7b4"
+    },
+    {
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/src/game/world/assets/MapAssetLoader.ts",
+      "sha256": "7a9c7ecf72ffcb9ded87298452ea8f138fdd31671fe3d7bd63d60b045f4041ae"
+    },
+    {
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/src/game/world/maps/harborV2Map.ts",
+      "sha256": "66d2e08ff8bb693e3695bae870b2824df1b99bd31f02f198c2e203f58b833d3d"
+    },
+    {
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/src/game/world/maps/oldHarborFortnite.ts",
+      "sha256": "9b11d3097f350244e71c5d15695624d8a9ca059e00aa265d7aa9e14fb940f509"
+    },
+    {
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/src/game/world/zones/harborZones.ts",
+      "sha256": "f18d3bb3d84697ab03dc273d9a263ccb57ef363ef13d30c5936f9be8e421fa87"
+    },
+    {
+      "path": "/Users/tlle/Documents/PersonalProject/CatchAndRun/client/src/game/world/HunterGateState.ts",
+      "sha256": "652861e99b1a97272a9b9c05d8e88148f32febf64b54a396a55b82a4501cfe09"
+    }
+  ],
+  "changedInputs": [],
+  "qualities": {
+    "high": {
+      "passed": true,
+      "probes": [
+        {
+          "name": "house_front_door",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -35,
+            1.8,
+            27
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 1.6,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_left_window_1f",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -41,
+            2.2,
+            22
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 1.4,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_right_window_1f",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -29,
+            2.2,
+            22
+          ],
+          "direction": [
+            -1,
+            0,
+            0
+          ],
+          "far": 1.4,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_left_window_2f",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -41,
+            7.2,
+            22
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 1.4,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_right_window_2f",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -29,
+            7.2,
+            22
+          ],
+          "direction": [
+            -1,
+            0,
+            0
+          ],
+          "far": 1.4,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_loggia_door",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -35,
+            7,
+            27
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 1.4,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_chimney_flue",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -31.5,
+            13.4,
+            19
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 12.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_hearth_exit",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -31.5,
+            1.7,
+            19.4
+          ],
+          "direction": [
+            0,
+            0,
+            1
+          ],
+          "far": 1.2,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_2f_floor",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -35,
+            6,
+            23
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 1.5,
+          "expectation": "surface",
+          "visualCoordinate": 5.55,
+          "collisionCoordinate": 5.55,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_GARDEN_WOOD_INTERIOR_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/garden-ac.glb",
+              "at": [
+                -35,
+                5.549999713897705,
+                23
+              ],
+              "distance": 0.4500002861022949
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "procedural_198",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                -35,
+                5.55,
+                23
+              ],
+              "distance": 0.4500000000000002,
+              "min": [
+                -38,
+                5.35,
+                18
+              ],
+              "max": [
+                -32.2,
+                5.55,
+                26
+              ]
+            }
+          ]
+        },
+        {
+          "name": "house_roof_pitch",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py; oldHarborFortnite.ts/buildBackyardHouse stepped roof",
+          "origin": [
+            -35,
+            14,
+            24
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 2,
+          "expectation": "surface",
+          "visualCoordinate": 12.57,
+          "collisionCoordinate": 12.6375,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_GARDEN_ROOF_METAL_DARK_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/garden-ac.glb",
+              "at": [
+                -35,
+                12.569999694824219,
+                24
+              ],
+              "distance": 1.4300003051757812
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "procedural_232",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                -35,
+                12.6375,
+                24
+              ],
+              "distance": 1.3625000000000007,
+              "min": [
+                -41,
+                10.549999999999999,
+                23.25
+              ],
+              "max": [
+                -29,
+                12.6375,
+                24.5
+              ]
+            }
+          ]
+        },
+        {
+          "name": "construction_pour_1f",
+          "zone": "construction-ad",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -31.6,
+            4,
+            -18.5
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 1.2,
+          "expectation": "surface",
+          "visualCoordinate": 3.5,
+          "collisionCoordinate": 3.5,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_CONSTRUCTION_CONCRETE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -31.6,
+                3.5,
+                -18.5
+              ],
+              "distance": 0.5
+            },
+            {
+              "name": "MESH_CONSTRUCTION_PALETTE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -31.6,
+                3.200000047683716,
+                -18.5
+              ],
+              "distance": 0.7999999523162842
+            },
+            {
+              "name": "MESH_CONSTRUCTION_SAFETY_YELLOW_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -31.6,
+                3.200000047683716,
+                -18.5
+              ],
+              "distance": 0.7999999523162842
+            },
+            {
+              "name": "MESH_CONSTRUCTION_PALETTE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -31.6,
+                3.120000123977661,
+                -18.5
+              ],
+              "distance": 0.8799998760223389
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_CONSTRUCTION_RP03_POUR_1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -31.6,
+                3.499999910593033,
+                -18.5
+              ],
+              "distance": 0.5000000894069672,
+              "min": [
+                -33.00000035762787,
+                3.199999898672104,
+                -21.799999237060547
+              ],
+              "max": [
+                -30.200000405311584,
+                3.499999910593033,
+                -15.799999237060547
+              ]
+            }
+          ]
+        },
+        {
+          "name": "construction_pour_2f",
+          "zone": "construction-ad",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -31.6,
+            7.2,
+            -18.5
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 1.2,
+          "expectation": "surface",
+          "visualCoordinate": 6.7,
+          "collisionCoordinate": 6.7,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_CONSTRUCTION_CONCRETE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -31.6,
+                6.700000286102295,
+                -18.5
+              ],
+              "distance": 0.49999971389770526
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_CONSTRUCTION_RP03_POUR_2",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -31.6,
+                6.700000196695328,
+                -18.5
+              ],
+              "distance": 0.4999998033046724,
+              "min": [
+                -33.00000035762787,
+                6.400000184774399,
+                -21.799999952316284
+              ],
+              "max": [
+                -30.200000405311584,
+                6.700000196695328,
+                -15.200000047683716
+              ]
+            }
+          ]
+        },
+        {
+          "name": "construction_column",
+          "zone": "construction-ad",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -37,
+            1.7,
+            -22
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 1.3,
+          "expectation": "surface",
+          "visualCoordinate": -36.21,
+          "collisionCoordinate": -36.21,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_CONSTRUCTION_CONCRETE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -36.209999084472656,
+                1.7,
+                -22
+              ],
+              "distance": 0.7900009155273438
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_CINE_CONSTRUCTION_COLUMN_04",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/cinematic/harbor-cinematic.glb",
+              "at": [
+                -36.21011993774224,
+                1.7,
+                -22
+              ],
+              "distance": 0.7898800622577582,
+              "min": [
+                -36.21011993774224,
+                0,
+                -22.210119937742242
+              ],
+              "max": [
+                -35.78988006225776,
+                8.5,
+                -21.789880062257758
+              ]
+            }
+          ]
+        },
+        {
+          "name": "construction_bridge",
+          "zone": "construction-ad",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -34.8,
+            5.7,
+            -25.5
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 1.2,
+          "expectation": "surface",
+          "visualCoordinate": 5.1,
+          "collisionCoordinate": 5.1,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_CONSTRUCTION_GRATING_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -34.8,
+                5.100000381469727,
+                -25.5
+              ],
+              "distance": 0.5999996185302736
+            },
+            {
+              "name": "MESH_CONSTRUCTION_GRATING_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -34.8,
+                5.039999961853027,
+                -25.5
+              ],
+              "distance": 0.6600000381469728
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "procedural_47",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                -34.8,
+                5.1,
+                -25.5
+              ],
+              "distance": 0.6000000000000005,
+              "min": [
+                -37,
+                4.9,
+                -26.1
+              ],
+              "max": [
+                -32.75,
+                5.1,
+                -24.9
+              ]
+            }
+          ]
+        },
+        {
+          "name": "warehouse_roof",
+          "zone": "warehouse",
+          "source": "tools/harbor-v2/build_warehouse.py/build_colliders; RP03 native ray (galvanized seam High, panel Low)",
+          "origin": [
+            0,
+            11,
+            4
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 3,
+          "expectation": "surface",
+          "visualCoordinate": {
+            "high": 9.199706984966365,
+            "low": 9.139975537616657
+          },
+          "collisionCoordinate": 9.09401196123739,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_WAREHOUSE_GALVANIZED_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/warehouse.glb",
+              "at": [
+                0,
+                9.199706984966365,
+                4
+              ],
+              "distance": 1.8002930150336347
+            },
+            {
+              "name": "MESH_WAREHOUSE_ROOF_DARK_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/warehouse.glb",
+              "at": [
+                0,
+                9.139975537616657,
+                3.999999999999999
+              ],
+              "distance": 1.8600244623833433
+            },
+            {
+              "name": "MESH_WAREHOUSE_GALVANIZED_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/warehouse.glb",
+              "at": [
+                0,
+                9.139560330107132,
+                4
+              ],
+              "distance": 1.8604396698928678
+            },
+            {
+              "name": "MESH_WAREHOUSE_ROOF_DARK_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/warehouse.glb",
+              "at": [
+                0,
+                8.859291804967686,
+                3.999999999999999
+              ],
+              "distance": 2.140708195032314
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_ROOF_04",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/warehouse.glb",
+              "at": [
+                0,
+                9.094012066721916,
+                4
+              ],
+              "distance": 1.9059879332780838,
+              "min": [
+                -23,
+                8.74401207268238,
+                2.9600000381469727
+              ],
+              "max": [
+                23,
+                9.094012066721916,
+                6.039999961853027
+              ]
+            }
+          ]
+        },
+        {
+          "name": "operations_personnel_door_y0.45",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -3.2,
+            0.45,
+            -28
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 2.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_roller_door_y0.45",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            3.5,
+            0.45,
+            -28
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 2.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_side_door_y0.45",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -10.5,
+            0.45,
+            -36
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 2.2,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_personnel_door_y0.92",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -3.2,
+            0.92,
+            -28
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 2.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_roller_door_y0.92",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            3.5,
+            0.92,
+            -28
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 2.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_side_door_y0.92",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -10.5,
+            0.92,
+            -36
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 2.2,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_personnel_door_y1.8",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -3.2,
+            1.8,
+            -28
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 2.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_roller_door_y1.8",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            3.5,
+            1.8,
+            -28
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 2.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_side_door_y1.8",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -10.5,
+            1.8,
+            -36
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 2.2,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "market_front_entry",
+          "zone": "container-bd",
+          "source": "client/tests/HarborMarketNative.test.ts + oldHarborFortnite.ts/buildDocksideMiniMart",
+          "origin": [
+            45,
+            1.7,
+            -31
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 3.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "market_stockroom_entry",
+          "zone": "container-bd",
+          "source": "client/tests/HarborMarketNative.test.ts + oldHarborFortnite.ts/buildDocksideMiniMart",
+          "origin": [
+            40.15,
+            1.6,
+            -40.2
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 1.1,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "market_office_entry",
+          "zone": "container-bd",
+          "source": "client/tests/HarborMarketNative.test.ts + oldHarborFortnite.ts/buildDocksideMiniMart",
+          "origin": [
+            42.35,
+            1.6,
+            -40.2
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 1.1,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "market_roof_hatch",
+          "zone": "container-bd",
+          "source": "client/tests/HarborMarketNative.test.ts + oldHarborFortnite.ts/buildDocksideMiniMart",
+          "origin": [
+            38.85,
+            7,
+            -41.3
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 3,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "market_roof",
+          "zone": "container-bd",
+          "source": "client/tests/HarborMarketNative.test.ts + oldHarborFortnite.ts/buildDocksideMiniMart",
+          "origin": [
+            45,
+            7,
+            -39
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 2,
+          "expectation": "surface",
+          "visualCoordinate": 5.8,
+          "collisionCoordinate": 5.8,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_CONTAINER_BD_CONTAINER_STEEL_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/container-bd.glb",
+              "at": [
+                45,
+                5.800000190734863,
+                -39
+              ],
+              "distance": 1.1999998092651367
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "procedural_307",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                45,
+                5.8,
+                -39
+              ],
+              "distance": 1.2000000000000002,
+              "min": [
+                39.3,
+                5.5,
+                -44
+              ],
+              "max": [
+                53,
+                5.8,
+                -32
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ferris_ticket_side_entry",
+          "zone": "ferris-harbor",
+          "source": "client/tests/FerrisTicketBooth.test.ts + tools/harbor-v2/repair_ticket_booth.py",
+          "origin": [
+            -21.5,
+            1.5,
+            30.8
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 1.1,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "ferris_ticket_roof",
+          "zone": "ferris-harbor",
+          "source": "client/tests/FerrisTicketBooth.test.ts + tools/harbor-v2/repair_ticket_booth.py",
+          "origin": [
+            -19,
+            5,
+            31
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 3,
+          "expectation": "surface",
+          "visualCoordinate": 3.4,
+          "collisionCoordinate": 3.4,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_FERRIS_HARBOR_PALETTE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                3.3999998569488525,
+                31
+              ],
+              "distance": 1.6000001430511475
+            },
+            {
+              "name": "MESH_FERRIS_HARBOR_PALETTE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                3.200000047683716,
+                31
+              ],
+              "distance": 1.7999999523162842
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_FERRIS_HARBOR_TICKET_ROOF",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                3.3999999538064003,
+                31
+              ],
+              "distance": 1.6000000461935997,
+              "min": [
+                -21.049999952316284,
+                3.199999950826168,
+                29.350000500679016
+              ],
+              "max": [
+                -17.019999742507935,
+                3.3999999538064003,
+                33.28000056743622
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ferris_ticket_floor",
+          "zone": "ferris-harbor",
+          "source": "client/tests/FerrisTicketBooth.test.ts + tools/harbor-v2/repair_ticket_booth.py",
+          "origin": [
+            -19,
+            0.5,
+            31
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 0.4,
+          "expectation": "surface",
+          "visualCoordinate": 0.2,
+          "collisionCoordinate": 0.2,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_FERRIS_HARBOR_BASE_CONCRETE_SEAWALL_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                0.20000000298023224,
+                31
+              ],
+              "distance": 0.29999999701976776
+            },
+            {
+              "name": "MESH_GARDEN_BASE_LAWN_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/garden-ac.glb",
+              "at": [
+                -19,
+                0.11999999731779099,
+                31
+              ],
+              "distance": 0.380000002682209
+            },
+            {
+              "name": "base_MESH_asphalt_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/cinematic/harbor-cinematic.glb",
+              "at": [
+                -19,
+                0.11813554167747498,
+                31
+              ],
+              "distance": 0.381864458322525
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_FERRIS_HARBOR_TICKET_FLOOR",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                0.20000000298023224,
+                31
+              ],
+              "distance": 0.29999999701976776,
+              "min": [
+                -20.899999618530273,
+                0.04999999701976776,
+                29.500000715255737
+              ],
+              "max": [
+                -17.149999618530273,
+                0.20000000298023224,
+                32.90000081062317
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ferris_ticket_glazing",
+          "zone": "ferris-harbor",
+          "source": "client/tests/FerrisTicketBooth.test.ts + tools/harbor-v2/repair_ticket_booth.py",
+          "origin": [
+            -19,
+            1.8,
+            34
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 3,
+          "expectation": "surface",
+          "visualCoordinate": 32.83,
+          "collisionCoordinate": 32.83,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_FERRIS_HARBOR_RP02_TICKET_GLASS_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                1.8,
+                32.83000183105469
+              ],
+              "distance": 1.1699981689453125
+            },
+            {
+              "name": "MESH_FERRIS_HARBOR_RP02_TICKET_GLASS_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                1.8,
+                32.790000915527344
+              ],
+              "distance": 1.2099990844726562
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_FERRIS_HARBOR_TICKET_FRONT_GLASS",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                1.8,
+                32.83000137284398
+              ],
+              "distance": 1.1699986271560192,
+              "min": [
+                -20.299999237060547,
+                1.050000011920929,
+                32.79000137373805
+              ],
+              "max": [
+                -17.799999237060547,
+                2.650000035762787,
+                32.83000137284398
+              ]
+            }
+          ]
+        },
+        {
+          "name": "rescue_maintenance_lane_x43.4",
+          "zone": "rescue-quay",
+          "source": "client/tests/RescueQuay.test.ts + tools/harbor-v2/zones/build_rescue_quay.py",
+          "origin": [
+            43.4,
+            1.5,
+            12.5
+          ],
+          "direction": [
+            0,
+            0,
+            1
+          ],
+          "far": 20,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "rescue_apron_x43.4",
+          "zone": "rescue-quay",
+          "source": "client/tests/RescueQuay.test.ts + tools/harbor-v2/zones/build_rescue_quay.py",
+          "origin": [
+            43.4,
+            0.31,
+            28
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 0.1,
+          "expectation": "surface",
+          "visualCoordinate": 0.24,
+          "collisionCoordinate": 0.24,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_RESCUE_QUAY_RQ_CONCRETE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                43.4,
+                0.23999999463558197,
+                28
+              ],
+              "distance": 0.07000000536441803
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_RESCUE_QUAY_APRON_00",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                43.4,
+                0.23999999463558197,
+                28
+              ],
+              "distance": 0.07000000536441803,
+              "min": [
+                33,
+                0,
+                12
+              ],
+              "max": [
+                60,
+                0.23999999463558197,
+                34
+              ]
+            }
+          ]
+        },
+        {
+          "name": "rescue_maintenance_lane_x45",
+          "zone": "rescue-quay",
+          "source": "client/tests/RescueQuay.test.ts + tools/harbor-v2/zones/build_rescue_quay.py",
+          "origin": [
+            45,
+            1.5,
+            12.5
+          ],
+          "direction": [
+            0,
+            0,
+            1
+          ],
+          "far": 20,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "rescue_apron_x45",
+          "zone": "rescue-quay",
+          "source": "client/tests/RescueQuay.test.ts + tools/harbor-v2/zones/build_rescue_quay.py",
+          "origin": [
+            45,
+            0.31,
+            28
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 0.1,
+          "expectation": "surface",
+          "visualCoordinate": 0.244,
+          "collisionCoordinate": 0.24,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_RESCUE_QUAY_RQ_RUBBER_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                45,
+                0.24400000274181366,
+                28
+              ],
+              "distance": 0.06599999725818634
+            },
+            {
+              "name": "MESH_RESCUE_QUAY_RQ_CONCRETE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                45,
+                0.23999999463558197,
+                28
+              ],
+              "distance": 0.07000000536441803
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_RESCUE_QUAY_APRON_00",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                45,
+                0.23999999463558197,
+                28
+              ],
+              "distance": 0.07000000536441803,
+              "min": [
+                33,
+                0,
+                12
+              ],
+              "max": [
+                60,
+                0.23999999463558197,
+                34
+              ]
+            }
+          ]
+        },
+        {
+          "name": "rescue_maintenance_lane_x48.6",
+          "zone": "rescue-quay",
+          "source": "client/tests/RescueQuay.test.ts + tools/harbor-v2/zones/build_rescue_quay.py",
+          "origin": [
+            48.6,
+            1.5,
+            12.5
+          ],
+          "direction": [
+            0,
+            0,
+            1
+          ],
+          "far": 20,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "rescue_apron_x48.6",
+          "zone": "rescue-quay",
+          "source": "client/tests/RescueQuay.test.ts + tools/harbor-v2/zones/build_rescue_quay.py",
+          "origin": [
+            48.6,
+            0.31,
+            28
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 0.1,
+          "expectation": "surface",
+          "visualCoordinate": 0.24,
+          "collisionCoordinate": 0.24,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_RESCUE_QUAY_RQ_CONCRETE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                48.6,
+                0.23999999463558197,
+                28
+              ],
+              "distance": 0.07000000536441803
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_RESCUE_QUAY_APRON_00",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                48.6,
+                0.23999999463558197,
+                28
+              ],
+              "distance": 0.07000000536441803,
+              "min": [
+                33,
+                0,
+                12
+              ],
+              "max": [
+                60,
+                0.23999999463558197,
+                34
+              ]
+            }
+          ]
+        },
+        {
+          "name": "rescue_watchtower_deck",
+          "zone": "rescue-quay",
+          "source": "client/tests/RescueQuay.test.ts + tools/harbor-v2/zones/build_rescue_quay.py",
+          "origin": [
+            40,
+            6.15,
+            30
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 0.12,
+          "expectation": "surface",
+          "visualCoordinate": 6.075,
+          "collisionCoordinate": 6.075,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_RESCUE_QUAY_RQ_STEEL_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                40,
+                6.074999809265137,
+                30
+              ],
+              "distance": 0.07500019073486364
+            },
+            {
+              "name": "MESH_RESCUE_QUAY_RQ_STEEL_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                40,
+                6.074999809265137,
+                30
+              ],
+              "distance": 0.07500019073486364
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "procedural_113",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                40,
+                6.075000002980232,
+                30
+              ],
+              "distance": 0.07499999701976812,
+              "min": [
+                38,
+                5.924999997019768,
+                28
+              ],
+              "max": [
+                42,
+                6.075000002980232,
+                32
+              ]
+            }
+          ]
+        },
+        {
+          "name": "response_floor",
+          "zone": "response-station",
+          "source": "client/tests/ResponseStationIntegration.test.ts + tools/harbor-v2/zones/build_response_station.py",
+          "origin": [
+            -40,
+            0.3,
+            1
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 0.25,
+          "expectation": "surface",
+          "visualCoordinate": 0.14,
+          "collisionCoordinate": 0.14,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_RESPONSE_STATION_RS_CONCRETE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/response-station.glb",
+              "at": [
+                -40,
+                0.14000000059604645,
+                1
+              ],
+              "distance": 0.15999999940395354
+            },
+            {
+              "name": "base_MESH_asphalt_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/cinematic/harbor-cinematic.glb",
+              "at": [
+                -40,
+                0.11813554167747498,
+                1
+              ],
+              "distance": 0.181864458322525
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "procedural_763",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                -40,
+                0.14,
+                1
+              ],
+              "distance": 0.15999999999999998,
+              "min": [
+                -49,
+                0.1,
+                -7
+              ],
+              "max": [
+                -35,
+                0.14,
+                7
+              ]
+            },
+            {
+              "name": "procedural_93",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                -40,
+                0.10000000074505805,
+                1
+              ],
+              "distance": 0.19999999925494194,
+              "min": [
+                -49,
+                -7.450580569168253e-10,
+                -7
+              ],
+              "max": [
+                -35,
+                0.10000000074505806,
+                7
+              ]
+            }
+          ]
+        },
+        {
+          "name": "response_gate_closed",
+          "zone": "response-station",
+          "source": "client/tests/ResponseStationIntegration.test.ts + tools/harbor-v2/zones/build_response_station.py",
+          "origin": [
+            -36,
+            1.8,
+            0
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 1.5,
+          "expectation": "surface",
+          "visualCoordinate": -35.105,
+          "collisionCoordinate": -35.125,
+          "tolerance": 0.001,
+          "gate": "closed",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_RESPONSE_STATION_HUNTER_GATE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/response-station.glb",
+              "at": [
+                -35.104999996721745,
+                1.7999999999999998,
+                0
+              ],
+              "distance": 0.8950000032782555
+            },
+            {
+              "name": "MESH_RESPONSE_STATION_HUNTER_GATE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/response-station.glb",
+              "at": [
+                -34.895000003278255,
+                1.7999999999999998,
+                0
+              ],
+              "distance": 1.1049999967217445
+            },
+            {
+              "name": "MESH_RESPONSE_STATION_HUNTER_GATE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/response-station.glb",
+              "at": [
+                -34.88999969512224,
+                1.7999999999999998,
+                0
+              ],
+              "distance": 1.110000304877758
+            },
+            {
+              "name": "MESH_RESPONSE_STATION_HUNTER_GATE_LOD0",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/response-station.glb",
+              "at": [
+                -34.874999701976776,
+                1.7999999999999998,
+                0
+              ],
+              "distance": 1.1250002980232239
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "procedural_98",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                -35.125,
+                1.8,
+                0
+              ],
+              "distance": 0.875,
+              "min": [
+                -35.125,
+                0,
+                -7
+              ],
+              "max": [
+                -34.875,
+                5,
+                7
+              ]
+            }
+          ]
+        },
+        {
+          "name": "response_release_lane",
+          "zone": "response-station",
+          "source": "client/tests/ResponseStationIntegration.test.ts + tools/harbor-v2/zones/build_response_station.py",
+          "origin": [
+            -47.7,
+            1.1,
+            0
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 14,
+          "expectation": "open",
+          "gate": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        }
+      ],
+      "controls": [
+        {
+          "name": "missing_floor",
+          "probe": "house_2f_floor",
+          "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/garden-ac.glb",
+          "baselinePassed": true,
+          "detected": true,
+          "restored": true,
+          "passed": true,
+          "evidence": {
+            "name": "house_2f_floor",
+            "zone": "garden-ac",
+            "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+            "origin": [
+              -35,
+              6,
+              23
+            ],
+            "direction": [
+              0,
+              -1,
+              0
+            ],
+            "far": 1.5,
+            "expectation": "surface",
+            "visualCoordinate": 5.55,
+            "collisionCoordinate": 5.55,
+            "tolerance": 0.001,
+            "passed": false,
+            "failures": [
+              "missing_visual_surface"
+            ],
+            "visibleHits": [],
+            "collisionHits": [
+              {
+                "name": "procedural_198",
+                "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+                "at": [
+                  -35,
+                  5.55,
+                  23
+                ],
+                "distance": 0.4500000000000002,
+                "min": [
+                  -38,
+                  5.35,
+                  18
+                ],
+                "max": [
+                  -32.2,
+                  5.55,
+                  26
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "invisible_blocker",
+          "probe": "ferris_ticket_side_entry",
+          "source": "StaticAssetGate in-memory negative control (never saved to GLB)",
+          "baselinePassed": true,
+          "detected": true,
+          "restored": true,
+          "passed": true,
+          "evidence": {
+            "name": "ferris_ticket_side_entry",
+            "zone": "ferris-harbor",
+            "source": "client/tests/FerrisTicketBooth.test.ts + tools/harbor-v2/repair_ticket_booth.py",
+            "origin": [
+              -21.5,
+              1.5,
+              30.8
+            ],
+            "direction": [
+              1,
+              0,
+              0
+            ],
+            "far": 1.1,
+            "expectation": "open",
+            "passed": false,
+            "failures": [
+              "invisible_blocker"
+            ],
+            "visibleHits": [],
+            "collisionHits": [
+              {
+                "name": "StaticAssetGate_MUTATION_invisible_blocker",
+                "source": "StaticAssetGate in-memory negative control (never saved to GLB)",
+                "at": [
+                  -21.000000000745057,
+                  1.5,
+                  30.8
+                ],
+                "distance": 0.49999999925494265,
+                "min": [
+                  -21.000000000745057,
+                  0.5,
+                  30.3
+                ],
+                "max": [
+                  -20.89999999925494,
+                  2.5,
+                  31.3
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "visible_seal",
+          "probe": "ferris_ticket_side_entry",
+          "source": "StaticAssetGate in-memory negative control (never saved to GLB)",
+          "baselinePassed": true,
+          "detected": true,
+          "restored": true,
+          "passed": true,
+          "evidence": {
+            "name": "ferris_ticket_side_entry",
+            "zone": "ferris-harbor",
+            "source": "client/tests/FerrisTicketBooth.test.ts + tools/harbor-v2/repair_ticket_booth.py",
+            "origin": [
+              -21.5,
+              1.5,
+              30.8
+            ],
+            "direction": [
+              1,
+              0,
+              0
+            ],
+            "far": 1.1,
+            "expectation": "open",
+            "passed": false,
+            "failures": [
+              "visible_seal"
+            ],
+            "visibleHits": [
+              {
+                "name": "StaticAssetGate_MUTATION_visible_seal",
+                "source": "StaticAssetGate in-memory negative control (never saved to GLB)",
+                "at": [
+                  -21.000000000745057,
+                  1.5,
+                  30.8
+                ],
+                "distance": 0.49999999925494265
+              },
+              {
+                "name": "StaticAssetGate_MUTATION_visible_seal",
+                "source": "StaticAssetGate in-memory negative control (never saved to GLB)",
+                "at": [
+                  -21.000000000745057,
+                  1.5,
+                  30.8
+                ],
+                "distance": 0.49999999925494265
+              }
+            ],
+            "collisionHits": []
+          }
+        }
+      ]
+    },
+    "low": {
+      "passed": true,
+      "probes": [
+        {
+          "name": "house_front_door",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -35,
+            1.8,
+            27
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 1.6,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_left_window_1f",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -41,
+            2.2,
+            22
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 1.4,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_right_window_1f",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -29,
+            2.2,
+            22
+          ],
+          "direction": [
+            -1,
+            0,
+            0
+          ],
+          "far": 1.4,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_left_window_2f",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -41,
+            7.2,
+            22
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 1.4,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_right_window_2f",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -29,
+            7.2,
+            22
+          ],
+          "direction": [
+            -1,
+            0,
+            0
+          ],
+          "far": 1.4,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_loggia_door",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -35,
+            7,
+            27
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 1.4,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_chimney_flue",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -31.5,
+            13.4,
+            19
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 12.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_hearth_exit",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -31.5,
+            1.7,
+            19.4
+          ],
+          "direction": [
+            0,
+            0,
+            1
+          ],
+          "far": 1.2,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "house_2f_floor",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -35,
+            6,
+            23
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 1.5,
+          "expectation": "surface",
+          "visualCoordinate": 5.55,
+          "collisionCoordinate": 5.55,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_GARDEN_WOOD_INTERIOR_RP03_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/garden-ac.glb",
+              "at": [
+                -35,
+                5.549999713897705,
+                23
+              ],
+              "distance": 0.4500002861022949
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "procedural_198",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                -35,
+                5.55,
+                23
+              ],
+              "distance": 0.4500000000000002,
+              "min": [
+                -38,
+                5.35,
+                18
+              ],
+              "max": [
+                -32.2,
+                5.55,
+                26
+              ]
+            }
+          ]
+        },
+        {
+          "name": "house_roof_pitch",
+          "zone": "garden-ac",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py; oldHarborFortnite.ts/buildBackyardHouse stepped roof",
+          "origin": [
+            -35,
+            14,
+            24
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 2,
+          "expectation": "surface",
+          "visualCoordinate": 12.57,
+          "collisionCoordinate": 12.6375,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_GARDEN_ROOF_METAL_DARK_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/garden-ac.glb",
+              "at": [
+                -35,
+                12.569999694824219,
+                24
+              ],
+              "distance": 1.4300003051757812
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "procedural_232",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                -35,
+                12.6375,
+                24
+              ],
+              "distance": 1.3625000000000007,
+              "min": [
+                -41,
+                10.549999999999999,
+                23.25
+              ],
+              "max": [
+                -29,
+                12.6375,
+                24.5
+              ]
+            }
+          ]
+        },
+        {
+          "name": "construction_pour_1f",
+          "zone": "construction-ad",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -31.6,
+            4,
+            -18.5
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 1.2,
+          "expectation": "surface",
+          "visualCoordinate": 3.5,
+          "collisionCoordinate": 3.5,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_CONSTRUCTION_CONCRETE_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -31.6,
+                3.5,
+                -18.5
+              ],
+              "distance": 0.5
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_CONSTRUCTION_RP03_POUR_1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -31.6,
+                3.499999910593033,
+                -18.5
+              ],
+              "distance": 0.5000000894069672,
+              "min": [
+                -33.00000035762787,
+                3.199999898672104,
+                -21.799999237060547
+              ],
+              "max": [
+                -30.200000405311584,
+                3.499999910593033,
+                -15.799999237060547
+              ]
+            }
+          ]
+        },
+        {
+          "name": "construction_pour_2f",
+          "zone": "construction-ad",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -31.6,
+            7.2,
+            -18.5
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 1.2,
+          "expectation": "surface",
+          "visualCoordinate": 6.7,
+          "collisionCoordinate": 6.7,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_CONSTRUCTION_CONCRETE_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -31.6,
+                6.700000286102295,
+                -18.5
+              ],
+              "distance": 0.49999971389770526
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_CONSTRUCTION_RP03_POUR_2",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -31.6,
+                6.700000196695328,
+                -18.5
+              ],
+              "distance": 0.4999998033046724,
+              "min": [
+                -33.00000035762787,
+                6.400000184774399,
+                -21.799999952316284
+              ],
+              "max": [
+                -30.200000405311584,
+                6.700000196695328,
+                -15.200000047683716
+              ]
+            }
+          ]
+        },
+        {
+          "name": "construction_column",
+          "zone": "construction-ad",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -37,
+            1.7,
+            -22
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 1.3,
+          "expectation": "surface",
+          "visualCoordinate": -36.21,
+          "collisionCoordinate": -36.21,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_CONSTRUCTION_CONCRETE_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -36.209999084472656,
+                1.7,
+                -22
+              ],
+              "distance": 0.7900009155273438
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_CINE_CONSTRUCTION_COLUMN_04",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/cinematic/harbor-cinematic.glb",
+              "at": [
+                -36.21011993774224,
+                1.7,
+                -22
+              ],
+              "distance": 0.7898800622577582,
+              "min": [
+                -36.21011993774224,
+                0,
+                -22.210119937742242
+              ],
+              "max": [
+                -35.78988006225776,
+                8.5,
+                -21.789880062257758
+              ]
+            }
+          ]
+        },
+        {
+          "name": "construction_bridge",
+          "zone": "construction-ad",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -34.8,
+            5.7,
+            -25.5
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 1.2,
+          "expectation": "surface",
+          "visualCoordinate": 5.1,
+          "collisionCoordinate": 5.1,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_CONSTRUCTION_GALVANIZED_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/construction-ad.glb",
+              "at": [
+                -34.8,
+                5.100000381469727,
+                -25.5
+              ],
+              "distance": 0.5999996185302736
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "procedural_47",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                -34.8,
+                5.1,
+                -25.5
+              ],
+              "distance": 0.6000000000000005,
+              "min": [
+                -37,
+                4.9,
+                -26.1
+              ],
+              "max": [
+                -32.75,
+                5.1,
+                -24.9
+              ]
+            }
+          ]
+        },
+        {
+          "name": "warehouse_roof",
+          "zone": "warehouse",
+          "source": "tools/harbor-v2/build_warehouse.py/build_colliders; RP03 native ray (galvanized seam High, panel Low)",
+          "origin": [
+            0,
+            11,
+            4
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 3,
+          "expectation": "surface",
+          "visualCoordinate": {
+            "high": 9.199706984966365,
+            "low": 9.139975537616657
+          },
+          "collisionCoordinate": 9.09401196123739,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_WAREHOUSE_ROOF_FRONT_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/warehouse.glb",
+              "at": [
+                0,
+                9.139975537616657,
+                3.999999999999999
+              ],
+              "distance": 1.8600244623833433
+            },
+            {
+              "name": "MESH_WAREHOUSE_ROOF_FRONT_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/warehouse.glb",
+              "at": [
+                0,
+                8.859291804967686,
+                3.999999999999999
+              ],
+              "distance": 2.140708195032314
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_ROOF_04",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/warehouse.glb",
+              "at": [
+                0,
+                9.094012066721916,
+                4
+              ],
+              "distance": 1.9059879332780838,
+              "min": [
+                -23,
+                8.74401207268238,
+                2.9600000381469727
+              ],
+              "max": [
+                23,
+                9.094012066721916,
+                6.039999961853027
+              ]
+            }
+          ]
+        },
+        {
+          "name": "operations_personnel_door_y0.45",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -3.2,
+            0.45,
+            -28
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 2.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_roller_door_y0.45",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            3.5,
+            0.45,
+            -28
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 2.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_side_door_y0.45",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -10.5,
+            0.45,
+            -36
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 2.2,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_personnel_door_y0.92",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -3.2,
+            0.92,
+            -28
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 2.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_roller_door_y0.92",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            3.5,
+            0.92,
+            -28
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 2.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_side_door_y0.92",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -10.5,
+            0.92,
+            -36
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 2.2,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_personnel_door_y1.8",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -3.2,
+            1.8,
+            -28
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 2.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_roller_door_y1.8",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            3.5,
+            1.8,
+            -28
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 2.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "operations_side_door_y1.8",
+          "zone": "operations-ab",
+          "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+          "origin": [
+            -10.5,
+            1.8,
+            -36
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 2.2,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "market_front_entry",
+          "zone": "container-bd",
+          "source": "client/tests/HarborMarketNative.test.ts + oldHarborFortnite.ts/buildDocksideMiniMart",
+          "origin": [
+            45,
+            1.7,
+            -31
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 3.5,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "market_stockroom_entry",
+          "zone": "container-bd",
+          "source": "client/tests/HarborMarketNative.test.ts + oldHarborFortnite.ts/buildDocksideMiniMart",
+          "origin": [
+            40.15,
+            1.6,
+            -40.2
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 1.1,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "market_office_entry",
+          "zone": "container-bd",
+          "source": "client/tests/HarborMarketNative.test.ts + oldHarborFortnite.ts/buildDocksideMiniMart",
+          "origin": [
+            42.35,
+            1.6,
+            -40.2
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 1.1,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "market_roof_hatch",
+          "zone": "container-bd",
+          "source": "client/tests/HarborMarketNative.test.ts + oldHarborFortnite.ts/buildDocksideMiniMart",
+          "origin": [
+            38.85,
+            7,
+            -41.3
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 3,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "market_roof",
+          "zone": "container-bd",
+          "source": "client/tests/HarborMarketNative.test.ts + oldHarborFortnite.ts/buildDocksideMiniMart",
+          "origin": [
+            45,
+            7,
+            -39
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 2,
+          "expectation": "surface",
+          "visualCoordinate": 5.8,
+          "collisionCoordinate": 5.8,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_CONTAINER_BD_CONTAINER_STEEL_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/container-bd.glb",
+              "at": [
+                45,
+                5.800000190734863,
+                -39
+              ],
+              "distance": 1.1999998092651367
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "procedural_307",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                45,
+                5.8,
+                -39
+              ],
+              "distance": 1.2000000000000002,
+              "min": [
+                39.3,
+                5.5,
+                -44
+              ],
+              "max": [
+                53,
+                5.8,
+                -32
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ferris_ticket_side_entry",
+          "zone": "ferris-harbor",
+          "source": "client/tests/FerrisTicketBooth.test.ts + tools/harbor-v2/repair_ticket_booth.py",
+          "origin": [
+            -21.5,
+            1.5,
+            30.8
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 1.1,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "ferris_ticket_roof",
+          "zone": "ferris-harbor",
+          "source": "client/tests/FerrisTicketBooth.test.ts + tools/harbor-v2/repair_ticket_booth.py",
+          "origin": [
+            -19,
+            5,
+            31
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 3,
+          "expectation": "surface",
+          "visualCoordinate": 3.4,
+          "collisionCoordinate": 3.4,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_FERRIS_HARBOR_PALETTE_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                3.3999998569488525,
+                31
+              ],
+              "distance": 1.6000001430511475
+            },
+            {
+              "name": "MESH_FERRIS_HARBOR_PALETTE_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                3.200000047683716,
+                31
+              ],
+              "distance": 1.7999999523162842
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_FERRIS_HARBOR_TICKET_ROOF",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                3.3999999538064003,
+                31
+              ],
+              "distance": 1.6000000461935997,
+              "min": [
+                -21.049999952316284,
+                3.199999950826168,
+                29.350000500679016
+              ],
+              "max": [
+                -17.019999742507935,
+                3.3999999538064003,
+                33.28000056743622
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ferris_ticket_floor",
+          "zone": "ferris-harbor",
+          "source": "client/tests/FerrisTicketBooth.test.ts + tools/harbor-v2/repair_ticket_booth.py",
+          "origin": [
+            -19,
+            0.5,
+            31
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 0.4,
+          "expectation": "surface",
+          "visualCoordinate": 0.2,
+          "collisionCoordinate": 0.2,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_FERRIS_HARBOR_BASE_CONCRETE_SEAWALL_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                0.20000000298023224,
+                31
+              ],
+              "distance": 0.29999999701976776
+            },
+            {
+              "name": "harbor_MESH_wood_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/cinematic/harbor-cinematic.glb",
+              "at": [
+                -19.000000000000004,
+                0.1959093489733288,
+                31.000000000000004
+              ],
+              "distance": 0.3040906510266712
+            },
+            {
+              "name": "MESH_GARDEN_BASE_LAWN_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/garden-ac.glb",
+              "at": [
+                -19,
+                0.11999999731779099,
+                31
+              ],
+              "distance": 0.380000002682209
+            },
+            {
+              "name": "harbor_MESH_asphalt_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/cinematic/harbor-cinematic.glb",
+              "at": [
+                -19,
+                0.11398106813430786,
+                31
+              ],
+              "distance": 0.38601893186569214
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_FERRIS_HARBOR_TICKET_FLOOR",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                0.20000000298023224,
+                31
+              ],
+              "distance": 0.29999999701976776,
+              "min": [
+                -20.899999618530273,
+                0.04999999701976776,
+                29.500000715255737
+              ],
+              "max": [
+                -17.149999618530273,
+                0.20000000298023224,
+                32.90000081062317
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ferris_ticket_glazing",
+          "zone": "ferris-harbor",
+          "source": "client/tests/FerrisTicketBooth.test.ts + tools/harbor-v2/repair_ticket_booth.py",
+          "origin": [
+            -19,
+            1.8,
+            34
+          ],
+          "direction": [
+            0,
+            0,
+            -1
+          ],
+          "far": 3,
+          "expectation": "surface",
+          "visualCoordinate": 32.83,
+          "collisionCoordinate": 32.83,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_FERRIS_HARBOR_RP02_TICKET_GLASS_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                1.8,
+                32.83000183105469
+              ],
+              "distance": 1.1699981689453125
+            },
+            {
+              "name": "MESH_FERRIS_HARBOR_RP02_TICKET_GLASS_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                1.8,
+                32.790000915527344
+              ],
+              "distance": 1.2099990844726562
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_FERRIS_HARBOR_TICKET_FRONT_GLASS",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/ferris-harbor.glb",
+              "at": [
+                -19,
+                1.8,
+                32.83000137284398
+              ],
+              "distance": 1.1699986271560192,
+              "min": [
+                -20.299999237060547,
+                1.050000011920929,
+                32.79000137373805
+              ],
+              "max": [
+                -17.799999237060547,
+                2.650000035762787,
+                32.83000137284398
+              ]
+            }
+          ]
+        },
+        {
+          "name": "rescue_maintenance_lane_x43.4",
+          "zone": "rescue-quay",
+          "source": "client/tests/RescueQuay.test.ts + tools/harbor-v2/zones/build_rescue_quay.py",
+          "origin": [
+            43.4,
+            1.5,
+            12.5
+          ],
+          "direction": [
+            0,
+            0,
+            1
+          ],
+          "far": 20,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "rescue_apron_x43.4",
+          "zone": "rescue-quay",
+          "source": "client/tests/RescueQuay.test.ts + tools/harbor-v2/zones/build_rescue_quay.py",
+          "origin": [
+            43.4,
+            0.31,
+            28
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 0.1,
+          "expectation": "surface",
+          "visualCoordinate": 0.24,
+          "collisionCoordinate": 0.24,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_RESCUE_QUAY_RQ_CONCRETE_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                43.4,
+                0.23999999463558197,
+                28
+              ],
+              "distance": 0.07000000536441803
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_RESCUE_QUAY_APRON_00",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                43.4,
+                0.23999999463558197,
+                28
+              ],
+              "distance": 0.07000000536441803,
+              "min": [
+                33,
+                0,
+                12
+              ],
+              "max": [
+                60,
+                0.23999999463558197,
+                34
+              ]
+            }
+          ]
+        },
+        {
+          "name": "rescue_maintenance_lane_x45",
+          "zone": "rescue-quay",
+          "source": "client/tests/RescueQuay.test.ts + tools/harbor-v2/zones/build_rescue_quay.py",
+          "origin": [
+            45,
+            1.5,
+            12.5
+          ],
+          "direction": [
+            0,
+            0,
+            1
+          ],
+          "far": 20,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "rescue_apron_x45",
+          "zone": "rescue-quay",
+          "source": "client/tests/RescueQuay.test.ts + tools/harbor-v2/zones/build_rescue_quay.py",
+          "origin": [
+            45,
+            0.31,
+            28
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 0.1,
+          "expectation": "surface",
+          "visualCoordinate": 0.244,
+          "collisionCoordinate": 0.24,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_RESCUE_QUAY_RQ_RUBBER_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                45,
+                0.24400000274181366,
+                28
+              ],
+              "distance": 0.06599999725818634
+            },
+            {
+              "name": "MESH_RESCUE_QUAY_RQ_CONCRETE_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                45,
+                0.23999999463558197,
+                28
+              ],
+              "distance": 0.07000000536441803
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_RESCUE_QUAY_APRON_00",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                45,
+                0.23999999463558197,
+                28
+              ],
+              "distance": 0.07000000536441803,
+              "min": [
+                33,
+                0,
+                12
+              ],
+              "max": [
+                60,
+                0.23999999463558197,
+                34
+              ]
+            }
+          ]
+        },
+        {
+          "name": "rescue_maintenance_lane_x48.6",
+          "zone": "rescue-quay",
+          "source": "client/tests/RescueQuay.test.ts + tools/harbor-v2/zones/build_rescue_quay.py",
+          "origin": [
+            48.6,
+            1.5,
+            12.5
+          ],
+          "direction": [
+            0,
+            0,
+            1
+          ],
+          "far": 20,
+          "expectation": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        },
+        {
+          "name": "rescue_apron_x48.6",
+          "zone": "rescue-quay",
+          "source": "client/tests/RescueQuay.test.ts + tools/harbor-v2/zones/build_rescue_quay.py",
+          "origin": [
+            48.6,
+            0.31,
+            28
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 0.1,
+          "expectation": "surface",
+          "visualCoordinate": 0.24,
+          "collisionCoordinate": 0.24,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_RESCUE_QUAY_RQ_CONCRETE_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                48.6,
+                0.23999999463558197,
+                28
+              ],
+              "distance": 0.07000000536441803
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "COL_MOVE_RESCUE_QUAY_APRON_00",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                48.6,
+                0.23999999463558197,
+                28
+              ],
+              "distance": 0.07000000536441803,
+              "min": [
+                33,
+                0,
+                12
+              ],
+              "max": [
+                60,
+                0.23999999463558197,
+                34
+              ]
+            }
+          ]
+        },
+        {
+          "name": "rescue_watchtower_deck",
+          "zone": "rescue-quay",
+          "source": "client/tests/RescueQuay.test.ts + tools/harbor-v2/zones/build_rescue_quay.py",
+          "origin": [
+            40,
+            6.15,
+            30
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 0.12,
+          "expectation": "surface",
+          "visualCoordinate": 6.075,
+          "collisionCoordinate": 6.075,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_RESCUE_QUAY_RQ_STEEL_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                40,
+                6.074999809265137,
+                30
+              ],
+              "distance": 0.07500019073486364
+            },
+            {
+              "name": "MESH_RESCUE_QUAY_RQ_STEEL_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/rescue-quay.glb",
+              "at": [
+                40,
+                6.074999809265137,
+                30
+              ],
+              "distance": 0.07500019073486364
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "procedural_113",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                40,
+                6.075000002980232,
+                30
+              ],
+              "distance": 0.07499999701976812,
+              "min": [
+                38,
+                5.924999997019768,
+                28
+              ],
+              "max": [
+                42,
+                6.075000002980232,
+                32
+              ]
+            }
+          ]
+        },
+        {
+          "name": "response_floor",
+          "zone": "response-station",
+          "source": "client/tests/ResponseStationIntegration.test.ts + tools/harbor-v2/zones/build_response_station.py",
+          "origin": [
+            -40,
+            0.3,
+            1
+          ],
+          "direction": [
+            0,
+            -1,
+            0
+          ],
+          "far": 0.25,
+          "expectation": "surface",
+          "visualCoordinate": 0.14,
+          "collisionCoordinate": 0.14,
+          "tolerance": 0.001,
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_RESPONSE_STATION_RS_CONCRETE_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/response-station.glb",
+              "at": [
+                -40,
+                0.14000000059604645,
+                1
+              ],
+              "distance": 0.15999999940395354
+            },
+            {
+              "name": "harbor_MESH_asphalt_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/cinematic/harbor-cinematic.glb",
+              "at": [
+                -40,
+                0.11398106813430786,
+                1
+              ],
+              "distance": 0.18601893186569213
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "procedural_763",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                -40,
+                0.14,
+                1
+              ],
+              "distance": 0.15999999999999998,
+              "min": [
+                -49,
+                0.1,
+                -7
+              ],
+              "max": [
+                -35,
+                0.14,
+                7
+              ]
+            },
+            {
+              "name": "procedural_93",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                -40,
+                0.10000000074505805,
+                1
+              ],
+              "distance": 0.19999999925494194,
+              "min": [
+                -49,
+                -7.450580569168253e-10,
+                -7
+              ],
+              "max": [
+                -35,
+                0.10000000074505806,
+                7
+              ]
+            }
+          ]
+        },
+        {
+          "name": "response_gate_closed",
+          "zone": "response-station",
+          "source": "client/tests/ResponseStationIntegration.test.ts + tools/harbor-v2/zones/build_response_station.py",
+          "origin": [
+            -36,
+            1.8,
+            0
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 1.5,
+          "expectation": "surface",
+          "visualCoordinate": -35.105,
+          "collisionCoordinate": -35.125,
+          "tolerance": 0.001,
+          "gate": "closed",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [
+            {
+              "name": "MESH_RESPONSE_STATION_HUNTER_GATE_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/response-station.glb",
+              "at": [
+                -35.104999996721745,
+                1.7999999999999998,
+                0
+              ],
+              "distance": 0.8950000032782555
+            },
+            {
+              "name": "MESH_RESPONSE_STATION_HUNTER_GATE_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/response-station.glb",
+              "at": [
+                -34.895000003278255,
+                1.7999999999999998,
+                0
+              ],
+              "distance": 1.1049999967217445
+            },
+            {
+              "name": "MESH_RESPONSE_STATION_HUNTER_GATE_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/response-station.glb",
+              "at": [
+                -34.88999969512224,
+                1.7999999999999998,
+                0
+              ],
+              "distance": 1.110000304877758
+            },
+            {
+              "name": "MESH_RESPONSE_STATION_HUNTER_GATE_LOD1",
+              "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/response-station.glb",
+              "at": [
+                -34.874999701976776,
+                1.7999999999999998,
+                0
+              ],
+              "distance": 1.1250002980232239
+            }
+          ],
+          "collisionHits": [
+            {
+              "name": "procedural_98",
+              "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+              "at": [
+                -35.125,
+                1.8,
+                0
+              ],
+              "distance": 0.875,
+              "min": [
+                -35.125,
+                0,
+                -7
+              ],
+              "max": [
+                -34.875,
+                5,
+                7
+              ]
+            }
+          ]
+        },
+        {
+          "name": "response_release_lane",
+          "zone": "response-station",
+          "source": "client/tests/ResponseStationIntegration.test.ts + tools/harbor-v2/zones/build_response_station.py",
+          "origin": [
+            -47.7,
+            1.1,
+            0
+          ],
+          "direction": [
+            1,
+            0,
+            0
+          ],
+          "far": 14,
+          "expectation": "open",
+          "gate": "open",
+          "passed": true,
+          "failures": [],
+          "visibleHits": [],
+          "collisionHits": []
+        }
+      ],
+      "controls": [
+        {
+          "name": "missing_floor",
+          "probe": "house_2f_floor",
+          "source": "/Users/tlle/Documents/PersonalProject/CatchAndRun/art-source/harbor-v2/_staging/market-rp04/assets/zones/garden-ac.glb",
+          "baselinePassed": true,
+          "detected": true,
+          "restored": true,
+          "passed": true,
+          "evidence": {
+            "name": "house_2f_floor",
+            "zone": "garden-ac",
+            "source": "client/tests/ShippedStructuralRoutes.test.ts + tools/harbor-v2/repair_structural_routes.py",
+            "origin": [
+              -35,
+              6,
+              23
+            ],
+            "direction": [
+              0,
+              -1,
+              0
+            ],
+            "far": 1.5,
+            "expectation": "surface",
+            "visualCoordinate": 5.55,
+            "collisionCoordinate": 5.55,
+            "tolerance": 0.001,
+            "passed": false,
+            "failures": [
+              "missing_visual_surface"
+            ],
+            "visibleHits": [],
+            "collisionHits": [
+              {
+                "name": "procedural_198",
+                "source": "client/src/game/world/maps/oldHarborFortnite.ts + harborV2Map.ts",
+                "at": [
+                  -35,
+                  5.55,
+                  23
+                ],
+                "distance": 0.4500000000000002,
+                "min": [
+                  -38,
+                  5.35,
+                  18
+                ],
+                "max": [
+                  -32.2,
+                  5.55,
+                  26
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "invisible_blocker",
+          "probe": "ferris_ticket_side_entry",
+          "source": "StaticAssetGate in-memory negative control (never saved to GLB)",
+          "baselinePassed": true,
+          "detected": true,
+          "restored": true,
+          "passed": true,
+          "evidence": {
+            "name": "ferris_ticket_side_entry",
+            "zone": "ferris-harbor",
+            "source": "client/tests/FerrisTicketBooth.test.ts + tools/harbor-v2/repair_ticket_booth.py",
+            "origin": [
+              -21.5,
+              1.5,
+              30.8
+            ],
+            "direction": [
+              1,
+              0,
+              0
+            ],
+            "far": 1.1,
+            "expectation": "open",
+            "passed": false,
+            "failures": [
+              "invisible_blocker"
+            ],
+            "visibleHits": [],
+            "collisionHits": [
+              {
+                "name": "StaticAssetGate_MUTATION_invisible_blocker",
+                "source": "StaticAssetGate in-memory negative control (never saved to GLB)",
+                "at": [
+                  -21.000000000745057,
+                  1.5,
+                  30.8
+                ],
+                "distance": 0.49999999925494265,
+                "min": [
+                  -21.000000000745057,
+                  0.5,
+                  30.3
+                ],
+                "max": [
+                  -20.89999999925494,
+                  2.5,
+                  31.3
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "visible_seal",
+          "probe": "ferris_ticket_side_entry",
+          "source": "StaticAssetGate in-memory negative control (never saved to GLB)",
+          "baselinePassed": true,
+          "detected": true,
+          "restored": true,
+          "passed": true,
+          "evidence": {
+            "name": "ferris_ticket_side_entry",
+            "zone": "ferris-harbor",
+            "source": "client/tests/FerrisTicketBooth.test.ts + tools/harbor-v2/repair_ticket_booth.py",
+            "origin": [
+              -21.5,
+              1.5,
+              30.8
+            ],
+            "direction": [
+              1,
+              0,
+              0
+            ],
+            "far": 1.1,
+            "expectation": "open",
+            "passed": false,
+            "failures": [
+              "visible_seal"
+            ],
+            "visibleHits": [
+              {
+                "name": "StaticAssetGate_MUTATION_visible_seal",
+                "source": "StaticAssetGate in-memory negative control (never saved to GLB)",
+                "at": [
+                  -21.000000000745057,
+                  1.5,
+                  30.8
+                ],
+                "distance": 0.49999999925494265
+              },
+              {
+                "name": "StaticAssetGate_MUTATION_visible_seal",
+                "source": "StaticAssetGate in-memory negative control (never saved to GLB)",
+                "at": [
+                  -21.000000000745057,
+                  1.5,
+                  30.8
+                ],
+                "distance": 0.49999999925494265
+              }
+            ],
+            "collisionHits": []
+          }
+        }
+      ]
+    }
+  },
+  "summary": {
+    "probes": 86,
+    "failedProbes": 0,
+    "controls": 6,
+    "failedControls": 0
+  }
+}

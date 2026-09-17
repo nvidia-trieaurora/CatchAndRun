@@ -6,7 +6,7 @@
   "replacesCinematicNodes": ["base_MESH_foliage_LOD0", "harbor_MESH_foliage_LOD1"],
   "carveBox": { "min": [-56, -1, 11.5], "max": [-17.5, 20, 47.5] },
   "footprint": { "min": [-56, -0.5, 11.5], "max": [-17.0, 20, 48] },
-  "expectedProceduralColliders": 488,
+  "expectedProceduralColliders": 493,
   "budgets": {
     "lod0Triangles": 30000,
     "lod0DrawCalls": 40,

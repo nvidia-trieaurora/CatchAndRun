@@ -1,0 +1,47 @@
+{
+  "asset": "art-source/harbor-v2/_staging/realism/warehouse-v2-runtime.glb",
+  "payloadBytes": 5620760,
+  "lod0": {
+    "renderMeshes": 21,
+    "triangles": 60240,
+    "estimatedDrawCalls": 21
+  },
+  "lod1": {
+    "renderMeshes": 21,
+    "triangles": 2828,
+    "estimatedDrawCalls": 21
+  },
+  "sharedRender": {
+    "renderMeshes": 3,
+    "triangles": 836,
+    "estimatedDrawCalls": 3
+  },
+  "rp01": {
+    "renderMeshes": 5,
+    "triangles": 21004,
+    "estimatedDrawCalls": 5
+  },
+  "rp01Required": true,
+  "sc02": {
+    "renderMeshes": 5,
+    "triangles": 10412,
+    "estimatedDrawCalls": 5
+  },
+  "sc02Required": true,
+  "structuralSupportRequired": true,
+  "facadeCoherenceViolations": {},
+  "collisionMeshes": 86,
+  "markers": 7,
+  "transformToleranceMeters": 0.001,
+  "desktopBudgets": {
+    "triangles": 120000,
+    "drawCalls": 100
+  },
+  "mobileBudgets": {
+    "triangles": 60000,
+    "drawCalls": 60,
+    "payloadBytes": 6291456
+  },
+  "passed": true,
+  "errors": []
+}

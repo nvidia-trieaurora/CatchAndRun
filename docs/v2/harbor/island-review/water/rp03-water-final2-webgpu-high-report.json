@@ -1,0 +1,120 @@
+{
+  "capturedAt": "2026-09-09T18:52:40.460Z",
+  "viewport": {
+    "width": 1600,
+    "height": 900,
+    "deviceScaleFactor": 1
+  },
+  "headless": true,
+  "gpuFlags": [
+    "enable-unsafe-webgpu",
+    "enable-features=Vulkan,WebGPU",
+    "ignore-gpu-blocklist",
+    "use-angle=metal"
+  ],
+  "audioMuted": true,
+  "profileDirectory": "/var/folders/21/jnt5qrg12nzcbgh9msb8q9280000gp/T/cr-cdp-catchandrun-pwospQ",
+  "url": "http://localhost:5173/?renderer=webgpu",
+  "backend": "webgpu",
+  "quality": "high",
+  "presets": [
+    {
+      "preset": "fleetDetail",
+      "view": "view-fleetDetail",
+      "file": "docs/v2/harbor/island-review/water/rp03-water-final2-webgpu-high-fleetDetail.png",
+      "metrics": {
+        "backend": "webgpu",
+        "visualVersion": "v2",
+        "fpsAverage": 59.99520038389776,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 255,
+        "triangles": 284169,
+        "geometries": 310,
+        "textures": 281,
+        "sceneMeshes": 255,
+        "instancedMeshes": 23,
+        "colliderCount": 833,
+        "estimatedTextureMemoryBytes": 205177088,
+        "environmentTransferBytes": 31852044
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00150003750092,
+        "p95Ms": 16.799999999999272,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "panSample": null,
+      "rendererStats": {
+        "render": {
+          "calls": 20389,
+          "frameCalls": 15,
+          "drawCalls": 329,
+          "triangles": 424818,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "overview",
+      "view": "view-overview",
+      "file": "docs/v2/harbor/island-review/water/rp03-water-final2-webgpu-high-overview.png",
+      "metrics": {
+        "backend": "webgpu",
+        "visualVersion": "v2",
+        "fpsAverage": 59.99880002371343,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 254,
+        "triangles": 280709,
+        "geometries": 327,
+        "textures": 306,
+        "sceneMeshes": 254,
+        "instancedMeshes": 23,
+        "colliderCount": 833,
+        "estimatedTextureMemoryBytes": 204914944,
+        "environmentTransferBytes": 31852044
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00150003750092,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "panSample": null,
+      "rendererStats": {
+        "render": {
+          "calls": 27289,
+          "frameCalls": 15,
+          "drawCalls": 454,
+          "triangles": 515573,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    }
+  ],
+  "shooting": [],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "[warning] [VoiceChat] Mic access denied"
+  ],
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[debug] [vite] connected.",
+    "[info] [Renderer] Initialized webgpu",
+    "[warning] [VoiceChat] Mic access denied",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock.",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock."
+  ],
+  "repair": null,
+  "water": null,
+  "boats": null
+}

@@ -1,0 +1,29 @@
+{
+  "reviewedAt": "2026-09-10T16:09:05.047Z",
+  "reviewedBy": "Codex visual QA",
+  "visualPassed": true,
+  "candidateSHA256": "b51a69ec535d54b440f35a9aa11fe69b8fc7adc8ba777e840daf75bfa3cc08bc",
+  "sourceSHA256": "70e5105104f47c443197fc0a54e9e9cd9638bb3b8669917b3239017ddf331ac9",
+  "scope": "Approve bounded Fleet RP04 fittings and crest-linked shoreline foam for local Three.js integration, not photorealistic completion or all-island performance certification.",
+  "reports": [
+    "docs/v2/harbor/fleet-rp04/final-webgpu-high-v4/final-webgpu-high-v4-report.json",
+    "docs/v2/harbor/fleet-rp04/final-webgl2-low-v4/final-webgl2-low-v4-report.json",
+    "docs/v2/harbor/fleet-rp04/final-webgl2-high-v4/final-webgl2-high-v4-report.json",
+    "docs/v2/harbor/fleet-rp04/final-webgpu-low-v4/final-webgpu-low-v4-report.json"
+  ],
+  "observations": [
+    "Main agent inspected actual workboatDetail and fleetDetail screenshots for all four backend/tier combinations, plus High shoreline and native Blender Cycles 3840x2160 render.",
+    "Independent visual reviewer inspected all three High WebGPU views and all six timed shoreline screenshots, matching source and asset hashes.",
+    "New High window hardware, rope reel and cargo bands are attached plausibly in sampled views; visible decks remain dry. Low preserves its existing coarse geometry, not a visual upgrade.",
+    "Timed shoreline wetline rises/recedes against the lower quay. No added foam sheet seen over dry decks in reviewed shots.",
+    "High and Low designated-deck-v2 live proofs pass on five authored planes, with recomputed raw server matches. Negative water scenario reaches matching authoritative elimination.",
+    "Static and 360-degree pan rAF samples: approximately 59.5-60 FPS, worst sampled p95 16.8ms, max33.4ms, zero intervals above50ms. Muted headless 1600x900 short tests; not GPU/presented-frame throughput or controlled before/after improvement.",
+    "High coast firing:41 water impacts; wall:40 marks, maximum world span0.13m. Raw microphone and headless pointer-lock errors are retained separately from zero filtered application errors."
+  ],
+  "remaining": [
+    "Cabin/cargo large surfaces and regular offshore highlights remain stylized, not photorealistic.",
+    "Low LOD is unchanged coarse art; no4K runtime, stable60FPS, whole-island or lagged multiplayer certification.",
+    "Live captures prove deck contact, not every jump/escape/disguise; those bounded controller cases are separate in Gate04.",
+    "Existing few-centimeter CPU/GPU Gerstner sampling approximation and arbitrary-yaw foot-corner sampling limitation remain documented."
+  ]
+}

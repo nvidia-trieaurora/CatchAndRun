@@ -1,0 +1,266 @@
+{
+  "capturedAt": "2026-09-09T07:17:10.977Z",
+  "viewport": {
+    "width": 1600,
+    "height": 900,
+    "deviceScaleFactor": 1
+  },
+  "headless": true,
+  "gpuFlags": [
+    "enable-unsafe-webgpu",
+    "enable-features=Vulkan,WebGPU",
+    "ignore-gpu-blocklist",
+    "use-angle=metal"
+  ],
+  "audioMuted": true,
+  "profileDirectory": "/var/folders/21/jnt5qrg12nzcbgh9msb8q9280000gp/T/cr-cdp-catchandrun-1V5P9N",
+  "url": "http://localhost:5173/?renderer=webgl2",
+  "backend": "webgl2",
+  "quality": "low",
+  "presets": [
+    {
+      "preset": "warehouse",
+      "view": "view-warehouse",
+      "file": "docs/v2/harbor/realism-review/runtime/rl01-webgl2-low-warehouse.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00240009621843,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 126,
+        "triangles": 26744,
+        "geometries": 202,
+        "textures": 145,
+        "sceneMeshes": 126,
+        "instancedMeshes": 15,
+        "colliderCount": 756,
+        "estimatedTextureMemoryBytes": 97697792,
+        "environmentTransferBytes": 24111616
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00450033752536,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 3431,
+          "frameCalls": 3,
+          "drawCalls": 221,
+          "triangles": 49133,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "low",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "ferrisHarborWater",
+      "view": "view-ferrisHarborWater",
+      "file": "docs/v2/harbor/realism-review/runtime/rl01-webgl2-low-ferrisHarborWater.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00120002392895,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 126,
+        "triangles": 26744,
+        "geometries": 202,
+        "textures": 145,
+        "sceneMeshes": 126,
+        "instancedMeshes": 15,
+        "colliderCount": 756,
+        "estimatedTextureMemoryBytes": 97697792,
+        "environmentTransferBytes": 24111616
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00150003750092,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 4829,
+          "frameCalls": 3,
+          "drawCalls": 219,
+          "triangles": 49073,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "low",
+        "water": "gerstner"
+      }
+    }
+  ],
+  "shooting": [
+    {
+      "target": "coast",
+      "setup": {
+        "role": "hunter",
+        "alive": true,
+        "ammo": 20
+      },
+      "idle": {
+        "frames": 240,
+        "fps": 60.00300015000746,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "firing": {
+        "frames": 711,
+        "fps": 59.25246885286887,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 150,
+        "over50Ms": 1
+      },
+      "details": {
+        "shots": 41,
+        "waterImpacts": 40,
+        "fireCpuMs": [
+          2.5999999940395355,
+          0.5,
+          0.5,
+          0.30000001192092896,
+          0.20000001788139343,
+          0.29999998211860657,
+          0.19999998807907104,
+          0.19999998807907104,
+          0.30000001192092896,
+          0.29999998211860657,
+          0.20000001788139343,
+          0.30000001192092896,
+          0.800000011920929,
+          0.20000001788139343,
+          0.3999999761581421,
+          0.19999998807907104,
+          0.10000002384185791,
+          0.30000001192092896,
+          0.09999999403953552,
+          0.19999998807907104,
+          0.20000001788139343,
+          0.19999998807907104,
+          0.19999998807907104,
+          0.09999999403953552,
+          0.30000001192092896,
+          0.19999998807907104,
+          0.09999999403953552,
+          0.19999998807907104,
+          0.29999998211860657,
+          0.09999999403953552,
+          0.30000001192092896,
+          0.19999998807907104,
+          0.19999998807907104,
+          0.30000001192092896,
+          0.19999998807907104,
+          0.20000001788139343,
+          0.19999998807907104,
+          0.30000001192092896,
+          0.20000001788139343,
+          0.19999998807907104,
+          0.30000001192092896
+        ],
+        "ammo": 19,
+        "holes": 0,
+        "maxHoleWorldSpan": 0,
+        "geometryCount": 202,
+        "waterKind": "gerstner"
+      },
+      "file": "docs/v2/harbor/realism-review/runtime/rl01-webgl2-low-shoot-coast.png"
+    },
+    {
+      "target": "warehouse-wall",
+      "setup": {
+        "role": "hunter",
+        "alive": true,
+        "ammo": 19
+      },
+      "idle": {
+        "frames": 240,
+        "fps": 60.001500037501025,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "firing": {
+        "frames": 720,
+        "fps": 60.002500104171006,
+        "p95Ms": 16.70000000001164,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "details": {
+        "shots": 41,
+        "waterImpacts": 0,
+        "fireCpuMs": [
+          1.9000000059604645,
+          0.699999988079071,
+          0.4000000059604645,
+          1.800000011920929,
+          0.5,
+          0.4000000059604645,
+          0.29999998211860657,
+          0.30000001192092896,
+          0.5999999940395355,
+          0.4000000059604645,
+          0.29999998211860657,
+          0.29999998211860657,
+          0.4000000059604645,
+          0.5,
+          0.5999999940395355,
+          0.30000001192092896,
+          0.20000001788139343,
+          0.29999998211860657,
+          0.4000000059604645,
+          0.5,
+          0.4000000059604645,
+          0.5,
+          0.29999998211860657,
+          0.5,
+          0.5,
+          0.4000000059604645,
+          0.3999999761581421,
+          0.4000000059604645,
+          0.29999998211860657,
+          0.4000000059604645,
+          0.30000001192092896,
+          0.4000000059604645,
+          0.4000000059604645,
+          0.4000000059604645,
+          0.4000000059604645,
+          0.7000000178813934,
+          0.5,
+          0.3999999761581421,
+          0.29999998211860657,
+          0.4000000059604645,
+          0.29999998211860657
+        ],
+        "ammo": 18,
+        "holes": 40,
+        "maxHoleWorldSpan": 0.12999999523162842,
+        "geometryCount": 202,
+        "waterKind": "gerstner"
+      },
+      "file": "docs/v2/harbor/realism-review/runtime/rl01-webgl2-low-shoot-warehouse-wall.png"
+    }
+  ],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "[warning] [VoiceChat] Mic access denied"
+  ],
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[info] [Renderer] Initialized webgl2",
+    "[debug] [vite] connected.",
+    "[warning] [VoiceChat] Mic access denied",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock.",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock."
+  ]
+}

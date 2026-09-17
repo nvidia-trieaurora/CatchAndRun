@@ -1,7 +1,7 @@
 {
-  "asset": "art-source/harbor-v2/_staging/construction-ad-candidate.glb",
+  "asset": "art-source/harbor-v2/_staging/structural-rp03/construction-ad-runtime.glb",
   "zone": "CONSTRUCTION",
-  "payloadBytes": 2442968,
+  "payloadBytes": 2685880,
   "textureBytes": 592968,
   "images": [
     {
@@ -217,14 +217,18 @@
   ],
   "estimatedGpuTextureBytes": 37278806,
   "lod0": {
-    "renderMeshes": 19,
-    "triangles": 24054,
-    "estimatedDrawCalls": 19
+    "renderMeshes": 20,
+    "triangles": 25434,
+    "estimatedDrawCalls": 20,
+    "instancedMeshes": 0,
+    "instanceKeys": 0
   },
   "lod1": {
     "renderMeshes": 11,
     "triangles": 644,
-    "estimatedDrawCalls": 11
+    "estimatedDrawCalls": 11,
+    "instancedMeshes": 0,
+    "instanceKeys": 0
   },
   "budgets": {
     "lod0Triangles": 36000,
@@ -237,7 +241,7 @@
     "zoneColliders": 40
   },
   "colliderParity": {
-    "colliders": 488,
+    "colliders": 493,
     "source": "buildOldHarborFortniteMap({ useWarehouseV2: true, cinematicVisuals: true, quality: 'high' })"
   },
   "zoneColliders": [
@@ -659,6 +663,45 @@
       ]
     },
     {
+      "name": "COL_MOVE_CONSTRUCTION_RP03_POUR_1",
+      "min": [
+        -33.0,
+        3.2,
+        -21.8
+      ],
+      "max": [
+        -30.2,
+        3.5,
+        -15.8
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_RP03_POUR_1_RETURN",
+      "min": [
+        -33.0,
+        3.2,
+        -15.8
+      ],
+      "max": [
+        -30.6,
+        3.5,
+        -15.2
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONSTRUCTION_RP03_POUR_2",
+      "min": [
+        -33.0,
+        6.4,
+        -21.8
+      ],
+      "max": [
+        -30.2,
+        6.7,
+        -15.2
+      ]
+    },
+    {
       "name": "COL_MOVE_CONSTRUCTION_SHELTER_POST_4275_1185",
       "min": [
         -42.83,
@@ -724,6 +767,7 @@
       ]
     }
   ],
+  "rigNodes": [],
   "warnings": [],
   "passed": true,
   "errors": []

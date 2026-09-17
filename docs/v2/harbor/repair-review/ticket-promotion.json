@@ -1,0 +1,24 @@
+{
+  "source": "art-source/harbor-v2/ferris-harbor/ferris-harbor-ticket-repair.blend",
+  "backup": "art-source/harbor-v2/_staging/ticket-repair/pre-rp02-323f3ab590a7.glb",
+  "production": "client/public/assets/maps/harbor-v2/zones/ferris-harbor.glb",
+  "sha256": "d660d36caa4b22926417b758327836af181cee1b102f604138a6e1454c05f8f1",
+  "beforeBytes": 2578380,
+  "afterBytes": 3014476,
+  "lod0": {
+    "renderMeshes": 189,
+    "triangles": 36388,
+    "estimatedDrawCalls": 90,
+    "instancedMeshes": 110,
+    "instanceKeys": 11
+  },
+  "lod1": {
+    "renderMeshes": 26,
+    "triangles": 3460,
+    "estimatedDrawCalls": 26,
+    "instancedMeshes": 0,
+    "instanceKeys": 0
+  },
+  "zoneColliders": 50,
+  "validationErrors": 0
+}

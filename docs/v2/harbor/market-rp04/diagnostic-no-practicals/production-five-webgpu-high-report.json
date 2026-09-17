@@ -1,0 +1,428 @@
+{
+  "capturedAt": "2026-09-10T10:44:02.677Z",
+  "viewport": {
+    "width": 1600,
+    "height": 900,
+    "deviceScaleFactor": 1
+  },
+  "headless": true,
+  "gpuFlags": [
+    "enable-unsafe-webgpu",
+    "enable-features=Vulkan,WebGPU",
+    "ignore-gpu-blocklist",
+    "use-angle=metal"
+  ],
+  "audioMuted": true,
+  "profileDirectory": "/var/folders/21/jnt5qrg12nzcbgh9msb8q9280000gp/T/cr-cdp-catchandrun-awQzYH",
+  "url": "http://localhost:5174/?renderer=webgpu",
+  "backend": "webgpu",
+  "quality": "high",
+  "presets": [
+    {
+      "preset": "harborMarketFront",
+      "view": "view-harborMarketFront",
+      "file": "docs/v2/harbor/market-rp04/diagnostic-no-practicals/production-five-webgpu-high-harborMarketFront.png",
+      "metrics": {
+        "backend": "webgpu",
+        "visualVersion": "v2",
+        "fpsAverage": 56.650804441805654,
+        "frameTimeP95Ms": 22.600000023841858,
+        "drawCalls": 254,
+        "triangles": 280705,
+        "geometries": 327,
+        "textures": 311,
+        "sceneMeshes": 254,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 205439232,
+        "environmentTransferBytes": 32041208
+      },
+      "frameSample": {
+        "frames": 221,
+        "fps": 55.021660110541276,
+        "p95Ms": 33.299999999995634,
+        "maxMs": 83.29999999999563,
+        "over50Ms": 2
+      },
+      "panSample": {
+        "frames": 239,
+        "fps": 59.50454375700237,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 33.39999999999418,
+        "over50Ms": 0,
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 22801,
+          "frameCalls": 15,
+          "drawCalls": 197,
+          "triangles": 339926,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "harborMarketExterior",
+      "view": "view-harborMarketExterior",
+      "file": "docs/v2/harbor/market-rp04/diagnostic-no-practicals/production-five-webgpu-high-harborMarketExterior.png",
+      "metrics": {
+        "backend": "webgpu",
+        "visualVersion": "v2",
+        "fpsAverage": 58.89859625012271,
+        "frameTimeP95Ms": 19.900000035762787,
+        "drawCalls": 254,
+        "triangles": 280705,
+        "geometries": 327,
+        "textures": 311,
+        "sceneMeshes": 254,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 205439232,
+        "environmentTransferBytes": 32041208
+      },
+      "frameSample": {
+        "frames": 239,
+        "fps": 59.752987649382426,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 33.30000000000291,
+        "over50Ms": 0
+      },
+      "panSample": {
+        "frames": 235,
+        "fps": 58.508651811278476,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 50,
+        "over50Ms": 0,
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 33916,
+          "frameCalls": 15,
+          "drawCalls": 231,
+          "triangles": 378374,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "harborMarketInterior",
+      "view": "view-harborMarketInterior",
+      "file": "docs/v2/harbor/market-rp04/diagnostic-no-practicals/production-five-webgpu-high-harborMarketInterior.png",
+      "metrics": {
+        "backend": "webgpu",
+        "visualVersion": "v2",
+        "fpsAverage": 58.906691800050616,
+        "frameTimeP95Ms": 18.19999998807907,
+        "drawCalls": 254,
+        "triangles": 280705,
+        "geometries": 327,
+        "textures": 311,
+        "sceneMeshes": 254,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 205439232,
+        "environmentTransferBytes": 32041208
+      },
+      "frameSample": {
+        "frames": 229,
+        "fps": 57.251431285782225,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 150.10000000000582,
+        "over50Ms": 1
+      },
+      "panSample": {
+        "frames": 238,
+        "fps": 59.50297514875739,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 50,
+        "over50Ms": 0,
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 45646,
+          "frameCalls": 15,
+          "drawCalls": 190,
+          "triangles": 339058,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "harborMarketShelf",
+      "view": "view-harborMarketShelf",
+      "file": "docs/v2/harbor/market-rp04/diagnostic-no-practicals/production-five-webgpu-high-harborMarketShelf.png",
+      "metrics": {
+        "backend": "webgpu",
+        "visualVersion": "v2",
+        "fpsAverage": 59.997600096139195,
+        "frameTimeP95Ms": 17.400000035762787,
+        "drawCalls": 254,
+        "triangles": 280705,
+        "geometries": 327,
+        "textures": 311,
+        "sceneMeshes": 254,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 205439232,
+        "environmentTransferBytes": 32041208
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00300015000746,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "panSample": {
+        "frames": 235,
+        "fps": 58.7529376468823,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 33.39999999999418,
+        "over50Ms": 0,
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 56926,
+          "frameCalls": 15,
+          "drawCalls": 225,
+          "triangles": 370562,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "harborMarketFridge",
+      "view": "view-harborMarketFridge",
+      "file": "docs/v2/harbor/market-rp04/diagnostic-no-practicals/production-five-webgpu-high-harborMarketFridge.png",
+      "metrics": {
+        "backend": "webgpu",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00840117673703,
+        "frameTimeP95Ms": 17.5,
+        "drawCalls": 254,
+        "triangles": 280705,
+        "geometries": 327,
+        "textures": 311,
+        "sceneMeshes": 254,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 205439232,
+        "environmentTransferBytes": 32041208
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.001500037501025,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "panSample": {
+        "frames": 234,
+        "fps": 58.50292514625727,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 33.39999999999418,
+        "over50Ms": 0,
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 69721,
+          "frameCalls": 15,
+          "drawCalls": 186,
+          "triangles": 310422,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    }
+  ],
+  "shooting": [
+    {
+      "target": "coast",
+      "setup": {
+        "role": "hunter",
+        "alive": true,
+        "ammo": 20
+      },
+      "idle": {
+        "frames": 227,
+        "fps": 56.515460837524394,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 83.30000000000291,
+        "over50Ms": 2
+      },
+      "firing": {
+        "frames": 717,
+        "fps": 59.752489687070295,
+        "p95Ms": 16.70000000001164,
+        "maxMs": 33.30000000000291,
+        "over50Ms": 0
+      },
+      "details": {
+        "shots": 41,
+        "waterImpacts": 40,
+        "fireCpuMs": [
+          5.300000011920929,
+          1.600000023841858,
+          1.199999988079071,
+          1,
+          1.199999988079071,
+          1.100000023841858,
+          1.199999988079071,
+          0.9000000357627869,
+          1,
+          1.0999999642372131,
+          1,
+          1.199999988079071,
+          0.8999999761581421,
+          0.800000011920929,
+          1,
+          1,
+          0.800000011920929,
+          1,
+          0.800000011920929,
+          1.0999999642372131,
+          0.800000011920929,
+          1,
+          0.8999999761581421,
+          1.100000023841858,
+          0.800000011920929,
+          0.8999999761581421,
+          1.5999999642372131,
+          0.8999999761581421,
+          0.800000011920929,
+          1.5999999642372131,
+          0.5999999642372131,
+          1,
+          0.699999988079071,
+          0.800000011920929,
+          0.9000000357627869,
+          0.699999988079071,
+          0.8999999761581421,
+          1,
+          0.8999999761581421,
+          0.800000011920929,
+          0.7000000476837158
+        ],
+        "ammo": 19,
+        "holes": 0,
+        "maxHoleWorldSpan": 0,
+        "geometryCount": 327,
+        "waterKind": "gerstner"
+      },
+      "file": "docs/v2/harbor/market-rp04/diagnostic-no-practicals/production-five-webgpu-high-shoot-coast.png"
+    },
+    {
+      "target": "warehouse-wall",
+      "setup": {
+        "role": "hunter",
+        "alive": true,
+        "ammo": 19
+      },
+      "idle": {
+        "frames": 210,
+        "fps": 52.501312532813394,
+        "p95Ms": 33.39999999999418,
+        "maxMs": 100.09999999999127,
+        "over50Ms": 1
+      },
+      "firing": {
+        "frames": 611,
+        "fps": 50.84759867846168,
+        "p95Ms": 33.39999999999418,
+        "maxMs": 66.70000000001164,
+        "over50Ms": 3
+      },
+      "details": {
+        "shots": 40,
+        "waterImpacts": 0,
+        "fireCpuMs": [
+          10.300000011920929,
+          5.600000023841858,
+          3,
+          2.800000011920929,
+          5,
+          5.800000011920929,
+          3.199999988079071,
+          3.099999964237213,
+          4.100000023841858,
+          3.699999988079071,
+          3.300000011920929,
+          5,
+          2.599999964237213,
+          3.600000023841858,
+          4.199999988079071,
+          2.899999976158142,
+          3.900000035762787,
+          4.799999952316284,
+          2.600000023841858,
+          3.799999952316284,
+          4.899999976158142,
+          2.600000023841858,
+          2.800000011920929,
+          2.5,
+          2.5,
+          4.899999976158142,
+          3,
+          3.099999964237213,
+          5,
+          4.800000011920929,
+          2.699999988079071,
+          3.199999988079071,
+          4.799999952316284,
+          3.599999964237213,
+          3.099999964237213,
+          4.799999952316284,
+          2.899999976158142,
+          4.799999952316284,
+          4.799999952316284,
+          2.5
+        ],
+        "ammo": 19,
+        "holes": 39,
+        "maxHoleWorldSpan": 0.12999999523162842,
+        "geometryCount": 327,
+        "waterKind": "gerstner"
+      },
+      "file": "docs/v2/harbor/market-rp04/diagnostic-no-practicals/production-five-webgpu-high-shoot-warehouse-wall.png"
+    }
+  ],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "[warning] [VoiceChat] Mic access denied"
+  ],
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[info] [Renderer] Initialized webgpu",
+    "[debug] [vite] connected.",
+    "[warning] [VoiceChat] Mic access denied",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock.",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock."
+  ],
+  "repair": null,
+  "water": null,
+  "boats": null
+}

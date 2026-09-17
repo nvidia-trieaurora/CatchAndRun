@@ -4,11 +4,14 @@ import type { ClientConfig } from "../../config/ClientConfig";
 import { PROP_SPEED } from "@catch-and-run/shared";
 import {
   dampGroundVisual,
+  findCeilingSurface,
   findGroundSurface,
   shouldResolveGround,
   STAIR_STEP_DOWN,
 } from "./GroundCollision";
 import { LadderClimber, type LadderInput, type LadderVolume } from "./LadderClimb";
+import { WaterVolumes, type WaterBox } from "./WaterSwim";
+import { getCeilingHeightAt, getSupportHeightAt } from "../world/SupportSurfaces";
 
 const RADIUS = 0.35;
 const LADDER_HOP_SPEED = 4.5;
@@ -46,6 +49,7 @@ export class PropController {
   private jumpSpeed = 11.5;
   private onGround = true;
   private moveDir = new THREE.Vector3();
+  private readonly collisionBox = new THREE.Box3();
   private smoothY = 0;
   private movementBounds = {
     minX: -54,
@@ -58,6 +62,7 @@ export class PropController {
   private thirdPerson = true;
 
   private readonly ladder = new LadderClimber();
+  private readonly water = new WaterVolumes();
 
   // Soul mode (out-of-body)
   private inSoulMode = false;
@@ -146,9 +151,10 @@ export class PropController {
       this.moveDir.applyAxisAngle(new THREE.Vector3(0, 1, 0), this.currentYaw);
     }
 
-    // Move with slide collision
-    const moveX = this.moveDir.x * this.speed * dt;
-    const moveZ = this.moveDir.z * this.speed * dt;
+    // Move with slide collision (slow strokes while swimming)
+    const swim = this.water.speedMultiplier(this.position.x, this.position.y, this.position.z);
+    const moveX = this.moveDir.x * this.speed * swim * dt;
+    const moveZ = this.moveDir.z * this.speed * swim * dt;
 
     // Ladders: grab when pushing into a rung column, then climb instead of
     // the swept move / gravity passes for this frame.
@@ -171,6 +177,7 @@ export class PropController {
       return this.position.clone();
     }
 
+    const startX = this.position.x, startZ = this.position.z;
     const distance = Math.hypot(moveX, moveZ);
     const maxStep = RADIUS;
     const steps = Math.max(1, Math.ceil(distance / maxStep));
@@ -178,11 +185,23 @@ export class PropController {
       this.moveAndSlide(moveX / steps, moveZ / steps, colliders);
     }
 
-    const wasGrounded = this.onGround;
+    let wasGrounded = this.onGround;
     let jumped = false;
 
+    // Swimming into the shore climbs out: lift the prop onto the land, gravity
+    // settles it on the ground or the seawall cap.
+    const climbOut = this.water.climbOut(startX, startZ, this.position.x, this.position.z, this.position.y, GROUND_Y, moveX, moveZ);
+    if (climbOut !== null) {
+      this.position.y = climbOut;
+      this.smoothY = climbOut;
+      this.verticalVelocity = 0;
+      this.onGround = false;
+      wasGrounded = false;
+    }
+
     // Jump
-    if (state.jump && this.onGround) {
+    // Buoyancy holds a swimmer at the surface but cannot launch a ground jump.
+    if (state.jump && this.onGround && !this.isInWater()) {
       this.smoothY = this.position.y;
       this.verticalVelocity = this.jumpSpeed;
       this.onGround = false;
@@ -196,7 +215,13 @@ export class PropController {
 
     // Ceiling collision
     if (this.verticalVelocity > 0) {
-      const ceiling = this.findCeiling(colliders);
+      const ceiling = findCeilingSurface(colliders, {
+        x: this.position.x,
+        z: this.position.z,
+        previousHeadY: previousY + HEIGHT,
+        currentHeadY: this.position.y + HEIGHT,
+        radius: RADIUS,
+      });
       if (ceiling !== null && this.position.y + HEIGHT > ceiling) {
         this.position.y = ceiling - HEIGHT;
         this.verticalVelocity = 0;
@@ -213,7 +238,8 @@ export class PropController {
       stepUp: STEP_UP,
       stepDown: STAIR_STEP_DOWN,
       allowStepTransition,
-      fallbackY: GROUND_Y,
+      // over the sea nothing holds the prop at y 0: it drops to the swim level
+      fallbackY: this.water.fallbackGroundY(this.position.x, this.position.z, GROUND_Y),
     });
     if (shouldResolveGround(
       ground,
@@ -410,45 +436,28 @@ export class PropController {
   }
 
   private isCollidingXZ(colliders: THREE.Box3[]): boolean {
-    const box = new THREE.Box3(
-      new THREE.Vector3(this.position.x - RADIUS, this.position.y + STEP_UP, this.position.z - RADIUS),
-      new THREE.Vector3(this.position.x + RADIUS, this.position.y + HEIGHT, this.position.z + RADIUS)
-    );
+    const box = this.collisionBox;
+    box.min.set(this.position.x - RADIUS, this.position.y + STEP_UP, this.position.z - RADIUS);
+    box.max.set(this.position.x + RADIUS, this.position.y + HEIGHT, this.position.z + RADIUS);
     for (const c of colliders) {
+      const bottom = getCeilingHeightAt(c, this.position.x, this.position.z, RADIUS);
+      const top = getSupportHeightAt(c, this.position.x, this.position.z, RADIUS);
+      if (bottom === null || top === null || box.max.y <= bottom + 1e-6 || box.min.y >= top - 1e-6) continue;
       if (box.intersectsBox(c)) return true;
     }
     return false;
   }
 
-  private findCeiling(colliders: THREE.Box3[]): number | null {
-    const headY = this.position.y + HEIGHT;
-    const vUp = Math.max(2.5, this.verticalVelocity * 0.3);
-    const probe = new THREE.Box3(
-      new THREE.Vector3(this.position.x - RADIUS, headY - 0.1, this.position.z - RADIUS),
-      new THREE.Vector3(this.position.x + RADIUS, headY + vUp, this.position.z + RADIUS)
-    );
-    let lowestCeiling: number | null = null;
-    for (const c of colliders) {
-      if (!probe.intersectsBox(c)) continue;
-      const slabThickness = c.max.y - c.min.y;
-      if (slabThickness < 0.08) continue;
-      if (c.min.y >= headY - 0.3) {
-        if (lowestCeiling === null || c.min.y < lowestCeiling) {
-          lowestCeiling = c.min.y;
-        }
-      }
-    }
-    return lowestCeiling;
-  }
-
   private pushOutHorizontal(colliders: THREE.Box3[]) {
     // Only check body above step-up height to avoid fighting with findGround
-    const box = new THREE.Box3(
-      new THREE.Vector3(this.position.x - RADIUS, this.position.y + STEP_UP + 0.05, this.position.z - RADIUS),
-      new THREE.Vector3(this.position.x + RADIUS, this.position.y + HEIGHT, this.position.z + RADIUS)
-    );
+    const box = this.collisionBox;
+    box.min.set(this.position.x - RADIUS, this.position.y + STEP_UP + 0.05, this.position.z - RADIUS);
+    box.max.set(this.position.x + RADIUS, this.position.y + HEIGHT, this.position.z + RADIUS);
 
     for (const c of colliders) {
+      const bottom = getCeilingHeightAt(c, this.position.x, this.position.z, RADIUS);
+      const top = getSupportHeightAt(c, this.position.x, this.position.z, RADIUS);
+      if (bottom === null || top === null || box.max.y <= bottom + 1e-6 || box.min.y >= top - 1e-6) continue;
       if (!box.intersectsBox(c)) continue;
       const ox1 = box.max.x - c.min.x;
       const ox2 = c.max.x - box.min.x;
@@ -482,6 +491,8 @@ export class PropController {
   }
 
   // --- Public API ---
+  isGrounded(): boolean { return this.onGround; }
+
   setPosition(x: number, y: number, z: number) {
     this.ladder.release();
     this.position.set(x, y, z);
@@ -494,6 +505,21 @@ export class PropController {
 
   setMovementBounds(minX: number, maxX: number, minZ: number, maxZ: number) {
     this.movementBounds = { minX, maxX, minZ, maxZ };
+    this.water.setMovementBounds(minX, maxX, minZ, maxZ);
+  }
+
+  /** Sea boxes of the current map (`waterHazards`); empty for maps without water. */
+  setWaterVolumes(boxes: readonly WaterBox[] | undefined) {
+    this.water.setBoxes(boxes);
+  }
+
+  setBoatSupports(boxes: readonly WaterBox[] | undefined) {
+    this.water.setDrySupports(boxes);
+  }
+
+  /** Prop base below the sea surface over the water — swimming or sinking. */
+  isInWater(): boolean {
+    return this.water.isIn(this.position.x, this.position.y, this.position.z);
   }
 
   setPropMesh(mesh: THREE.Mesh | null) { this.propMesh = mesh; }
@@ -506,9 +532,10 @@ export class PropController {
   getPosition(): THREE.Vector3 { return this.position.clone(); }
   getRotation(): { x: number; y: number } { return { x: this.currentPitch, y: this.currentYaw }; }
 
-  translatePosition(dx: number, dy: number) {
+  translatePosition(dx: number, dy: number, dz = 0) {
     this.position.x += dx;
     this.position.y += dy;
+    this.position.z += dz;
     this.smoothY += dy;
     if (this.propMesh) this.propMesh.position.copy(this.position);
   }

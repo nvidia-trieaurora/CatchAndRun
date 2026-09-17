@@ -1,0 +1,17 @@
+{
+  "name": "response-station",
+  "payloadBytes": 1623596,
+  "sha256": "8f8aaf89f4e4a93e34a5be9a67dc63ba2f6b83d6fed445074dfac7887c07af1f",
+  "lod0": {
+    "meshes": 7,
+    "drawCalls": 7,
+    "triangles": 13739
+  },
+  "lod1": {
+    "meshes": 7,
+    "drawCalls": 7,
+    "triangles": 9955
+  },
+  "colliders": 0,
+  "gltfErrors": 0
+}

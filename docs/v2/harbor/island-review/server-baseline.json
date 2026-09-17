@@ -1,0 +1,244 @@
+{
+  "generatedAt": "2026-09-09T19:36:46.846Z",
+  "conclusion": "All 10 failures in the current four-suite audit reproduce with identical failure signatures on an isolated archive of HEAD. They are pre-existing, not regressions caused by Harbor boat, water or map changes.",
+  "headCommit": "708d368317013dbf0b32b0cdfb9036b5e2564bc3",
+  "auditScope": "Targeted re-run of the four failing suites (35 tests), not a replacement for the parent full-server-suite report.",
+  "isolation": {
+    "snapshot": "/tmp/catchandrun-server-head.qZHWSI",
+    "source": "git archive HEAD server shared package.json package-lock.json tsconfig.base.json",
+    "dependencies": "Existing node_modules symlink reused for identical installed dependency versions; Vitest config aliases shared to the archived snapshot/shared/src, not the working shared/dist.",
+    "node": "v22.22.1",
+    "vitest": "3.2.4",
+    "productionFilesModified": false,
+    "testFilesModified": false,
+    "applicationProcessesRestarted": false
+  },
+  "reproduction": {
+    "snapshotSetup": "git archive 708d368317013dbf0b32b0cdfb9036b5e2564bc3 server shared package.json package-lock.json tsconfig.base.json | tar -x -C <fresh-mktemp-dir>; link existing node_modules",
+    "workingDirectory": "<snapshot>/server",
+    "command": "node <repository>/node_modules/vitest/vitest.mjs run tests/systems/RoleAssigner.test.ts tests/systems/ScoringSystem.test.ts tests/systems/GameplayFlow.test.ts tests/systems/MatchStateMachine.test.ts --reporter=json --outputFile=<output.json>"
+  },
+  "runs": [
+    {
+      "name": "head",
+      "total": 35,
+      "passed": 24,
+      "failed": 11,
+      "rawReport": "/tmp/catchandrun-server-head.qZHWSI/head-tests.json"
+    },
+    {
+      "name": "head-repeat",
+      "total": 35,
+      "passed": 25,
+      "failed": 10,
+      "rawReport": "/tmp/catchandrun-server-head.qZHWSI/head-repeat-tests.json"
+    },
+    {
+      "name": "current",
+      "total": 35,
+      "passed": 25,
+      "failed": 10,
+      "rawReport": "/tmp/catchandrun-server-head.qZHWSI/current-tests.json"
+    }
+  ],
+  "matchingCurrentFailures": 10,
+  "unmatchedCurrentFailures": [],
+  "failureSignatures": [
+    {
+      "file": "GameplayFlow.test.ts",
+      "test": "Full Gameplay Flow match lifecycle with kills should track kills and scores through a full round",
+      "message": "AssertionError: expected 1 to be 3 // Object.is equality",
+      "matchingHeadRuns": [
+        "head",
+        "head-repeat"
+      ]
+    },
+    {
+      "file": "GameplayFlow.test.ts",
+      "test": "Full Gameplay Flow match lifecycle with kills should not award survival points to dead props",
+      "message": "AssertionError: expected 1 to be 2 // Object.is equality",
+      "matchingHeadRuns": [
+        "head",
+        "head-repeat"
+      ]
+    },
+    {
+      "file": "GameplayFlow.test.ts",
+      "test": "Full Gameplay Flow phase transition edge cases should handle player disconnect during active phase",
+      "message": "AssertionError: expected 'active' to be 'roundEnd' // Object.is equality",
+      "matchingHeadRuns": [
+        "head",
+        "head-repeat"
+      ]
+    },
+    {
+      "file": "MatchStateMachine.test.ts",
+      "test": "MatchStateMachine phase transitions MATCH_END -> WAITING: should reset all player state",
+      "message": "TypeError: this.room.setMetadata is not a function",
+      "matchingHeadRuns": [
+        "head",
+        "head-repeat"
+      ]
+    },
+    {
+      "file": "RoleAssigner.test.ts",
+      "test": "RoleAssigner should calculate hunter count as floor(playerCount / huntersPerPlayers)",
+      "message": "AssertionError: expected 2 to be 1 // Object.is equality",
+      "matchingHeadRuns": [
+        "head",
+        "head-repeat"
+      ]
+    },
+    {
+      "file": "RoleAssigner.test.ts",
+      "test": "RoleAssigner should produce independent random assignments across rounds",
+      "message": "AssertionError: expected 2 to be 1 // Object.is equality",
+      "matchingHeadRuns": [
+        "head",
+        "head-repeat"
+      ]
+    },
+    {
+      "file": "ScoringSystem.test.ts",
+      "test": "ScoringSystem updateSurvivalScores should award survival points to alive props after 1 second",
+      "message": "AssertionError: expected +0 to be 1 // Object.is equality",
+      "matchingHeadRuns": [
+        "head",
+        "head-repeat"
+      ]
+    },
+    {
+      "file": "ScoringSystem.test.ts",
+      "test": "ScoringSystem updateSurvivalScores should not award survival points to dead props",
+      "message": "AssertionError: expected +0 to be 1 // Object.is equality",
+      "matchingHeadRuns": [
+        "head",
+        "head-repeat"
+      ]
+    },
+    {
+      "file": "ScoringSystem.test.ts",
+      "test": "ScoringSystem updateSurvivalScores should accumulate fractional time and only award on full seconds",
+      "message": "AssertionError: expected +0 to be 1 // Object.is equality",
+      "matchingHeadRuns": [
+        "head",
+        "head-repeat"
+      ]
+    },
+    {
+      "file": "ScoringSystem.test.ts",
+      "test": "ScoringSystem updateSurvivalScores should handle multiple seconds at once",
+      "message": "AssertionError: expected 1 to be 3 // Object.is equality",
+      "matchingHeadRuns": [
+        "head",
+        "head-repeat"
+      ]
+    }
+  ],
+  "baselineOnlyFailures": [
+    {
+      "file": "GameplayFlow.test.ts",
+      "test": "Full Gameplay Flow role assignment fairness should rotate hunters across multiple rounds",
+      "message": "AssertionError: expected 9 to be less than or equal to 8"
+    }
+  ],
+  "observations": [
+    "RoleAssigner uses fixed count tiers and ignores huntersPerPlayers; unchanged tests expect floor division. Both count assertions fail on HEAD.",
+    "ScoringSystem awards survival points per 2-second tick; unchanged tests expect points each second. This explains four ScoringSystem failures and two GameplayFlow score failures.",
+    "MatchStateMachine retains ACTIVE when fewer than two players remain; unchanged GameplayFlow test expects immediate ROUND_END after disconnect.",
+    "MatchStateMachine.resetToWaiting calls setMetadata; unchanged mock factory has no setMetadata, causing the same TypeError on HEAD.",
+    "The unseeded 20-round fairness test additionally failed in the first HEAD run (maxDiff 9 > 8), but passed in the current run. Its source uses Math.random without a test seed; no attempt was made to alter randomness or force a pass."
+  ],
+  "unchangedSourceChecks": [
+    {
+      "file": "server/src/systems/RoleAssigner.ts",
+      "headGitBlob": "691383704607e24f7f67172077af01091b2fb982",
+      "workingGitBlob": "691383704607e24f7f67172077af01091b2fb982",
+      "archivedGitBlob": "691383704607e24f7f67172077af01091b2fb982",
+      "identical": true
+    },
+    {
+      "file": "server/src/systems/ScoringSystem.ts",
+      "headGitBlob": "c341ec38a987e2d6d860454d9b9659cc5b144867",
+      "workingGitBlob": "c341ec38a987e2d6d860454d9b9659cc5b144867",
+      "archivedGitBlob": "c341ec38a987e2d6d860454d9b9659cc5b144867",
+      "identical": true
+    },
+    {
+      "file": "server/src/systems/MatchStateMachine.ts",
+      "headGitBlob": "58f829a1d7460c336572477c8924623ee9bdc6e2",
+      "workingGitBlob": "58f829a1d7460c336572477c8924623ee9bdc6e2",
+      "archivedGitBlob": "58f829a1d7460c336572477c8924623ee9bdc6e2",
+      "identical": true
+    },
+    {
+      "file": "server/tests/systems/RoleAssigner.test.ts",
+      "headGitBlob": "21241bf25a7a011494a88ecea1d160224dfaaf46",
+      "workingGitBlob": "21241bf25a7a011494a88ecea1d160224dfaaf46",
+      "archivedGitBlob": "21241bf25a7a011494a88ecea1d160224dfaaf46",
+      "identical": true
+    },
+    {
+      "file": "server/tests/systems/ScoringSystem.test.ts",
+      "headGitBlob": "2f23fc03546657baca1ea8876ef0ecfb4b6255c3",
+      "workingGitBlob": "2f23fc03546657baca1ea8876ef0ecfb4b6255c3",
+      "archivedGitBlob": "2f23fc03546657baca1ea8876ef0ecfb4b6255c3",
+      "identical": true
+    },
+    {
+      "file": "server/tests/systems/GameplayFlow.test.ts",
+      "headGitBlob": "837085fdf1df37498b92b6c45d9b9fbf648cb720",
+      "workingGitBlob": "837085fdf1df37498b92b6c45d9b9fbf648cb720",
+      "archivedGitBlob": "837085fdf1df37498b92b6c45d9b9fbf648cb720",
+      "identical": true
+    },
+    {
+      "file": "server/tests/systems/MatchStateMachine.test.ts",
+      "headGitBlob": "18380c17ee5d28a6dec5fdab4abcd8f89cba9913",
+      "workingGitBlob": "18380c17ee5d28a6dec5fdab4abcd8f89cba9913",
+      "archivedGitBlob": "18380c17ee5d28a6dec5fdab4abcd8f89cba9913",
+      "identical": true
+    },
+    {
+      "file": "server/tests/helpers/factories.ts",
+      "headGitBlob": "ad36ab8d7c310afe0208b6fc3ceb7d96328c7fa3",
+      "workingGitBlob": "ad36ab8d7c310afe0208b6fc3ceb7d96328c7fa3",
+      "archivedGitBlob": "ad36ab8d7c310afe0208b6fc3ceb7d96328c7fa3",
+      "identical": true
+    },
+    {
+      "file": "server/src/schemas/PlayerSchema.ts",
+      "headGitBlob": "74854a6c2b08e9c52b215f99958147aa5370f14a",
+      "workingGitBlob": "74854a6c2b08e9c52b215f99958147aa5370f14a",
+      "archivedGitBlob": "74854a6c2b08e9c52b215f99958147aa5370f14a",
+      "identical": true
+    },
+    {
+      "file": "server/src/schemas/GameState.ts",
+      "headGitBlob": "f1af90d1643b2878fd41e35895b142d4ff92f4d1",
+      "workingGitBlob": "f1af90d1643b2878fd41e35895b142d4ff92f4d1",
+      "archivedGitBlob": "f1af90d1643b2878fd41e35895b142d4ff92f4d1",
+      "identical": true
+    },
+    {
+      "file": "server/vitest.config.ts",
+      "headGitBlob": "cb0c77a98ed1ece131ddd4ef65136e590e91f7fa",
+      "workingGitBlob": "cb0c77a98ed1ece131ddd4ef65136e590e91f7fa",
+      "archivedGitBlob": "cb0c77a98ed1ece131ddd4ef65136e590e91f7fa",
+      "identical": true
+    },
+    {
+      "file": "package-lock.json",
+      "headGitBlob": "97efd6ae684631d967e4760cf7ed4ca7b10f3b7c",
+      "workingGitBlob": "97efd6ae684631d967e4760cf7ed4ca7b10f3b7c",
+      "archivedGitBlob": "97efd6ae684631d967e4760cf7ed4ca7b10f3b7c",
+      "identical": true
+    }
+  ],
+  "sharedConstants": {
+    "headGitBlob": "14f85d64edb9c78e0dd437c55968146e5f2a1af7",
+    "workingGitBlob": "a23c95e83c61efc4b46772dd8c2690b65300dc78",
+    "difference": "Working changes only add WATER_DROWN_GRACE_MS, WATER_SURFACE_Y, WATER_SWIM_FEET_Y and WATER_SWIM_SPEED_MULTIPLIER plus comments. Existing role/scoring constants are unchanged. Isolated runs use the original HEAD constants."
+  },
+  "cleanup": "Temporary archive and raw JSON reports retained at the recorded snapshot path as audit evidence; no repository files, existing services, browser sessions or user data were removed."
+}

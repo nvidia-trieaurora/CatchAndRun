@@ -7,11 +7,14 @@ import {
 } from "@catch-and-run/shared";
 import {
   dampGroundVisual,
+  findCeilingSurface,
   findGroundSurface,
   shouldResolveGround,
   STAIR_STEP_DOWN,
 } from "./GroundCollision";
 import { LadderClimber, type LadderInput, type LadderVolume } from "./LadderClimb";
+import { WaterVolumes, type WaterBox } from "./WaterSwim";
+import { getCeilingHeightAt, getSupportHeightAt } from "../world/SupportSurfaces";
 
 const RADIUS = 0.35;
 const LADDER_HOP_SPEED = 4.5;
@@ -38,6 +41,9 @@ export class HunterController {
   private velocity = new THREE.Vector3();
   private position = new THREE.Vector3();
   private direction = new THREE.Vector3();
+  private readonly collisionBox = new THREE.Box3();
+  private readonly moveRotation = new THREE.Quaternion();
+  private readonly moveEuler = new THREE.Euler();
   private feetY = 0;
 
   private speed = HUNTER_SPEED;
@@ -57,6 +63,7 @@ export class HunterController {
 
   private bobTimer = 0;
   private readonly ladder = new LadderClimber();
+  private readonly water = new WaterVolumes();
 
   constructor(camera: THREE.PerspectiveCamera, input: InputManager, config: ClientConfig) {
     this.camera = camera;
@@ -82,13 +89,18 @@ export class HunterController {
 
     const state = this.input.getState();
 
-    // Crouch
-    this.isCrouching = state.crouch;
+    // Eye animation must not change physical feet height, especially mid-jump.
+    this.feetY = this.position.y - this.currentEyeH;
+    // Remain crouched beneath a platform instead of standing inside it and
+    // being pushed sideways across the entire slab by the unstuck pass.
+    this.isCrouching = state.crouch || (this.isCrouching && !this.canStand(colliders));
     const targetEye = this.isCrouching ? CROUCH_EYE_H : EYE_H;
     this.currentEyeH += (targetEye - this.currentEyeH) * Math.min(1, dt * 12);
+    this.position.y = this.feetY + this.currentEyeH;
 
     const bodyH = this.isCrouching ? CROUCH_BODY_H : BODY_H;
-    const moveSpeed = this.isCrouching ? this.speed * CROUCH_SPEED : this.speed;
+    const moveSpeed = (this.isCrouching ? this.speed * CROUCH_SPEED : this.speed)
+      * this.water.speedMultiplier(this.position.x, this.position.y - this.currentEyeH, this.position.z);
 
     // Movement direction
     this.direction.set(0, 0, 0);
@@ -99,11 +111,8 @@ export class HunterController {
     if (this.direction.lengthSq() > 0) this.direction.normalize();
 
     this.velocity.copy(this.direction);
-    this.velocity.applyQuaternion(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, this.euler.y, 0)));
+    this.velocity.applyQuaternion(this.moveRotation.setFromEuler(this.moveEuler.set(0, this.euler.y, 0)));
     this.velocity.multiplyScalar(moveSpeed * dt);
-
-    // Update feet position
-    this.feetY = this.position.y - this.currentEyeH;
 
     // Ladders: grab when walking into a rung column, then climb instead of
     // running the swept move / gravity passes for this frame.
@@ -130,6 +139,7 @@ export class HunterController {
     }
 
     // Move with slide collision (substeps to prevent tunneling)
+    const startX = this.position.x, startZ = this.position.z;
     const dx = this.velocity.x, dz = this.velocity.z;
     const dist = Math.sqrt(dx * dx + dz * dz);
     const MAX_STEP = RADIUS;
@@ -141,11 +151,25 @@ export class HunterController {
       for (let i = 0; i < steps; i++) this.moveAndSlide(sx, sz, colliders, bodyH);
     }
 
-    const wasGrounded = this.onGround;
+    let wasGrounded = this.onGround;
     let jumped = false;
 
+    // Swimming into the shore climbs out: the body is lifted onto the land and
+    // gravity settles it on the ground or the seawall cap.
+    const climbOut = this.water.climbOut(startX, startZ, this.position.x, this.position.z, this.feetY, GROUND_Y, dx, dz);
+    if (climbOut !== null) {
+      this.feetY = climbOut;
+      this.position.y = this.feetY + this.currentEyeH;
+      this.smoothFeetY = this.feetY;
+      this.verticalVelocity = 0;
+      this.onGround = false;
+      wasGrounded = false;
+    }
+
     // Jump
-    if (state.jump && this.onGround && !this.isCrouching) {
+    // The buoyancy fallback is not a solid surface to jump from. Otherwise a
+    // held jump repeatedly clears the server's continuous drowning countdown.
+    if (state.jump && this.onGround && !this.isCrouching && !this.isInWater()) {
       this.smoothFeetY = this.feetY;
       this.verticalVelocity = this.jumpSpeed;
       this.onGround = false;
@@ -160,7 +184,13 @@ export class HunterController {
 
     // Ceiling collision (prevent jumping through roofs)
     if (this.verticalVelocity > 0) {
-      const ceiling = this.findCeiling(colliders, bodyH);
+      const ceiling = findCeilingSurface(colliders, {
+        x: this.position.x,
+        z: this.position.z,
+        previousHeadY: previousFeetY + bodyH,
+        currentHeadY: this.feetY + bodyH,
+        radius: RADIUS,
+      });
       if (ceiling !== null) {
         const maxEyeY = ceiling - (bodyH - this.currentEyeH);
         if (this.position.y > maxEyeY) {
@@ -183,7 +213,8 @@ export class HunterController {
       stepUp: STEP_UP,
       stepDown: STAIR_STEP_DOWN,
       allowStepTransition,
-      fallbackY: GROUND_Y,
+      // over the sea nothing holds the body at y 0: it falls to the swim level
+      fallbackY: this.water.fallbackGroundY(this.position.x, this.position.z, GROUND_Y),
     });
     if (shouldResolveGround(
       ground,
@@ -304,45 +335,43 @@ export class HunterController {
   }
 
   private isColliding(colliders: THREE.Box3[], bodyH: number): boolean {
-    const box = new THREE.Box3(
-      new THREE.Vector3(this.position.x - RADIUS, this.feetY + STEP_UP, this.position.z - RADIUS),
-      new THREE.Vector3(this.position.x + RADIUS, this.feetY + bodyH, this.position.z + RADIUS)
-    );
+    const box = this.collisionBox;
+    box.min.set(this.position.x - RADIUS, this.feetY + STEP_UP, this.position.z - RADIUS);
+    box.max.set(this.position.x + RADIUS, this.feetY + bodyH, this.position.z + RADIUS);
     for (const c of colliders) {
+      // Contact with a roof/floor is not horizontal penetration.
+      const bottom = getCeilingHeightAt(c, this.position.x, this.position.z, RADIUS);
+      const top = getSupportHeightAt(c, this.position.x, this.position.z, RADIUS);
+      if (bottom === null || top === null || box.max.y <= bottom + 1e-6 || box.min.y >= top - 1e-6) continue;
       if (box.intersectsBox(c)) return true;
     }
     return false;
   }
 
-  private findCeiling(colliders: THREE.Box3[], bodyH: number): number | null {
-    const headY = this.feetY + bodyH;
-    const vUp = Math.max(2.5, this.verticalVelocity * 0.3);
-    const probe = new THREE.Box3(
-      new THREE.Vector3(this.position.x - RADIUS, headY - 0.1, this.position.z - RADIUS),
-      new THREE.Vector3(this.position.x + RADIUS, headY + vUp, this.position.z + RADIUS)
-    );
-    let lowestCeiling: number | null = null;
-    for (const c of colliders) {
-      if (!probe.intersectsBox(c)) continue;
-      const slabThickness = c.max.y - c.min.y;
-      if (slabThickness < 0.08) continue;
-      if (c.min.y >= headY - 0.3) {
-        if (lowestCeiling === null || c.min.y < lowestCeiling) {
-          lowestCeiling = c.min.y;
-        }
-      }
+  private canStand(colliders: readonly THREE.Box3[]): boolean {
+    for (const collider of colliders) {
+      const bottom = getCeilingHeightAt(collider, this.position.x, this.position.z, RADIUS);
+      const top = getSupportHeightAt(collider, this.position.x, this.position.z, RADIUS);
+      if (bottom === null || top === null || bottom >= this.feetY + BODY_H - 1e-6
+        || top <= this.feetY + CROUCH_BODY_H + 1e-6) continue;
+      if (this.position.x + RADIUS > collider.min.x
+        && this.position.x - RADIUS < collider.max.x
+        && this.position.z + RADIUS > collider.min.z
+        && this.position.z - RADIUS < collider.max.z) return false;
     }
-    return lowestCeiling;
+    return true;
   }
 
   private pushOutHorizontal(colliders: THREE.Box3[], bodyH: number) {
     // Only check body above step-up height to avoid fighting with findGround
-    const box = new THREE.Box3(
-      new THREE.Vector3(this.position.x - RADIUS, this.feetY + STEP_UP + 0.05, this.position.z - RADIUS),
-      new THREE.Vector3(this.position.x + RADIUS, this.feetY + bodyH, this.position.z + RADIUS)
-    );
+    const box = this.collisionBox;
+    box.min.set(this.position.x - RADIUS, this.feetY + STEP_UP + 0.05, this.position.z - RADIUS);
+    box.max.set(this.position.x + RADIUS, this.feetY + bodyH, this.position.z + RADIUS);
 
     for (const c of colliders) {
+      const bottom = getCeilingHeightAt(c, this.position.x, this.position.z, RADIUS);
+      const top = getSupportHeightAt(c, this.position.x, this.position.z, RADIUS);
+      if (bottom === null || top === null || box.max.y <= bottom + 1e-6 || box.min.y >= top - 1e-6) continue;
       if (!box.intersectsBox(c)) continue;
 
       const ox1 = box.max.x - c.min.x;
@@ -367,6 +396,7 @@ export class HunterController {
   }
 
   getIsCrouching(): boolean { return this.isCrouching; }
+  isGrounded(): boolean { return this.onGround; }
 
   setMovementTuning(speed: number, jumpSpeed: number) {
     this.speed = speed;
@@ -375,6 +405,21 @@ export class HunterController {
 
   setMovementBounds(minX: number, maxX: number, minZ: number, maxZ: number) {
     this.movementBounds = { minX, maxX, minZ, maxZ };
+    this.water.setMovementBounds(minX, maxX, minZ, maxZ);
+  }
+
+  /** Sea boxes of the current map (`waterHazards`); empty for maps without water. */
+  setWaterVolumes(boxes: readonly WaterBox[] | undefined) {
+    this.water.setBoxes(boxes);
+  }
+
+  setBoatSupports(boxes: readonly WaterBox[] | undefined) {
+    this.water.setDrySupports(boxes);
+  }
+
+  /** Feet below the sea surface over the water — swimming or sinking. */
+  isInWater(): boolean {
+    return this.water.isIn(this.position.x, this.feetY, this.position.z);
   }
 
   private clampToBounds() {
@@ -390,6 +435,8 @@ export class HunterController {
 
   setPosition(x: number, y: number, z: number) {
     this.ladder.release();
+    this.currentEyeH = EYE_H;
+    this.isCrouching = false;
     this.position.set(x, y + EYE_H, z);
     this.feetY = y;
     this.smoothFeetY = y;
@@ -415,9 +462,13 @@ export class HunterController {
 
   getPosition(): THREE.Vector3 { return this.position.clone(); }
 
-  translatePosition(dx: number, dy: number) {
+  /** Physical network height; independent of the crouch/camera eye offset. */
+  getFeetY(): number { return this.feetY; }
+
+  translatePosition(dx: number, dy: number, dz = 0) {
     this.position.x += dx;
     this.position.y += dy;
+    this.position.z += dz;
     this.feetY += dy;
     this.smoothFeetY += dy;
   }

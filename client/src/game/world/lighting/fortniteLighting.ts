@@ -37,8 +37,11 @@ export function createFortniteLighting(
   sun.shadow.camera.bottom = -60;
   sun.shadow.camera.near = 1;
   sun.shadow.camera.far = 140;
-  sun.shadow.bias = -0.0004;
-  sun.shadow.normalBias = 0.02;
+  // The wide harbor shadow frustum needs enough separation to avoid self-shadow
+  // bands on shallow roofs/slabs. Runtime A/B keeps contact shadows with these
+  // offsets; disabling normal maps did not remove the former shadow acne.
+  sun.shadow.bias = -0.001;
+  sun.shadow.normalBias = 0.08;
   scene.add(sun);
 
   // Cool maritime fill from the opposite side, without flattening the scene.

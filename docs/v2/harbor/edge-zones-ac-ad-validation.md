@@ -176,6 +176,34 @@ client and server copies (parity test passes) — the anti-cheat previously reje
 any position above 25 m, which would have frozen a Hunter's eye position (feet + 1.6)
 on the ring. Water hazard volumes were left at 25 m so nothing on the crane is lethal.
 
+## Follow-up 2026-09-08 — AC residence routes (promoted as `?v=20260908-ac02`)
+
+Reported in-game: the chimney was a closed cap, the 2F loggia door could not be walked
+through ("blocked by something invisible"), and the 1F/2F side windows were barred.
+
+- Chimney: the eight pitched-roof collider segments of `buildBackyardHouse` are split
+  around the 1.2 × 1.2 flue (x -32.2..-30.8, z 18.3..19.7); the flat roof and 2F floor
+  already had the hole, so a body entering the rim (y 12.85) now falls through the
+  brick shaft to the hearth (y 0.6) and exits into the living room. The AC visuals lost
+  the cap/pot and gained a concrete rim, soot lining, roof-slab / batten / ceiling holes;
+  the bookshelf that stood inside the flue moved to the front-right corner (three books
+  without colliders). Procedural dump 488 → 492, all four contracts updated.
+- Loggia door: the cinematic collision nodes `COL_MOVE_CINE_HOUSE_FRONT_L/R/HEADER`
+  (y 0.25..8.5/8.75) sealed the opening the procedural colliders leave open
+  (x -37.5..-32.5, y 5.35..9.7). They are removed by the AC override
+  (`GARDEN_AC_REMOVED_COLLIDERS`, also `HOUSE_LEFT` / `HOUSE_RIGHT` for the windows);
+  `COL_MOVE_CINE_HOUSE_BACK` stays.
+- Window bands (x -40 / -30, z 19.6..24.4, 1F 1.35..3.35, 2F 6.35..8.35): mullions and
+  in-band shutters removed, exterior folded shutters outside the opening, room-side
+  ledge; the full-height cinematic side walls that also blocked them are the removed
+  `HOUSE_LEFT/RIGHT`.
+- Verification: `GardenHouseRoutes.test.ts` (flue, hearth exit, loggia door, window bands
+  collision-free; override keeps `HOUSE_BACK` + ticket booth), validator passes for
+  garden / construction / ferris / container-bd against the new dump, glTF clean, tsc,
+  107 client tests, lint 0 errors, build; production captures (no staging flag) WebGPU +
+  WebGL2 `_staging/renders/ac-fix/after-ac02-*.png` (chimney top open, loggia open,
+  window band see-through), 0 console errors. Presets `acChimney`, `acLoggia`, `acWindows`.
+
 ## Promotion procedure (done 2026-09-07; repeat for future candidates)
 
 1. Copy `_staging/<zone>-candidate.glb` (+ `.metrics.json`) →

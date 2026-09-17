@@ -38,6 +38,9 @@ import {
 import { ZoneAmbientMotion } from "./world/zones/ZoneAmbientMotion";
 import type { FerrisHarborRig } from "./world/zones/FerrisHarborRig";
 import type { MooringRopes } from "./world/zones/MooringRopes";
+import { BoatCollisionRig } from "./world/zones/BoatCollisionRig";
+import { getSupportHeightAt } from "./world/SupportSurfaces";
+import { WaterVolumes } from "./controllers/WaterSwim";
 import schoolDataJson from "./world/school.json";
 import {
   applyHarborEnvironment,
@@ -46,7 +49,7 @@ import {
 import { HarborEnvironmentLoader } from "./world/lighting/HarborEnvironmentLoader";
 import { disposeMaterialLibrary } from "./world/materials/materialLibrary";
 import { PropRegistry } from "./world/PropRegistry";
-import { setHunterGateOpen } from "./world/HunterGateState";
+import { setHunterGateOpen, updateHunterGateVisual } from "./world/HunterGateState";
 import {
   getHunterMovementSpeed,
   HunterController,
@@ -64,7 +67,7 @@ import { PropTransformSystem } from "./systems/PropTransformSystem";
 import { AudioSystem } from "./systems/AudioSystem";
 import { ParticleSystem } from "./systems/ParticleSystem";
 import { WaterProximityWarning } from "./systems/WaterProximityWarning";
-import { collectNearbyColliders } from "./world/collisionBroadphase";
+import { CollisionSpatialIndex } from "./world/collisionBroadphase";
 import {
   enterLobbyPresentation as applyLobbyPresentation,
   type LobbyScreen,
@@ -79,6 +82,7 @@ import {
   type DevViewPose,
 } from "./rendering/RuntimeMetrics";
 import { configureFirstPersonViewmodel } from "./rendering/FirstPersonViewmodel";
+import { MapRenderWarmup } from "./rendering/MapRenderWarmup";
 import {
   sampleDrowningCinematic,
   type DrowningCinematicState,
@@ -104,6 +108,7 @@ import {
   HUNTER_GRENADE_STUN_MS,
   HUNTER_PHASEWALK_DURATION_MS,
   HUNTER_PHASEWALK_COOLDOWN_MS,
+  WATER_DROWN_GRACE_MS,
   type PlayerDrownedData,
 } from "@catch-and-run/shared";
 import mapDataJson from "./world/harbor-warehouse.json";
@@ -159,6 +164,9 @@ export class GameManager {
 
   private playerEntities = new Map<string, PlayerEntity>();
   private colliders: THREE.Box3[] = [];
+  private readonly collisionIndex = new CollisionSpatialIndex(8);
+  private readonly nearbyMapColliders: THREE.Box3[] = [];
+  private weaponEffectsWarmupPending = false;
   /** Vertical ladders derived from the stacked rung colliders of the current map. */
   private ladderVolumes: LadderVolume[] = [];
   private gateColliderIndex = -1;
@@ -184,9 +192,14 @@ export class GameManager {
   private lastPhaseWalkTime = 0;
   private phaseWalkColliders: THREE.Box3[] = [];
   private duplicatesLeft = 4;
-  private duplicates: { mesh: THREE.Mesh; collider: THREE.Box3; hp: number; vy: number; onGround: boolean }[] = [];
+  private duplicates: {
+    mesh: THREE.Mesh; collider: THREE.Box3; hp: number; vy: number; onGround: boolean;
+    boatCarry?: { previous: THREE.Box3; delta: THREE.Vector3; supported: boolean };
+  }[] = [];
+  private boatDrySupports?: THREE.Box3[];
   private currentPhase: string = GamePhase.WAITING;
   private mapBuilt = false;
+  private readonly mapRenderWarmup = new MapRenderWarmup();
   private readonly mapLoaderResources: CompressedMapLoader;
   private readonly harborV2Loader: MapAssetLoader;
   private readonly harborCinematicLoader: MapAssetLoader;
@@ -194,6 +207,9 @@ export class GameManager {
   private activeWarehouseV2: THREE.Group | null = null;
   private activeHarborCinematic: THREE.Group | null = null;
   private harborAmbientMotion: HarborAmbientMotion | null = null;
+  private boatCollisionRig: BoatCollisionRig | null = null;
+  private readonly boatCarryScratch = new THREE.Vector3();
+  private readonly duplicateWater = new WaterVolumes();
   /** Edge-zone GLB loaders (AC garden, AD construction) keyed by zone id. */
   private readonly harborZoneLoaders: { asset: HarborZoneAsset; loader: MapAssetLoader }[] = [];
   private activeHarborZones: THREE.Group[] = [];
@@ -228,6 +244,8 @@ export class GameManager {
   private ferrisCabD = 1.4;
   private minimap: Minimap;
   private waterProximity: WaterProximityWarning;
+  /** performance.now() when the local body dropped below the sea surface; null on land. */
+  private waterEnteredAt: number | null = null;
   private menuBgGroup: THREE.Group | null = null;
   private menuBgAngle = 0;
   private lastCountdownShown = -1;
@@ -242,11 +260,11 @@ export class GameManager {
     console.info(`[Renderer] Initialized ${this.rendererBackend}`);
     this.mapLoaderResources = createCompressedMapLoader(this.renderer);
     this.harborV2Loader = new MapAssetLoader(
-      "/assets/maps/harbor-v2/warehouse.glb?v=20260907-sc04",
+      "/assets/maps/harbor-v2/warehouse.glb?v=20260909-rl01",
       this.mapLoaderResources.loader,
     );
     this.harborCinematicLoader = new MapAssetLoader(
-      "/assets/maps/harbor-v2/cinematic/harbor-cinematic.glb?v=20260907-detail03",
+      "/assets/maps/harbor-v2/cinematic/harbor-cinematic.glb?v=20260910-rp03",
       this.mapLoaderResources.loader,
     );
     const zoneSource = resolveHarborZoneSource(window.location.search);
@@ -279,12 +297,22 @@ export class GameManager {
         warehouse: { position: v(48, 17, 34), target: v(0, 4, 0) },
         dock: { position: v(68, 13, 62), target: v(15, 1, 38) },
         fleet: { position: v(58, 9, 72), target: v(24, 1, 52) },
+        responseStation: { position: v(-30, 10, 13), target: v(-42, 2, 0), fov: 55 },
+        responseStationEntry: { position: v(-28, 2, 0), target: v(-47, 2, 0), fov: 60 },
+        rescueQuay: { position: v(28, 14, 8), target: v(49, 2.2, 23), fov: 55 },
+        rescueWorkshop: { position: v(46, 3, 14), target: v(54.5, 1.4, 20.7), fov: 55 },
+        ferrisTicket: { position: v(-24, 3, 38), target: v(-18.5, 1.8, 31.2), fov: 55 },
         // AC — Waterfront Residential Garden (house -40..-30 × 18..29, pond @ -48,38)
         acGarden: { position: v(-12, 28, 8), target: v(-44, 0, 35), fov: 55 },
         acGardenRoute: { position: v(-52, 1.7, 44.5), target: v(-33, 4, 24) },
         acGardenReverse: { position: v(-37, 2.1, 29.5), target: v(-47, 0.3, 42) },
         acGardenTop: { position: v(-35.5, 140, 30), target: v(-36, 0, 30), fov: 18, fogScale: 0.15 },
         acGardenDetail: { position: v(-44.2, 1.6, 42.5), target: v(-48.5, 0.6, 38) },
+        // AC residence routes: open chimney flue (-31.5, 19), 2F loggia door (x -37.5..-32.5,
+        // z 26), side window bands (x -40 / -30, z 19.6..24.4)
+        acChimney: { position: v(-27.5, 16.5, 13.5), target: v(-31.5, 12.6, 19), fov: 50 },
+        acLoggia: { position: v(-35, 7.6, 33.5), target: v(-35, 7.2, 26), fov: 60 },
+        acWindows: { position: v(-46.5, 3.4, 22), target: v(-40, 2.6, 22), fov: 60 },
         // AD — Waterfront Construction Site (slab -47..-23 × -34..-10)
         adConstruction: { position: v(-6, 30, -48), target: v(-38, 2, -22), fov: 55 },
         // route: standing in the site gate opening (-30..-26 × -15) looking NW across the slab
@@ -308,6 +336,38 @@ export class GameManager {
         ferrisCabinDetail: { position: v(0.2, 12.4, 41.8), target: v(-2.2, 12.0, 34.0), fov: 55 },
         workboatDetail: { position: v(11.5, 3.2, 44.2), target: v(6.5, 0.6, 50), fov: 50 },
         fleetDetail: { position: v(-20, 4.5, 56), target: v(0, -0.2, 52), fov: 55 },
+        // BD Eastern Container Yard (x 29.5..62.6, z -44..2.6; shop 38..52 x -43..-33,
+        // door x 44..46 at z -33; main lane x 44.2..50.2; cross road z -25..-19)
+        containerBD: { position: v(20, 15, 16), target: v(48, 1.5, -20), fov: 55 },
+        containerBDRoute: { position: v(47.2, 1.7, 3), target: v(45.8, 2.2, -30) },
+        containerBDShop: { position: v(45, 2.4, -20.5), target: v(45, 2.6, -33.5), fov: 55 },
+        containerBDReverse: { position: v(61, 9.5, -31), target: v(36, 1, -6), fov: 55 },
+        containerBDTop: { position: v(46, 140, -20), target: v(46, 0, -20), fov: 18, fogScale: 0.15 },
+        containerBDDetail: { position: v(48.6, 2.3, -10.8), target: v(36, 1.8, -15.6), fov: 50 },
+        containerBDForklift: { position: v(58.3, 2.0, -10.4), target: v(55.6, 0.9, -7.0), fov: 50 },
+        containerBDRoof: { position: v(33.5, 6.8, -30), target: v(46, 5.6, -38), fov: 55 },
+        // Harbor Market (the BD shop, 38..52 × -43..-33, storefront at z -33 facing south)
+        harborMarketExterior: { position: v(58.5, 6.2, -20.5), target: v(45, 2.6, -37.5), fov: 50 },
+        harborMarketFront: { position: v(45, 3.0, -21.5), target: v(45, 2.9, -33), fov: 45 },
+        // west side: must read as a flat service path (no stair, ramp, landing or posts)
+        harborMarketLeft: { position: v(31.5, 3.2, -30), target: v(38, 2.0, -39.5), fov: 55 },
+        harborMarketInterior: { position: v(45, 1.85, -33.4), target: v(45, 1.35, -42.5), fov: 70 },
+        harborMarketCheckout: { position: v(47.6, 2.5, -41.0), target: v(49.4, 0.9, -34.8), fov: 60 },
+        harborMarketTop: { position: v(45, 60, -37.5), target: v(45, 0, -37.5), fov: 18, fogScale: 0.15 },
+        harborMarketShelf: { position: v(43.9, 1.5, -36.2), target: v(42.1, 1.0, -37.4), fov: 45 },
+        harborMarketFridge: { position: v(49.4, 1.6, -39.6), target: v(51.6, 1.3, -41.3), fov: 55 },
+        // roof access: stockroom ladder (approach from +x) up through the hatch onto the west overhang
+        harborMarketRoofLadder: { position: v(40.5, 1.5, -42.3), target: v(38.35, 3.0, -41.3), fov: 65 },
+        harborMarketHatch: { position: v(36.2, 7.6, -38.6), target: v(38.7, 5.9, -41.3), fov: 50 },
+        // AB — Harbor Operations & Repair Lane (strip x -23.4..29.5, z -43.5..-18: lane z -25..-19,
+        // Operations building -9..9 × -43..-29 on the old Dockside Bar boxes, warehouse wall z -18)
+        operationsAB: { position: v(-22, 6.5, -20.5), target: v(4, 2.5, -34), fov: 58 },
+        operationsABRoute: { position: v(-21.5, 1.7, -22), target: v(28, 1.4, -22), fov: 65 },
+        operationsABInterior: { position: v(-7.6, 1.7, -31.2), target: v(5, 1.3, -37.5), fov: 70 },
+        operationsABSeawall: { position: v(-17, 6.5, -53), target: v(3, 2, -36), fov: 50 },
+        operationsABTop: { position: v(3, 90, -30), target: v(3, 0, -30.01), fov: 18, fogScale: 0.15 },
+        operationsABDetail: { position: v(11, 1.7, -23.6), target: v(18, 3.2, -18.2), fov: 55 },
+        operationsABPump: { position: v(-11.5, 2.0, -33.5), target: v(-17.5, 1.4, -40.5), fov: 55 },
       };
       window.__catchAndRunView = (preset) => {
         this.input.exitPointerLock();
@@ -390,6 +450,7 @@ export class GameManager {
         && this.builtMapId === "harbor-warehouse"
       ) {
         applyHarborEnvironment(this.scene, environment);
+        this.weaponEffectsWarmupPending = true;
       }
     });
 
@@ -799,11 +860,20 @@ export class GameManager {
 
   /** Removes all scene objects created by the last map build (host switched maps). */
   private teardownMap() {
+    this.weaponEffectsWarmupPending = false;
+    this.mapRenderWarmup?.invalidate();
+    this.clearDuplicates();
     this.weaponSystem?.clearRoundEffects();
     this.weaponSystem?.invalidateImpactSurfaces();
     this.harborWater?.dispose();
     this.harborWater = null;
     this.harborAmbientMotion = null;
+    this.boatCollisionRig = null;
+    this.duplicateWater.setBoxes(undefined);
+    if (this.controllersReady) {
+      this.hunterController.setBoatSupports([]);
+      this.propController.setBoatSupports([]);
+    }
     this.ferrisRig = null;
     this.mooringRopes?.dispose();
     this.mooringRopes = null;
@@ -825,6 +895,8 @@ export class GameManager {
     disposeMaterialLibrary();
     this.mapObjects = [];
     this.colliders = [];
+    this.collisionIndex.rebuild([]);
+    this.nearbyMapColliders.length = 0;
     this.ferrisWheel = null;
     this.ferrisCabinColliders = [];
     this.gateMesh = null;
@@ -907,6 +979,7 @@ export class GameManager {
       this.activeWarehouseV2 = mapResult.warehouseV2Root;
       this.activeHarborCinematic = mapResult.cinematicV2Root;
       this.activeHarborZones = mapResult.zoneRoots;
+      this.boatCollisionRig = new BoatCollisionRig(mapResult.zoneRoots);
       this.zoneAmbientMotion = mapResult.zoneRoots.length > 0
         ? new ZoneAmbientMotion(
           mapResult.zoneRoots,
@@ -923,10 +996,13 @@ export class GameManager {
       this.ferrisRig = mapResult.ferrisRig;
       this.mooringRopes = mapResult.mooringRopes;
       this.harborWater = mapResult.harborWater;
+      this.harborWater?.setHullInteriors(this.boatCollisionRig?.hullInteriors ?? []);
     }
     this.mapObjects = this.scene.children.filter((c) => !beforeChildren.has(c));
 
     this.colliders = mapResult.colliders;
+    this.colliders.push(...(this.boatCollisionRig?.colliders ?? []));
+    this.duplicateWater.setBoxes(this.builtMapId === "school" ? undefined : mapDataJson.waterHazards);
     this.gateColliderIndex = mapResult.gateColliderIndex;
     this.gateCollider = this.colliders[this.gateColliderIndex] || null;
     this.gateColliderTemplate = this.gateCollider;
@@ -934,6 +1010,7 @@ export class GameManager {
     this.ferrisWheel = mapResult.ferrisWheel;
 
     this.ferrisCabinColliders = mapResult.ferrisCabinColliders;
+    this.rebuildCollisionIndex();
 
     // Stacked rung colliders (silo, scaffolds, watchtower) become climbable
     // ladders, plus any COL_LADDER_* column authored in a GLB (crane mast);
@@ -946,6 +1023,8 @@ export class GameManager {
     if (this.controllersReady) {
       this.hunterController.setLadders(this.ladderVolumes);
       this.propController.setLadders(this.ladderVolumes);
+      this.hunterController.setBoatSupports(this.boatCollisionRig?.colliders ?? []);
+      this.propController.setBoatSupports(this.boatCollisionRig?.colliders ?? []);
     }
 
     // Game systems persist across map rebuilds — create once
@@ -969,6 +1048,7 @@ export class GameManager {
     }
     // Build the broad-phase once while the map is loading, never on the first shot.
     this.weaponSystem.prepareImpactSurfaces();
+    this.weaponEffectsWarmupPending = true;
   }
 
   private closeHunterGate() {
@@ -978,6 +1058,7 @@ export class GameManager {
       this.gateMesh,
       false,
     );
+    this.rebuildCollisionIndex();
   }
 
   private openHunterGate() {
@@ -987,6 +1068,16 @@ export class GameManager {
       this.gateMesh,
       true,
     );
+    this.rebuildCollisionIndex();
+  }
+
+  /** Rebuild only when membership changes; moving cabins/decoys are queried live. */
+  private rebuildCollisionIndex() {
+    this.collisionIndex.rebuild(this.colliders, [
+      ...this.ferrisCabinColliders,
+      ...(this.boatCollisionRig?.colliders ?? []),
+      ...this.duplicates.map((duplicate) => duplicate.collider),
+    ]);
   }
 
   /** Leave any development snapshot pose and restore gameplay optics. */
@@ -1024,6 +1115,14 @@ export class GameManager {
     );
     this.hunterController.setLadders(this.ladderVolumes);
     this.propController.setLadders(this.ladderVolumes);
+    // the sea: bodies fall in, swim slowly and can climb back out (server drowns
+    // them after WATER_DROWN_GRACE_MS under water)
+    const waterHazards = this.builtMapId === "school" ? undefined : mapDataJson.waterHazards;
+    this.hunterController.setWaterVolumes(waterHazards);
+    this.propController.setWaterVolumes(waterHazards);
+    this.hunterController.setBoatSupports(this.boatCollisionRig?.colliders ?? []);
+    this.propController.setBoatSupports(this.boatCollisionRig?.colliders ?? []);
+    this.waterEnteredAt = null;
 
     // Clean up old transform mesh
     this.propTransformSystem?.dispose();
@@ -1876,12 +1975,16 @@ export class GameManager {
     if (this.ferrisWheel) {
       this.updateFerrisWheel(dt);
     }
-    this.harborWater?.update(dt);
     this.harborAmbientMotion?.update(dt, this.harborWater);
+    this.updateBoatPhysics();
+    // Refresh inverse hull transforms after the boat poses; no seawater is
+    // drawn through the two open skiff interiors. Wave time advances once.
+    this.harborWater?.update(dt);
     this.zoneAmbientMotion?.update(dt);
     // ropes follow the boats that just bobbed (socket world matrices refresh here)
     if (this.mooringRopes) {
-      for (const root of this.activeHarborZones) root.updateMatrixWorld(true);
+      // getWorldPosition() refreshes each socket's ancestors in MooringRopes.
+      // Do not force traversal of every static mesh on the island each frame.
       this.mooringRopes.update();
     }
 
@@ -1889,6 +1992,7 @@ export class GameManager {
       this.updateGameplay(dt);
     }
     this.updateDrowningCinematic(dt);
+    updateHunterGateVisual(this.gateMesh, dt);
 
     this.playerEntities.forEach((entity) => entity.updateVisual(dt));
 
@@ -1905,6 +2009,28 @@ export class GameManager {
       this.renderer.render(this.scene, this.camera);
     }
 
+    // The first real world render must initialize HDR/PMREM before compileAsync.
+    // Starting compilation earlier can cache a black environment because nested
+    // PMREM passes run under the renderer's compile-only object handler.
+    if (this.mapBuilt && this.weaponEffectsWarmupPending && this.weaponSystem) {
+      this.weaponEffectsWarmupPending = false;
+      const mapObjects = this.mapObjects;
+      const environment = this.scene.environment;
+      const fog = this.scene.fog;
+      // Serialize both jobs on this renderer and never warm a newer, not-yet-
+      // rendered map/HDR if a room switch or an asset upgrade happened meanwhile.
+      void this.weaponSystem.prepareVisualEffects(this.renderer, this.camera)
+        .catch((error: unknown) => { console.warn("[Weapon] Effect prewarm failed", error); })
+        .then(() => {
+          if (!this.mapBuilt || this.mapObjects !== mapObjects || this.scene.environment !== environment || this.scene.fog !== fog) return;
+          return this.mapRenderWarmup?.prepare(
+            this.renderer, this.scene, this.camera, mapObjects,
+            this.post.enabled ? this.post.getSceneRenderTarget() : null,
+          );
+        })
+        .catch((error: unknown) => { console.warn("[Map] Render prewarm failed", error); });
+    }
+
     this.metricsFrame++;
     if (this.mapBuilt && this.metricsFrame % 60 === 0) {
       window.__catchAndRunMetrics = this.runtimeMetrics.collect(
@@ -1918,6 +2044,73 @@ export class GameManager {
   }
 
   private prevCabinPositions: { x: number; y: number }[] = [];
+
+  private updateBoatPhysics() {
+    const boats = this.boatCollisionRig;
+    if (!boats) return;
+    boats.update();
+    // Snapshot before moving anything, then resolve a strictly bottom-up
+    // support chain. Each object receives exactly one vessel displacement.
+    this.duplicates.sort((a, b) => a.collider.min.y - b.collider.min.y);
+    for (const duplicate of this.duplicates) {
+      const carry = duplicate.boatCarry ??= {
+        previous: new THREE.Box3(), delta: new THREE.Vector3(), supported: false,
+      };
+      carry.previous.copy(duplicate.collider);
+      carry.delta.set(0, 0, 0);
+      carry.supported = false;
+    }
+    const drySupports = this.boatDrySupports ??= [];
+    drySupports.length = 0;
+    drySupports.push(...boats.colliders);
+    for (const duplicate of this.duplicates) {
+      const carry = duplicate.boatCarry;
+      if (!carry) continue;
+      if (!duplicate.onGround) continue;
+      const { x, z } = duplicate.mesh.position;
+      carry.supported = boats.carryDelta(x, carry.previous.min.y, z, carry.delta, 0);
+      if (!carry.supported) {
+        for (const lower of this.duplicates) {
+          const support = lower.boatCarry;
+          if (!support?.supported || support.previous.min.y >= carry.previous.min.y - 1e-6) continue;
+          const top = getSupportHeightAt(support.previous, x, z, 0);
+          if (top === null || Math.abs(top - carry.previous.min.y) >= .09) continue;
+          carry.delta.copy(support.delta);
+          carry.supported = true;
+          break;
+        }
+      }
+      if (carry.supported) {
+        duplicate.mesh.position.add(carry.delta);
+        duplicate.collider.translate(carry.delta);
+        drySupports.push(duplicate.collider);
+      }
+    }
+    if (this.controllersReady && this.localIsAlive) {
+      const hunter = this.localRole === PlayerRole.HUNTER;
+      const controller = hunter ? this.hunterController : this.propController;
+      controller.setBoatSupports(drySupports);
+      // A rising jump within the contact tolerance is no longer attached.
+      if (!controller.isGrounded()) return;
+      const position = controller.getPosition();
+      const feetY = hunter ? this.hunterController.getFeetY() : position.y;
+      let supported = boats.carryDelta(position.x, feetY, position.z, this.boatCarryScratch);
+      if (!supported) {
+        for (const duplicate of this.duplicates) {
+          const carry = duplicate.boatCarry;
+          if (!carry?.supported) continue;
+          const top = getSupportHeightAt(carry.previous, position.x, position.z, .28);
+          if (top === null || Math.abs(top - feetY) >= .09) continue;
+          this.boatCarryScratch.copy(carry.delta);
+          supported = true;
+          break;
+        }
+      }
+      if (supported) {
+        controller.translatePosition(this.boatCarryScratch.x, this.boatCarryScratch.y, this.boatCarryScratch.z);
+      }
+    }
+  }
 
   private updateFerrisWheel(dt: number) {
     if (!this.ferrisWheel) return;
@@ -1982,7 +2175,7 @@ export class GameManager {
       if (prevPos && playerPos && this.ferrisCabinColliders[base]) {
         const floorBox = this.ferrisCabinColliders[base];
         const px = playerPos.x, pz = playerPos.z;
-        const py = playerPos.y - (this.localRole === PlayerRole.HUNTER ? 1.6 : 0);
+        const py = this.localRole === PlayerRole.HUNTER ? this.hunterController.getFeetY() : playerPos.y;
         if (px > floorBox.min.x && px < floorBox.max.x &&
             pz > floorBox.min.z && pz < floorBox.max.z &&
             Math.abs(py - floorBox.max.y) < 0.3) {
@@ -2027,10 +2220,10 @@ export class GameManager {
     const controllerPosition = this.localRole === PlayerRole.HUNTER
       ? this.hunterController.getPosition()
       : this.propController.getPosition();
-    const allColliders = collectNearbyColliders(
-      this.colliders,
+    const allColliders = this.collisionIndex.collectNearby(
       controllerPosition,
       16,
+      this.nearbyMapColliders,
     );
     const myId = this.network.getSessionId();
     this.playerEntities.forEach((entity, sid) => {
@@ -2096,6 +2289,35 @@ export class GameManager {
       this.updatePropHUD();
     }
 
+    this.updateWaterState(pos);
+    this.sendInputToServer(pos!);
+  }
+
+  /**
+   * Shore warnings while dry; once the body is under the surface a countdown of
+   * the server's drowning grace runs on the HUD until the player climbs out (or
+   * PLAYER_DROWNED arrives).
+   */
+  private updateWaterState(pos: THREE.Vector3) {
+    const inWater = this.localRole === PlayerRole.HUNTER
+      ? this.hunterController.isInWater()
+      : this.propController.isInWater();
+    const now = performance.now();
+    if (inWater) {
+      if (this.waterEnteredAt === null) {
+        this.waterEnteredAt = now;
+        const feetY = this.localRole === PlayerRole.HUNTER ? this.hunterController.getFeetY() : pos.y;
+        const sampled = this.harborWater?.sampleHeight(pos.x, pos.z);
+        const splashY = typeof sampled === "number" ? sampled : HARBOR_WATER_Y;
+        this.weaponSystem?.spawnWaterImpact(new THREE.Vector3(pos.x, Math.max(splashY, feetY), pos.z), 1.4);
+        this.audioSystem?.playSound("waterWarning");
+        this.cameraShake.add(0.2);
+      }
+      const secondsLeft = Math.max(0, (WATER_DROWN_GRACE_MS - (now - this.waterEnteredAt)) / 1000);
+      this.waterProximity.showDrowning(secondsLeft);
+      return;
+    }
+    this.waterEnteredAt = null;
     const waterWarning = this.waterProximity.update(this.builtMapId, pos);
     if (
       waterWarning.changed
@@ -2103,7 +2325,6 @@ export class GameManager {
     ) {
       this.audioSystem?.playSound("waterWarning");
     }
-    this.sendInputToServer(pos!);
   }
 
   private handleHunterActions(_dt: number) {
@@ -2315,36 +2536,43 @@ export class GameManager {
     const hp = (propDef as any)?.hp || 100;
 
     this.duplicates.push({ mesh, collider: box, hp, vy: 0, onGround: false });
+    this.rebuildCollisionIndex();
   }
 
   private updateDuplicatePhysics(dt: number) {
     const gravity = -28;
+    this.duplicates.sort((a, b) => a.collider.min.y - b.collider.min.y);
     for (const dup of this.duplicates) {
-      if (dup.onGround) continue;
-
-      dup.vy += gravity * dt;
-      dup.mesh.position.y += dup.vy * dt;
-
-      // Find ground from map colliders (exclude other duplicate colliders)
-      let groundY = 0;
+      // Measure real feet (some prop pivots are not at their lowest vertex).
+      // Sea is not a hidden y=0 platform; low skiff decks must win over water.
+      const oldFeet = dup.collider.min.y;
       const mx = dup.mesh.position.x;
       const mz = dup.mesh.position.z;
-      for (const c of this.colliders) {
-        if (this.duplicates.some(d => d.collider === c)) continue;
-        if (mx > c.min.x && mx < c.max.x && mz > c.min.z && mz < c.max.z) {
-          if (c.max.y > groundY && c.max.y <= dup.mesh.position.y + 0.5) {
-            groundY = c.max.y;
+      let groundY = this.duplicateWater.fallbackGroundY(mx, mz, 0);
+      const nearby = this.collisionIndex.collectNearby(dup.mesh.position, 4);
+      for (const c of nearby) {
+        if (c === dup.collider) continue;
+        const other = this.duplicates.find(d => d.collider === c);
+        // Settled lower objects can support a stack. Never support ourselves
+        // or form a cyclic pair of overlapping, still-falling duplicates.
+        if (other && (!other.onGround || c.min.y >= oldFeet - 1e-6)) continue;
+        const surface = getSupportHeightAt(c, mx, mz, 0);
+        if (surface !== null) {
+          if (surface > groundY && surface <= oldFeet + .08) {
+            groundY = surface;
           }
         }
       }
-
-      if (dup.mesh.position.y <= groundY) {
-        dup.mesh.position.y = groundY;
+      if (dup.onGround && Math.abs(oldFeet - groundY) < .001) continue;
+      dup.onGround = false;
+      dup.vy += gravity * dt;
+      let dy = dup.vy * dt;
+      if (oldFeet + dy <= groundY) {
+        dy = groundY - oldFeet;
         dup.vy = 0;
         dup.onGround = true;
       }
-
-      // Update collider position
+      dup.mesh.position.y += dy;
       dup.collider.setFromObject(dup.mesh);
     }
   }
@@ -2365,6 +2593,7 @@ export class GameManager {
     const colIdx = this.colliders.indexOf(dup.collider);
     if (colIdx >= 0) this.colliders.splice(colIdx, 1);
     this.duplicates = this.duplicates.filter(d => d !== dup);
+    this.rebuildCollisionIndex();
   }
 
   private clearDuplicates() {
@@ -2374,6 +2603,7 @@ export class GameManager {
       if (idx >= 0) this.colliders.splice(idx, 1);
     }
     this.duplicates = [];
+    this.rebuildCollisionIndex();
     this.duplicatesLeft = 4;
   }
 
@@ -2433,7 +2663,7 @@ export class GameManager {
 
     for (let attempt = 0; attempt < 10; attempt++) {
       const pos = this.hunterController.getPosition();
-      const feetY = pos.y - 1.6;
+      const feetY = this.hunterController.getFeetY();
       const playerBox = new THREE.Box3(
         new THREE.Vector3(pos.x - radius, feetY, pos.z - radius),
         new THREE.Vector3(pos.x + radius, feetY + height, pos.z + radius)
@@ -2556,7 +2786,7 @@ export class GameManager {
 
     // Hunter position is at eye-height; convert to feet for network sync
     const feetY = this.localRole === PlayerRole.HUNTER
-      ? position.y - 1.6
+      ? this.hunterController.getFeetY()
       : position.y;
 
     this.network.send(ClientMessage.PLAYER_INPUT, {

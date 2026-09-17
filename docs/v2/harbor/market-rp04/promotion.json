@@ -1,0 +1,11 @@
+{
+  "promotedAt": "2026-09-10T10:51:04.402Z",
+  "sha256": "3e593113f9e820e80d24430b736adda7e22ae9f28ed350065a85be26db1a8ca5",
+  "beforeSHA256": "f6944872ccada70a276d94348cba03c99d6fe8c5ddb43558f0c0aad25f51c7e0",
+  "bytes": 6001596,
+  "backup": "art-source/harbor-v2/_staging/market-rp04/pre-rp04-f6944872ccad.glb",
+  "gate": "docs/v2/harbor/market-rp04/gate-reviewed-02/summary.json",
+  "review": "docs/v2/harbor/market-rp04/visual-review.json",
+  "nativeValidation": "art-source/harbor-v2/_staging/market-rp04/container-bd-runtime.metrics.json",
+  "scope": "Only container-bd Market asset. Other eight map GLBs unchanged. Bounded QA, not an exhaustive world proof."
+}

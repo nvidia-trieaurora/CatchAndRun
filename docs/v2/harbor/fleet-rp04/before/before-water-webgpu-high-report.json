@@ -1,0 +1,353 @@
+{
+  "capturedAt": "2026-09-10T12:00:11.424Z",
+  "viewport": {
+    "width": 1600,
+    "height": 900,
+    "deviceScaleFactor": 1
+  },
+  "headless": true,
+  "gpuFlags": [
+    "enable-unsafe-webgpu",
+    "enable-features=Vulkan,WebGPU",
+    "ignore-gpu-blocklist",
+    "use-angle=metal"
+  ],
+  "audioMuted": true,
+  "profileDirectory": "/var/folders/21/jnt5qrg12nzcbgh9msb8q9280000gp/T/cr-cdp-catchandrun-2aBnAP",
+  "url": "http://localhost:5174/?renderer=webgpu",
+  "backend": "webgpu",
+  "quality": "high",
+  "presets": [
+    {
+      "preset": "workboatDetail",
+      "view": "view-workboatDetail",
+      "file": "docs/v2/harbor/fleet-rp04/before/before-water-webgpu-high-workboatDetail.png",
+      "metrics": {
+        "backend": "webgpu",
+        "visualVersion": "v2",
+        "fpsAverage": 59.809804820243826,
+        "frameTimeP95Ms": 17.899999976158142,
+        "drawCalls": 257,
+        "triangles": 286897,
+        "geometries": 330,
+        "textures": 326,
+        "sceneMeshes": 257,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 215466240,
+        "environmentTransferBytes": 32708300
+      },
+      "frameSample": {
+        "frames": 180,
+        "fps": 60.004000266684386,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "panSample": {
+        "frames": 169,
+        "fps": 56.02519476214155,
+        "p95Ms": 33.299999999995634,
+        "maxMs": 66.69999999999709,
+        "over50Ms": 1,
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 19835,
+          "frameCalls": 15,
+          "drawCalls": 242,
+          "triangles": 286914,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "fleetDetail",
+      "view": "view-fleetDetail",
+      "file": "docs/v2/harbor/fleet-rp04/before/before-water-webgpu-high-fleetDetail.png",
+      "metrics": {
+        "backend": "webgpu",
+        "visualVersion": "v2",
+        "fpsAverage": 50.65428450823132,
+        "frameTimeP95Ms": 24,
+        "drawCalls": 257,
+        "triangles": 286897,
+        "geometries": 330,
+        "textures": 326,
+        "sceneMeshes": 257,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 215466240,
+        "environmentTransferBytes": 32708300
+      },
+      "frameSample": {
+        "frames": 151,
+        "fps": 50.05801425493121,
+        "p95Ms": 33.400000000001455,
+        "maxMs": 33.400000000001455,
+        "over50Ms": 0
+      },
+      "panSample": {
+        "frames": 157,
+        "fps": 52.04707442400132,
+        "p95Ms": 33.39999999999418,
+        "maxMs": 33.5,
+        "over50Ms": 0,
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 40655,
+          "frameCalls": 15,
+          "drawCalls": 334,
+          "triangles": 437098,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "ferrisHarborWater",
+      "view": "view-ferrisHarborWater",
+      "file": "docs/v2/harbor/fleet-rp04/before/before-water-webgpu-high-ferrisHarborWater.png",
+      "metrics": {
+        "backend": "webgpu",
+        "visualVersion": "v2",
+        "fpsAverage": 47.29101313122685,
+        "frameTimeP95Ms": 27.69999998807907,
+        "drawCalls": 257,
+        "triangles": 286897,
+        "geometries": 330,
+        "textures": 326,
+        "sceneMeshes": 257,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 215466240,
+        "environmentTransferBytes": 32708300
+      },
+      "frameSample": {
+        "frames": 148,
+        "fps": 48.79335355400242,
+        "p95Ms": 33.39999999999418,
+        "maxMs": 33.40000000000873,
+        "over50Ms": 0
+      },
+      "panSample": {
+        "frames": 166,
+        "fps": 55.030664677606495,
+        "p95Ms": 33.30000000000291,
+        "maxMs": 33.40000000000873,
+        "over50Ms": 0,
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 49070,
+          "frameCalls": 15,
+          "drawCalls": 430,
+          "triangles": 518507,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    }
+  ],
+  "shooting": [
+    {
+      "target": "coast",
+      "setup": {
+        "role": "hunter",
+        "alive": true,
+        "ammo": 20
+      },
+      "idle": {
+        "frames": 211,
+        "fps": 52.53330013693514,
+        "p95Ms": 33.39999999999418,
+        "maxMs": 66.80000000000291,
+        "over50Ms": 5
+      },
+      "firing": {
+        "frames": 599,
+        "fps": 49.84895516922851,
+        "p95Ms": 33.39999999999418,
+        "maxMs": 100,
+        "over50Ms": 1
+      },
+      "details": {
+        "shots": 46,
+        "waterImpacts": 46,
+        "fireCpuMs": [
+          10.299999952316284,
+          2.100000023841858,
+          2.199999988079071,
+          2.699999988079071,
+          2.099999964237213,
+          3.399999976158142,
+          1.399999976158142,
+          1.899999976158142,
+          2,
+          6.400000035762787,
+          1.199999988079071,
+          2,
+          1.4000000357627869,
+          1.300000011920929,
+          1.5999999642372131,
+          1.600000023841858,
+          1.399999976158142,
+          1.5,
+          1.5,
+          1.9000000357627869,
+          2.300000011920929,
+          1.600000023841858,
+          1,
+          1.5999999642372131,
+          1.4000000357627869,
+          2.699999988079071,
+          1.399999976158142,
+          1.0999999642372131,
+          0.8999999761581421,
+          1.100000023841858,
+          1.199999988079071,
+          1.5999999642372131,
+          1.0999999642372131,
+          1.199999988079071,
+          1,
+          1.399999976158142,
+          1.100000023841858,
+          1.100000023841858,
+          1.199999988079071,
+          1.199999988079071,
+          1.5999999642372131,
+          1,
+          1.5,
+          1,
+          0.9000000357627869,
+          0.7999999523162842
+        ],
+        "ammo": 20,
+        "holes": 0,
+        "maxHoleWorldSpan": 0,
+        "geometryCount": 330,
+        "waterKind": "gerstner"
+      },
+      "file": "docs/v2/harbor/fleet-rp04/before/before-water-webgpu-high-shoot-coast.png"
+    },
+    {
+      "target": "warehouse-wall",
+      "setup": {
+        "role": "hunter",
+        "alive": true,
+        "ammo": 20
+      },
+      "idle": {
+        "frames": 124,
+        "fps": 30.87265031744056,
+        "p95Ms": 83.30000000000291,
+        "maxMs": 199.89999999999418,
+        "over50Ms": 13
+      },
+      "firing": {
+        "frames": 432,
+        "fps": 35.852110046060005,
+        "p95Ms": 50,
+        "maxMs": 316.6999999999971,
+        "over50Ms": 21
+      },
+      "details": {
+        "shots": 56,
+        "waterImpacts": 0,
+        "fireCpuMs": [
+          46.30000001192093,
+          77.30000001192093,
+          7.100000023841858,
+          5.400000035762787,
+          6.699999988079071,
+          6,
+          3.899999976158142,
+          3.099999964237213,
+          4.300000011920929,
+          4,
+          4.399999976158142,
+          4.5,
+          6.700000047683716,
+          7.199999988079071,
+          6.600000023841858,
+          6.300000011920929,
+          4.900000035762787,
+          4.700000047683716,
+          4.700000047683716,
+          3.699999988079071,
+          3.800000011920929,
+          3.799999952316284,
+          4.099999964237213,
+          3.699999988079071,
+          3.699999988079071,
+          3.699999988079071,
+          3.899999976158142,
+          4.299999952316284,
+          4.099999964237213,
+          3.5,
+          5.5,
+          3.900000035762787,
+          5,
+          3.5,
+          4.800000011920929,
+          3.199999988079071,
+          3.100000023841858,
+          4.100000023841858,
+          13.5,
+          5.899999976158142,
+          3.799999952316284,
+          6.300000011920929,
+          3.399999976158142,
+          3.400000035762787,
+          3.699999988079071,
+          3.099999964237213,
+          3.699999988079071,
+          5,
+          3.199999988079071,
+          4,
+          4.599999964237213,
+          4.199999988079071,
+          5.400000035762787,
+          6.5,
+          7.699999988079071,
+          4.199999988079071
+        ],
+        "ammo": 3,
+        "holes": 48,
+        "maxHoleWorldSpan": 0.12999999523162842,
+        "geometryCount": 330,
+        "waterKind": "gerstner"
+      },
+      "file": "docs/v2/harbor/fleet-rp04/before/before-water-webgpu-high-shoot-warehouse-wall.png"
+    }
+  ],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "[warning] [VoiceChat] Mic access denied"
+  ],
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[debug] [vite] connected.",
+    "[info] [Renderer] Initialized webgpu",
+    "[warning] [VoiceChat] Mic access denied",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock.",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock."
+  ],
+  "repair": null,
+  "water": null,
+  "boats": null
+}

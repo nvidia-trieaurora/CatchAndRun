@@ -150,7 +150,7 @@ describe("Harbor edge-zone overrides", () => {
     expect(resolveHarborZoneSource("?harborZones=staging")).toBe("staging");
     expect(resolveHarborZoneSource("?harborZones=off")).toBe("off");
     expect(zoneAssetUrl(garden, "production")).toMatch(/^\/assets\/maps\/harbor-v2\/zones\/garden-ac\.glb(\?v=[\w-]+)?$/);
-    expect(zoneAssetUrl(garden, "staging")).toBe("/staging-assets/garden-ac-candidate.glb");
+    expect(zoneAssetUrl(garden, "staging")).toBe("/staging-assets/structural-rp03/garden-ac-runtime.glb");
   });
 
   it("requests unpromoted candidates only from staging, never in production", () => {

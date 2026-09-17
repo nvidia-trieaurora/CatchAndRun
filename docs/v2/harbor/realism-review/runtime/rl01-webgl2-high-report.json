@@ -1,0 +1,453 @@
+{
+  "url": "http://localhost:5173/?renderer=webgl2",
+  "backend": "webgl2",
+  "quality": "high",
+  "presets": [
+    {
+      "preset": "overview",
+      "view": "view-overview",
+      "file": "docs/v2/harbor/realism-review/runtime/rl01-webgl2-high-overview.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.01200240048009,
+        "frameTimeP95Ms": 17.5,
+        "drawCalls": 243,
+        "triangles": 249304,
+        "geometries": 314,
+        "textures": 266,
+        "sceneMeshes": 243,
+        "instancedMeshes": 23,
+        "colliderCount": 756,
+        "estimatedTextureMemoryBytes": 150520064,
+        "environmentTransferBytes": 2400
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00300015000751,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 28725,
+          "frameCalls": 15,
+          "drawCalls": 436,
+          "triangles": 452579,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "warehouse",
+      "view": "view-warehouse",
+      "file": "docs/v2/harbor/realism-review/runtime/rl01-webgl2-high-warehouse.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 57.736720554272516,
+        "frameTimeP95Ms": 21.30000001192093,
+        "drawCalls": 243,
+        "triangles": 249304,
+        "geometries": 314,
+        "textures": 266,
+        "sceneMeshes": 243,
+        "instancedMeshes": 23,
+        "colliderCount": 756,
+        "estimatedTextureMemoryBytes": 150520064,
+        "environmentTransferBytes": 2400
+      },
+      "frameSample": {
+        "frames": 229,
+        "fps": 57.254294072055345,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 50.10000000000582,
+        "over50Ms": 1
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 35400,
+          "frameCalls": 15,
+          "drawCalls": 418,
+          "triangles": 448131,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "acGarden",
+      "view": "view-acGarden",
+      "file": "docs/v2/harbor/realism-review/runtime/rl01-webgl2-high-acGarden.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00960153638889,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 243,
+        "triangles": 249304,
+        "geometries": 314,
+        "textures": 266,
+        "sceneMeshes": 243,
+        "instancedMeshes": 23,
+        "colliderCount": 756,
+        "estimatedTextureMemoryBytes": 150520064,
+        "environmentTransferBytes": 2400
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.003000150007566,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 42825,
+          "frameCalls": 15,
+          "drawCalls": 286,
+          "triangles": 339529,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "adConstruction",
+      "view": "view-adConstruction",
+      "file": "docs/v2/harbor/realism-review/runtime/rl01-webgl2-high-adConstruction.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 59.99640021620159,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 243,
+        "triangles": 249304,
+        "geometries": 314,
+        "textures": 266,
+        "sceneMeshes": 243,
+        "instancedMeshes": 23,
+        "colliderCount": 756,
+        "estimatedTextureMemoryBytes": 150520064,
+        "environmentTransferBytes": 2400
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00150003750092,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 49935,
+          "frameCalls": 15,
+          "drawCalls": 304,
+          "triangles": 388011,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "containerBD",
+      "view": "view-containerBD",
+      "file": "docs/v2/harbor/realism-review/runtime/rl01-webgl2-high-containerBD.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 59.998800024071045,
+        "frameTimeP95Ms": 17.299999982118607,
+        "drawCalls": 243,
+        "triangles": 249304,
+        "geometries": 314,
+        "textures": 266,
+        "sceneMeshes": 243,
+        "instancedMeshes": 23,
+        "colliderCount": 756,
+        "estimatedTextureMemoryBytes": 150520064,
+        "environmentTransferBytes": 2400
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.003000150007566,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 57075,
+          "frameCalls": 15,
+          "drawCalls": 240,
+          "triangles": 376459,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "operationsAB",
+      "view": "view-operationsAB",
+      "file": "docs/v2/harbor/realism-review/runtime/rl01-webgl2-high-operationsAB.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 59.99999999999999,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 243,
+        "triangles": 249304,
+        "geometries": 314,
+        "textures": 266,
+        "sceneMeshes": 243,
+        "instancedMeshes": 23,
+        "colliderCount": 756,
+        "estimatedTextureMemoryBytes": 150520064,
+        "environmentTransferBytes": 2400
+      },
+      "frameSample": {
+        "frames": 241,
+        "fps": 60.00099586715123,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 64125,
+          "frameCalls": 15,
+          "drawCalls": 260,
+          "triangles": 389123,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "ferrisHarborWater",
+      "view": "view-ferrisHarborWater",
+      "file": "docs/v2/harbor/realism-review/runtime/rl01-webgl2-high-ferrisHarborWater.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 59.998800024071045,
+        "frameTimeP95Ms": 17.30000001192093,
+        "drawCalls": 243,
+        "triangles": 249304,
+        "geometries": 314,
+        "textures": 266,
+        "sceneMeshes": 243,
+        "instancedMeshes": 23,
+        "colliderCount": 756,
+        "estimatedTextureMemoryBytes": 150520064,
+        "environmentTransferBytes": 2400
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.001500037500804,
+        "p95Ms": 16.70000000001164,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 71220,
+          "frameCalls": 15,
+          "drawCalls": 412,
+          "triangles": 446951,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    }
+  ],
+  "shooting": [
+    {
+      "target": "coast",
+      "setup": {
+        "role": "hunter",
+        "alive": true,
+        "ammo": 20
+      },
+      "idle": {
+        "frames": 240,
+        "fps": 60.001500037500804,
+        "p95Ms": 16.70000000001164,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "firing": {
+        "frames": 720,
+        "fps": 60.002500104171006,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "details": {
+        "shots": 42,
+        "waterImpacts": 41,
+        "fireCpuMs": [
+          1.5,
+          0.4000000059604645,
+          0.4000000059604645,
+          0.7000000178813934,
+          0.4000000059604645,
+          0.30000001192092896,
+          0.20000001788139343,
+          0.09999999403953552,
+          0.20000001788139343,
+          0.29999998211860657,
+          0.09999999403953552,
+          0.19999998807907104,
+          0.30000001192092896,
+          0.09999999403953552,
+          0.09999999403953552,
+          0.19999998807907104,
+          0.30000001192092896,
+          0.09999999403953552,
+          0.19999998807907104,
+          0.09999999403953552,
+          0.20000001788139343,
+          0.19999998807907104,
+          0.10000002384185791,
+          0.20000001788139343,
+          0.19999998807907104,
+          0.30000001192092896,
+          0.09999999403953552,
+          0.19999998807907104,
+          0.19999998807907104,
+          0.19999998807907104,
+          0.09999999403953552,
+          0.09999999403953552,
+          0.30000001192092896,
+          0.20000001788139343,
+          0.20000001788139343,
+          0.30000001192092896,
+          0.19999998807907104,
+          0.20000001788139343,
+          0.20000001788139343,
+          0.19999998807907104,
+          0.19999998807907104,
+          0.19999998807907104
+        ],
+        "ammo": 18,
+        "holes": 0,
+        "maxHoleWorldSpan": 0,
+        "geometryCount": 314,
+        "waterKind": "gerstner"
+      },
+      "file": "docs/v2/harbor/realism-review/runtime/rl01-webgl2-high-shoot-coast.png"
+    },
+    {
+      "target": "warehouse-wall",
+      "setup": {
+        "role": "hunter",
+        "alive": true,
+        "ammo": 18
+      },
+      "idle": {
+        "frames": 227,
+        "fps": 56.75283764188205,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 66.60000000000582,
+        "over50Ms": 1
+      },
+      "firing": {
+        "frames": 720,
+        "fps": 59.919109202576465,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 33.40000000000873,
+        "over50Ms": 0
+      },
+      "details": {
+        "shots": 42,
+        "waterImpacts": 0,
+        "fireCpuMs": [
+          4.600000023841858,
+          0.5,
+          0.6000000238418579,
+          0.5,
+          0.7999999821186066,
+          0.7000000178813934,
+          0.5,
+          0.5999999940395355,
+          0.5999999940395355,
+          0.5,
+          0.6000000238418579,
+          0.5,
+          0.6000000238418579,
+          0.5,
+          0.5999999940395355,
+          0.5,
+          0.5,
+          0.4000000059604645,
+          0.6000000238418579,
+          0.5,
+          0.6000000238418579,
+          0.5,
+          0.5,
+          0.5,
+          0.3999999761581421,
+          0.4000000059604645,
+          0.5,
+          0.4000000059604645,
+          0.5,
+          0.5999999940395355,
+          0.5,
+          0.4000000059604645,
+          0.5,
+          0.4000000059604645,
+          0.3999999761581421,
+          0.5,
+          0.5,
+          0.4000000059604645,
+          0.800000011920929,
+          0.5,
+          0.5999999940395355,
+          0.5
+        ],
+        "ammo": 16,
+        "holes": 41,
+        "maxHoleWorldSpan": 0.12999999523162842,
+        "geometryCount": 314,
+        "waterKind": "gerstner"
+      },
+      "file": "docs/v2/harbor/realism-review/runtime/rl01-webgl2-high-shoot-warehouse-wall.png"
+    }
+  ],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "[warning] [VoiceChat] Mic access denied"
+  ],
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[debug] [vite] connected.",
+    "[info] [Renderer] Initialized webgl2",
+    "[warning] [VoiceChat] Mic access denied",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock.",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock."
+  ]
+}

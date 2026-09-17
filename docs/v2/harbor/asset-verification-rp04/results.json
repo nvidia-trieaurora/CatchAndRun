@@ -1,0 +1,58 @@
+{
+  "schema": "HarborRP04ReviewEvidence/v1",
+  "date": "2026-09-10",
+  "runtimeArtChangedThisTurn": false,
+  "conceptImages": 12,
+  "conceptResolution": [
+    1672,
+    941
+  ],
+  "latestGate": "review-02/summary.json",
+  "freshness": "passed on same current checkout after final source changes",
+  "checks": [
+    {
+      "command": "npm run harbor:v2:verify-assets -- --out-dir docs/v2/harbor/asset-verification-rp04/review-02",
+      "result": "passed",
+      "staticProbes": 86,
+      "negativeControls": 6,
+      "candidateMovementTests": 24,
+      "defaultClientRegressionTests": 81,
+      "defaultServerRegressionTests": 18
+    },
+    {
+      "command": "npm run harbor:v2:test-asset-gate",
+      "result": "passed",
+      "runnerUnitTests": 24,
+      "staticTests": 11,
+      "helperTests": 12
+    },
+    {
+      "command": "npm run test -w client -- --maxWorkers=2",
+      "result": "passed",
+      "tests": 273,
+      "suites": 38
+    },
+    {
+      "command": "npx tsc --project tools/harbor-v2/tsconfig.StaticAssetGate.json --noEmit",
+      "result": "passed",
+      "scope": "focused static-gate project only"
+    },
+    {
+      "command": "npx eslint client/tests/AssetMovementVerification.test.ts client/tests/AssetMovementProbe.test.ts client/tests/helpers/assetMovementProbe.ts client/tests/StaticAssetGate.test.ts client/tests/StaticAssetGateIntegration.test.ts",
+      "result": "passed"
+    }
+  ],
+  "earlierFailure": {
+    "command": "npm run test -w client",
+    "result": "GameManagerCollisionLifecycle beforeAll import timed out at 10000ms, 257 passed/8 skipped at that source revision",
+    "resolution": "No timeout increase or test removal; final full suite at bounded 2-worker concurrency passes all273"
+  },
+  "notVerifiedThisTurn": [
+    "New native Blender/Unreal art quality",
+    "Per-texel alpha/rasterized visibility",
+    "All island points, all disguise dimensions and every dynamic pose",
+    "New browser/GPU/4K/mobile performance, enabled audio",
+    "Live network multiplayer against candidate GLBs"
+  ],
+  "pipelineDoesNotPromote": true
+}

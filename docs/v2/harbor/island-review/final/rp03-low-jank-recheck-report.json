@@ -1,0 +1,138 @@
+{
+  "capturedAt": "2026-09-09T19:56:56.556Z",
+  "viewport": {
+    "width": 1600,
+    "height": 900,
+    "deviceScaleFactor": 1
+  },
+  "headless": true,
+  "gpuFlags": [
+    "enable-unsafe-webgpu",
+    "enable-features=Vulkan,WebGPU",
+    "ignore-gpu-blocklist",
+    "use-angle=metal"
+  ],
+  "audioMuted": true,
+  "profileDirectory": "/var/folders/21/jnt5qrg12nzcbgh9msb8q9280000gp/T/cr-cdp-catchandrun-81hzQX",
+  "url": "http://localhost:5174/?renderer=webgl2",
+  "backend": "webgl2",
+  "quality": "low",
+  "presets": [
+    {
+      "preset": "workboatDetail",
+      "view": "view-workboatDetail",
+      "file": "docs/v2/harbor/island-review/final/rp03-low-jank-recheck-workboatDetail.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.014403456686516,
+        "frameTimeP95Ms": 17.899999976158142,
+        "drawCalls": 147,
+        "triangles": 48556,
+        "geometries": 218,
+        "textures": 163,
+        "sceneMeshes": 147,
+        "instancedMeshes": 15,
+        "colliderCount": 799,
+        "estimatedTextureMemoryBytes": 130334720,
+        "environmentTransferBytes": 32041208
+      },
+      "frameSample": {
+        "frames": 1201,
+        "fps": 60.0022981729525,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0,
+        "longTasks": []
+      },
+      "panSample": {
+        "frames": 479,
+        "fps": 59.87724539670234,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 33.30000000000291,
+        "over50Ms": 0,
+        "longTasks": [],
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 7225,
+          "frameCalls": 3,
+          "drawCalls": 147,
+          "triangles": 62695,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "low",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "workboatDetail",
+      "view": "view-workboatDetail",
+      "file": "docs/v2/harbor/island-review/final/rp03-low-jank-recheck-workboatDetail.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 59.99520038389776,
+        "frameTimeP95Ms": 18.099999994039536,
+        "drawCalls": 147,
+        "triangles": 48556,
+        "geometries": 223,
+        "textures": 178,
+        "sceneMeshes": 147,
+        "instancedMeshes": 15,
+        "colliderCount": 799,
+        "estimatedTextureMemoryBytes": 130334720,
+        "environmentTransferBytes": 32041208
+      },
+      "frameSample": {
+        "frames": 1200,
+        "fps": 60.002400096003846,
+        "p95Ms": 16.70000000001164,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0,
+        "longTasks": []
+      },
+      "panSample": {
+        "frames": 480,
+        "fps": 60.00225008437818,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0,
+        "longTasks": [],
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 12928,
+          "frameCalls": 3,
+          "drawCalls": 147,
+          "triangles": 62695,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "low",
+        "water": "gerstner"
+      }
+    }
+  ],
+  "shooting": [],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "[warning] [VoiceChat] Mic access denied"
+  ],
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[info] [Renderer] Initialized webgl2",
+    "[debug] [vite] connected.",
+    "[warning] [VoiceChat] Mic access denied",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock.",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock."
+  ],
+  "repair": null,
+  "water": null,
+  "boats": null
+}

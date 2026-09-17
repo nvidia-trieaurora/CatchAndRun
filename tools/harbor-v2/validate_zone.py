@@ -18,6 +18,7 @@ Checks
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import struct
 import sys
@@ -238,6 +239,7 @@ def main() -> None:
 
     metrics = {
         "asset": str(glb.relative_to(ROOT)),
+        "sha256": hashlib.sha256(glb.read_bytes()).hexdigest(),
         "zone": args.zone,
         "payloadBytes": payload,
         "textureBytes": texture_bytes,

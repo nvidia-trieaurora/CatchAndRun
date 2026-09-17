@@ -1,0 +1,944 @@
+{
+  "asset": "art-source/harbor-v2/_staging/market-rp04/container-bd-runtime.glb",
+  "sha256": "3e593113f9e820e80d24430b736adda7e22ae9f28ed350065a85be26db1a8ca5",
+  "zone": "CONTAINER_BD",
+  "payloadBytes": 6001596,
+  "textureBytes": 252538,
+  "images": [
+    {
+      "name": "mat_bd_light",
+      "mimeType": "image/webp",
+      "bytes": 402
+    },
+    {
+      "name": "mat_bd_palette",
+      "mimeType": "image/webp",
+      "bytes": 1310
+    },
+    {
+      "name": "concrete_yard_normal",
+      "mimeType": "image/webp",
+      "bytes": 570
+    },
+    {
+      "name": "concrete_yard_orm",
+      "mimeType": "image/webp",
+      "bytes": 730
+    },
+    {
+      "name": "concrete_yard_base",
+      "mimeType": "image/webp",
+      "bytes": 9260
+    },
+    {
+      "name": "container_neutral_normal",
+      "mimeType": "image/webp",
+      "bytes": 6422
+    },
+    {
+      "name": "container_neutral_orm",
+      "mimeType": "image/webp",
+      "bytes": 2306
+    },
+    {
+      "name": "container_neutral_base",
+      "mimeType": "image/webp",
+      "bytes": 64664
+    },
+    {
+      "name": "grating_normal",
+      "mimeType": "image/webp",
+      "bytes": 84
+    },
+    {
+      "name": "grating_orm",
+      "mimeType": "image/webp",
+      "bytes": 86
+    },
+    {
+      "name": "grating_base",
+      "mimeType": "image/webp",
+      "bytes": 2468
+    },
+    {
+      "name": "grass_tuft_normal",
+      "mimeType": "image/webp",
+      "bytes": 108
+    },
+    {
+      "name": "grass_tuft_orm",
+      "mimeType": "image/webp",
+      "bytes": 1822
+    },
+    {
+      "name": "grass_tuft_base",
+      "mimeType": "image/webp",
+      "bytes": 52132
+    },
+    {
+      "name": "product_atlas_normal",
+      "mimeType": "image/webp",
+      "bytes": 64
+    },
+    {
+      "name": "product_atlas_orm",
+      "mimeType": "image/webp",
+      "bytes": 1014
+    },
+    {
+      "name": "product_atlas_base",
+      "mimeType": "image/webp",
+      "bytes": 67372
+    },
+    {
+      "name": "limestone_normal",
+      "mimeType": "image/webp",
+      "bytes": 2322
+    },
+    {
+      "name": "limestone_orm",
+      "mimeType": "image/webp",
+      "bytes": 8484
+    },
+    {
+      "name": "limestone_base",
+      "mimeType": "image/webp",
+      "bytes": 1266
+    },
+    {
+      "name": "oak_normal",
+      "mimeType": "image/webp",
+      "bytes": 1406
+    },
+    {
+      "name": "oak_orm",
+      "mimeType": "image/webp",
+      "bytes": 4596
+    },
+    {
+      "name": "oak_base",
+      "mimeType": "image/webp",
+      "bytes": 3774
+    },
+    {
+      "name": "plaster_normal",
+      "mimeType": "image/webp",
+      "bytes": 694
+    },
+    {
+      "name": "plaster_orm",
+      "mimeType": "image/webp",
+      "bytes": 284
+    },
+    {
+      "name": "plaster_base",
+      "mimeType": "image/webp",
+      "bytes": 152
+    },
+    {
+      "name": "steel_dark_normal",
+      "mimeType": "image/webp",
+      "bytes": 1764
+    },
+    {
+      "name": "steel_dark_orm",
+      "mimeType": "image/webp",
+      "bytes": 9934
+    },
+    {
+      "name": "steel_dark_base",
+      "mimeType": "image/webp",
+      "bytes": 7048
+    }
+  ],
+  "estimatedGpuTextureBytes": 27553296,
+  "lod0": {
+    "renderMeshes": 20,
+    "triangles": 61088,
+    "estimatedDrawCalls": 20,
+    "instancedMeshes": 0,
+    "instanceKeys": 0
+  },
+  "lod1": {
+    "renderMeshes": 9,
+    "triangles": 5582,
+    "estimatedDrawCalls": 9,
+    "instancedMeshes": 0,
+    "instanceKeys": 0
+  },
+  "budgets": {
+    "lod0Triangles": 62000,
+    "lod0DrawCalls": 20,
+    "lod1Triangles": 16000,
+    "lod1DrawCalls": 11,
+    "payloadBytes": 8388608,
+    "maxTextureSize": 1024,
+    "gpuTextureBytes": 29360128,
+    "zoneColliders": 60
+  },
+  "colliderParity": {
+    "colliders": 493,
+    "source": "buildOldHarborFortniteMap({ useWarehouseV2: true, cinematicVisuals: true, quality: 'high' })"
+  },
+  "zoneColliders": [
+    {
+      "name": "COL_LADDER_CONTAINER_BD_STOCK_LADDER",
+      "min": [
+        38.25,
+        0.25,
+        -41.55
+      ],
+      "max": [
+        38.55,
+        5.8,
+        -41.05
+      ],
+      "ladderApproach": "+x"
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_BARRIER_0",
+      "min": [
+        51.15,
+        0,
+        -10.95
+      ],
+      "max": [
+        51.65,
+        1.08,
+        -8.45
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_BARRIER_1",
+      "min": [
+        51.2,
+        0,
+        -6.65
+      ],
+      "max": [
+        51.7,
+        1.08,
+        -4.15
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_BARRIER_2",
+      "min": [
+        51.35,
+        0,
+        -13.85
+      ],
+      "max": [
+        53.85,
+        1.08,
+        -13.35
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_BENCH",
+      "min": [
+        36.3,
+        0.251,
+        -31.45
+      ],
+      "max": [
+        38.1,
+        1.15,
+        -30.95
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_BOLLARD_0",
+      "min": [
+        36.1,
+        0.251,
+        -26.5
+      ],
+      "max": [
+        36.3,
+        1.2,
+        -26.3
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_BOLLARD_1",
+      "min": [
+        40.9,
+        0.251,
+        -26.5
+      ],
+      "max": [
+        41.1,
+        1.2,
+        -26.3
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_BOLLARD_2",
+      "min": [
+        48.9,
+        0.251,
+        -26.5
+      ],
+      "max": [
+        49.1,
+        1.2,
+        -26.3
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_BOLLARD_3",
+      "min": [
+        53.7,
+        0.251,
+        -26.5
+      ],
+      "max": [
+        53.9,
+        1.2,
+        -26.3
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_CAGE",
+      "min": [
+        50.32,
+        0,
+        -0.63
+      ],
+      "max": [
+        51.48,
+        2.38,
+        1.43
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_CONT_E1",
+      "min": [
+        58.4,
+        0,
+        -18.5
+      ],
+      "max": [
+        60.838,
+        2.591,
+        -6.308
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_CONT_E2",
+      "min": [
+        58.4,
+        0,
+        -24.8
+      ],
+      "max": [
+        60.838,
+        2.591,
+        -18.742
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_CONT_S1_L",
+      "min": [
+        31,
+        0,
+        -0.9
+      ],
+      "max": [
+        43.192,
+        2.591,
+        1.538
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_CONT_S1_U",
+      "min": [
+        31,
+        2.591,
+        -0.9
+      ],
+      "max": [
+        43.192,
+        5.182,
+        1.538
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_CONT_SW_FLAT",
+      "min": [
+        31,
+        0,
+        -4.9
+      ],
+      "max": [
+        37.058,
+        2.591,
+        -2.462
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_CONT_SW_MAINT",
+      "min": [
+        37.3,
+        0,
+        -4.9
+      ],
+      "max": [
+        43.358,
+        2.591,
+        -2.462
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_CONT_W1_L",
+      "min": [
+        31,
+        0,
+        -18.95
+      ],
+      "max": [
+        43.192,
+        2.591,
+        -16.512
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_CONT_W1_U",
+      "min": [
+        31,
+        2.591,
+        -18.95
+      ],
+      "max": [
+        43.192,
+        5.182,
+        -16.512
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_CONT_W2_L",
+      "min": [
+        31,
+        0,
+        -13.45
+      ],
+      "max": [
+        43.192,
+        2.591,
+        -11.012
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_CONT_W2_U",
+      "min": [
+        31,
+        2.591,
+        -13.45
+      ],
+      "max": [
+        43.192,
+        5.182,
+        -11.012
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_CONT_W3_L",
+      "min": [
+        31,
+        0,
+        -7.7
+      ],
+      "max": [
+        43.192,
+        2.591,
+        -5.262
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_CONT_W3_U",
+      "min": [
+        37.13,
+        2.591,
+        -7.7
+      ],
+      "max": [
+        43.188,
+        5.182,
+        -5.262
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_CRATES_E",
+      "min": [
+        52.6,
+        0,
+        -40.6
+      ],
+      "max": [
+        53.7,
+        1.28,
+        -39.5
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_DRUMS",
+      "min": [
+        37.95,
+        0,
+        -2.3
+      ],
+      "max": [
+        39.45,
+        1.08,
+        -0.95
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_FENCE_S",
+      "min": [
+        50.7,
+        0,
+        1.9
+      ],
+      "max": [
+        60.65,
+        2.2,
+        2
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_FORECOURT_0",
+      "min": [
+        42.305,
+        0,
+        -32.485
+      ],
+      "max": [
+        47.245,
+        0.25,
+        -26.005
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_FORECOURT_1",
+      "min": [
+        34.205,
+        0,
+        -32.485
+      ],
+      "max": [
+        37.645,
+        0.25,
+        -26.005
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_FORECOURT_2",
+      "min": [
+        37.655,
+        0,
+        -31.195
+      ],
+      "max": [
+        42.295,
+        0.25,
+        -26.005
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_FORECOURT_3",
+      "min": [
+        47.255,
+        0,
+        -29.545
+      ],
+      "max": [
+        49.695,
+        0.25,
+        -26.005
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_FORECOURT_4",
+      "min": [
+        48.655,
+        0,
+        -32.485
+      ],
+      "max": [
+        55.795,
+        0.25,
+        -29.555
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_FORECOURT_5",
+      "min": [
+        50.305,
+        0,
+        -29.545
+      ],
+      "max": [
+        55.795,
+        0.25,
+        -26.005
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_FORKLIFT",
+      "min": [
+        54.5,
+        0,
+        -8.18
+      ],
+      "max": [
+        58.35,
+        2.3,
+        -6.62
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_GATE_POST_0",
+      "min": [
+        43.75,
+        0,
+        1.85
+      ],
+      "max": [
+        43.95,
+        2.5,
+        2.05
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_GATE_POST_1",
+      "min": [
+        50.45,
+        0,
+        1.85
+      ],
+      "max": [
+        50.65,
+        2.5,
+        2.05
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_HANDLER",
+      "min": [
+        54.6,
+        0,
+        -18.9
+      ],
+      "max": [
+        58.2,
+        5,
+        -10.4
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_MARKET_CEILING_AISLE",
+      "min": [
+        39.3,
+        4.2,
+        -40.5
+      ],
+      "max": [
+        43,
+        4.25,
+        -33.15
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_MARKET_CEILING_DOOR_A",
+      "min": [
+        39.7,
+        4.2,
+        -40.6
+      ],
+      "max": [
+        40.6,
+        4.25,
+        -40.5
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_MARKET_CEILING_DOOR_B",
+      "min": [
+        41.9,
+        4.2,
+        -40.6
+      ],
+      "max": [
+        42.8,
+        4.25,
+        -40.5
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_MARKET_CEILING_E",
+      "min": [
+        43,
+        4.2,
+        -42.8
+      ],
+      "max": [
+        51.8,
+        4.25,
+        -33.15
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_MARKET_CEILING_HATCH_RETURN",
+      "min": [
+        38.2,
+        4.2,
+        -40.7
+      ],
+      "max": [
+        39.3,
+        4.25,
+        -40.6
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_MARKET_CEILING_N",
+      "min": [
+        38.2,
+        4.2,
+        -42.8
+      ],
+      "max": [
+        39.3,
+        4.25,
+        -41.9
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_MARKET_CEILING_OFFICE",
+      "min": [
+        40.9,
+        4.2,
+        -42.8
+      ],
+      "max": [
+        42.9,
+        4.25,
+        -40.6
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_MARKET_CEILING_S",
+      "min": [
+        38.2,
+        4.2,
+        -40.5
+      ],
+      "max": [
+        39.3,
+        4.25,
+        -33.15
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_MARKET_CEILING_STOCK",
+      "min": [
+        39.3,
+        4.2,
+        -42.8
+      ],
+      "max": [
+        40.8,
+        4.25,
+        -40.6
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_MARKET_OPERATOR_HEADER",
+      "min": [
+        43.5,
+        2.9,
+        -33.25
+      ],
+      "max": [
+        46.5,
+        4,
+        -32.78
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_MARKET_ROOM_HEADER_A",
+      "min": [
+        39.7,
+        2.35,
+        -40.61
+      ],
+      "max": [
+        40.6,
+        2.43,
+        -40.49
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_MARKET_ROOM_HEADER_B",
+      "min": [
+        41.9,
+        2.35,
+        -40.61
+      ],
+      "max": [
+        42.8,
+        2.43,
+        -40.49
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_PALLETS_PA",
+      "min": [
+        31.75,
+        0,
+        -2.15
+      ],
+      "max": [
+        33.05,
+        1.08,
+        -1.05
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_PALLETS_PB",
+      "min": [
+        58.25,
+        0,
+        -28.15
+      ],
+      "max": [
+        59.55,
+        0.78,
+        -27.05
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_PARAPET_E",
+      "min": [
+        52.85,
+        5.801,
+        -44
+      ],
+      "max": [
+        53,
+        6.36,
+        -32
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_PARAPET_N",
+      "min": [
+        37,
+        5.801,
+        -44
+      ],
+      "max": [
+        53,
+        6.36,
+        -43.85
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_PARAPET_S",
+      "min": [
+        37,
+        5.801,
+        -32.15
+      ],
+      "max": [
+        53,
+        6.36,
+        -32
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_PARAPET_W",
+      "min": [
+        37,
+        5.801,
+        -44
+      ],
+      "max": [
+        37.15,
+        6.36,
+        -32
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_REEL_0",
+      "min": [
+        58.15,
+        0,
+        -31.2
+      ],
+      "max": [
+        59.05,
+        1.58,
+        -29.8
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_REEL_1",
+      "min": [
+        58.25,
+        0,
+        -29.7
+      ],
+      "max": [
+        59.15,
+        1.58,
+        -28.3
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_REEL_FLAT",
+      "min": [
+        34.95,
+        0,
+        -2.35
+      ],
+      "max": [
+        36.25,
+        0.98,
+        -1.05
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_TARP_STACK",
+      "min": [
+        40.5,
+        0,
+        -2.25
+      ],
+      "max": [
+        42.3,
+        1.28,
+        -0.95
+      ]
+    },
+    {
+      "name": "COL_MOVE_CONTAINER_BD_TRAILER_T1",
+      "min": [
+        52,
+        0,
+        -11.9
+      ],
+      "max": [
+        54.4,
+        3.701,
+        -4.6
+      ]
+    }
+  ],
+  "rigNodes": [],
+  "warnings": [],
+  "passed": true,
+  "errors": []
+}

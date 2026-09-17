@@ -1,0 +1,477 @@
+{
+  "asset": "art-source/harbor-v2/_staging/structural-rp03/operations-ab-runtime.glb",
+  "zone": "OPERATIONS_AB",
+  "payloadBytes": 3143904,
+  "textureBytes": 107106,
+  "images": [
+    {
+      "name": "mat_ab_light",
+      "mimeType": "image/webp",
+      "bytes": 446
+    },
+    {
+      "name": "mat_ab_palette",
+      "mimeType": "image/webp",
+      "bytes": 1324
+    },
+    {
+      "name": "container_neutral_normal",
+      "mimeType": "image/webp",
+      "bytes": 6422
+    },
+    {
+      "name": "container_neutral_orm",
+      "mimeType": "image/webp",
+      "bytes": 2306
+    },
+    {
+      "name": "container_neutral_base",
+      "mimeType": "image/webp",
+      "bytes": 64664
+    },
+    {
+      "name": "concrete_yard_normal",
+      "mimeType": "image/webp",
+      "bytes": 570
+    },
+    {
+      "name": "concrete_yard_orm",
+      "mimeType": "image/webp",
+      "bytes": 730
+    },
+    {
+      "name": "concrete_yard_base",
+      "mimeType": "image/webp",
+      "bytes": 9260
+    },
+    {
+      "name": "grating_normal",
+      "mimeType": "image/webp",
+      "bytes": 84
+    },
+    {
+      "name": "grating_orm",
+      "mimeType": "image/webp",
+      "bytes": 86
+    },
+    {
+      "name": "grating_base",
+      "mimeType": "image/webp",
+      "bytes": 2468
+    },
+    {
+      "name": "steel_dark_normal",
+      "mimeType": "image/webp",
+      "bytes": 1764
+    },
+    {
+      "name": "steel_dark_orm",
+      "mimeType": "image/webp",
+      "bytes": 9934
+    },
+    {
+      "name": "steel_dark_base",
+      "mimeType": "image/webp",
+      "bytes": 7048
+    }
+  ],
+  "estimatedGpuTextureBytes": 13414225,
+  "lod0": {
+    "renderMeshes": 17,
+    "triangles": 33658,
+    "estimatedDrawCalls": 17,
+    "instancedMeshes": 2,
+    "instanceKeys": 2
+  },
+  "lod1": {
+    "renderMeshes": 7,
+    "triangles": 632,
+    "estimatedDrawCalls": 7,
+    "instancedMeshes": 0,
+    "instanceKeys": 0
+  },
+  "budgets": {
+    "lod0Triangles": 45000,
+    "lod0DrawCalls": 18,
+    "lod1Triangles": 10000,
+    "lod1DrawCalls": 10,
+    "payloadBytes": 6291456,
+    "maxTextureSize": 1024,
+    "gpuTextureBytes": 16777216,
+    "zoneColliders": 40
+  },
+  "colliderParity": {
+    "colliders": 493,
+    "source": "buildOldHarborFortniteMap({ useWarehouseV2: true, cinematicVisuals: true, quality: 'high' })"
+  },
+  "zoneColliders": [
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_BOLLARD_0",
+      "min": [
+        -22.5,
+        0.0,
+        -26.5
+      ],
+      "max": [
+        -22.3,
+        1.13,
+        -26.3
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_BOLLARD_1",
+      "min": [
+        -22.5,
+        0.0,
+        -18.6
+      ],
+      "max": [
+        -22.3,
+        1.13,
+        -18.4
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_BOLLARD_2",
+      "min": [
+        28.5,
+        0.0,
+        -27.5
+      ],
+      "max": [
+        28.7,
+        1.13,
+        -27.3
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_BOLLARD_3",
+      "min": [
+        28.5,
+        0.0,
+        -18.6
+      ],
+      "max": [
+        28.7,
+        1.13,
+        -18.4
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_BOLLARD_4",
+      "min": [
+        -11.6,
+        0.0,
+        -25.6
+      ],
+      "max": [
+        -11.4,
+        1.13,
+        -25.4
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_BOLLARD_5",
+      "min": [
+        11.3,
+        0.0,
+        -25.6
+      ],
+      "max": [
+        11.5,
+        1.13,
+        -25.4
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_BUOY_RACK",
+      "min": [
+        11.1,
+        0.0,
+        -42.48
+      ],
+      "max": [
+        13.7,
+        1.5,
+        -41.48
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_CHECKPOINT_BOOTH",
+      "min": [
+        25.5,
+        0.0,
+        -29.8
+      ],
+      "max": [
+        27.9,
+        2.54,
+        -27.4
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_CP_BARRIER_PEDESTAL",
+      "min": [
+        27.4,
+        0.0,
+        -18.85
+      ],
+      "max": [
+        27.8,
+        1.24,
+        -18.45
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_CP_BOLLARD",
+      "min": [
+        24.8,
+        0.0,
+        -27.9
+      ],
+      "max": [
+        25.0,
+        1.13,
+        -27.7
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_DAVIT",
+      "min": [
+        -22.75,
+        0.901,
+        -43.35
+      ],
+      "max": [
+        -21.8,
+        4.4,
+        -42.45
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_MAINT_CRATES",
+      "min": [
+        22.0,
+        0.0,
+        -42.0
+      ],
+      "max": [
+        24.4,
+        0.9,
+        -39.8
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_MANIFOLD",
+      "min": [
+        -16.9,
+        0.0,
+        -42.15
+      ],
+      "max": [
+        -13.3,
+        1.72,
+        -41.05
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_OFFICE_LOCKERS",
+      "min": [
+        -8.8,
+        0.25,
+        -32.0
+      ],
+      "max": [
+        -8.25,
+        2.15,
+        -30.2
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_PROP_PALLET",
+      "min": [
+        7.45,
+        0.25,
+        -32.0
+      ],
+      "max": [
+        8.75,
+        1.3,
+        -30.8
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_PUMP_HOUSE",
+      "min": [
+        -20.7,
+        0.0,
+        -42.5
+      ],
+      "max": [
+        -17.5,
+        3.2,
+        -39.8
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_RESCUE_CABINET",
+      "min": [
+        -12.6,
+        0.0,
+        -42.45
+      ],
+      "max": [
+        -11.8,
+        1.9,
+        -42.05
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_SEA_COMPRESSOR",
+      "min": [
+        -13.2,
+        0.0,
+        -41.0
+      ],
+      "max": [
+        -12.0,
+        1.15,
+        -40.2
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_SPARE_PUMP",
+      "min": [
+        -1.2,
+        0.25,
+        -40.7
+      ],
+      "max": [
+        0.0,
+        1.1,
+        -39.5
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_TOOL_CHEST",
+      "min": [
+        7.9,
+        0.25,
+        -40.2
+      ],
+      "max": [
+        8.7,
+        1.2,
+        -39.6
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_TRANSFORMER",
+      "min": [
+        19.9,
+        0.0,
+        -19.3
+      ],
+      "max": [
+        21.5,
+        1.88,
+        -18.05
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_TYRE_RACK",
+      "min": [
+        16.0,
+        0.0,
+        -42.5
+      ],
+      "max": [
+        18.0,
+        1.4,
+        -41.6
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_UTILITY_CART",
+      "min": [
+        -8.15,
+        0.22,
+        -27.95
+      ],
+      "max": [
+        -7.25,
+        1.22,
+        -26.55
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_WEIGH_CABINET",
+      "min": [
+        15.9,
+        0.0,
+        -18.75
+      ],
+      "max": [
+        16.4,
+        1.48,
+        -18.25
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_WELDING_CART",
+      "min": [
+        7.9,
+        0.25,
+        -33.5
+      ],
+      "max": [
+        8.8,
+        1.35,
+        -32.5
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_WH_BENCH",
+      "min": [
+        -8.0,
+        0.0,
+        -18.7
+      ],
+      "max": [
+        -6.0,
+        0.98,
+        -18.05
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_WH_LOCKERS",
+      "min": [
+        6.0,
+        0.0,
+        -18.5
+      ],
+      "max": [
+        7.8,
+        2.08,
+        -18.0
+      ]
+    },
+    {
+      "name": "COL_MOVE_OPERATIONS_AB_WH_PALLETS",
+      "min": [
+        16.6,
+        0.0,
+        -19.0
+      ],
+      "max": [
+        19.2,
+        0.98,
+        -18.05
+      ]
+    }
+  ],
+  "rigNodes": [],
+  "warnings": [],
+  "passed": true,
+  "errors": []
+}

@@ -1,0 +1,28 @@
+import {execFileSync} from 'node:child_process';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {NodeIO} from '@gltf-transform/core';
+import {ALL_EXTENSIONS} from '@gltf-transform/extensions';
+import {quantize} from '@gltf-transform/functions';
+const blender=process.env.BLENDER_PATH??'/Applications/Blender.app/Contents/MacOS/Blender';
+const dir='art-source/harbor-v2/_staging/visual-qa-rp05/asset';
+const run=(exe,args)=>execFileSync(exe,args,{stdio:'inherit'});
+run(blender,['-b','--python-exit-code','1','--python','tools/visual-qa/build_station.py']);
+run(blender,['-b','art-source/harbor-v2/response-station/response-station-rp05.blend','--python-exit-code','1','--python','tools/harbor-v2/export_zone_scene.py','--','--output',`${dir}/response-station.glb`]);
+// Same bounded optimization as Market RP04: color-only, keep collision/UV/pivot precision.
+const io=new NodeIO().registerExtensions(ALL_EXTENSIONS),file=`${dir}/response-station.glb`;
+const doc=await io.read(file);
+const colors=new Set(doc.getRoot().listMeshes().flatMap(m=>m.listPrimitives()).flatMap(p=>p.listSemantics().filter(s=>s.startsWith('COLOR_')).map(s=>p.getAttribute(s))));
+const hash=a=>createHash('sha256').update(Buffer.from(a.getArray().buffer,a.getArray().byteOffset,a.getArray().byteLength)).digest('hex');
+const protectedData=new Map(doc.getRoot().listAccessors().filter(a=>!colors.has(a)).map(a=>[a,hash(a)]));
+await doc.transform(quantize({pattern:/^COLOR_\d+$/,quantizeColor:8}));
+for(const [a,h] of protectedData)if(hash(a)!==h)throw Error('Non-color data changed');
+await io.write(file,doc);
+run(process.execPath,['tools/visual-qa/validate_asset.mjs',`${dir}/response-station.glb`,`${dir}/validation.json`]);
+run(process.execPath,['tools/harbor-v2/validate_response_station.mjs',`${dir}/response-station.glb`]);
+const manifest=JSON.parse(readFileSync(`${dir}/build-manifest.json`));
+manifest.export={format:'GLB',yUp:true,image:'WEBP',quality:86,tangents:false,triangulated:true,colorBits:8,positionQuantization:false};
+manifest.tangentDecision='Explicit tangent trial grew raw GLB to 2.35MB. Retain existing runtime-generated tangent space within 2MB cap; validator portability warnings recorded, require WebGPU and WebGL2 visual review. No claim of identical shading in other engines.';
+manifest.outputSha256=createHash('sha256').update(readFileSync(`${dir}/response-station.glb`)).digest('hex');
+manifest.routeValidation=JSON.parse(readFileSync('art-source/harbor-v2/_staging/response-station/validation.json'));
+writeFileSync(`${dir}/build-manifest.json`,JSON.stringify(manifest,null,2));

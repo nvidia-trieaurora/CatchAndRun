@@ -1,0 +1,19 @@
+{
+  "source": "art-source/harbor-v2/island/island-surfaces-rp03.blend",
+  "backup": "art-source/harbor-v2/_staging/island-surfaces/before-674aae371553.glb",
+  "sourceHash": "674aae371553f7dea5f24c3966317649c88e8e5e931fd80336e999df71dd3396",
+  "sha256": "3bf4b229e928e52488aaf90154686c466b7e5a84b2f61febd2ac16e5018d5fcc",
+  "bytes": 5206904,
+  "updated": [
+    "base_MESH_asphalt_LOD0",
+    "base_MESH_concrete_LOD0",
+    "base_MESH_concrete_warm_LOD0",
+    "harbor_MESH_asphalt_LOD1",
+    "harbor_MESH_concrete_LOD1",
+    "harbor_MESH_concrete_warm_LOD1"
+  ],
+  "protectedNodes": 531,
+  "additionalDrawsPerTier": 1,
+  "addedColliders": 0,
+  "validationErrors": 0
+}

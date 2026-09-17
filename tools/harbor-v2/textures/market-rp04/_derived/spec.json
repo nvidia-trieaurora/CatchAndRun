@@ -1,0 +1,23 @@
+{
+  "limestone": {
+    "base": "limestone_base.png",
+    "orm": "limestone_orm.png",
+    "normal": "limestone_normal.png",
+    "tile": 2.4,
+    "source": "Original procedural RP04 material, authored for CatchAndRun"
+  },
+  "plaster": {
+    "base": "plaster_base.png",
+    "orm": "plaster_orm.png",
+    "normal": "plaster_normal.png",
+    "tile": 1.2,
+    "source": "Original procedural RP04 material, authored for CatchAndRun"
+  },
+  "oak": {
+    "base": "oak_base.png",
+    "orm": "oak_orm.png",
+    "normal": "oak_normal.png",
+    "tile": 1.2,
+    "source": "Original procedural RP04 material, authored for CatchAndRun"
+  }
+}

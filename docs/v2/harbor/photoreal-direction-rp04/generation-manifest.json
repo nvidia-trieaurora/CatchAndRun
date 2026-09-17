@@ -1,0 +1,229 @@
+{
+  "schema": "HarborConceptGeneration/v1",
+  "date": "2026-09-10",
+  "generatedCount": 12,
+  "mode": "Built-in image_gen, reference-conditioned image generation. No API-key/CLI fallback; no Brev cloud provisioning.",
+  "status": "Concept review only. Not Blender/UE renders, not runtime screenshots, not collision blueprints.",
+  "originalsRetained": true,
+  "images": [
+    {
+      "slug": "01-island-master",
+      "title": "Toàn đảo — hướng tổng thể",
+      "status": "generated",
+      "prompt": "Use case: stylized-concept.\nAsset type: photorealistic 3D game environment art-direction reference, NOT a runtime screenshot.\nPrimary request: redesign Catch and Run's compact working harbor to look convincingly real, suitable as a Blender modeling and Unreal lighting target.\nStyle: photorealistic architectural/location photography, physically credible construction and material response, contemporary working port, cinematic but legible late-afternoon coastal light. Muted navy, oxidized red, galvanized steel, weathered timber and warm off-white. Real human scale, crisp mid-scale detail and subtle edge wear. No cartoon, no toy diorama, no painterly stylization, no oversaturated teal-orange filter.\nConstraints: existing playable footprint and openings take priority. All stairs, decks, roofs and railings have believable load-bearing connections. Keep circulation open; dress margins, not combat routes. No people, weapons, HUD, reticles, UI, logos or watermark. No giant new landmarks, yachts or city. No floating disconnected objects. Glass must have visible frame depth and a view into real interiors. Rain-darkening only near wet zones; most inland paving is dry. Maintain readable shadows, not crushed-black interiors.\nInput images: Image 1 is the authoritative map composition reference only, not a style to imitate. Remove every game overlay.\nComposition: one high-resolution wide landscape establishing view of the entire small rectangular harbor island, same three-quarter aerial view as reference, island fills 80% of frame. Keep the dominant low-gabled red warehouse in the middle, worker house and garden at image left, Ferris wheel and timber promenade on the near-left shore, working boats along near seawall, stacked containers and small market on right, crane and unfinished building at far-left rear, low operations buildings along far edge, rescue watchtower/service canopy near right foreground. Preserve this adjacency; do not expand into a town.\nEnhancement: warehouse standing-seam roof with sensible skylights, layered gutters, properly supported exterior stair; recessed façades, real door/window reveals; detailed corrugated containers with corner castings; mature wind-shaped coastal trees with natural leaf silhouettes; a lived-in but orderly promenade with café awnings; five modest working boats with shaped hulls, cabins, ropes, tire fenders, clear decks.\nWater and sky: believable sea horizon under a pale clouded sky, continuous atmosphere without dark horizon bands. Small wind ripples, broad slow swells, narrow intermittent white wash meeting stained concrete seawall, darker wet tidal band and algae restricted to waterline, not surf flooding the island. Subtle foam around piles and hulls. No giant waves.\nDo not tilt-shift or blur the model into a miniature. High detail landscape composition.",
+      "referencedImagePaths": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/island-review/final/rp03-webgpu-high-overview.png"
+      ],
+      "output": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/01-island-master.png",
+      "originalOutput": "/Users/tlle/.codex/generated_images/01a077ea-62b5-76e0-aaab-e93efa4e6cd5/exec-c7a2c5bd-baec-42e3-81f7-fc558aad3047.png",
+      "file": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/01-island-master.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 3172368,
+      "sha256": "3c9d36d2f78b0d2b12b286dd69d52bd5c1c92816770f88ac1c5c05682dc7d5c0"
+    },
+    {
+      "slug": "02-market-exterior",
+      "title": "Harbor Market — ngoại thất",
+      "status": "generated",
+      "prompt": "Use case: stylized-concept.\nAsset type: photorealistic environment concept photograph for Catch and Run, a compact working harbor game. New art-direction reference, not a screenshot of implemented game.\nStyle: exceptionally detailed, physically plausible, cinematic architectural/location photography. Real material scale, precise joinery, small surface imperfections, restrained wear and readable shadows. Warm late-afternoon coastal sunlight balanced by cool natural sky fill. Life comes from glints on water, gently wind-shaped vegetation and convincing signs of everyday use, not random clutter. Request a highly detailed wide landscape frame.\nInput images: Image 1 is the current game's layout and footprint reference, not a style to copy. Image 2 is the new island master concept for consistent palette, atmosphere and material realism. Retain Image 1's gameplay routes and adjacency while elevating construction detail. Remove all HUD and weapons.\nConstraints: no cartoon, no toy blocks, no miniature tilt-shift, no painted illustration, no crushed shadows, no excessive bloom. No people, weapon, HUD, watermark or unrelated brand. No floating details, no obstructed doorways, no arbitrary new buildings. Rough inland paving mostly dry; wetness local to the shoreline. Concept proportions must remain plausible for human movement; all rails/stairs/decks have credible supports.\nScene and composition: One eye-level 28mm three-quarter photograph of the small 14m-wide single-storey Harbor Market, with full façade and threshold visible. Keep a clear centered 3m-wide automatic sliding entrance and transparent front glazing into believable stocked aisles. Recessed dark anodized aluminum mullions, gaskets, door operator, believable slim canopy and flat roof, small timber accents, off-white tile walls. Exact sign \"HARBOR MARKET\" in crisp off-white letters on navy fascia, subdued practical lighting. Delivery crates and bicycle rack parked to the side, a slim flush drainage channel, worn but orderly pavement. The sea behind. Match reference aisle arrangement, not a luxury mall. Focus on convincing transitions at glass/frame/wall and daylight entering the interior.",
+      "referencedImagePaths": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/island-review/final/rp03-webgpu-high-containerBDShop.png",
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/01-island-master.png"
+      ],
+      "output": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/02-market-exterior.png",
+      "originalOutput": "/Users/tlle/.codex/generated_images/01a077ea-62b5-76e0-aaab-e93efa4e6cd5/exec-c5616a17-9a69-4a38-8137-b0199a271ebd.png",
+      "file": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/02-market-exterior.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2468646,
+      "sha256": "4b76c255734f476aff4b34ed3f4f3e042d30cfca814cf8a357ad3c86002018ea"
+    },
+    {
+      "slug": "03-market-interior",
+      "title": "Harbor Market — nội thất",
+      "status": "generated",
+      "prompt": "Use case: stylized-concept.\nAsset type: photorealistic environment concept photograph for Catch and Run, a compact working harbor game. New art-direction reference, not a screenshot of implemented game.\nStyle: exceptionally detailed, physically plausible, cinematic architectural/location photography. Real material scale, precise joinery, small surface imperfections, restrained wear and readable shadows. Warm late-afternoon coastal sunlight balanced by cool natural sky fill. Life comes from glints on water, gently wind-shaped vegetation and convincing signs of everyday use, not random clutter. Request a highly detailed wide landscape frame.\nInput images: Image 1 is the current game's layout and footprint reference, not a style to copy. Image 2 is the new island master concept for consistent palette, atmosphere and material realism. Retain Image 1's gameplay routes and adjacency while elevating construction detail. Remove all HUD and weapons.\nConstraints: no cartoon, no toy blocks, no miniature tilt-shift, no painted illustration, no crushed shadows, no excessive bloom. No people, weapon, HUD, watermark or unrelated brand. No floating details, no obstructed doorways, no arbitrary new buildings. Rough inland paving mostly dry; wetness local to the shoreline. Concept proportions must remain plausible for human movement; all rails/stairs/decks have credible supports.\nScene and composition: One immersive eye-level 24mm architectural photograph from near the entrance looking down the existing aisle into the small harbor provisions store. Preserve the aisle, rear refrigerators, side maintenance doorway and shelving arrangement. Human-scale gondola shelves with varied unbranded snack packaging, paper labels, bottles with caps, sensible imperfect stock levels. Refrigerator gaskets, handles and discreet condensation. Clear walking aisles, checkout counter with believable register and coffee station to one side. Cream/gray tiled floor with fine grout, small wear at shelves, softly lit practical suspended ceiling with HVAC vents, no giant white glowing planes. Glass storefront daylight mixed with warm neutral diffused shop lighting. Product packaging realistic, not repeating colorful cubes.",
+      "referencedImagePaths": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/island-review/final/rp03-webgpu-high-harborMarketInterior.png",
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/01-island-master.png"
+      ],
+      "output": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/03-market-interior.png",
+      "originalOutput": "/Users/tlle/.codex/generated_images/01a077ea-62b5-76e0-aaab-e93efa4e6cd5/exec-c6bb1625-cd2e-4530-86dc-37a41ffafedc.png",
+      "file": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/03-market-interior.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2390551,
+      "sha256": "187907cd9f0cdcc9109ed44948822e774795931c9efd605a890139f39b487bbf"
+    },
+    {
+      "slug": "04-warehouse",
+      "title": "Old Harbor — nhà kho",
+      "status": "generated",
+      "prompt": "Use case: stylized-concept.\nAsset type: photorealistic environment concept photograph for Catch and Run, a compact working harbor game. New art-direction reference, not a screenshot of implemented game.\nStyle: exceptionally detailed, physically plausible, cinematic architectural/location photography. Real material scale, precise joinery, small surface imperfections, restrained wear and readable shadows. Warm late-afternoon coastal sunlight balanced by cool natural sky fill. Life comes from glints on water, gently wind-shaped vegetation and convincing signs of everyday use, not random clutter. Request a highly detailed wide landscape frame.\nInput image: the supplied current game screenshot is the layout, viewpoint, scale, shallow roof profile and playable-opening reference. Rebuild the same scene as a physically plausible photorealistic working harbor; remove all HUD. Warm coastal afternoon with restrained amber sun and cool sky fill.\nConstraints: no cartoon, no toy blocks, no miniature tilt-shift, no painted illustration, no crushed shadows, no excessive bloom. No people, weapon, HUD, watermark or unrelated brand. No floating details, no obstructed doorways, no arbitrary new buildings. Rough inland paving mostly dry; wetness local to the shoreline. Concept proportions must remain plausible for human movement; all rails/stairs/decks have credible supports.\nScene and composition: One highly detailed 28mm exterior photograph at a slightly raised human accessible catwalk height, focused on the large central working warehouse. Keep broad loading doors and exterior stair on the right and the shallow gabled roof. Oxidized dark-red corrugated steel panels at real scale, concrete plinth, galvanized frame, properly supported loading canopy, drainpipes and flashed skylights. Crisp readable exact sign \"OLD HARBOR\" above the main loading entrance without canopy obstruction. Through the opening see shelving and supported catwalks. Keep broad ground routes clear; wrapped pallets, hose fixture and loading equipment neatly against edges. Avoid endless flat roof lines, uniform grunge or tiny bright speckled roof pattern. Natural soft sky fill makes shadowed construction legible.",
+      "referencedImagePaths": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/island-review/final/rp03-webgpu-high-warehouse.png"
+      ],
+      "output": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/04-warehouse.png",
+      "originalOutput": "/Users/tlle/.codex/generated_images/01a077ea-62b5-76e0-aaab-e93efa4e6cd5/exec-f542711c-b276-4f40-b268-7d1ac995e313.png",
+      "file": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/04-warehouse.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2759689,
+      "sha256": "cdb4a6527c5706b2205bd1333d1f5325352e4f81adce5ddb1e0e8b2790e73e43"
+    },
+    {
+      "slug": "05-construction",
+      "title": "Công trường sửa chữa cảng",
+      "status": "generated",
+      "prompt": "Use case: stylized-concept.\nAsset type: photorealistic environment concept photograph for Catch and Run, a compact working harbor game. New art-direction reference, not a screenshot of implemented game.\nStyle: exceptionally detailed, physically plausible, cinematic architectural/location photography. Real material scale, precise joinery, small surface imperfections, restrained wear and readable shadows. Warm late-afternoon coastal sunlight balanced by cool natural sky fill. Life comes from glints on water, gently wind-shaped vegetation and convincing signs of everyday use, not random clutter. Request a highly detailed wide landscape frame.\nInput image: the supplied current game screenshot is the authoritative layout, viewpoint and clear playable-opening reference. Rebuild this scene as a highly detailed photograph of a physically plausible working harbor, with warm coastal afternoon lighting and cool fill. Remove all game HUD.\nConstraints: no cartoon, no toy blocks, no miniature tilt-shift, no painted illustration, no crushed shadows, no excessive bloom. No people, weapon, HUD, watermark or unrelated brand. No floating details, no obstructed doorways, no arbitrary new buildings. Rough inland paving mostly dry; wetness local to the shoreline. Concept proportions must remain plausible for human movement; all rails/stairs/decks have credible supports.\nScene and composition: One cinematic eye-level 24mm photograph looking through the existing reinforced concrete construction frame. Preserve existing ground passage, upper slabs, vertical columns and stair route. Formwork joints and tie holes, careful edge chips and concrete variation, embedded/connected rebar cages with safety caps, scaffold couplers, screw base jacks and timber sole boards physically touching ground. Controlled steel/wood stacks in existing storage zones, cables clipped along beams, floodlight with real housing rather than a glowing slab. Existing crane and silo in background, water beyond seawall. Structure substantial and load-bearing, not diagrammatic black boxes. No loose debris blocking paths.",
+      "referencedImagePaths": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/island-review/final/rp03-webgpu-high-adConstructionRoute.png"
+      ],
+      "output": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/05-construction.png",
+      "originalOutput": "/Users/tlle/.codex/generated_images/01a077ea-62b5-76e0-aaab-e93efa4e6cd5/exec-36851a32-8523-4638-b55a-fdaf5107e361.png",
+      "file": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/05-construction.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2689037,
+      "sha256": "919da7fbd5791c3a97d8a528d905d76fd7ca23c3ca8651f4780c0327708e2b25"
+    },
+    {
+      "slug": "06-operations",
+      "title": "Xưởng kỹ thuật và điều hành",
+      "status": "generated",
+      "prompt": "Use case: stylized-concept.\nAsset type: photorealistic environment concept photograph for Catch and Run, a compact working harbor game. New art-direction reference, not a screenshot of implemented game.\nStyle: exceptionally detailed, physically plausible, cinematic architectural/location photography. Real material scale, precise joinery, small surface imperfections, restrained wear and readable shadows. Warm late-afternoon coastal sunlight balanced by cool natural sky fill. Life comes from glints on water, gently wind-shaped vegetation and convincing signs of everyday use, not random clutter. Request a highly detailed wide landscape frame.\nInput image: the supplied current game screenshot is the authoritative layout, viewpoint and clear playable-opening reference. Rebuild this scene as a highly detailed photograph of a physically plausible working harbor, with warm coastal afternoon lighting and cool fill. Remove all game HUD.\nConstraints: no cartoon, no toy blocks, no miniature tilt-shift, no painted illustration, no crushed shadows, no excessive bloom. No people, weapon, HUD, watermark or unrelated brand. No floating details, no obstructed doorways, no arbitrary new buildings. Rough inland paving mostly dry; wetness local to the shoreline. Concept proportions must remain plausible for human movement; all rails/stairs/decks have credible supports.\nScene and composition: One eye-level wide-angle photograph of a small marine engineering workshop/control hall, preserving the three existing open entries, workbench layout, high room, spiral stair and central service lane. Real painted masonry walls with darker navy lower band, supports and conduit brackets, attached cable trays, vents, industrial hanging luminaire housings. Refine the existing tool cabinets, stools, workbenches and instrument displays into believable actual equipment. Tool silhouettes, restrained screen content, task lights and localized wear at handles. Warm neutral task light plus side daylight and skylight, no science fiction, no bright white featureless emissive squares. Keep visible path under the stairs and door thresholds clear.",
+      "referencedImagePaths": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/island-review/final/rp03-webgpu-high-operationsABInterior.png"
+      ],
+      "output": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/06-operations.png",
+      "originalOutput": "/Users/tlle/.codex/generated_images/01a077ea-62b5-76e0-aaab-e93efa4e6cd5/exec-27e134b3-fa60-492d-ae48-5295c6b59b84.png",
+      "file": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/06-operations.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2525807,
+      "sha256": "6cbc1986f8eb5d1ccf2e7f81653d9cacfb78f17bc7d14a4739e98aaf1c885d63"
+    },
+    {
+      "slug": "07-garden",
+      "title": "Nhà ven cảng và vườn",
+      "status": "generated",
+      "prompt": "Use case: stylized-concept.\nAsset type: photorealistic environment concept photograph for Catch and Run, a compact working harbor game. New art-direction reference, not a screenshot of implemented game.\nStyle: exceptionally detailed, physically plausible, cinematic architectural/location photography. Real material scale, precise joinery, small surface imperfections, restrained wear and readable shadows. Warm late-afternoon coastal sunlight balanced by cool natural sky fill. Life comes from glints on water, gently wind-shaped vegetation and convincing signs of everyday use, not random clutter. Request a highly detailed wide landscape frame.\nInput image: the current game screenshot is a geometry/layout reference, not a style to imitate. Preserve its house, bridge, pond and paths while redesigning realistic materials and vegetation. Remove game HUD.\nConstraints: no cartoon, no toy blocks, no miniature tilt-shift, no painted illustration, no crushed shadows, no excessive bloom. No people, weapon, HUD, watermark or unrelated brand. No floating details, no obstructed doorways, no arbitrary new buildings. Rough inland paving mostly dry; wetness local to the shoreline. Concept proportions must remain plausible for human movement; all rails/stairs/decks have credible supports.\nScene and composition: One eye-level 28mm photograph of the existing two-storey harbor keeper's house and pond garden. Retain house footprint, open upstairs loggia, traversable ground and upper openings, pond footbridge and clear winding paths. Lime plaster with subtle localized salt staining, timber recessed window frames, properly flashed roof tiles and gutters, credible eaves and stair joinery. Coastal broadleaf trees with natural fine-sized leaf clusters, visible branch architecture and wind-shaped asymmetric crowns; not giant round leaves. Mixed grasses and reeds at stone borders, varied ground cover. Pond darker with submerged stones, gentle ripples and reflected sky. Ferris wheel and warehouse remain recognizable behind. Inviting living coastal garden, not abandoned jungle.",
+      "referencedImagePaths": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/island-review/final/rp03-webgpu-high-acGardenRoute.png"
+      ],
+      "output": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/07-garden.png",
+      "originalOutput": "/Users/tlle/.codex/generated_images/01a077ea-62b5-76e0-aaab-e93efa4e6cd5/exec-b7e3f508-f720-48bc-a2a8-b91cef73b53b.png",
+      "file": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/07-garden.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 3008564,
+      "sha256": "73634fe962ff0a371a827bd69ab4e5f9c4493d2a156522dce2fb106a84963fec"
+    },
+    {
+      "slug": "08-ferris-ticket",
+      "title": "Đu quay và quầy vé",
+      "status": "generated",
+      "prompt": "Use case: stylized-concept.\nAsset type: photorealistic environment concept photograph for Catch and Run, a compact working harbor game. New art-direction reference, not a screenshot of implemented game.\nStyle: exceptionally detailed, physically plausible, cinematic architectural/location photography. Real material scale, precise joinery, small surface imperfections, restrained wear and readable shadows. Warm late-afternoon coastal sunlight balanced by cool natural sky fill. Life comes from glints on water, gently wind-shaped vegetation and convincing signs of everyday use, not random clutter. Request a highly detailed wide landscape frame.\nInput image: the supplied current game screenshot is the layout, footprint, viewpoint and clear playable-opening reference. Rebuild this scene as a highly detailed photograph of a physically plausible working harbor, with warm coastal afternoon lighting and cool fill. Remove all game HUD.\nConstraints: no cartoon, no toy blocks, no miniature tilt-shift, no painted illustration, no crushed shadows, no excessive bloom. No people, weapon, HUD, watermark or unrelated brand. No floating details, no obstructed doorways, no arbitrary new buildings. Rough inland paving mostly dry; wetness local to the shoreline. Concept proportions must remain plausible for human movement; all rails/stairs/decks have credible supports.\nScene and composition: One eye-level architectural photograph of the restored modest waterfront Ferris ticket kiosk and lower wheel assembly, preserving the booth footprint, side entrance, boardwalk and wheel pivot. Exact sign \"HARBOR TICKETS\", dark painted timber/steel with fine joinery, recessed framed clear transaction glazing, inside desk, small transaction opening, solid sill and grounded threshold. Wheel steel has credible hub/bearing housings, flanged joints, diagonal bracing, bolted cabin brackets and warm restrained bulbs. Preserve eight open-front cabins overall. Worn red/teal/yellow cabin paint, real glazing depth and seats. Frame includes seaside promenade and warehouse context. Roof, walls and windows physically distinct, not an empty cube or opaque blue pane.",
+      "referencedImagePaths": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/island-review/final/rp03-webgpu-high-ferrisTicket.png"
+      ],
+      "output": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/08-ferris-ticket.png",
+      "originalOutput": "/Users/tlle/.codex/generated_images/01a077ea-62b5-76e0-aaab-e93efa4e6cd5/exec-0e134f7c-72e7-4e81-86ad-09106dae4a24.png",
+      "file": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/08-ferris-ticket.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2968271,
+      "sha256": "701ffd6e94d907c76e5d14888df3b234c811cd5551e7ee8e8fced4f1fa14d1c1"
+    },
+    {
+      "slug": "09-working-fleet",
+      "title": "Tàu công vụ và mặt nước",
+      "status": "generated",
+      "prompt": "Use case: stylized-concept.\nAsset type: photorealistic environment concept photograph for Catch and Run, a compact working harbor game. New art-direction reference, not a screenshot of implemented game.\nStyle: exceptionally detailed, physically plausible, cinematic architectural/location photography. Real material scale, precise joinery, small surface imperfections, restrained wear and readable shadows. Warm late-afternoon coastal sunlight balanced by cool natural sky fill. Life comes from glints on water, gently wind-shaped vegetation and convincing signs of everyday use, not random clutter. Request a highly detailed wide landscape frame.\nInput image: the supplied current game screenshot is the layout and boat envelope reference, not a style to imitate. Keep boat size, mooring arrangement and deck route while redesigning a physically convincing realistic working fleet. Remove HUD.\nConstraints: no cartoon, no toy blocks, no miniature tilt-shift, no painted illustration, no crushed shadows, no excessive bloom. No people, weapon, HUD, watermark or unrelated brand. No floating details, no obstructed doorways, no arbitrary new buildings. Rough inland paving mostly dry; wetness local to the shoreline. Concept proportions must remain plausible for human movement; all rails/stairs/decks have credible supports.\nScene and composition: One cinematic eye-level 28mm photograph along the working-boat moorings, same small boat scale and deck envelopes as reference. Foreground hero boat: dark navy painted steel shaped hull with believable sheer and chine, thick gunwale, real recessed wheelhouse glazing with mullion depth, subtle weld seams and panel joints, anti-slip deck and safe unobstructed standing area. Tire fenders and ropes attached to actual cleats, restrained working equipment secured at margins. Small boats in background, not yachts or huge ships. Late-afternoon light flickers over gently rippling sea. Water below dry decks, narrow intermittent wash at algae-stained seawall foot and around hulls/piles, realistic wet/dry tidal band and soft foam breakup. No giant surf or foam blanket. Make boat look seaworthy, not a box with pasted windows. Keep land access and physical support plausible.",
+      "referencedImagePaths": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/island-review/final/rp03-webgpu-high-workboatDetail.png"
+      ],
+      "output": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/09-working-fleet.png",
+      "originalOutput": "/Users/tlle/.codex/generated_images/01a077ea-62b5-76e0-aaab-e93efa4e6cd5/exec-339bf6ee-3c04-4c2f-990f-6514f8920781.png",
+      "file": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/09-working-fleet.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2772281,
+      "sha256": "796580f332bf2cdd1fb1c29086cc6049a32aa6c42d3c355681deb406df659b90"
+    },
+    {
+      "slug": "10-response-rescue",
+      "title": "Sân hậu cần cứu hộ ven cảng",
+      "status": "generated",
+      "prompt": "Use case: stylized-concept.\nAsset type: photorealistic environment concept photograph for Catch and Run, a compact working harbor game. New art-direction reference, not a screenshot of implemented game.\nStyle: exceptionally detailed, physically plausible, cinematic architectural/location photography. Real material scale, precise joinery, small surface imperfections, restrained wear and readable shadows. Warm late-afternoon coastal sunlight balanced by cool natural sky fill. Life comes from glints on water, gently wind-shaped vegetation and convincing signs of everyday use, not random clutter. Request a highly detailed wide landscape frame.\nInput image: the supplied current game screenshot is the layout, footprint, viewpoint and clear playable-opening reference. Rebuild this scene as a highly detailed photograph of a physically plausible working harbor, with warm coastal afternoon lighting and cool fill. Remove all game HUD.\nConstraints: no cartoon, no toy blocks, no miniature tilt-shift, no painted illustration, no crushed shadows, no excessive bloom. No people, weapon, HUD, watermark or unrelated brand. No floating details, no obstructed doorways, no arbitrary new buildings. Rough inland paving mostly dry; wetness local to the shoreline. Concept proportions must remain plausible for human movement; all rails/stairs/decks have credible supports.\nScene and composition: One very detailed eye-level architectural photograph of the rescue harbor apron in the supplied screenshot. Keep the existing lookout tower, maintenance workshop canopy, modest concrete courtyard and relationship to the sea. Refine with real concrete plinths, bolted cross-bracing, watchtower clear glazing and safely attached access ladder, a small rescue inflatable securely parked on a real cradle under the canopy, neatly attached hose reel and equipment locker at the margins. Tower roof naturally weathered, workshop timber and steel show real joinery. Flush drainage strips and cracked salt-worn paving, dry inland and damp close to the seawall. Broad maintenance lane remains completely clear, no central obstruction or dramatic giant vehicle. Photograph in warm coastal late-afternoon sun and readable cool fill. No new buildings or layouts; realism through construction and materials.",
+      "referencedImagePaths": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/island-review/final/rp03-webgpu-high-rescueQuay.png"
+      ],
+      "output": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/10-response-rescue.png",
+      "originalOutput": "/Users/tlle/.codex/generated_images/01a077ea-62b5-76e0-aaab-e93efa4e6cd5/exec-05003cad-961a-463e-a81b-1f8d662d9274.png",
+      "file": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/10-response-rescue.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 3077835,
+      "sha256": "a4200c6219c7fc90769df24b3d86ed443e7d9556a264b63524a37540a55f05a6"
+    },
+    {
+      "slug": "11-container-yard",
+      "title": "Bãi container và giao nhận",
+      "status": "generated",
+      "prompt": "Use case: stylized-concept.\nAsset type: photorealistic environment concept photograph for Catch and Run, a compact working harbor game. New art-direction reference, not a screenshot of implemented game.\nStyle: exceptionally detailed, physically plausible, cinematic architectural/location photography. Real material scale, precise joinery, small surface imperfections, restrained wear and readable shadows. Warm late-afternoon coastal sunlight balanced by cool natural sky fill. Life comes from glints on water, gently wind-shaped vegetation and convincing signs of everyday use, not random clutter. Request a highly detailed wide landscape frame.\nInput image: the supplied current game screenshot is the layout, footprint, viewpoint and clear playable-opening reference. Rebuild this scene as a highly detailed photograph of a physically plausible working harbor, with warm coastal afternoon lighting and cool fill. Remove all game HUD.\nConstraints: no cartoon, no toy blocks, no miniature tilt-shift, no painted illustration, no crushed shadows, no excessive bloom. No people, weapon, HUD, watermark or unrelated brand. No floating details, no obstructed doorways, no arbitrary new buildings. Rough inland paving mostly dry; wetness local to the shoreline. Concept proportions must remain plausible for human movement; all rails/stairs/decks have credible supports.\nScene and composition: One cinematic high three-quarter architectural photograph of this compact working harbor container yard. Keep all shown container stacks and their heights, the accessible stair next to warehouse, small gate hut and market in the background. Real ribbed painted steel panels with pressed corner radii, ISO corner castings, door locking bars, rubber gaskets, restrained localized salt corrosion and scuffs, small unbranded shipping labels. Worn navy, deep teal, ochre, muted red. Forklift parked in its existing bay, secure spool and pallet loads only at lane margins. Clear pedestrian and service lanes, flush drains, realistically scaled asphalt with sparse repair patches and painted lines. Market frontage matches compact navy HARBOR MARKET with transparent doors. Coastal sea reflections and distant hills, warm late-afternoon light. Do not invent more container stacks or obstruct playable climbing routes.",
+      "referencedImagePaths": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/realism-review/runtime/rl01-webgpu-high-containerBD.png"
+      ],
+      "output": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/11-container-yard.png",
+      "originalOutput": "/Users/tlle/.codex/generated_images/01a077ea-62b5-76e0-aaab-e93efa4e6cd5/exec-9dcd3498-0406-4ba5-a229-a4f878a4b2e2.png",
+      "file": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/11-container-yard.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2915643,
+      "sha256": "8a384b1485d672dd9480d001ff6c24943e9873296f8684885d567d2d045d6eab"
+    },
+    {
+      "slug": "12-response-station",
+      "title": "Trạm phản ứng Hunter",
+      "status": "generated",
+      "prompt": "Use case: stylized-concept.\nAsset type: photorealistic environment concept photograph for Catch and Run, a compact working harbor game. New art-direction reference, not a screenshot of implemented game.\nStyle: exceptionally detailed, physically plausible, cinematic architectural/location photography. Real material scale, precise joinery, small surface imperfections, restrained wear and readable shadows. Warm late-afternoon coastal sunlight balanced by cool natural sky fill. Life comes from glints on water, gently wind-shaped vegetation and convincing signs of everyday use, not random clutter. Request a highly detailed wide landscape frame.\nInput image: the supplied current game screenshot is the layout, footprint, viewpoint and clear playable-opening reference. Rebuild this scene as a highly detailed photograph of a physically plausible working harbor, with warm coastal afternoon lighting and cool fill. Remove all game HUD.\nConstraints: no cartoon, no toy blocks, no miniature tilt-shift, no painted illustration, no crushed shadows, no excessive bloom. No people, weapon, HUD, watermark or unrelated brand. No floating details, no obstructed doorways, no arbitrary new buildings. Rough inland paving mostly dry; wetness local to the shoreline. Concept proportions must remain plausible for human movement; all rails/stairs/decks have credible supports.\nScene and composition: One cinematic architectural photograph of the existing compact 14 by 14 meter coastguard response station, in an eye-level three-quarter view near its broad open deployment gate. Preserve the square footprint, open front, flat weatherproof roof, rear/side enclosure and surrounding harbor context; no massive new architecture. The upper fascia reads exactly HARBOR RESPONSE in clear off-white letters on navy. Precise steel portal structure, gate side tracks, lintel, seals and restrained amber warning lamps. Paint salt-weathered only at seams and exposed edges. Real framed glass dispatch corner with visible desk/equipment, grounded lockers and benches against the side wall, protective bollards only at jambs. A clean unobstructed central deployment lane through the open gate, painted ground guide lines and flush drainage. Navy blue powder-coated metal and warm pale interior walls, strong natural daylight with soft warm practical lights. Physically grounded credible assembly; no helicopter squeezed inside, no sci-fi, no sealed black cube, no enormous glowing sign. Highly detailed photographic realism.",
+      "referencedImagePaths": [
+        "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/island-review/final/rp03-webgl2-low-station-open.png"
+      ],
+      "output": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/12-response-station.png",
+      "originalOutput": "/Users/tlle/.codex/generated_images/01a077ea-62b5-76e0-aaab-e93efa4e6cd5/exec-909a3f8c-1531-4d27-82b5-3db051c9fb65.png",
+      "file": "/Users/tlle/Documents/PersonalProject/CatchAndRun/docs/v2/harbor/photoreal-direction-rp04/12-response-station.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2419614,
+      "sha256": "dbcd04ef26e2ef041b97152429c9f4f0aa254696f9ee7b9ab1fd32acd8818aad"
+    }
+  ],
+  "failedRetriesThisTurn": [
+    {
+      "slug": "04-warehouse",
+      "requestId": "db5dc79c-58a9-469f-894e-84af4cf9d3d1",
+      "error": "HTTP500",
+      "recovered": "single-reference retry"
+    },
+    {
+      "slug": "05-construction",
+      "requestId": "dcfff2d1-1814-4996-84cc-221e97d633fb",
+      "error": "HTTP500",
+      "recovered": "single-reference retry"
+    },
+    {
+      "slug": "06-operations",
+      "requestId": "60cd5034-9782-439b-9286-d47db7c076e8",
+      "error": "HTTP500",
+      "recovered": "single-reference retry"
+    }
+  ],
+  "notes": [
+    "All PNGs were visually reviewed in native tool output.",
+    "Resolution is actual PNG size, not 4K.",
+    "AI may alter stair/door/cabin geometry; preserve source contracts. See shot-contracts.json."
+  ]
+}

@@ -11,7 +11,7 @@
   "carveBox": { "min": [-22.5, -3.5, 27.0], "max": [32.0, 24.0, 62.0] },
   "boardwalkCarveBox": { "min": [-22.5, 0.05, 33.0], "max": [52.0, 0.6, 43.0] },
   "footprint": { "min": [-24.0, -3.5, 26.5], "max": [52.0, 24.0, 63.0] },
-  "expectedProceduralColliders": 488,
+  "expectedProceduralColliders": 493,
   "gameplay": {
     "ferris": { "hub": [-10, 12, 34], "ringRadius": 8, "mountRadius": 8.5, "cabins": 8, "cabin": [1.8, 2.2, 1.4] },
     "platform": { "min": [-17, 0, 29], "max": [-3, 0.35, 39] },
@@ -27,7 +27,7 @@
     "payloadBytes": 8388608,
     "maxTextureSize": 1024,
     "gpuTextureBytes": 33554432,
-    "zoneColliders": 40
+    "zoneColliders": 52
   },
   "requiredRigNodes": [
     "RIG_FERRIS_HARBOR_WHEEL_ROOT",

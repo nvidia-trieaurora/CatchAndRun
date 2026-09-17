@@ -65,6 +65,65 @@ afterEach(() => {
 });
 
 describe("swept ground collision", () => {
+  it("lowers the Hunter eye without lifting the feet when crouching", () => {
+    const controller = new HunterController(new THREE.PerspectiveCamera(), input, config);
+    controller.setPosition(0, 0, 0);
+    inputState.crouch = true;
+
+    const position = controller.update(0.016, []);
+
+    expect(position.y).toBeCloseTo(1.6 + (0.9 - 1.6) * 0.016 * 12);
+  });
+
+  it("does not turn airborne crouching into extra vertical movement", () => {
+    const controller = new HunterController(new THREE.PerspectiveCamera(), input, config);
+    controller.setPosition(0, 3, 0);
+    inputState.crouch = true;
+
+    const position = controller.update(0.016, []);
+
+    const eyeHeight = 1.6 + (0.9 - 1.6) * 0.016 * 12;
+    expect(position.y - eyeHeight).toBeCloseTo(3 - 28 * 0.016 ** 2);
+  });
+
+  it("keeps the Hunter crouched under a low platform until there is headroom", () => {
+    const controller = new HunterController(new THREE.PerspectiveCamera(), input, config);
+    controller.setPosition(0, 0, 0);
+    inputState.crouch = true;
+    for (let frame = 0; frame < 120; frame++) controller.update(0.016, []);
+    const platform = new THREE.Box3(new THREE.Vector3(-5, 1.3, -5), new THREE.Vector3(5, 1.5, 5));
+    inputState.crouch = false;
+
+    const position = controller.update(0.016, [platform]);
+
+    expect(controller.getIsCrouching()).toBe(true);
+    expect(position.x).toBe(0);
+    expect(position.z).toBe(0);
+    expect(position.y).toBeCloseTo(0.9);
+    controller.update(0.016, []);
+    expect(controller.getIsCrouching()).toBe(false);
+  });
+
+  it.each([
+    ["Hunter", HunterController, 1.8, 1.6],
+    ["Prop", PropController, 0.9, 0],
+  ] as const)("keeps a %s below a thin ceiling even after a long jump frame", (_name, Controller, bodyHeight, eyeHeight) => {
+    const controller = new Controller(new THREE.PerspectiveCamera(), input, config);
+    controller.setPosition(0, 0, 0);
+    const ceilingY = bodyHeight + 0.4;
+    const roof = new THREE.Box3(
+      new THREE.Vector3(-5, ceilingY, -5),
+      new THREE.Vector3(5, ceilingY + 0.06, 5),
+    );
+    inputState.jump = true;
+
+    const position = controller.update(0.15, [roof]);
+
+    expect(position.y - eyeHeight + bodyHeight).toBeLessThanOrEqual(ceilingY + 0.001);
+    expect(position.x).toBe(0);
+    expect(position.z).toBe(0);
+  });
+
   it("keeps the Hunter from falling through a raised platform", () => {
     const controller = new HunterController(
       new THREE.PerspectiveCamera(),

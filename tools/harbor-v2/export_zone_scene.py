@@ -38,6 +38,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--image-format", choices=("AUTO", "JPEG", "WEBP"), default="WEBP")
     parser.add_argument("--image-quality", type=int, default=86)
+    parser.add_argument("--tangents", action="store_true", help="Export authored tangent space for reviewed normal-mapped assets")
     return parser.parse_args(blender_args())
 
 
@@ -133,6 +134,7 @@ def main() -> None:
             export_cameras=False,
             export_lights=False,
             export_animations=False,
+            export_tangents=args.tangents,
             use_selection=True,
         )
     finally:

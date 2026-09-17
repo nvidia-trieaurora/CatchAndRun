@@ -1,7 +1,40 @@
 import * as THREE from "three";
+import { getCeilingHeightAt, getSupportHeightAt } from "../world/SupportSurfaces";
 
 export const GROUND_CONTACT_EPSILON = 0.05;
 export const STAIR_STEP_DOWN = 0.6;
+
+interface CeilingProbe {
+  x: number;
+  z: number;
+  previousHeadY: number;
+  currentHeadY: number;
+  radius: number;
+}
+
+/** Sweep the head through the whole jump step, including thin roof panels. */
+export function findCeilingSurface(
+  colliders: readonly THREE.Box3[],
+  probe: CeilingProbe,
+): number | null {
+  if (probe.currentHeadY < probe.previousHeadY) return null;
+  let lowest: number | null = null;
+  for (const collider of colliders) {
+    const underside = getCeilingHeightAt(collider, probe.x, probe.z, probe.radius);
+    if (
+      collider.max.y <= collider.min.y
+      || underside === null
+      || underside < probe.previousHeadY - GROUND_CONTACT_EPSILON
+      || underside > probe.currentHeadY
+      || probe.x + probe.radius <= collider.min.x
+      || probe.x - probe.radius >= collider.max.x
+      || probe.z + probe.radius <= collider.min.z
+      || probe.z - probe.radius >= collider.max.z
+    ) continue;
+    if (lowest === null || underside < lowest) lowest = underside;
+  }
+  return lowest;
+}
 
 interface GroundProbe {
   x: number;
@@ -32,18 +65,14 @@ export function findGroundSurface(
   let best = probe.fallbackY;
 
   for (const collider of colliders) {
-    const overlapsXZ =
-      probe.x + probe.radius >= collider.min.x
-      && probe.x - probe.radius <= collider.max.x
-      && probe.z + probe.radius >= collider.min.z
-      && probe.z - probe.radius <= collider.max.z;
+    const surfaceY = getSupportHeightAt(collider, probe.x, probe.z, probe.radius);
     if (
-      overlapsXZ
-      && collider.max.y > best
-      && collider.max.y >= minSurfaceY - GROUND_CONTACT_EPSILON
-      && collider.max.y <= maxSurfaceY + GROUND_CONTACT_EPSILON
+      surfaceY !== null
+      && surfaceY > best
+      && surfaceY >= minSurfaceY - GROUND_CONTACT_EPSILON
+      && surfaceY <= maxSurfaceY + GROUND_CONTACT_EPSILON
     ) {
-      best = collider.max.y;
+      best = surfaceY;
     }
   }
 

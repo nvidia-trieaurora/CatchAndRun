@@ -149,26 +149,28 @@ def window_glazed(name, cx, cy, cz, w, h, facing, M, frame_depth=0.12):
 
 
 def open_window_band(name, x_wall, z0, z1, y0, y1, outward_sign, M):
-    """5 m x 2 m collision-open side window: frame, two mullions, shutters swung open."""
+    """5 m x 2 m collision-open side window: frame + sill only.
+
+    The opening is a jump route for Hunters and Props (the procedural wall colliders
+    leave it open), so nothing may stand inside the band: no mullions, no glass, and
+    the shutters hang folded back against the exterior wall beside the opening.
+    """
     fw = 0.1
     depth = W + 0.06
     box_span(f"{name}_head", x_wall - depth / 2, x_wall + depth / 2, y1, y1 + fw, z0, z1, M["wood"])
     box_span(f"{name}_sill", x_wall - depth / 2, x_wall + depth / 2, y0 - fw, y0, z0, z1, M["wood"])
     box_span(f"{name}_jamb0", x_wall - depth / 2, x_wall + depth / 2, y0, y1, z0 - fw, z0, M["wood"])
     box_span(f"{name}_jamb1", x_wall - depth / 2, x_wall + depth / 2, y0, y1, z1, z1 + fw, M["wood"])
-    span = z1 - z0
-    for k in (1, 2):
-        zm = z0 + span * k / 3
-        box_span(f"{name}_mullion{k}", x_wall - 0.03, x_wall + 0.03, y0, y1, zm - 0.04, zm + 0.04, M["wood"])
-    # open shutters flat against the exterior wall, one each side of each bay
+    # worn sill board on the room side so the jump-out reads as a low ledge
+    box_span(f"{name}_ledge", x_wall - outward_sign * (depth / 2 + 0.08), x_wall - outward_sign * depth / 2, y0 - fw, y0 + 0.02, z0 - fw, z1 + fw, M["wood_in"])
+    # shutters folded back flat against the exterior wall, outside the opening
     sx = x_wall + outward_sign * (W / 2 + 0.03)
     shutter_w = 0.62
-    for k in range(3):
-        b0 = z0 + span * k / 3
-        b1 = z0 + span * (k + 1) / 3
-        box_span(f"{name}_shutterA{k}", sx - 0.02, sx + 0.02, y0 + 0.05, y1 - 0.05, b0 - shutter_w - 0.02 if k == 0 else b0 + 0.04, b0 - 0.02 if k == 0 else b0 + 0.04 + shutter_w, M["wood"])
-        if k == 2:
-            box_span(f"{name}_shutterB{k}", sx - 0.02, sx + 0.02, y0 + 0.05, y1 - 0.05, b1 + 0.02, b1 + 0.02 + shutter_w, M["wood"])
+    for k, (za, zb) in enumerate(((z0 - fw - shutter_w - 0.02, z0 - fw - 0.02), (z1 + fw + 0.02, z1 + fw + 0.02 + shutter_w))):
+        box_span(f"{name}_shutter{k}", sx - 0.02, sx + 0.02, y0 + 0.05, y1 - 0.05, za, zb, M["wood"])
+        for s in range(4):
+            sy = y0 + 0.25 + s * (y1 - y0 - 0.5) / 3
+            box_span(f"{name}_shutter{k}_slat{s}", sx + outward_sign * 0.02, sx + outward_sign * 0.035, sy - 0.03, sy + 0.03, za + 0.04, zb - 0.04, M["wood"])
 
 
 def build_house(M):
@@ -185,8 +187,11 @@ def build_house(M):
     box_span("floor_2f_c", chx0, chx1, BASE2, BASE2 + 0.2, z0, chz0, M["wood_in"])
     box_span("floor_2f_d", chx0, chx1, BASE2, BASE2 + 0.2, chz1, z1, M["wood_in"])
     box_span("floor_2f_landing", x0, -38.0, BASE2, BASE2 + 0.2, 23.0, z1, M["wood_in"])
-    # ceiling under the roof deck + 1F ceiling boards
-    box_span("ceiling_2f", x0, x1, DECK_Y - 0.08, DECK_Y, z0, z1, M["plaster_in"])
+    # ceiling under the roof deck, split around the chimney flue so the shaft stays open
+    box_span("ceiling_2f_a", x0, chx0, DECK_Y - 0.08, DECK_Y, z0, z1, M["plaster_in"])
+    box_span("ceiling_2f_b", chx1, x1, DECK_Y - 0.08, DECK_Y, z0, z1, M["plaster_in"])
+    box_span("ceiling_2f_c", chx0, chx1, DECK_Y - 0.08, DECK_Y, z0, chz0, M["plaster_in"])
+    box_span("ceiling_2f_d", chx0, chx1, DECK_Y - 0.08, DECK_Y, chz1, z1, M["plaster_in"])
     # interior lining (painted plaster) on the inside faces of the walls, both floors
     li = 0.03
     for (ya, yb) in ((BASE1, BASE2), (BASE2 + 0.2, DECK_Y - 0.08)):
@@ -298,17 +303,32 @@ def build_house(M):
 
     # ---- roof: two slabs, ridge cap, fascia, gutters, downspouts ----
     t = 0.14
+
+    def roof_y(z):
+        return ROOF_EAVE_Y + (ROOF_RIDGE_Y - ROOF_EAVE_Y) * (1.0 - abs(z - HZ) / ROOF_HALF_RUN)
+
+    def slab_piece(name, xa, xb, za, zb, side):
+        # sloped slab piece between two z stations (top surface follows the pitch)
+        v = [(xa, roof_y(za), za), (xb, roof_y(za), za), (xb, roof_y(zb), zb), (xa, roof_y(zb), zb)]
+        vb = [(x, y - t, z) for (x, y, z) in v]
+        faces = [(0, 1, 2, 3), (7, 6, 5, 4), (0, 4, 5, 1), (1, 5, 6, 2), (2, 6, 7, 3), (3, 7, 4, 0)]
+        if (zb - za) * side > 0:
+            faces = [tuple(reversed(f)) for f in faces]
+        K.mesh(name, v + vb, faces, M["roof"], force_recalc=True)
+
+    # chimney flue footprint (outer brick faces) leaves a hole in the back slope
+    fx0, fx1 = CH_X - CH_W / 2 - CH_T, CH_X + CH_W / 2 + CH_T
+    fz0, fz1 = CH_Z - CH_W / 2 - CH_T, CH_Z + CH_W / 2 + CH_T
     for side in (-1, 1):
         ze = HZ + side * ROOF_HALF_RUN
         zr = HZ
-        # slab top surface from ridge to eave, thickness downward along normal-ish (vertical offset)
-        v = [(-ROOF_HALF_W + HX, ROOF_RIDGE_Y, zr), (ROOF_HALF_W + HX, ROOF_RIDGE_Y, zr),
-             (ROOF_HALF_W + HX, ROOF_EAVE_Y, ze), (-ROOF_HALF_W + HX, ROOF_EAVE_Y, ze)]
-        vb = [(x, y - t, z) for (x, y, z) in v]
-        faces = [(0, 1, 2, 3), (7, 6, 5, 4), (0, 4, 5, 1), (1, 5, 6, 2), (2, 6, 7, 3), (3, 7, 4, 0)]
-        if side == -1:
-            faces = [tuple(reversed(f)) for f in faces]
-        K.mesh(f"roof_slab_{side}", v + vb, faces, M["roof"])
+        if side == 1:
+            slab_piece(f"roof_slab_{side}", HX - ROOF_HALF_W, HX + ROOF_HALF_W, zr, ze, side)
+        else:
+            slab_piece(f"roof_slab_{side}_w", HX - ROOF_HALF_W, fx0, zr, ze, side)
+            slab_piece(f"roof_slab_{side}_e", fx1, HX + ROOF_HALF_W, zr, ze, side)
+            slab_piece(f"roof_slab_{side}_ridge", fx0, fx1, zr, fz1, side)
+            slab_piece(f"roof_slab_{side}_eave", fx0, fx1, fz0, ze, side)
         # fascia + gutter at the eave
         box_span(f"roof_fascia_{side}", HX - ROOF_HALF_W, HX + ROOF_HALF_W, ROOF_EAVE_Y - 0.36, ROOF_EAVE_Y - 0.1,
                  ze - 0.08 if side == 1 else ze - 0.02, ze + 0.02 if side == 1 else ze + 0.08, M["wood"])
@@ -325,10 +345,15 @@ def build_house(M):
         for i in range(21):
             sx = HX - ROOF_HALF_W + 0.3 + i * 0.6
             zr, ze = HZ, HZ + side * ROOF_HALF_RUN
-            v = [(sx - 0.02, ROOF_RIDGE_Y + 0.025, zr), (sx + 0.02, ROOF_RIDGE_Y + 0.025, zr),
-                 (sx + 0.02, ROOF_EAVE_Y + 0.025, ze), (sx - 0.02, ROOF_EAVE_Y + 0.025, ze)]
-            faces = [(0, 1, 2, 3)] if side == 1 else [(3, 2, 1, 0)]
-            K.mesh(f"roof_seam_{side}_{i}", v, faces, M["steel"], tags={"castShadow": False})
+            # seams crossing the flue are split around it (the back slope has the hole)
+            spans = [(zr, ze)]
+            if side == -1 and fx0 < sx < fx1:
+                spans = [(zr, fz1), (fz0, ze)]
+            for k, (za, zb) in enumerate(spans):
+                v = [(sx - 0.02, roof_y(za) + 0.025, za), (sx + 0.02, roof_y(za) + 0.025, za),
+                     (sx + 0.02, roof_y(zb) + 0.025, zb), (sx - 0.02, roof_y(zb) + 0.025, zb)]
+                faces = [(0, 1, 2, 3)] if side == 1 else [(3, 2, 1, 0)]
+                K.mesh(f"roof_seam_{side}_{i}_{k}", v, faces, M["steel"], tags={"castShadow": False})
 
     # ---- chimney (brick shaft with open hearth) ----
     cx0, cx1 = CH_X - CH_W / 2 - CH_T, CH_X + CH_W / 2 + CH_T
@@ -338,8 +363,19 @@ def build_house(M):
     box_span("chimney_left", cx0, cx0 + CH_T, BASE1, CH_TOP, cz0, cz1, M["brick"])
     box_span("chimney_right", cx1 - CH_T, cx1, BASE1, CH_TOP, cz0, cz1, M["brick"])
     box_span("chimney_front_upper", cx0, cx1, mantel_y, CH_TOP, cz1 - CH_T, cz1, M["brick"])
-    box_span("chimney_cap", cx0 - 0.12, cx1 + 0.12, CH_TOP, CH_TOP + 0.14, cz0 - 0.12, cz1 + 0.12, M["concrete"], bevel=0.02)
-    box_span("chimney_pot", CH_X - 0.3, CH_X + 0.3, CH_TOP + 0.14, CH_TOP + 0.5, CH_Z - 0.3, CH_Z + 0.3, M["brick"])
+    # OPEN flue: the shaft is a gameplay drop (roof -> hearth), so the top is a concrete
+    # rim around the 1.2 x 1.2 opening (no cap, no pot) and the inside is lined with
+    # soot-dark faces that point into the shaft (a box's own faces point outward).
+    ix0, ix1, iz0, iz1 = cx0 + CH_T, cx1 - CH_T, cz0 + CH_T, cz1 - CH_T
+    rim = 0.12
+    for nm, (rx0, rx1, rz0, rz1) in {"n": (cx0 - rim, cx1 + rim, cz0 - rim, cz0 + CH_T), "s": (cx0 - rim, cx1 + rim, cz1 - CH_T, cz1 + rim),
+                                     "w": (cx0 - rim, cx0 + CH_T, cz0 - rim, cz1 + rim), "e": (cx1 - CH_T, cx1 + rim, cz0 - rim, cz1 + rim)}.items():
+        box_span(f"chimney_rim_{nm}", rx0, rx1, CH_TOP, CH_TOP + 0.14, rz0, rz1, M["concrete"], bevel=0.02)
+    soot = 0.012
+    box_span("chimney_soot_back", ix0, ix1, BASE1, CH_TOP - 0.02, iz0, iz0 + soot, M["matte"])
+    box_span("chimney_soot_left", ix0, ix0 + soot, BASE1, CH_TOP - 0.02, iz0, iz1, M["matte"])
+    box_span("chimney_soot_right", ix1 - soot, ix1, BASE1, CH_TOP - 0.02, iz0, iz1, M["matte"])
+    box_span("chimney_soot_front", ix0, ix1, mantel_y, CH_TOP - 0.02, iz1 - soot, iz1, M["matte"])
     # hearth
     box_span("hearth_stone", cx0 - 0.3, cx1 + 0.3, BASE1, BASE1 + 0.06, cz1 - 0.05, cz1 + 0.5, M["concrete"])
     box_span("mantel_shelf", cx0 - 0.3, cx1 + 0.3, mantel_y, mantel_y + 0.12, cz1 - 0.1, cz1 + 0.35, M["wood_in"], bevel=0.015)
@@ -438,9 +474,13 @@ def build_interior(M):
     b("rug", (3.0, 0.02, 3.0), (sx, 0.51, sz + 0.8), M["fabric_warm"], bevel=0, tags={"castShadow": False})
     b("tv_stand", (1.5, 0.5, 0.4), (sx, 0.6, sz + 2.8), M["wood_in"])
     b("tv", (1.4, 0.8, 0.06), (sx, 1.55, sz + 2.7), M["matte"])
-    b("bookshelf", (1.2, 1.8, 0.4), (hx + HW / 2 - 0.7, 1.25, hz - HD / 2 + 1.0), M["wood_in"])
+    # bookshelf in the right-front corner (collider x -30.65..-30.25, z 24.6..25.7), clear of the window band
+    shelf_x, shelf_z = hx + HW / 2 - 0.45, hz + HD / 2 - 0.85
+    b("bookshelf", (0.4, 1.8, 1.1), (shelf_x, 1.25, shelf_z), M["wood_in"])
+    for k in range(3):
+        b(f"bookshelf_plank_{k}", (0.36, 0.03, 1.04), (shelf_x - 0.02, 0.62 + k * 0.5, shelf_z), M["wood_in"], bevel=0)
     for i, (w, h, mat) in enumerate(((0.3, 0.25, "fabric_warm"), (0.25, 0.3, "fabric"), (0.35, 0.25, "linen"))):
-        b(f"book_{i}", (w, h, 0.18), (hx + HW / 2 - 0.9 + i * 0.2, 1.0 + (i == 2) * 0.6, hz - HD / 2 + 0.95), M[mat], bevel=0)
+        b(f"book_{i}", (0.18, h, w), (shelf_x - 0.06, 0.78 + (i == 2) * 0.5, shelf_z - 0.35 + i * 0.3), M[mat], bevel=0)
     K.cylinder("floor_lamp_pole", 0.03, 1.6, (sx + 1.6, 1.15, sz - 0.2), M["steel"], segments=8)
     b("floor_lamp_shade", (0.35, 0.25, 0.35), (sx + 1.6, 2.0, sz - 0.2), M["lamp"], tags={"castShadow": False, "ambientMotion": "lamp-flicker"})
     # kitchen

@@ -1,0 +1,79 @@
+{
+  "capturedAt": "2026-09-09T18:57:08.953Z",
+  "viewport": {
+    "width": 1600,
+    "height": 900,
+    "deviceScaleFactor": 1
+  },
+  "headless": true,
+  "gpuFlags": [
+    "enable-unsafe-webgpu",
+    "enable-features=Vulkan,WebGPU",
+    "ignore-gpu-blocklist",
+    "use-angle=metal"
+  ],
+  "audioMuted": true,
+  "profileDirectory": "/var/folders/21/jnt5qrg12nzcbgh9msb8q9280000gp/T/cr-cdp-catchandrun-VW3TH0",
+  "url": "http://localhost:5173/?renderer=webgl2",
+  "backend": "webgl2",
+  "quality": "low",
+  "presets": [
+    {
+      "preset": "fleetDetail",
+      "view": "view-fleetDetail",
+      "file": "docs/v2/harbor/island-review/water/rp03-water-final2-webgl2-low-fleetDetail.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.0012000242866,
+        "frameTimeP95Ms": 18.099999994039536,
+        "drawCalls": 145,
+        "triangles": 45996,
+        "geometries": 216,
+        "textures": 159,
+        "sceneMeshes": 145,
+        "instancedMeshes": 15,
+        "colliderCount": 796,
+        "estimatedTextureMemoryBytes": 129286144,
+        "environmentTransferBytes": 31852044
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.003000150007566,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "panSample": null,
+      "rendererStats": {
+        "render": {
+          "calls": 3414,
+          "frameCalls": 3,
+          "drawCalls": 196,
+          "triangles": 78404,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "low",
+        "water": "gerstner"
+      }
+    }
+  ],
+  "shooting": [],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "[warning] [VoiceChat] Mic access denied"
+  ],
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[info] [Renderer] Initialized webgl2",
+    "[debug] [vite] connected.",
+    "[warning] [VoiceChat] Mic access denied",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock.",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock."
+  ],
+  "repair": null,
+  "water": null,
+  "boats": null
+}

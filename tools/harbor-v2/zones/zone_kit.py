@@ -92,6 +92,56 @@ class PaletteSwatch:
         self.name = name
 
 
+class TintedMaterial:
+    """A vertex-tinted use of one shared PBR material (built with ``pbr(vertex_tint=True)``).
+
+    The material's base texture is neutral; every object painted with a tint gets a
+    ``Col`` corner colour attribute (exported as COLOR_0, multiplied in the shader), so
+    many colour variants stay one material and one draw call. ``grime`` darkens the
+    tint from ``y0`` (full ``dark``) to ``y1`` (clean) in Three.js metres; ``roof_dirt``
+    dulls upward-facing polygons.
+    """
+
+    def __init__(self, material: bpy.types.Material, rgb: Vec3, name: str, *,
+                 grime: tuple[float, float, float] | None = None, roof_dirt: float = 0.0):
+        self.material = material
+        self.rgb = rgb
+        self.name = name
+        self.grime = grime
+        self.roof_dirt = roof_dirt
+
+    def variant(self, name: str, *, grime=None, roof_dirt=None) -> "TintedMaterial":
+        return TintedMaterial(self.material, self.rgb, name,
+                              grime=self.grime if grime is None else grime,
+                              roof_dirt=self.roof_dirt if roof_dirt is None else roof_dirt)
+
+
+def _paint_tint(obj: bpy.types.Object, tint: TintedMaterial) -> None:
+    mesh = obj.data
+    attr = mesh.color_attributes.get("Col")
+    if attr is None:
+        attr = mesh.color_attributes.new("Col", "FLOAT_COLOR", "CORNER")
+    world = Matrix.LocRotScale(obj.location, obj.rotation_euler, obj.scale)
+    if obj.parent is not None:
+        world = obj.parent.matrix_world @ obj.matrix_parent_inverse @ world
+    r, g, b = tint.rgb
+    for poly in mesh.polygons:
+        up = (world.to_3x3() @ poly.normal).z > 0.7
+        for loop_index in poly.loop_indices:
+            factor = 1.0
+            if tint.grime is not None:
+                y0, y1, dark = tint.grime
+                height = (world @ mesh.vertices[mesh.loops[loop_index].vertex_index].co).z
+                t = min(1.0, max(0.0, (height - y0) / max(1e-6, y1 - y0)))
+                factor = dark + (1.0 - dark) * t
+            cr, cg, cb = r * factor, g * factor, b * factor
+            if up and tint.roof_dirt > 0:
+                grey = (cr + cg + cb) / 3.0 * 0.7
+                d = tint.roof_dirt
+                cr, cg, cb = cr * (1 - d) + grey * d, cg * (1 - d) + grey * d, cb * (1 - d) + grey * d
+            attr.data[loop_index].color = (cr, cg, cb, 1.0)
+
+
 class ZoneKit:
     """Stateful helper bound to one zone scene."""
 
@@ -208,8 +258,13 @@ class ZoneKit:
 
     def pbr(self, key: str, spec_name: str | None = None, *, pack: str | None = None,
             normal_strength: float = 1.0, alpha_clip: bool = False,
-            double_sided: bool = False) -> bpy.types.Material:
-        """Material from a derived Poly Haven set (see zone_textures.py)."""
+            double_sided: bool = False, vertex_tint: bool = False) -> bpy.types.Material:
+        """Material from a derived Poly Haven set (see zone_textures.py).
+
+        ``vertex_tint`` multiplies the base texture by the ``Col`` colour attribute
+        (glTF COLOR_0), so objects painted through ``TintedMaterial`` share this one
+        material and draw call while carrying their own colour and grime.
+        """
         if key in self.materials:
             return self.materials[key]
         pack = pack or self.texture_pack
@@ -225,7 +280,21 @@ class ZoneKit:
         tree.links.new(bsdf.outputs["BSDF"], out.inputs["Surface"])
         base = tree.nodes.new("ShaderNodeTexImage"); base.location = (-420, 320)
         base.image = _image(derived / spec["base"], "sRGB")
-        tree.links.new(base.outputs["Color"], bsdf.inputs["Base Color"])
+        if vertex_tint:
+            # texture x colour attribute: the glTF exporter recognises this Mix
+            # (MULTIPLY) pattern and writes the texture plus COLOR_0
+            color_attr = tree.nodes.new("ShaderNodeVertexColor"); color_attr.location = (-420, 560)
+            color_attr.layer_name = "Col"
+            mix = tree.nodes.new("ShaderNodeMix"); mix.location = (-120, 420)
+            mix.data_type = "RGBA"
+            mix.blend_type = "MULTIPLY"
+            mix.inputs[0].default_value = 1.0
+            tree.links.new(base.outputs["Color"], mix.inputs[6])
+            tree.links.new(color_attr.outputs["Color"], mix.inputs[7])
+            tree.links.new(mix.outputs[2], bsdf.inputs["Base Color"])
+            mat["vertexTint"] = True
+        else:
+            tree.links.new(base.outputs["Color"], bsdf.inputs["Base Color"])
         if alpha_clip:
             tree.links.new(base.outputs["Alpha"], bsdf.inputs["Alpha"])
             mat.surface_render_method = "DITHERED"
@@ -335,6 +404,12 @@ class ZoneKit:
             for loop in layer.data:
                 loop.uv = (mat.u, mat.v)
             uv_locked = True
+        elif isinstance(mat, TintedMaterial):
+            obj.data.materials.append(mat.material)
+            obj["tint"] = mat.name
+            # painted after the bevel-free base mesh exists; the bevel modifier
+            # interpolates the corner colours when it is applied on export
+            _paint_tint(obj, mat)
         else:
             obj.data.materials.append(mat)
         obj["harborZone"] = self.harbor_zone

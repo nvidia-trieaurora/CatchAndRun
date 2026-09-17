@@ -33,6 +33,10 @@ export interface OldHarborBuildOptions {
    * gameplay contract is untouched, but ships no meshes of its own.
    */
   ferrisVisuals?: boolean;
+  /** Active rescue asset replaces three old trees in the maintenance apron. */
+  rescueQuay?: boolean;
+  /** Native deployment station replaces the three original room props. */
+  responseStation?: boolean;
 }
 
 function makeSignTextMesh(
@@ -83,10 +87,10 @@ export function buildOldHarborFortniteMap(
   const harborWater = buildHarborEdge(B, buildScene, quality);
   buildConstructionZone(B);
   if (!useWarehouseV2) buildCatwalkNetwork(B);
-  const { gateIdx: gateColliderIndex, gateMesh } = buildHunterSpawn(B);
+  const { gateIdx: gateColliderIndex, gateMesh } = buildHunterSpawn(B, options.responseStation ?? false);
   buildLandmark(B, buildScene, !useWarehouseV2);
   buildHarborMasterPlanDressing(B, buildScene);
-  buildVegetation(buildScene, B);
+  buildVegetation(buildScene, B, options.rescueQuay ?? false);
   buildStreetLamps(B, buildScene);
   if (!(useWarehouseV2 && cinematicVisuals)) {
     buildParkour(B, !useWarehouseV2);
@@ -957,7 +961,7 @@ function buildCatwalkNetwork(B: MapBoxHelper) {
 }
 
 // ========== HUNTER SPAWN ==========
-function buildHunterSpawn(B: MapBoxHelper): { gateIdx: number; gateMesh: THREE.Mesh | null } {
+function buildHunterSpawn(B: MapBoxHelper, responseStation = false): { gateIdx: number; gateMesh: THREE.Mesh | null } {
   const JAIL_H = 5.0;
   const JAIL_Y = JAIL_H / 2;
 
@@ -975,10 +979,14 @@ function buildHunterSpawn(B: MapBoxHelper): { gateIdx: number; gateMesh: THREE.M
 
   B.colorBox(0.3, 0.3, 14.5, -35, JAIL_H + 0.15, 0, PALETTE.steelDark, 0.5, 0.5, false);
 
-  // Interior props
-  B.colorBox(0.8, 0.5, 0.5, -45, 0.25, -4, 0x4a5a2a, 0.85, 0.02, true);
-  B.colorBox(0.8, 0.5, 0.5, -45, 0.25, 4, 0x4a5a2a, 0.85, 0.02, true);
-  B.box(2.0, 0.35, 0.5, -46, 0.175, 0, "woodOld", true);
+  // The native station dresses its walls and keeps this floor clear. Retaining
+  // these boxes after its visual replacement would leave three invisible steps.
+  // The gate was added first, so suppressing props never changes its index.
+  if (!responseStation) {
+    B.colorBox(0.8, 0.5, 0.5, -45, 0.25, -4, 0x4a5a2a, 0.85, 0.02, true);
+    B.colorBox(0.8, 0.5, 0.5, -45, 0.25, 4, 0x4a5a2a, 0.85, 0.02, true);
+    B.box(2.0, 0.35, 0.5, -46, 0.175, 0, "woodOld", true);
+  }
 
   return { gateIdx, gateMesh };
 }
@@ -1011,7 +1019,7 @@ function buildLandmark(B: MapBoxHelper, scene: THREE.Scene, includeWarehouseSign
 }
 
 // ========== VEGETATION ==========
-function buildVegetation(scene: THREE.Scene, B: MapBoxHelper) {
+function buildVegetation(scene: THREE.Scene, B: MapBoxHelper, rescueQuay = false) {
   const leafMats = [
     getCustomMaterial(0x3a7a2a, 0.85, 0),
     getCustomMaterial(0x4a8a3a, 0.85, 0),
@@ -1028,6 +1036,7 @@ function buildVegetation(scene: THREE.Scene, B: MapBoxHelper) {
   ];
 
   for (const [tx, tz] of trees) {
+    if (rescueQuay && ((tx === 52 && tz === 22) || (tx === 55 && tz === 15) || (tx === 45 && tz === 28))) continue;
     const h = 4 + Math.sin(tx * 13.37) * 2;
     const tree = new THREE.Group();
     tree.position.set(tx, 0, tz);
@@ -1619,19 +1628,26 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
     scene.add(slab);
   }
   B.colorBox(HW + roofOverhang * 2.5, 0.24, 0.28, hx, roofTopY + gableRise + 0.38, hz, 0x303638, 0.7, 0.28, false);
+  // The stepped pitched-roof colliders leave the chimney shaft open (same hole as
+  // the flat deck and the 2F floor), so jumping into the chimney drops a player
+  // down to the 1F hearth instead of landing on an invisible roof inside the flue.
   for (let step = 0; step < 8; step++) {
     const segmentDepth = (gableRun * 2) / 8;
     const localZ = -gableRun + segmentDepth * (step + 0.5);
     const roofY = roofTopY + 0.25
       + gableRise * (1 - Math.abs(localZ) / gableRun);
-    B.addCollider(
-      hx - HW / 2 - roofOverhang,
-      roofTopY + 0.2,
-      hz + localZ - segmentDepth / 2,
-      hx + HW / 2 + roofOverhang,
-      roofY + 0.35,
-      hz + localZ + segmentDepth / 2,
-    );
+    const segZ0 = hz + localZ - segmentDepth / 2;
+    const segZ1 = hz + localZ + segmentDepth / 2;
+    const roofX0 = hx - HW / 2 - roofOverhang;
+    const roofX1 = hx + HW / 2 + roofOverhang;
+    if (segZ1 <= hB2 || segZ0 >= hF2) {
+      B.addCollider(roofX0, roofTopY + 0.2, segZ0, roofX1, roofY + 0.35, segZ1);
+      continue;
+    }
+    B.addCollider(roofX0, roofTopY + 0.2, segZ0, hL, roofY + 0.35, segZ1);
+    B.addCollider(hR, roofTopY + 0.2, segZ0, roofX1, roofY + 0.35, segZ1);
+    if (hB2 - segZ0 > 0.05) B.addCollider(hL, roofTopY + 0.2, segZ0, hR, roofY + 0.35, hB2);
+    if (segZ1 - hF2 > 0.05) B.addCollider(hL, roofTopY + 0.2, hF2, hR, roofY + 0.35, segZ1);
   }
 
   // === INTERIOR STAIRCASE (clean, along left wall) ===
@@ -1678,11 +1694,14 @@ function buildBackyardHouse(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(1.5, 0.5, 0.4, sofaX, 0.6, tvStandZ, trimColor, 0.85, 0.02, true);
   B.colorBox(1.4, 0.8, 0.06, sofaX, 1.55, tvStandZ - 0.1, 0x111111, 0.9, 0.5, true);
   B.colorBox(0.15, 0.2, 0.1, sofaX, 1.1, tvStandZ - 0.05, 0x222222, 0.5, 0.5, false);
-  // Bookshelf against right wall (moved away from staircase)
-  B.colorBox(1.2, 1.8, 0.4, hx + HW / 2 - 0.7, 1.25, hz - HD / 2 + 1.0, trimColor, 0.85, 0.02, true);
-  B.colorBox(0.3, 0.25, 0.18, hx + HW / 2 - 0.9, 1.0, hz - HD / 2 + 0.95, 0xaa2222, 0.9, 0, false);
-  B.colorBox(0.25, 0.3, 0.18, hx + HW / 2 - 0.5, 1.02, hz - HD / 2 + 0.95, 0x2255aa, 0.9, 0, false);
-  B.colorBox(0.35, 0.25, 0.18, hx + HW / 2 - 0.7, 1.6, hz - HD / 2 + 0.95, 0x885500, 0.9, 0, false);
+  // Bookshelf in the right-front corner (it used to straddle the flue interior,
+  // which would have caught anyone dropping down the chimney; the right wall's
+  // 5 m window band z 19.5..24.5 stays a clear jump route)
+  const shelfX = hx + HW / 2 - 0.45, shelfZ = hz + HD / 2 - 0.85;
+  B.colorBox(0.4, 1.8, 1.1, shelfX, 1.25, shelfZ, trimColor, 0.85, 0.02, true);
+  B.colorBox(0.18, 0.25, 0.3, shelfX - 0.05, 1.0, shelfZ - 0.35, 0xaa2222, 0.9, 0, false);
+  B.colorBox(0.18, 0.3, 0.25, shelfX - 0.05, 1.02, shelfZ + 0.1, 0x2255aa, 0.9, 0, false);
+  B.colorBox(0.18, 0.25, 0.35, shelfX - 0.05, 1.6, shelfZ - 0.1, 0x885500, 0.9, 0, false);
   // Floor lamp (corner near sofa)
   B.cyl(0.04, 0.06, 1.6, sofaX + 1.6, 1.15, sofaZ - 0.2, "steelDark");
   B.colorBox(0.35, 0.25, 0.35, sofaX + 1.6, 2.0, sofaZ - 0.2, 0xffeecc, 0.8, 0, false);
@@ -3031,23 +3050,33 @@ function buildDocksideMiniMart(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(wallT, MH, MD, mx + MW / 2, MH / 2, mz, wallColor, 0.85, 0.02, false);
   B.addCollider(mx + MW / 2 - wallT / 2, 0, mz - MD / 2, mx + MW / 2 + wallT / 2, MH, mz + MD / 2);
 
-  // Front wall (glass with door opening in center)
+  // Front wall: glazed storefront with a centred 3 m automatic double sliding door
+  // (x 43.5..46.5, 4 m clear header). The Harbor Market zone dresses these boxes.
+  const doorHalf = 1.5;
   // Left glass panel
-  B.colorBox(4, MH, 0.1, mx - 5, MH / 2, mz + MD / 2, 0x88aacc, 0.1, 0.5, false);
-  B.addCollider(mx - MW / 2, 0, mz + MD / 2 - 0.15, mx - 3, MH, mz + MD / 2 + 0.15);
+  B.colorBox(MW / 2 - doorHalf, MH, 0.1, (mx - MW / 2 + mx - doorHalf) / 2, MH / 2, mz + MD / 2, 0x88aacc, 0.1, 0.5, false);
+  B.addCollider(mx - MW / 2, 0, mz + MD / 2 - 0.15, mx - doorHalf, MH, mz + MD / 2 + 0.15);
   // Right glass panel
-  B.colorBox(4, MH, 0.1, mx + 5, MH / 2, mz + MD / 2, 0x88aacc, 0.1, 0.5, false);
-  B.addCollider(mx + 3, 0, mz + MD / 2 - 0.15, mx + MW / 2, MH, mz + MD / 2 + 0.15);
+  B.colorBox(MW / 2 - doorHalf, MH, 0.1, (mx + doorHalf + mx + MW / 2) / 2, MH / 2, mz + MD / 2, 0x88aacc, 0.1, 0.5, false);
+  B.addCollider(mx + doorHalf, 0, mz + MD / 2 - 0.15, mx + MW / 2, MH, mz + MD / 2 + 0.15);
   // Above door
-  B.colorBox(6, 1.5, 0.1, mx, MH - 0.75, mz + MD / 2, 0x88aacc, 0.1, 0.5, false);
-  B.addCollider(mx - 3, MH - 1.5, mz + MD / 2 - 0.15, mx + 3, MH, mz + MD / 2 + 0.15);
+  B.colorBox(doorHalf * 2, 1.5, 0.1, mx, MH - 0.75, mz + MD / 2, 0x88aacc, 0.1, 0.5, false);
+  B.addCollider(mx - doorHalf, MH - 1.5, mz + MD / 2 - 0.15, mx + doorHalf, MH, mz + MD / 2 + 0.15);
   // Door frame
-  B.colorBox(0.12, MH - 1.5, 0.15, mx - 3, (MH - 1.5) / 2, mz + MD / 2, navyTrim, 0.85, 0.02, false);
-  B.colorBox(0.12, MH - 1.5, 0.15, mx + 3, (MH - 1.5) / 2, mz + MD / 2, navyTrim, 0.85, 0.02, false);
+  B.colorBox(0.12, MH - 1.5, 0.15, mx - doorHalf, (MH - 1.5) / 2, mz + MD / 2, navyTrim, 0.85, 0.02, false);
+  B.colorBox(0.12, MH - 1.5, 0.15, mx + doorHalf, (MH - 1.5) / 2, mz + MD / 2, navyTrim, 0.85, 0.02, false);
 
   // === ROOF ===
+  // Solid slab with a 1 m overhang, except the roof-access hatch above the stockroom
+  // ladder (x 38.2..39.3, z -41.9..-40.7): the Harbor Market zone ships the ladder as
+  // COL_LADDER_CONTAINER_BD_STOCK_LADDER and players mantle out onto the west overhang.
   B.colorBox(MW + 2, 0.25, MD + 2, mx, MH + 0.12, mz, PALETTE.concreteDark, 0.9, 0.03, false);
-  B.addCollider(mx - MW / 2 - 1, MH, mz - MD / 2 - 1, mx + MW / 2 + 1, MH + 0.3, mz + MD / 2 + 1);
+  const roofX0 = mx - MW / 2 - 1, roofX1 = mx + MW / 2 + 1, roofZ0 = mz - MD / 2 - 1, roofZ1 = mz + MD / 2 + 1;
+  const hatchX0 = 38.2, hatchX1 = 39.3, hatchZ0 = -41.9, hatchZ1 = -40.7;
+  B.addCollider(roofX0, MH, roofZ0, hatchX0, MH + 0.3, roofZ1);
+  B.addCollider(hatchX1, MH, roofZ0, roofX1, MH + 0.3, roofZ1);
+  B.addCollider(hatchX0, MH, roofZ0, hatchX1, MH + 0.3, hatchZ0);
+  B.addCollider(hatchX0, MH, hatchZ1, hatchX1, MH + 0.3, roofZ1);
   // Roof overhang front (canopy)
   B.colorBox(MW + 2, 0.15, 2, mx, MH + 0.05, mz + MD / 2 + 1, navyTrim, 0.85, 0.02, false);
   B.addCollider(mx - MW / 2 - 1, MH - 0.1, mz + MD / 2, mx + MW / 2 + 1, MH + 0.15, mz + MD / 2 + 2);
@@ -3069,81 +3098,43 @@ function buildDocksideMiniMart(B: MapBoxHelper, scene: THREE.Scene) {
   martText.position.set(mx, MH + 0.6, mz + MD / 2 + 2.12);
   scene.add(martText);
 
-  // === INTERIOR: 2 SHELF AISLES ===
-  for (let aisle = 0; aisle < 2; aisle++) {
-    const ax = mx - 3.5 + aisle * 5;
-    const az = mz - 1;
-    // Shelf unit (double-sided, with collider)
-    B.colorBox(0.3, 1.6, 4.5, ax, 1.0, az, PALETTE.steelLight, 0.5, 0.5, false);
-    B.addCollider(ax - 0.2, 0.2, az - 2.3, ax + 0.2, 1.8, az + 2.3);
-    // Shelf planks (3 levels)
-    for (let s = 0; s < 3; s++) {
-      B.colorBox(0.6, 0.04, 4.5, ax - 0.15, 0.5 + s * 0.55, az, PALETTE.woodWarm, 0.82, 0.02, false);
-      B.colorBox(0.6, 0.04, 4.5, ax + 0.15, 0.5 + s * 0.55, az, PALETTE.woodWarm, 0.82, 0.02, false);
-    }
-    // Products on shelves (colorful boxes)
-    const colors = [0xff3333, 0x33aa33, 0x3366ff, 0xffcc00, 0xff6600, 0xaa33cc];
-    for (let s = 0; s < 3; s++) {
-      for (let p = 0; p < 6; p++) {
-        const py = 0.55 + s * 0.55;
-        const pz = az - 2 + p * 0.7;
-        const side = p % 2 === 0 ? -1 : 1;
-        B.colorBox(0.15, 0.2, 0.12, ax + side * 0.3, py, pz, colors[(s + p) % colors.length], 0.8, 0.02, false);
-      }
-    }
-  }
-
-  // === CHECKOUT COUNTER (front-left) ===
-  const ccX = mx + 4, ccZ = mz + 3;
-  B.colorBox(2.5, 1.0, 0.8, ccX, 0.7, ccZ, navyTrim, 0.85, 0.02, false);
-  B.addCollider(ccX - 1.3, 0.2, ccZ - 0.45, ccX + 1.3, 1.2, ccZ + 0.45);
-  // Counter top
-  B.colorBox(2.6, 0.06, 0.85, ccX, 1.23, ccZ, PALETTE.woodWarm, 0.82, 0.02, false);
-  // Cash register
-  B.colorBox(0.3, 0.25, 0.25, ccX - 0.5, 1.38, ccZ, 0x333333, 0.8, 0.3, false);
-  // Monitor
-  B.colorBox(0.4, 0.3, 0.04, ccX + 0.3, 1.5, ccZ - 0.15, 0x111111, 0.9, 0.5, false);
-  // Stool behind counter
-  B.colorBox(0.35, 0.06, 0.35, ccX + 0.5, 0.7, ccZ - 0.8, 0x333333, 0.9, 0.02, false);
-  B.cyl(0.03, 0.04, 0.35, ccX + 0.5, 0.5, ccZ - 0.8, "steelDark");
-
-  // === GLASS FRIDGE (back-right wall) ===
-  const frX = mx + 5, frZ = mz - 4;
-  B.colorBox(2.5, 2.2, 0.7, frX, 1.3, frZ, 0xdddddd, 0.3, 0.4, false);
-  B.addCollider(frX - 1.3, 0.2, frZ - 0.4, frX + 1.3, 2.4, frZ + 0.4);
-  // Glass door
-  B.colorBox(2.3, 2.0, 0.05, frX, 1.2, frZ + 0.35, 0x88ccdd, 0.05, 0.6, false);
-  // Interior shelves with drinks
-  for (let s = 0; s < 3; s++) {
-    B.colorBox(2.3, 0.03, 0.5, frX, 0.5 + s * 0.7, frZ, 0xcccccc, 0.3, 0.5, false);
-  }
-  // Drink bottles (colorful)
-  for (let s = 0; s < 3; s++) {
-    for (let d = 0; d < 5; d++) {
-      const dc = [0x33cc33, 0xff3333, 0x3366ff, 0xffaa00, 0xcc33cc][d];
-      B.cyl(0.04, 0.04, 0.2, frX - 0.8 + d * 0.4, 0.63 + s * 0.7, frZ, "steelDark");
-      B.colorBox(0.06, 0.15, 0.06, frX - 0.8 + d * 0.4, 0.6 + s * 0.7, frZ, dc, 0.7, 0.1, false);
-    }
-  }
-
-  // === ARCADE CORNER (back-left) ===
-  const arcX = mx - 5, arcZ = mz - 3.5;
-  // Arcade cabinet
-  B.colorBox(0.8, 1.8, 0.7, arcX, 1.1, arcZ, navyTrim, 0.85, 0.02, false);
-  B.addCollider(arcX - 0.45, 0.2, arcZ - 0.4, arcX + 0.45, 2.0, arcZ + 0.4);
-  // Screen
-  B.colorBox(0.6, 0.5, 0.04, arcX, 1.5, arcZ + 0.36, 0x222222, 0.9, 0.5, false);
-  const screenGlow = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.4, 0.02), getEmissiveMaterial(0x44ff88, 0x44ff88, 0.4));
-  screenGlow.position.set(arcX, 1.5, arcZ + 0.38);
-  scene.add(screenGlow);
-  // Joystick panel
-  B.colorBox(0.6, 0.04, 0.25, arcX, 1.1, arcZ + 0.35, 0x444444, 0.8, 0.3, false);
-  // Second arcade cabinet
-  B.colorBox(0.8, 1.8, 0.7, arcX + 1.2, 1.1, arcZ, 0x2244aa, 0.85, 0.02, false);
-  B.addCollider(arcX + 1.2 - 0.45, 0.2, arcZ - 0.4, arcX + 1.2 + 0.45, 2.0, arcZ + 0.4);
-  const screenGlow2 = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.4, 0.02), getEmissiveMaterial(0xff4488, 0xff4488, 0.4));
-  screenGlow2.position.set(arcX + 1.2, 1.5, arcZ + 0.38);
-  scene.add(screenGlow2);
+  // === INTERIOR: HARBOR MARKET FLOORPLAN ===
+  // Gameplay boxes for the mini-supermarket the Harbor Market zone dresses: every
+  // fixture a player can bump into has exactly one box here (see HarborMarket.test.ts).
+  // Interior clear x 38.2..51.8, z -42.8..-33.15, floor 0.25.
+  const floorY = 0.25;
+  const fixture = (x0: number, y1: number, z0: number, x1: number, z1: number, color: number, rough = 0.8) => {
+    B.colorBox(x1 - x0, y1 - floorY, z1 - z0, (x0 + x1) / 2, (floorY + y1) / 2, (z0 + z1) / 2, color, rough, 0.05, false);
+    B.addCollider(x0, floorY, z0, x1, y1, z1);
+  };
+  // rear-left stockroom (38.2..40.8) + manager/utility room (40.9..42.9), z -42.8..-40.5,
+  // doors 39.7..40.6 and 41.9..42.8 in the south wall; walls run to the roof
+  const roomWall = (x0: number, x1: number, z0: number, z1: number) => {
+    B.colorBox(x1 - x0, MH, z1 - z0, (x0 + x1) / 2, MH / 2, (z0 + z1) / 2, wallColor, 0.85, 0.02, false);
+    B.addCollider(x0, 0, z0, x1, MH, z1);
+  };
+  roomWall(38.2, 39.7, -40.6, -40.5);
+  roomWall(40.6, 41.9, -40.6, -40.5);
+  roomWall(42.8, 43.0, -40.6, -40.5);
+  roomWall(40.8, 40.9, -42.8, -40.6);
+  roomWall(42.9, 43.0, -42.8, -40.6);
+  fixture(38.3, 2.2, -42.75, 40.7, -42.3, PALETTE.steelLight);         // stockroom shelving
+  fixture(41.0, 0.78, -42.75, 42.2, -42.1, PALETTE.woodWarm);         // manager desk
+  // produce: tiered display along the west wall + crate stack at its south end
+  fixture(38.2, 1.35, -39.6, 39.5, -34.6, PALETTE.woodWarm);
+  fixture(38.2, 1.05, -34.5, 39.4, -33.6, PALETTE.woodWarm);
+  // two double-sided grocery gondolas with endcaps; the door axis (x 45) opens onto the
+  // 3.4 m centre aisle (produce aisle 1.7 m, checkout lane 1.6 m, front aisle 2 m to the
+  // glazing, rear aisle 1.7 m to the fridges)
+  fixture(41.2, 1.85, -38.95, 42.2, -35.15, PALETTE.steelLight, 0.6);
+  fixture(45.6, 1.85, -40.35, 46.6, -35.15, PALETTE.steelLight, 0.6);
+  // refrigerated cases along the rear and right walls
+  fixture(43.2, 2.15, -42.8, 51.05, -42.05, 0xdddddd, 0.4);
+  fixture(51.05, 2.15, -42.05, 51.8, -38.05, 0xdddddd, 0.4);
+  // checkout (front-right): counter with belt, impulse rack on the customer side, wall shelf
+  fixture(48.7, 1.15, -37.6, 49.7, -34.4, navyTrim);
+  fixture(48.2, 1.45, -37.6, 48.7, -36.4, PALETTE.steelLight, 0.6);
+  fixture(51.4, 1.9, -37.4, 51.8, -35.2, PALETTE.steelLight, 0.6);
 
   // === EXTERIOR: VENDING MACHINES ===
   const vmX = mx + MW / 2 + 0.8, vmZ = mz + 2;
@@ -3158,26 +3149,9 @@ function buildDocksideMiniMart(B: MapBoxHelper, scene: THREE.Scene) {
   B.colorBox(0.8, 1.8, 0.7, vmX, 1.1, vmZ - 1.2, 0x2255aa, 0.7, 0.2, false);
   B.addCollider(vmX - 0.45, 0, vmZ - 1.6, vmX + 0.45, 2.0, vmZ - 0.8);
 
-  // === EXTERIOR: CRATES ===
-  B.colorBox(1.0, 0.8, 0.8, mx - MW / 2 - 1, 0.4, mz - 3, PALETTE.woodWarm, 0.85, 0.02, true);
-  B.colorBox(0.8, 0.6, 0.8, mx - MW / 2 - 1, 1.1, mz - 3, PALETTE.woodDark, 0.85, 0.02, true);
-  B.colorBox(1.0, 0.8, 0.8, mx - MW / 2 - 1, 0.4, mz - 1.5, PALETTE.woodWarm, 0.85, 0.02, true);
-
-  // === ROOF ACCESS (ramp from crates on back side) ===
-  // Stacked crates forming steps up to roof
-  B.colorBox(1.5, 1.2, 1.2, mx - MW / 2 - 1.5, 0.6, mz - MD / 2 + 1, PALETTE.woodWarm, 0.85, 0.02, true);
-  B.colorBox(1.5, 1.0, 1.2, mx - MW / 2 - 1.5, 1.7, mz - MD / 2 + 1, PALETTE.woodDark, 0.85, 0.02, true);
-  B.colorBox(1.5, 0.8, 1.2, mx - MW / 2 - 1.5, 2.6, mz - MD / 2 + 1, PALETTE.woodWarm, 0.85, 0.02, true);
-  // Ramp from crate top to roof edge
-  const rampSteps = 6;
-  const rampStartY = 3.0;
-  const rampEndY = MH;
-  for (let r = 0; r < rampSteps; r++) {
-    const ry = rampStartY + (r + 0.5) * (rampEndY - rampStartY) / rampSteps;
-    const rz = mz - MD / 2 + 1 + 0.6 + r * 0.4;
-    B.colorBox(1.5, 0.1, 0.4, mx - MW / 2 - 0.5, ry, rz, PALETTE.steelLight, 0.5, 0.5, false);
-    B.addCollider(mx - MW / 2 - 1.3, ry - 0.15, rz - 0.25, mx - MW / 2 + 0.3, ry + 0.1, rz + 0.25);
-  }
+  // West side: flat service path, deliberately empty (the crate stair that climbed to
+  // the roof here was removed with the Harbor Market redesign — no steps, ramp, landing
+  // or invisible boxes on this side; see HarborMarket.test.ts).
 
   // === AC UNIT ON ROOF ===
   B.colorBox(1.5, 0.8, 1.0, mx + 3, MH + 0.7, mz - 2, 0xdddddd, 0.4, 0.4, false);

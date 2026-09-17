@@ -1,0 +1,9 @@
+# Harbor concept board — provenance
+
+Generated with the built-in imagegen tool, not CLI/API fallback. Saved selected
+output: `harbor-six-zone-concept.png`. This is an art-direction reference only.
+The actual deliverable game assets are the separately exported Blender GLBs.
+
+Final prompt:
+
+> Use case: stylized-concept. Asset type: art-direction reference board for Catch and Run, a browser multiplayer harbor game. Generate a single premium realistic 3D environment concept board with six coherent wide panels, arranged 3 columns x 2 rows, subtle panel dividers, no HUD, no people, no weapons, no branding. Each panel shows one district at human camera height with realistic connected construction and clear walkable routes. Panels: 1 red corrugated central warehouse with readable OLD HARBOR sign, roof vents, a fully supported external yellow-railed staircase and open doorways; 2 waterfront reinforced concrete construction site with scaffold clamps, timber formwork, restrained safety markings and tower crane; 3 a coastal garden house with glazed open-window recesses, greenhouse and layered plants; 4 container yard with faded teal/red containers, a compact harbor market and a clear forklift lane; 5 harbor operations workshop with pumps, overhead pipes and clear maintenance access; 6 working timber pier with ferris wheel, modest fishing boats, mooring ropes attached to cleats and calm translucent teal sea. Unified physically based materials, subtle grounded contact shadows, credible scale, visible bevelled edge highlights and restrained salt/rust/grime, soft bright overcast maritime afternoon, good readable midtones, no blown-out neon, no extreme blur. Art goal: more realistic atmosphere and mid-scale structural detail while preserving readable game-space; NOT dense scattered clutter, NOT floating props. This is a design concept, not an actual screenshot. Frame each district clearly; deliver a beautiful crisp high-resolution board.

@@ -53,6 +53,14 @@ export const HUNTER_GRENADE_THROW_SPEED = 18;
 export const HUNTER_GRENADE_UP_BOOST = 8;
 export const HUNTER_GRENADE_GRAVITY = -20;
 
+// Water: falling in is survivable — a player under the surface has this long to
+// climb back onto land before the server drowns them (Harbor: surface y -0.8,
+// hazard boxes end at feet y -0.9, swim level feet y -1.6).
+export const WATER_DROWN_GRACE_MS = 3000;
+export const WATER_SURFACE_Y = -0.8;
+export const WATER_SWIM_FEET_Y = -1.6;
+export const WATER_SWIM_SPEED_MULTIPLIER = 0.55;
+
 export const ANTI_CHEAT_SPEED_TOLERANCE = 1.2;
 export const ANTI_CHEAT_MIN_FIRE_INTERVAL_MS = 100;
 

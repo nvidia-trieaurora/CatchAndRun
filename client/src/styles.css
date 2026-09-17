@@ -2286,6 +2286,19 @@ body {
   animation: water-danger-pulse 0.7s ease-in-out infinite alternate;
 }
 
+/* under the surface: the drowning countdown (server grace WATER_DROWN_GRACE_MS) */
+.water-proximity-warning[data-level="drowning"] {
+  display: block;
+  bottom: 140px;
+  padding: 14px 24px;
+  border-color: rgba(120, 205, 255, 0.85);
+  color: #eaf7ff;
+  background: rgba(8, 44, 78, 0.9);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  animation: water-danger-pulse 0.5s ease-in-out infinite alternate;
+}
+
 @keyframes water-danger-pulse {
   from { transform: translateX(-50%) scale(1); }
   to { transform: translateX(-50%) scale(1.025); }

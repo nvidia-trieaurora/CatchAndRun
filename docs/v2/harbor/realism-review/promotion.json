@@ -1,0 +1,130 @@
+[
+  {
+    "name": "garden-ac",
+    "beforeBytes": 2202448,
+    "afterBytes": 2349232,
+    "sha256": "336481bea98ad2ce92c33425a82e746521c7d78cce171a5c56bfb57b4f40a6ca",
+    "backup": "art-source/harbor-v2/_staging/realism/pre-rl01/garden-ac-5ce666ae6edd.glb",
+    "lod0": {
+      "renderMeshes": 22,
+      "triangles": 13620,
+      "estimatedDrawCalls": 22,
+      "instancedMeshes": 0,
+      "instanceKeys": 0
+    },
+    "lod1": {
+      "renderMeshes": 11,
+      "triangles": 896,
+      "estimatedDrawCalls": 11,
+      "instancedMeshes": 0,
+      "instanceKeys": 0
+    },
+    "validated": true
+  },
+  {
+    "name": "construction-ad",
+    "beforeBytes": 2442968,
+    "afterBytes": 2682816,
+    "sha256": "4e9c01654a4606cb359415aaa8ae68bd8e0c719f62ed8402edb5340cd1d80202",
+    "backup": "art-source/harbor-v2/_staging/realism/pre-rl01/construction-ad-23ac66ef34cd.glb",
+    "lod0": {
+      "renderMeshes": 20,
+      "triangles": 25434,
+      "estimatedDrawCalls": 20,
+      "instancedMeshes": 0,
+      "instanceKeys": 0
+    },
+    "lod1": {
+      "renderMeshes": 11,
+      "triangles": 644,
+      "estimatedDrawCalls": 11,
+      "instancedMeshes": 0,
+      "instanceKeys": 0
+    },
+    "validated": true
+  },
+  {
+    "name": "container-bd",
+    "beforeBytes": 3995896,
+    "afterBytes": 4168644,
+    "sha256": "a6c2999cd86b9480fc788ab9f40c148adcb3496ce5086af099375f0e77e36395",
+    "backup": "art-source/harbor-v2/_staging/realism/pre-rl01/container-bd-77920f19d9c4.glb",
+    "lod0": {
+      "renderMeshes": 17,
+      "triangles": 47166,
+      "estimatedDrawCalls": 17,
+      "instancedMeshes": 0,
+      "instanceKeys": 0
+    },
+    "lod1": {
+      "renderMeshes": 7,
+      "triangles": 630,
+      "estimatedDrawCalls": 7,
+      "instancedMeshes": 0,
+      "instanceKeys": 0
+    },
+    "validated": true
+  },
+  {
+    "name": "operations-ab",
+    "beforeBytes": 2732204,
+    "afterBytes": 3000352,
+    "sha256": "1e78dbb990be43c914ee0d057e1410bc63f252b6cc3687b857fa0a416a37cc87",
+    "backup": "art-source/harbor-v2/_staging/realism/pre-rl01/operations-ab-b9ec1918638e.glb",
+    "lod0": {
+      "renderMeshes": 17,
+      "triangles": 33662,
+      "estimatedDrawCalls": 17,
+      "instancedMeshes": 2,
+      "instanceKeys": 2
+    },
+    "lod1": {
+      "renderMeshes": 7,
+      "triangles": 344,
+      "estimatedDrawCalls": 7,
+      "instancedMeshes": 0,
+      "instanceKeys": 0
+    },
+    "validated": true
+  },
+  {
+    "name": "ferris-harbor",
+    "beforeBytes": 2728712,
+    "afterBytes": 2578380,
+    "sha256": "323f3ab590a74a7c056220a93221e37534711f97bc989cc686163bc45442508a",
+    "backup": "art-source/harbor-v2/_staging/realism/pre-rl01/ferris-harbor-c992b15c7bd6.glb",
+    "lod0": {
+      "renderMeshes": 188,
+      "triangles": 33722,
+      "estimatedDrawCalls": 89,
+      "instancedMeshes": 110,
+      "instanceKeys": 11
+    },
+    "lod1": {
+      "renderMeshes": 25,
+      "triangles": 1804,
+      "estimatedDrawCalls": 25,
+      "instancedMeshes": 0,
+      "instanceKeys": 0
+    },
+    "validated": true
+  },
+  {
+    "name": "warehouse-v2",
+    "beforeBytes": 4963220,
+    "afterBytes": 5620760,
+    "sha256": "d41a9ac251d9ea7116e192d3d7be4a0bffcd9b249621da1ed6806282afb086f5",
+    "backup": "art-source/harbor-v2/_staging/realism/pre-rl01/warehouse-v2-0df75d4b8cae.glb",
+    "lod0": {
+      "renderMeshes": 21,
+      "triangles": 60240,
+      "estimatedDrawCalls": 21
+    },
+    "lod1": {
+      "renderMeshes": 21,
+      "triangles": 2828,
+      "estimatedDrawCalls": 21
+    },
+    "validated": true
+  }
+]

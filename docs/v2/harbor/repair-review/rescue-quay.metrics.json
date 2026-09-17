@@ -1,0 +1,17 @@
+{
+  "name": "rescue-quay",
+  "payloadBytes": 1375540,
+  "sha256": "e077c85bee11cb3b912172d03b0f6a89d5058b97c21c64a82fdfe1b82f27e71e",
+  "lod0": {
+    "meshes": 9,
+    "drawCalls": 9,
+    "triangles": 12548
+  },
+  "lod1": {
+    "meshes": 9,
+    "drawCalls": 9,
+    "triangles": 5860
+  },
+  "colliders": 29,
+  "gltfErrors": 0
+}

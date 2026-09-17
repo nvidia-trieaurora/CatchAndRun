@@ -1,0 +1,59 @@
+{
+  "zone": "OPERATIONS_AB",
+  "title": "AB - Harbor Operations & Repair Lane: inspection lane, Operations building, Warehouse service wall, seawall service pockets",
+  "harborZone": "operations-ab",
+  "replacesCinematicZones": [],
+  "replacesCinematicNodePrefixes": [],
+  "removesCinematicColliders": [
+    "COL_MOVE_CINE_BAR_BACK", "COL_MOVE_CINE_BAR_FRONT_CENTER", "COL_MOVE_CINE_BAR_FRONT_LEFT",
+    "COL_MOVE_CINE_BAR_FRONT_RIGHT", "COL_MOVE_CINE_BAR_LEFT", "COL_MOVE_CINE_BAR_RIGHT"
+  ],
+  "carveBox": { "min": [-23.3, -1.0, -43.6], "max": [29.45, 12.0, -18.05] },
+  "buildingCarveBox": { "min": [-10.5, 0.3, -44.0], "max": [10.5, 9.0, -26.0] },
+  "footprint": { "min": [-23.3, -1.5, -46.0], "max": [29.45, 12.0, -18.0] },
+  "expectedProceduralColliders": 493,
+  "gameplay": {
+    "building": { "min": [-9, 0, -43], "max": [9, 7, -29], "interior": { "min": [-8.8, 0.25, -40.8], "max": [8.8, 7, -29.15] },
+                  "doors": { "personnel": [-5, -2], "roller": [2, 5], "sideDoorZ": [-37, -35] }, "roofDeck": 7.3 },
+    "lane": { "z": [-25, -19], "clear": [-24.0, -19.4] },
+    "apron": { "min": [-9, 0, -28], "max": [9, 0.22, -24] },
+    "warehouseWallZ": -18,
+    "seawallCollider": { "min": [-55, 0, -43.45], "max": [63, 0.9, -42.55] },
+    "waterHazardZ": -43.01
+  },
+  "budgets": {
+    "lod0Triangles": 45000,
+    "lod0DrawCalls": 18,
+    "lod1Triangles": 10000,
+    "lod1DrawCalls": 10,
+    "payloadBytes": 6291456,
+    "maxTextureSize": 1024,
+    "gpuTextureBytes": 16777216,
+    "zoneColliders": 40
+  },
+  "requiredRigNodes": [],
+  "clearance": [
+    { "name": "main-lane", "min": [-23.2, 0.25, -24.0], "max": [29.4, 3.5, -19.4] },
+    { "name": "lane-west-full", "min": [-23.2, 0.25, -25.0], "max": [-9.4, 3.5, -19.4] },
+    { "name": "lane-east-full", "min": [9.4, 0.25, -25.0], "max": [29.4, 3.5, -19.4] },
+    { "name": "turn-west", "min": [-23.2, 0.25, -26.0], "max": [-18.0, 3.5, -19.4] },
+    { "name": "turn-east", "min": [22.5, 0.25, -27.0], "max": [29.4, 3.5, -19.4] },
+    { "name": "cross-west", "min": [-11.2, 0.25, -42.0], "max": [-9.4, 3.0, -25.0] },
+    { "name": "cross-east", "min": [9.4, 0.25, -41.6], "max": [11.0, 3.0, -25.0] },
+    { "name": "seawall-path-west", "min": [-22.8, 0.25, -39.65], "max": [-9.6, 2.6, -38.45] },
+    { "name": "seawall-path-east", "min": [9.6, 0.25, -41.4], "max": [21.8, 2.6, -40.2] },
+    { "name": "door-personnel", "min": [-4.3, 0.3, -30.6], "max": [-2.25, 4.0, -27.6] },
+    { "name": "door-roller", "min": [2.1, 0.3, -30.6], "max": [4.9, 3.9, -27.6] },
+    { "name": "door-side", "min": [-11.0, 0.3, -36.9], "max": [-8.2, 3.2, -35.1] },
+    { "name": "hall", "min": [-5.0, 0.3, -32.9], "max": [6.9, 2.4, -29.8] },
+    { "name": "office-front", "min": [-7.9, 0.3, -34.1], "max": [-5.0, 2.4, -29.4] },
+    { "name": "office-floor", "min": [-8.4, 0.3, -36.9], "max": [-1.6, 2.4, -34.1] },
+    { "name": "partition-door", "min": [-1.9, 0.3, -36.25], "max": [-1.05, 2.1, -35.35] },
+    { "name": "workshop-middle", "min": [-1.3, 0.3, -37.0], "max": [3.35, 2.4, -35.05] },
+    { "name": "hall-link-a", "min": [-1.3, 0.3, -35.1], "max": [0.4, 2.4, -34.0] },
+    { "name": "hall-link-b", "min": [-3.0, 0.3, -34.3], "max": [-1.0, 2.4, -32.9] },
+    { "name": "workshop-route", "min": [4.65, 0.3, -34.4], "max": [7.0, 2.4, -29.4] },
+    { "name": "apron-walk-w", "min": [-4.3, 0.3, -27.6], "max": [-2.1, 2.4, -24.1] },
+    { "name": "apron-walk-e", "min": [3.3, 0.3, -27.6], "max": [4.45, 2.4, -24.1] }
+  ]
+}

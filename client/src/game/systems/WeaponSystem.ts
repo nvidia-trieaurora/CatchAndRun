@@ -184,6 +184,10 @@ interface MuzzleFlash {
   remaining: number;
 }
 
+interface EffectShaderCompiler {
+  compileAsync(scene: THREE.Object3D, camera: THREE.Camera, targetScene?: THREE.Scene | null): Promise<unknown>;
+}
+
 export class WeaponSystem {
   private scene: THREE.Scene;
   private getImpactSurfaces: () => readonly THREE.Object3D[];
@@ -217,8 +221,14 @@ export class WeaponSystem {
   private readonly hitMatrixScratch = new THREE.Matrix4();
   private readonly inverseHitMatrixScratch = new THREE.Matrix4();
   private readonly normalMatrixScratch = new THREE.Matrix3();
-  private readonly impactWorldScaleScratch = new THREE.Vector3();
+  private readonly markPositionScratch = new THREE.Vector3();
+  private readonly markNormalScratch = new THREE.Vector3();
+  private readonly markRotationScratch = new THREE.Quaternion();
+  private readonly markWorldMatrixScratch = new THREE.Matrix4();
+  private readonly markForward = new THREE.Vector3(0, 0, 1);
+  private readonly markUnitScale = new THREE.Vector3(1, 1, 1);
   private destroyed = false;
+  private visualWarmupQueue: Promise<void> = Promise.resolve();
 
   private tracerMat: THREE.MeshBasicMaterial;
   private trailMat: THREE.MeshBasicMaterial;
@@ -279,6 +289,56 @@ export class WeaponSystem {
     this.scene.add(this.muzzleLight);
     this.initializeShotPools();
     this.initializeImpactPools();
+  }
+
+  /** Compile hidden pool materials at map load, not on the first visible shot. */
+  prepareVisualEffects(renderer: EffectShaderCompiler, camera: THREE.Camera): Promise<void> {
+    // Invoked only after these resources have participated in a normal world
+    // render. Never substitute a newer, not-yet-rendered HDR while queued.
+    const environment = this.scene.environment;
+    const fog = this.scene.fog;
+    // Map upgrades can arrive back-to-back. Serialize renderer compilation and
+    // skip stale scene snapshots; a failed task must not poison later map loads.
+    // The caller still receives that task's rejection.
+    this.visualWarmupQueue = this.visualWarmupQueue.catch(() => {}).then(async () => {
+      if (this.destroyed || this.scene.environment !== environment || this.scene.fog !== fog) return;
+      const staging = new THREE.Scene();
+      staging.environment = environment;
+      staging.environmentIntensity = this.scene.environmentIntensity;
+      staging.environmentRotation.copy(this.scene.environmentRotation);
+      staging.fog = fog;
+      const effects = [
+        ...[...this.tracerPool, ...this.tracers].flatMap((entry) => [entry.mesh, entry.trail]),
+        ...this.muzzleFlashes.map((entry) => entry.mesh),
+        ...[...this.bulletHolePool, ...this.bulletHoles].map((entry) => entry.mesh),
+        ...[...this.groundDebrisPool, ...this.groundDebris].map((entry) => entry.mesh),
+        ...[...this.foliageDebrisPool, ...this.foliageDebris].map((entry) => entry.mesh),
+        ...[...this.waterSplashPool, ...this.waterSplashes].map((entry) => entry.mesh),
+        ...[...this.waterRipplePool, ...this.waterRipples].map((entry) => entry.mesh),
+      ];
+      const warmed = new Set<string>();
+      for (const effect of effects) {
+        const materials = Array.isArray(effect.material) ? effect.material : [effect.material];
+        const key = `${effect.geometry.uuid}:${materials.map((material) => material.uuid).join(",")}`;
+        if (warmed.has(key)) continue;
+        warmed.add(key);
+        const proxy = new THREE.Mesh(effect.geometry, effect.material);
+        proxy.frustumCulled = false;
+        proxy.layers.mask = effect.layers.mask;
+        proxy.castShadow = effect.castShadow;
+        proxy.receiveShadow = effect.receiveShadow;
+        staging.add(proxy);
+      }
+      try {
+        // Isolated proxies share actual GPU resources. Never reveal/move pooled
+        // meshes in the live scene while asynchronous compilation is pending.
+        await renderer.compileAsync(staging, camera, this.scene);
+      } finally {
+        // Shared geometries/materials belong to the effect pools, not this scene.
+        staging.clear();
+      }
+    });
+    return this.visualWarmupQueue;
   }
 
   private initializeShotPools() {
@@ -853,7 +913,9 @@ export class WeaponSystem {
     const hole = entry.mesh;
     hole.removeFromParent();
     hole.visible = true;
-    hole.scale.setScalar(1);
+    let parent: THREE.Object3D = this.scene;
+    this.markPositionScratch.copy(hitPoint);
+    this.markNormalScratch.copy(surfaceNormal).normalize();
 
     if (
       impactObject
@@ -861,26 +923,25 @@ export class WeaponSystem {
       && localPoint
       && localNormal
     ) {
-      impactObject.getWorldScale(this.impactWorldScaleScratch);
-      hole.scale.set(
-        1 / Math.max(Math.abs(this.impactWorldScaleScratch.x), 1e-6),
-        1 / Math.max(Math.abs(this.impactWorldScaleScratch.y), 1e-6),
-        1 / Math.max(Math.abs(this.impactWorldScaleScratch.z), 1e-6),
+      parent = impactObject;
+      parent.updateWorldMatrix(true, false);
+      // The target may have moved while the tracer was travelling.
+      this.markPositionScratch.copy(localPoint).applyMatrix4(parent.matrixWorld);
+      this.markNormalScratch.copy(localNormal).applyNormalMatrix(
+        this.normalMatrixScratch.getNormalMatrix(parent.matrixWorld),
       );
-      hole.position.copy(localPoint).addScaledVector(localNormal, 0.002);
-      hole.quaternion.setFromUnitVectors(
-        new THREE.Vector3(0, 0, 1),
-        localNormal.clone().normalize(),
-      );
-      impactObject.add(hole);
-    } else {
-      hole.position.copy(hitPoint).addScaledVector(surfaceNormal, 0.002);
-      hole.quaternion.setFromUnitVectors(
-        new THREE.Vector3(0, 0, 1),
-        surfaceNormal.clone().normalize(),
-      );
-      this.scene.add(hole);
     }
+    this.markPositionScratch.addScaledVector(this.markNormalScratch, 0.002);
+    this.markRotationScratch.setFromUnitVectors(this.markForward, this.markNormalScratch);
+    this.markWorldMatrixScratch.compose(this.markPositionScratch, this.markRotationScratch, this.markUnitScale);
+    parent.updateWorldMatrix(true, false);
+    // Convert an exact world-size mark into its parent's frame. Reciprocal XYZ
+    // scales do not cancel a rotated/nonuniform parent (a 13 cm mark became 8 m).
+    // Keep the complete affine matrix: decomposing it to TRS would lose shear.
+    hole.matrixAutoUpdate = false;
+    hole.matrix.copy(parent.matrixWorld).invert().multiply(this.markWorldMatrixScratch);
+    hole.matrixWorldNeedsUpdate = true;
+    parent.add(hole);
     this.bulletHoles.push(entry);
   }
 

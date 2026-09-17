@@ -8,6 +8,8 @@ import {
 } from "./oldHarborFortnite";
 import { FerrisHarborRig } from "../zones/FerrisHarborRig";
 import { MooringRopes } from "../zones/MooringRopes";
+import { attachHarborMarketLighting } from "../lighting/harborMarketLighting";
+import { attachResponseStationLighting } from "../lighting/responseStationLighting";
 
 export interface HarborV2BuildResult extends MapBuildResult {
   warehouseV2Root: THREE.Group | null;
@@ -28,6 +30,15 @@ export function buildHarborV2Map(
   zones: MapAssetInstance[] = [],
 ): HarborV2BuildResult {
   const activeZones = cinematicV2 ? zones : [];
+  const responseStation = activeZones.some((zone) => {
+    let hasGate = false;
+    zone.root.traverse((object) => {
+      if (object instanceof THREE.Mesh && object.userData.gameplayRole === "hunterGate") hasGate = true;
+    });
+    return hasGate;
+  });
+  const rescueQuay = activeZones.some((zone) => zone.root.getObjectByProperty("name", "MESH_RESCUE_QUAY_RQ_STEEL_LOD0")
+    || zone.root.getObjectByProperty("name", "MESH_RESCUE_QUAY_RQ_STEEL_LOD1"));
   const ferrisRig = FerrisHarborRig.fromRoots(activeZones.map((zone) => zone.root));
   const result = buildOldHarborFortniteMap(
     scene,
@@ -38,6 +49,8 @@ export function buildHarborV2Map(
       quality,
       // the zone GLB draws the wheel; the procedural build keeps only the gameplay rig
       ferrisVisuals: ferrisRig === null,
+      rescueQuay,
+      responseStation,
     },
   );
 
@@ -63,10 +76,24 @@ export function buildHarborV2Map(
   // material stacks), so the props it renders are the props players collide with.
   const zoneRoots: THREE.Group[] = [];
   for (const zone of activeZones) {
+    attachHarborMarketLighting(zone.root, quality);
+    attachResponseStationLighting(zone.root, quality);
     scene.add(zone.root);
     zoneRoots.push(zone.root);
     result.colliders.push(...zone.colliders);
     result.ladders.push(...zone.ladders);
+    // The response station ships its gate at both quality tiers. Use the
+    // surviving gate mesh after LOD selection for the existing release logic.
+    zone.root.traverse((object) => {
+      if (object instanceof THREE.Mesh && object.userData.gameplayRole === "hunterGate") {
+        result.gateMesh = object;
+        // The station finish floor sits 4 cm above the old procedural slab,
+        // clearing the cinematic asphalt. The original shell/gate stays valid.
+        if (object.userData.gateMotion === "roller") {
+          result.colliders.push(new THREE.Box3(new THREE.Vector3(-49, .1, -7), new THREE.Vector3(-35, .14, 7)));
+        }
+      }
+    });
   }
 
   let mooringRopes: MooringRopes | null = null;

@@ -1,0 +1,369 @@
+{
+  "capturedAt": "2026-09-10T08:59:12.220Z",
+  "viewport": {
+    "width": 1600,
+    "height": 900,
+    "deviceScaleFactor": 1
+  },
+  "headless": true,
+  "gpuFlags": [
+    "enable-unsafe-webgpu",
+    "enable-features=Vulkan,WebGPU",
+    "ignore-gpu-blocklist",
+    "use-angle=metal"
+  ],
+  "audioMuted": true,
+  "profileDirectory": "/var/folders/21/jnt5qrg12nzcbgh9msb8q9280000gp/T/cr-cdp-catchandrun-kTxchs",
+  "url": "http://localhost:5174/?renderer=webgpu",
+  "backend": "webgpu",
+  "quality": "high",
+  "presets": [
+    {
+      "preset": "harborMarketFront",
+      "view": "view-harborMarketFront",
+      "file": "docs/v2/harbor/market-rp04/before/before-pan-repeat-harborMarketFront.png",
+      "metrics": {
+        "backend": "webgpu",
+        "visualVersion": "v2",
+        "fpsAverage": 52.20659891323632,
+        "frameTimeP95Ms": 33.89999997615814,
+        "drawCalls": 254,
+        "triangles": 280705,
+        "geometries": 304,
+        "textures": 281,
+        "sceneMeshes": 254,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 205439232,
+        "environmentTransferBytes": 32041208
+      },
+      "frameSample": {
+        "frames": 232,
+        "fps": 57.52256272934647,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 50,
+        "over50Ms": 0,
+        "longTasks": []
+      },
+      "panSample": {
+        "frames": 178,
+        "fps": 44.502225111255534,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 433.29999999999563,
+        "over50Ms": 5,
+        "longTasks": [
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 45900.69999998808,
+            "duration": 89,
+            "navigationId": 4290,
+            "attribution": [
+              {}
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 46016.90000003576,
+            "duration": 234,
+            "navigationId": 4290,
+            "attribution": [
+              {}
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 45899.30000001192,
+            "duration": 90.60000002384186,
+            "navigationId": 4290,
+            "paintTime": 45989.90000003576,
+            "presentationTime": 46008,
+            "renderStart": 45900.69999998808,
+            "styleAndLayoutStart": 45989.69999998808,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 40.2,
+            "scripts": [
+              {}
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 46271.19999998808,
+            "duration": 443,
+            "navigationId": 4290,
+            "attribution": [
+              {}
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 46016.69999998808,
+            "duration": 234,
+            "navigationId": 4290,
+            "paintTime": 46250.69999998808,
+            "presentationTime": 46272,
+            "renderStart": 46016.90000003576,
+            "styleAndLayoutStart": 46250.69999998808,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 183.9,
+            "scripts": [
+              {}
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 46735.90000003576,
+            "duration": 199,
+            "navigationId": 4290,
+            "attribution": [
+              {}
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 46268.10000002384,
+            "duration": 446.5999999642372,
+            "navigationId": 4290,
+            "paintTime": 46714.69999998808,
+            "presentationTime": 46772,
+            "renderStart": 46271.19999998808,
+            "styleAndLayoutStart": 46714.5,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 394.5,
+            "scripts": [
+              {}
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 46954.10000002384,
+            "duration": 114,
+            "navigationId": 4290,
+            "attribution": [
+              {}
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 46732.30000001192,
+            "duration": 202.60000002384186,
+            "navigationId": 4290,
+            "paintTime": 46934.90000003576,
+            "presentationTime": 46960,
+            "renderStart": 46736,
+            "styleAndLayoutStart": 46934.60000002384,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 149.7,
+            "scripts": [
+              {}
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 46951.60000002384,
+            "duration": 116.30000001192093,
+            "navigationId": 4290,
+            "paintTime": 47067.90000003576,
+            "presentationTime": 47112,
+            "renderStart": 46954.19999998808,
+            "styleAndLayoutStart": 47067.80000001192,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 64.6,
+            "scripts": [
+              {}
+            ]
+          }
+        ],
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 25958,
+          "frameCalls": 15,
+          "drawCalls": 197,
+          "triangles": 339926,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "harborMarketInterior",
+      "view": "view-harborMarketInterior",
+      "file": "docs/v2/harbor/market-rp04/before/before-pan-repeat-harborMarketInterior.png",
+      "metrics": {
+        "backend": "webgpu",
+        "visualVersion": "v2",
+        "fpsAverage": 59.610149621616756,
+        "frameTimeP95Ms": 17.899999976158142,
+        "drawCalls": 254,
+        "triangles": 280705,
+        "geometries": 327,
+        "textures": 311,
+        "sceneMeshes": 254,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 205439232,
+        "environmentTransferBytes": 32041208
+      },
+      "frameSample": {
+        "frames": 238,
+        "fps": 59.50297514875739,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 33.400000000001455,
+        "over50Ms": 0,
+        "longTasks": []
+      },
+      "panSample": {
+        "frames": 230,
+        "fps": 57.50143753593838,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 33.400000000001455,
+        "over50Ms": 0,
+        "longTasks": [],
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 35888,
+          "frameCalls": 15,
+          "drawCalls": 190,
+          "triangles": 339058,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "harborMarketFront",
+      "view": "view-harborMarketFront",
+      "file": "docs/v2/harbor/market-rp04/before/before-pan-repeat-harborMarketFront.png",
+      "metrics": {
+        "backend": "webgpu",
+        "visualVersion": "v2",
+        "fpsAverage": 59.98680290379023,
+        "frameTimeP95Ms": 17.80000001192093,
+        "drawCalls": 254,
+        "triangles": 280705,
+        "geometries": 327,
+        "textures": 311,
+        "sceneMeshes": 254,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 205439232,
+        "environmentTransferBytes": 32041208
+      },
+      "frameSample": {
+        "frames": 239,
+        "fps": 59.75149378734477,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 33.19999999999709,
+        "over50Ms": 0,
+        "longTasks": []
+      },
+      "panSample": {
+        "frames": 227,
+        "fps": 56.75141878546972,
+        "p95Ms": 33.29999999998836,
+        "maxMs": 33.40000000000873,
+        "over50Ms": 0,
+        "longTasks": [],
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 49313,
+          "frameCalls": 15,
+          "drawCalls": 197,
+          "triangles": 339926,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "harborMarketInterior",
+      "view": "view-harborMarketInterior",
+      "file": "docs/v2/harbor/market-rp04/before/before-pan-repeat-harborMarketInterior.png",
+      "metrics": {
+        "backend": "webgpu",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00360021615603,
+        "frameTimeP95Ms": 17.5,
+        "drawCalls": 254,
+        "triangles": 280705,
+        "geometries": 327,
+        "textures": 311,
+        "sceneMeshes": 254,
+        "instancedMeshes": 23,
+        "colliderCount": 836,
+        "estimatedTextureMemoryBytes": 205439232,
+        "environmentTransferBytes": 32041208
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.001500037501025,
+        "p95Ms": 16.70000000001164,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0,
+        "longTasks": []
+      },
+      "panSample": {
+        "frames": 236,
+        "fps": 59.00147503687601,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 33.40000000000873,
+        "over50Ms": 0,
+        "longTasks": [],
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 60068,
+          "frameCalls": 15,
+          "drawCalls": 190,
+          "triangles": 339058,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    }
+  ],
+  "shooting": [],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "[warning] [VoiceChat] Mic access denied"
+  ],
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[debug] [vite] connected.",
+    "[info] [Renderer] Initialized webgpu",
+    "[warning] [VoiceChat] Mic access denied",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock.",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock."
+  ],
+  "repair": null,
+  "water": null,
+  "boats": null
+}

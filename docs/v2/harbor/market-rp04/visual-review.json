@@ -1,0 +1,29 @@
+{
+  "reviewedBy": "Codex visual QA",
+  "visualPassed": true,
+  "candidateSHA256": "3e593113f9e820e80d24430b736adda7e22ae9f28ed350065a85be26db1a8ca5",
+  "sourceSHA256": "2449157375bbfb905e0a4bb34552644cfa9c5e492fc102fec03f38eab49feeea",
+  "reports": [
+    "docs/v2/harbor/market-rp04/candidate-reviewed/rp04-webgpu-high-report.json",
+    "docs/v2/harbor/market-rp04/candidate-reviewed/rp04-webgpu-low-report.json",
+    "docs/v2/harbor/market-rp04/candidate-reviewed/rp04-webgl2-high-report.json",
+    "docs/v2/harbor/market-rp04/candidate-reviewed/rp04-webgl2-low-report.json"
+  ],
+  "approvalScope": "Bounded first Market art slice: valid native budgets, unchanged protected gameplay volumes, sampled collision clearance, clear door/glazing, one selected LOD, and actual material/render compatibility. Not final island art acceptance or a stable-60-FPS performance certificate.",
+  "inspected": [
+    "All five WebGPU High screenshots: front, exterior, interior, shelf and fridge",
+    "Front and interior on WebGPU Low, WebGL2 High and WebGL2 Low",
+    "Recessed ceiling hardware after correcting the 23–47 mm intrusion",
+    "Packaging, metre-scale finishes, attached signage, glazing and preserved room/aisle openings"
+  ],
+  "physicalEvidence": "gate-reviewed-02: 86 static probes, 6 negative controls, 64 candidate movement tests; plus 88 client and 18 server generic regressions",
+  "performanceStatus": "Measured with open issues. No stable60FPS or no-lag claim. Low samples near60; WebGL2 High and some High camera/late-session samples remain slow.",
+  "performanceFollowup": "Matched five-view controls and candidate repeat are retained in diagnostic-no-practicals. The repeated unchanged candidate WITH its two practicals recovered coast firing59.75FPS/max33.3ms and wall54.18FPS; disabling those lights did not fix late degradation. This does not support deleting lights as a proven fix; uncontrolled host load and unresolved renderer cost remain.",
+  "remaining": [
+    "Low retains simplified legacy store fixtures and a container occluding part of the exterior review angle",
+    "High remains below the approved photorealistic concept in baked/contact lighting, product silhouettes and close-up joint finish",
+    "Initial map rendering/preparation can stall; warmup adds initial loading cost",
+    "WebGL High, audio-on firing, all-device performance and whole-island dynamic/multiplayer coverage are not certified",
+    "Other districts are not rebuilt in this Market slice"
+  ]
+}

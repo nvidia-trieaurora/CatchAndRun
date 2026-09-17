@@ -1,0 +1,25 @@
+{
+  "verifiedAt": "2026-09-10T16:19:05.918Z",
+  "scope": "Post-promotion local default asset route and game screenshots; no staging interception.",
+  "url": "http://localhost:5174/assets/maps/harbor-v2/zones/ferris-harbor.glb?v=20260910-rp04-b51a69ec",
+  "httpStatus": 200,
+  "bytes": 3990856,
+  "sha256": "b51a69ec535d54b440f35a9aa11fe69b8fc7adc8ba777e840daf75bfa3cc08bc",
+  "matchesDisk": true,
+  "browserReport": "applied-local/applied-local-report.json",
+  "browserURL": "http://localhost:5174/?renderer=webgpu",
+  "candidateOverrideUsed": false,
+  "applicationErrors": 0,
+  "sourceSHA256": "70e5105104f47c443197fc0a54e9e9cd9638bb3b8669917b3239017ddf331ac9",
+  "postPromotionGate": "post-promotion-gate/summary.json",
+  "typecheckPassed": true,
+  "clientCompilePassed": true,
+  "viteBuildPassed": true,
+  "buildWarnings": [
+    "Three vendor chunk is about970kB minified, above Vite500kB advisory."
+  ],
+  "inspectedScreenshots": [
+    "applied-local/applied-local-workboatDetail.png",
+    "applied-local/applied-local-fleetDetail.png"
+  ]
+}

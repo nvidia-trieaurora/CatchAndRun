@@ -1,0 +1,1685 @@
+{
+  "capturedAt": "2026-09-09T14:59:33.696Z",
+  "viewport": {
+    "width": 1600,
+    "height": 900,
+    "deviceScaleFactor": 1
+  },
+  "headless": true,
+  "gpuFlags": [
+    "enable-unsafe-webgpu",
+    "enable-features=Vulkan,WebGPU",
+    "ignore-gpu-blocklist",
+    "use-angle=metal"
+  ],
+  "audioMuted": true,
+  "profileDirectory": "/var/folders/21/jnt5qrg12nzcbgh9msb8q9280000gp/T/cr-cdp-catchandrun-tHycjn",
+  "url": "http://localhost:5173/?renderer=webgl2",
+  "backend": "webgl2",
+  "quality": "high",
+  "presets": [
+    {
+      "preset": "responseStation",
+      "view": "view-responseStation",
+      "file": "docs/v2/harbor/repair-review/runtime/rp02-webgl2-high-responseStation.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00120002392895,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 256,
+        "triangles": 271839,
+        "geometries": 307,
+        "textures": 288,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00300015000746,
+        "p95Ms": 16.700000000000728,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 24757,
+          "frameCalls": 15,
+          "drawCalls": 240,
+          "triangles": 334329,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "responseStationEntry",
+      "view": "view-responseStationEntry",
+      "file": "docs/v2/harbor/repair-review/runtime/rp02-webgl2-high-responseStationEntry.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00120002392895,
+        "frameTimeP95Ms": 17.5,
+        "drawCalls": 256,
+        "triangles": 271839,
+        "geometries": 307,
+        "textures": 288,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 241,
+        "fps": 60.00248972986431,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 31792,
+          "frameCalls": 15,
+          "drawCalls": 227,
+          "triangles": 332293,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "rescueQuay",
+      "view": "view-rescueQuay",
+      "file": "docs/v2/harbor/repair-review/runtime/rp02-webgl2-high-rescueQuay.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00240009586077,
+        "frameTimeP95Ms": 17.5,
+        "drawCalls": 256,
+        "triangles": 271839,
+        "geometries": 307,
+        "textures": 288,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00150003750092,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 38827,
+          "frameCalls": 15,
+          "drawCalls": 240,
+          "triangles": 360950,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "rescueWorkshop",
+      "view": "view-rescueWorkshop",
+      "file": "docs/v2/harbor/repair-review/runtime/rp02-webgl2-high-rescueWorkshop.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00240009586077,
+        "frameTimeP95Ms": 17.5,
+        "drawCalls": 256,
+        "triangles": 271839,
+        "geometries": 307,
+        "textures": 288,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00300015000746,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 45847,
+          "frameCalls": 15,
+          "drawCalls": 197,
+          "triangles": 271800,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "ferrisTicket",
+      "view": "view-ferrisTicket",
+      "file": "docs/v2/harbor/repair-review/runtime/rp02-webgl2-high-ferrisTicket.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00360021615603,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 256,
+        "triangles": 271839,
+        "geometries": 311,
+        "textures": 289,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00150003750092,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 52762,
+          "frameCalls": 15,
+          "drawCalls": 345,
+          "triangles": 469574,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    }
+  ],
+  "shooting": [
+    {
+      "target": "coast",
+      "setup": {
+        "role": "hunter",
+        "alive": true,
+        "ammo": 20
+      },
+      "idle": {
+        "frames": 240,
+        "fps": 60.003000150007566,
+        "p95Ms": 16.70000000001164,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "firing": {
+        "frames": 720,
+        "fps": 60.002500104171006,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "details": {
+        "shots": 41,
+        "waterImpacts": 40,
+        "fireCpuMs": [
+          2.4000000059604645,
+          0.4000000059604645,
+          0.5999999940395355,
+          0.5999999940395355,
+          0.5999999940395355,
+          0.5,
+          0.29999998211860657,
+          0.19999998807907104,
+          0.6000000238418579,
+          0.7000000178813934,
+          0.5999999940395355,
+          0.5,
+          0.19999998807907104,
+          0.5999999940395355,
+          0.20000001788139343,
+          0.20000001788139343,
+          0.5,
+          0.20000001788139343,
+          0.19999998807907104,
+          0.3999999761581421,
+          0.5999999940395355,
+          0.19999998807907104,
+          0.19999998807907104,
+          0.4000000059604645,
+          0.20000001788139343,
+          0.5,
+          0.10000002384185791,
+          0.4000000059604645,
+          0.3999999761581421,
+          0.20000001788139343,
+          0.4000000059604645,
+          0.5,
+          0.19999998807907104,
+          0.4000000059604645,
+          0.19999998807907104,
+          0.4000000059604645,
+          0.19999998807907104,
+          0.4000000059604645,
+          0.19999998807907104,
+          0.4000000059604645,
+          0.19999998807907104
+        ],
+        "ammo": 19,
+        "holes": 0,
+        "maxHoleWorldSpan": 0,
+        "geometryCount": 311,
+        "waterKind": "gerstner"
+      },
+      "file": "docs/v2/harbor/repair-review/runtime/rp02-webgl2-high-shoot-coast.png"
+    },
+    {
+      "target": "warehouse-wall",
+      "setup": {
+        "role": "hunter",
+        "alive": true,
+        "ammo": 19
+      },
+      "idle": {
+        "frames": 240,
+        "fps": 60.00300015000746,
+        "p95Ms": 16.70000000001164,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "firing": {
+        "frames": 720,
+        "fps": 60.00300015000753,
+        "p95Ms": 16.70000000001164,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "details": {
+        "shots": 41,
+        "waterImpacts": 0,
+        "fireCpuMs": [
+          1.300000011920929,
+          0.7000000178813934,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.4000000059604645,
+          0.5,
+          0.5,
+          0.5,
+          0.4000000059604645,
+          0.30000001192092896,
+          0.5,
+          0.4000000059604645,
+          0.5,
+          0.4000000059604645,
+          0.5,
+          0.4000000059604645,
+          0.5,
+          0.3999999761581421,
+          0.5,
+          0.5,
+          0.4000000059604645,
+          0.4000000059604645,
+          0.4000000059604645,
+          0.4000000059604645,
+          0.4000000059604645,
+          0.3999999761581421,
+          0.5,
+          0.5,
+          0.3999999761581421,
+          0.5,
+          0.4000000059604645,
+          0.5,
+          0.4000000059604645,
+          0.5,
+          0.30000001192092896,
+          0.4000000059604645,
+          0.29999998211860657
+        ],
+        "ammo": 18,
+        "holes": 40,
+        "maxHoleWorldSpan": 0.12999999523162842,
+        "geometryCount": 323,
+        "waterKind": "gerstner"
+      },
+      "file": "docs/v2/harbor/repair-review/runtime/rp02-webgl2-high-shoot-warehouse-wall.png"
+    }
+  ],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "[warning] [VoiceChat] Mic access denied"
+  ],
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[info] [Renderer] Initialized webgl2",
+    "[debug] [vite] connected.",
+    "[warning] [VoiceChat] Mic access denied",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock.",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock."
+  ],
+  "repair": {
+    "gate": "MESH_RESPONSE_STATION_HUNTER_GATE_LOD0",
+    "closed": {
+      "visible": true,
+      "scaleY": 1,
+      "collider": true
+    },
+    "activeZones": [
+      "residential",
+      "construction",
+      "ferris-harbor",
+      "container-bd",
+      "operations-ab",
+      "hunter-spawn",
+      "rescue-quay"
+    ],
+    "legacyBoothNodes": [],
+    "opened": {
+      "visible": false,
+      "collider": false,
+      "scaleY": 0.002
+    }
+  },
+  "water": {
+    "passed": true,
+    "reason": null,
+    "setup": {
+      "phase": "active",
+      "localRole": "hunter",
+      "localAlive": true,
+      "serverRole": "hunter",
+      "serverAlive": true
+    },
+    "inputMode": "supported-mobile-input-headless-fallback",
+    "startPosition": {
+      "x": 7,
+      "feetY": 8,
+      "z": 50
+    },
+    "waterCandidates": [
+      {
+        "position": {
+          "x": 7,
+          "feetY": 8,
+          "z": 50
+        },
+        "blockingColliders": []
+      },
+      {
+        "position": {
+          "x": 7,
+          "feetY": 8,
+          "z": 53
+        },
+        "blockingColliders": []
+      },
+      {
+        "position": {
+          "x": 7,
+          "feetY": 8,
+          "z": 56
+        },
+        "blockingColliders": []
+      },
+      {
+        "position": {
+          "x": 3,
+          "feetY": 8,
+          "z": 56
+        },
+        "blockingColliders": []
+      }
+    ],
+    "jumpInput": "held Space after initial gravity frames",
+    "clientEnteredMs": 850,
+    "serverEnteredMs": 2470,
+    "clientEntryToEventMs": 4550,
+    "serverObservedEntryToEventMs": 2930,
+    "events": [
+      {
+        "elapsedMs": 5400,
+        "payload": {
+          "victimSessionId": "Vk8QdzIVh",
+          "victimNickname": "AssetAudit",
+          "x": 7,
+          "y": -1.6,
+          "z": 50,
+          "cinematicMs": 2400,
+          "cameraX": 7.499026289241444,
+          "cameraY": 4.5,
+          "cameraZ": 57.98442062786311
+        }
+      }
+    ],
+    "samples": [
+      {
+        "elapsedMs": 0,
+        "phase": "active",
+        "jumpHeld": false,
+        "client": {
+          "x": 7,
+          "feetY": 8,
+          "z": 50,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 138,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": 7.700709119985596,
+          "z": 50,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 240,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": 7.170812479927619,
+          "z": 50,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 341,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": 6.35940551983656,
+          "z": 50,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 443,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": 5.258509079936459,
+          "z": 50,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 544,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": 3.884454999919716,
+          "z": 50,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 645,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": 2.2303883199032266,
+          "z": 50,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 749,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -0.05398719985973521,
+          "z": 50,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 850,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 951,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1052,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1152,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1253,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1354,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1455,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1557,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1658,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1759,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1861,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1966,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2067,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2168,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2268,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2369,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 25,
+          "feetY": 0,
+          "z": 0,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2470,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2571,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2672,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2773,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2874,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2975,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3077,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3178,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3283,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3383,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3485,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3585,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3685,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3786,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3888,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3988,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 4090,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 4191,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 4292,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 4394,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 4495,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 4599,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 4700,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 4800,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 4900,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 5001,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 5102,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 5203,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 5303,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 5404,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": false,
+          "role": "spectator"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": false,
+          "role": "spectator",
+          "health": 0
+        }
+      },
+      {
+        "elapsedMs": 5504,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": false,
+          "role": "spectator"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": false,
+          "role": "spectator",
+          "health": 0
+        }
+      },
+      {
+        "elapsedMs": 5504,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "inWater": true,
+          "isAlive": false,
+          "role": "spectator"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 50,
+          "isAlive": false,
+          "role": "spectator",
+          "health": 0
+        }
+      }
+    ],
+    "final": {
+      "elapsedMs": 5504,
+      "phase": "active",
+      "jumpHeld": true,
+      "client": {
+        "x": 7,
+        "feetY": -1.6,
+        "z": 50,
+        "inWater": true,
+        "isAlive": false,
+        "role": "spectator"
+      },
+      "server": {
+        "x": 7,
+        "feetY": -1.6,
+        "z": 50,
+        "isAlive": false,
+        "role": "spectator",
+        "health": 0
+      }
+    },
+    "pointerLock": {
+      "locked": false,
+      "reason": "WrongDocumentError: The root document of this element is not valid for pointer lock."
+    },
+    "file": "docs/v2/harbor/repair-review/runtime/rp02-webgl2-high-water-check.png"
+  }
+}

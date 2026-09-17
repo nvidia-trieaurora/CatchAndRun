@@ -13,7 +13,7 @@ import { ScoringSystem } from "../systems/ScoringSystem";
 import { RoleAssigner } from "../systems/RoleAssigner";
 import { SpawnManager } from "../systems/SpawnManager";
 import { handlePropDown } from "../systems/PropDownHandler";
-import { findWaterHazard } from "../systems/EnvironmentalHazards";
+import { DrowningTracker, findWaterHazard } from "../systems/EnvironmentalHazards";
 import { eliminatePlayerInWater } from "../systems/EnvironmentalEliminationHandler";
 import { SnapshotBuffer } from "../utils/SnapshotBuffer";
 import {
@@ -313,6 +313,7 @@ export class GameRoom extends Room<GameState> {
     this.state.players.delete(client.sessionId);
     this.lastAbility2Time.delete(client.sessionId);
     this.hunterBoostEnd.delete(client.sessionId);
+    this.drowning.clear(client.sessionId);
 
     if (wasHost && this.state.players.size > 0) {
       const newHostId = Array.from(this.state.players.keys())[0];
@@ -348,6 +349,7 @@ export class GameRoom extends Room<GameState> {
       this.scoring.updateSurvivalScores(dt);
       this.saveSnapshot();
     }
+    this.sweepDrowning();
 
     this.broadcastRoomState();
   }
@@ -440,16 +442,36 @@ export class GameRoom extends Room<GameState> {
     player.lastInputSeq = data.seq;
     player.lastPositionTime = Date.now();
 
-    if (
+    // Water: the hazard boxes end at the sea surface, so only a body that dropped
+    // below it counts. Falling in is not lethal by itself — the drowning clock runs
+    // and the player has the grace period to climb back onto land.
+    const inWater =
       this.state.phase === GamePhase.ACTIVE
       && findWaterHazard(
         getMapData(this.state.config.mapId),
         player.x,
         player.y,
         player.z,
-      ) !== null
-    ) {
+      ) !== null;
+    if (this.drowning.update(client.sessionId, inWater, Date.now()) === "drowned") {
       eliminatePlayerInWater(this, client.sessionId, player);
+    }
+  }
+
+  /** Drown players whose grace period ran out while they stopped sending inputs. */
+  private sweepDrowning() {
+    if (this.state.phase !== GamePhase.ACTIVE) {
+      this.drowning.clear();
+      return;
+    }
+    const now = Date.now();
+    const mapData = getMapData(this.state.config.mapId);
+    for (const sessionId of this.drowning.expired(now)) {
+      const player = this.state.players.get(sessionId);
+      this.drowning.clear(sessionId);
+      if (!player?.isAlive) continue;
+      if (findWaterHazard(mapData, player.x, player.y, player.z) === null) continue;
+      eliminatePlayerInWater(this, sessionId, player);
     }
   }
 
@@ -549,6 +571,8 @@ export class GameRoom extends Room<GameState> {
 
   private lastAbility2Time = new Map<string, number>();
   private hunterBoostEnd = new Map<string, number>();
+  // players under water get WATER_DROWN_GRACE_MS to climb out before they drown
+  private readonly drowning = new DrowningTracker();
 
   private handleUseAbility(client: Client) {
     const player = this.state.players.get(client.sessionId);

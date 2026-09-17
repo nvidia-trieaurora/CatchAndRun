@@ -1,0 +1,9 @@
+{
+  "diagnostic": "{\"text\":\"Room Lobby\\nCLASSIC\\nQABG4H1\\nPLAYERS\\nA\\nAssetAudit\\nHOST\\nNOT READY\\nCHAT\\nAssetAudit joined the room\\nSend\\nCHOOSE YOUR MEME (HUNTER FACE)\\nDummy Frog\\nDump Ghost\\nJam\\nLong Tounge\\nPig Kiss\\nGAME SETTINGS\\nMode\\nClassic\\nInfection\\nMap\\nOld Harbor\\nSunny School\\nMax Players\\n-\\n10\\n+\\nRounds\\n-\\n5\\n+\\nRound Time\\n-\\n4:00\\n+\\nReady\\nStart Game\\nLeave Room\",\"phase\":\"waiting\",\"mapBuilt\":false,\"room\":{\"phase\":\"waiting\",\"timer\":0,\"currentRound\":0,\"totalRounds\":2,\"roomName\":\"asset-audit\",\"roomCode\":\"QABG4H1\",\"isPrivate\":true,\"hostSessionId\":\"AP4s8oi7T\",\"config\":{\"maxPlayers\":10,\"roundTime\":240,\"totalRounds\":5,\"gameMode\":\"classic\",\"mapId\":\"harbor-warehouse\"},\"players\":[{\"sessionId\":\"AP4s8oi7T\",\"nickname\":\"AssetAudit\",\"role\":\"prop\",\"x\":0,\"y\":1,\"z\":0,\"rotX\":0,\"rotY\":0,\"health\":100,\"currentPropId\":\"\",\"isLocked\":false,\"isReady\":false,\"isAlive\":true,\"score\":0,\"ammo\":20,\"kills\":0,\"isHost\":true,\"memeId\":\"default\",\"isSpectator\":false}],\"chat\":[{\"sender\":\"System\",\"message\":\"AssetAudit joined the room\",\"timestamp\":1789031983209}]},\"resources\":[\"http://localhost:5174/src/game/GameManager.ts?t=1788982640711\"]}",
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[debug] [vite] connected.",
+    "[info] [Renderer] Initialized webgpu",
+    "[warning] [VoiceChat] Mic access denied"
+  ]
+}

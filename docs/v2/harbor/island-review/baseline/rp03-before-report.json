@@ -1,0 +1,317 @@
+{
+  "capturedAt": "2026-09-09T18:02:07.642Z",
+  "viewport": {
+    "width": 1600,
+    "height": 900,
+    "deviceScaleFactor": 1
+  },
+  "headless": true,
+  "gpuFlags": [
+    "enable-unsafe-webgpu",
+    "enable-features=Vulkan,WebGPU",
+    "ignore-gpu-blocklist",
+    "use-angle=metal"
+  ],
+  "audioMuted": true,
+  "profileDirectory": "/var/folders/21/jnt5qrg12nzcbgh9msb8q9280000gp/T/cr-cdp-catchandrun-UK6bcY",
+  "url": "http://localhost:5173/?renderer=webgl2",
+  "backend": "webgl2",
+  "quality": "high",
+  "presets": [
+    {
+      "preset": "overview",
+      "view": "view-overview",
+      "file": "docs/v2/harbor/island-review/baseline/rp03-before-overview.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.01080194442154,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 256,
+        "triangles": 271731,
+        "geometries": 327,
+        "textures": 305,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00300015000751,
+        "p95Ms": 16.799999999999272,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 24226,
+          "frameCalls": 15,
+          "drawCalls": 460,
+          "triangles": 497553,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "containerBDShop",
+      "view": "view-containerBDShop",
+      "file": "docs/v2/harbor/island-review/baseline/rp03-before-containerBDShop.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00840117602158,
+        "frameTimeP95Ms": 17.5,
+        "drawCalls": 256,
+        "triangles": 271731,
+        "geometries": 327,
+        "textures": 305,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00450033752536,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 31231,
+          "frameCalls": 15,
+          "drawCalls": 207,
+          "triangles": 328248,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "acGardenRoute",
+      "view": "view-acGardenRoute",
+      "file": "docs/v2/harbor/island-review/baseline/rp03-before-acGardenRoute.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00600060006001,
+        "frameTimeP95Ms": 17.5,
+        "drawCalls": 256,
+        "triangles": 271731,
+        "geometries": 327,
+        "textures": 305,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00150003750092,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 38221,
+          "frameCalls": 15,
+          "drawCalls": 449,
+          "triangles": 495673,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "adConstructionRoute",
+      "view": "view-adConstructionRoute",
+      "file": "docs/v2/harbor/island-review/baseline/rp03-before-adConstructionRoute.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00720086403215,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 256,
+        "triangles": 271731,
+        "geometries": 327,
+        "textures": 305,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.003000150007566,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 45271,
+          "frameCalls": 15,
+          "drawCalls": 217,
+          "triangles": 340870,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "ferrisHarborWater",
+      "view": "view-ferrisHarborWater",
+      "file": "docs/v2/harbor/island-review/baseline/rp03-before-ferrisHarborWater.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00240009621843,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 256,
+        "triangles": 271731,
+        "geometries": 327,
+        "textures": 305,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00300015000746,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 52246,
+          "frameCalls": 15,
+          "drawCalls": 430,
+          "triangles": 488111,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "operationsAB",
+      "view": "view-operationsAB",
+      "file": "docs/v2/harbor/island-review/baseline/rp03-before-operationsAB.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00960153603115,
+        "frameTimeP95Ms": 17.5,
+        "drawCalls": 256,
+        "triangles": 271731,
+        "geometries": 327,
+        "textures": 305,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.001500037501025,
+        "p95Ms": 16.70000000001164,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 59266,
+          "frameCalls": 15,
+          "drawCalls": 270,
+          "triangles": 411516,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "rescueQuay",
+      "view": "view-rescueQuay",
+      "file": "docs/v2/harbor/island-review/baseline/rp03-before-rescueQuay.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00960153603115,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 256,
+        "triangles": 271731,
+        "geometries": 327,
+        "textures": 305,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00300015000746,
+        "p95Ms": 16.70000000001164,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 66331,
+          "frameCalls": 15,
+          "drawCalls": 240,
+          "triangles": 360734,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    }
+  ],
+  "shooting": [],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "[warning] [VoiceChat] Mic access denied"
+  ],
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[info] [Renderer] Initialized webgl2",
+    "[debug] [vite] connected.",
+    "[warning] [VoiceChat] Mic access denied",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock.",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock."
+  ],
+  "repair": null,
+  "water": null
+}

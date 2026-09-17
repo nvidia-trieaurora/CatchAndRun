@@ -1,0 +1,245 @@
+{
+  "generatedAt": "2026-09-09T20:00:24.493Z",
+  "scope": "Short, isolated local Chrome runs, 1600x900 DPR1. rAF frame samples, not GPU timers or a guarantee for other devices. Audio muted. No simultaneous agent browser, Blender render or build during these final runs.",
+  "runs": [
+    {
+      "report": "rp03-webgl2-high-report.json",
+      "backend": "webgl2",
+      "quality": "high",
+      "viewport": {
+        "width": 1600,
+        "height": 900,
+        "deviceScaleFactor": 1
+      },
+      "audioMuted": true,
+      "views": [
+        "overview",
+        "containerBDShop",
+        "harborMarketInterior",
+        "warehouse",
+        "adConstructionRoute",
+        "acGardenRoute",
+        "operationsABInterior",
+        "ferrisTicket",
+        "workboatDetail",
+        "rescueQuay"
+      ],
+      "samples": 20,
+      "minimumFps": 60.001500037500804,
+      "worstP95Ms": 16.80000000000291,
+      "longestFrameMs": 16.800000000017462,
+      "framesOver50Ms": 0,
+      "consoleErrors": 0,
+      "shooting": [
+        {
+          "target": "coast",
+          "shots": 41,
+          "waterImpacts": 40,
+          "fps": 60.002000066669005,
+          "p95Ms": 16.79999999998836,
+          "maxMs": 16.800000000017462,
+          "over50Ms": 0,
+          "maxHoleWorldSpan": 0,
+          "maxFireCpuMs": 3.2000000178813934,
+          "geometryCount": 327
+        },
+        {
+          "target": "warehouse-wall",
+          "shots": 41,
+          "waterImpacts": 0,
+          "fps": 60.002500104171006,
+          "p95Ms": 16.70000000001164,
+          "maxMs": 16.800000000017462,
+          "over50Ms": 0,
+          "maxHoleWorldSpan": 0.12999999523162842,
+          "maxFireCpuMs": 1.5999999940395355,
+          "geometryCount": 327
+        }
+      ]
+    },
+    {
+      "report": "rp03-webgl2-low-report.json",
+      "backend": "webgl2",
+      "quality": "low",
+      "viewport": {
+        "width": 1600,
+        "height": 900,
+        "deviceScaleFactor": 1
+      },
+      "audioMuted": true,
+      "views": [
+        "overview",
+        "containerBDShop",
+        "harborMarketInterior",
+        "acWindows",
+        "acLoggia",
+        "adConstructionRoute",
+        "operationsABInterior",
+        "ferrisTicket",
+        "workboatDetail",
+        "rescueQuay"
+      ],
+      "samples": 20,
+      "minimumFps": 59.25296264813236,
+      "worstP95Ms": 16.80000000000291,
+      "longestFrameMs": 66.69999999999709,
+      "framesOver50Ms": 1,
+      "consoleErrors": 0,
+      "shooting": []
+    },
+    {
+      "report": "rp03-webgpu-high-report.json",
+      "backend": "webgpu",
+      "quality": "high",
+      "viewport": {
+        "width": 1600,
+        "height": 900,
+        "deviceScaleFactor": 1
+      },
+      "audioMuted": true,
+      "views": [
+        "overview",
+        "containerBDShop",
+        "harborMarketInterior",
+        "warehouse",
+        "adConstructionRoute",
+        "acGardenRoute",
+        "operationsABInterior",
+        "ferrisTicket",
+        "workboatDetail",
+        "rescueQuay"
+      ],
+      "samples": 20,
+      "minimumFps": 60.001500037500804,
+      "worstP95Ms": 16.80000000000291,
+      "longestFrameMs": 16.800000000017462,
+      "framesOver50Ms": 0,
+      "consoleErrors": 0,
+      "shooting": [
+        {
+          "target": "coast",
+          "shots": 42,
+          "waterImpacts": 41,
+          "fps": 60.002500104171006,
+          "p95Ms": 16.70000000001164,
+          "maxMs": 16.800000000017462,
+          "over50Ms": 0,
+          "maxHoleWorldSpan": 0,
+          "maxFireCpuMs": 3.2000000178813934,
+          "geometryCount": 327
+        },
+        {
+          "target": "warehouse-wall",
+          "shots": 42,
+          "waterImpacts": 0,
+          "fps": 60.002500104171006,
+          "p95Ms": 16.70000000001164,
+          "maxMs": 16.800000000017462,
+          "over50Ms": 0,
+          "maxHoleWorldSpan": 0.12999999523162842,
+          "maxFireCpuMs": 2.199999988079071,
+          "geometryCount": 327
+        }
+      ]
+    }
+  ],
+  "lowBoatJankRecheck": {
+    "report": "rp03-low-jank-recheck-report.json",
+    "note": "A single 66.7ms Low workboat frame was observed in the original pass. Repeated twice with 20s static plus 8s pan and LongTask/LoAF observers; the original cause was not reproduced or proven fixed.",
+    "samples": [
+      {
+        "frames": 1201,
+        "fps": 60.0022981729525,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0,
+        "longTasks": []
+      },
+      {
+        "frames": 479,
+        "fps": 59.87724539670234,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 33.30000000000291,
+        "over50Ms": 0,
+        "longTasks": [],
+        "degrees": 360
+      },
+      {
+        "frames": 1200,
+        "fps": 60.002400096003846,
+        "p95Ms": 16.70000000001164,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0,
+        "longTasks": []
+      },
+      {
+        "frames": 480,
+        "fps": 60.00225008437818,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0,
+        "longTasks": [],
+        "degrees": 360
+      }
+    ]
+  },
+  "structural": [
+    {
+      "tier": "high",
+      "probes": 18,
+      "mismatches": []
+    },
+    {
+      "tier": "low",
+      "probes": 18,
+      "mismatches": []
+    }
+  ],
+  "assets": [
+    {
+      "path": "client/public/assets/maps/harbor-v2/cinematic/harbor-cinematic.glb",
+      "bytes": 5206904,
+      "sha256": "3bf4b229e928e52488aaf90154686c466b7e5a84b2f61febd2ac16e5018d5fcc"
+    },
+    {
+      "path": "client/public/assets/maps/harbor-v2/warehouse.glb",
+      "bytes": 5620760,
+      "sha256": "d41a9ac251d9ea7116e192d3d7be4a0bffcd9b249621da1ed6806282afb086f5"
+    },
+    {
+      "path": "client/public/assets/maps/harbor-v2/zones/container-bd.glb",
+      "bytes": 5334504,
+      "sha256": "f6944872ccada70a276d94348cba03c99d6fe8c5ddb43558f0c0aad25f51c7e0"
+    },
+    {
+      "path": "client/public/assets/maps/harbor-v2/zones/garden-ac.glb",
+      "bytes": 2418196,
+      "sha256": "eba957f86623f8921d7e10dd426a6c88c3e074b9681200abf33a7a4e0dfbe762"
+    },
+    {
+      "path": "client/public/assets/maps/harbor-v2/zones/construction-ad.glb",
+      "bytes": 2685880,
+      "sha256": "cbae198daf1de59fcc51d57c6899cd8f89ddcd685bfc3bd1228189aa04628049"
+    },
+    {
+      "path": "client/public/assets/maps/harbor-v2/zones/operations-ab.glb",
+      "bytes": 3143904,
+      "sha256": "539236b2f4f5988bcb4d1b28f4c6c53de7c2b6a5c6ce740f1659315d7e8a1239"
+    },
+    {
+      "path": "client/public/assets/maps/harbor-v2/zones/ferris-harbor.glb",
+      "bytes": 2988060,
+      "sha256": "76a6bb0a733a5f1bcf692041336d772dc44b0d28f806b56c6aaf18c9738bd07f"
+    },
+    {
+      "path": "client/public/assets/maps/harbor-v2/zones/response-station.glb",
+      "bytes": 1623596,
+      "sha256": "8f8aaf89f4e4a93e34a5be9a67dc63ba2f6b83d6fed445074dfac7887c07af1f"
+    },
+    {
+      "path": "client/public/assets/maps/harbor-v2/zones/rescue-quay.glb",
+      "bytes": 1375540,
+      "sha256": "e077c85bee11cb3b912172d03b0f6a89d5058b97c21c64a82fdfe1b82f27e71e"
+    }
+  ]
+}

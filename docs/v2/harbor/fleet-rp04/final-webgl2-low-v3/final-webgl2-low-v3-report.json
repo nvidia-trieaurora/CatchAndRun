@@ -1,0 +1,5353 @@
+{
+  "capturedAt": "2026-09-10T15:15:44.726Z",
+  "viewport": {
+    "width": 1600,
+    "height": 900,
+    "deviceScaleFactor": 1
+  },
+  "headless": true,
+  "gpuFlags": [
+    "enable-unsafe-webgpu",
+    "enable-features=Vulkan,WebGPU",
+    "ignore-gpu-blocklist",
+    "use-angle=metal"
+  ],
+  "audioMuted": true,
+  "profileDirectory": "/var/folders/21/jnt5qrg12nzcbgh9msb8q9280000gp/T/cr-cdp-catchandrun-b6DaTm",
+  "url": "http://localhost:5174/?renderer=webgl2",
+  "backend": "webgl2",
+  "quality": "low",
+  "presets": [
+    {
+      "preset": "workboatDetail",
+      "view": "view-workboatDetail",
+      "file": "docs/v2/harbor/fleet-rp04/final-webgl2-low-v3/final-webgl2-low-v3-workboatDetail.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 59.99999999999999,
+        "frameTimeP95Ms": 17.400000035762787,
+        "drawCalls": 150,
+        "triangles": 49673,
+        "geometries": 226,
+        "textures": 187,
+        "sceneMeshes": 150,
+        "instancedMeshes": 15,
+        "colliderCount": 799,
+        "estimatedTextureMemoryBytes": 134463488,
+        "environmentTransferBytes": 33711096
+      },
+      "frameSample": {
+        "frames": 241,
+        "fps": 60.00248972986431,
+        "p95Ms": 16.700000000000728,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "panSample": {
+        "frames": 240,
+        "fps": 60.00300015000746,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0,
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 4315,
+          "frameCalls": 3,
+          "drawCalls": 150,
+          "triangles": 63812,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "low",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "fleetDetail",
+      "view": "view-fleetDetail",
+      "file": "docs/v2/harbor/fleet-rp04/final-webgl2-low-v3/final-webgl2-low-v3-fleetDetail.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00360021615603,
+        "frameTimeP95Ms": 17.5,
+        "drawCalls": 150,
+        "triangles": 49673,
+        "geometries": 226,
+        "textures": 187,
+        "sceneMeshes": 150,
+        "instancedMeshes": 15,
+        "colliderCount": 799,
+        "estimatedTextureMemoryBytes": 134463488,
+        "environmentTransferBytes": 33711096
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.003000150007566,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "panSample": {
+        "frames": 240,
+        "fps": 60.00150003750092,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0,
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 6433,
+          "frameCalls": 3,
+          "drawCalls": 203,
+          "triangles": 83036,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "low",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "ferrisHarborWater",
+      "view": "view-ferrisHarborWater",
+      "file": "docs/v2/harbor/fleet-rp04/final-webgl2-low-v3/final-webgl2-low-v3-ferrisHarborWater.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00480038445994,
+        "frameTimeP95Ms": 17.5,
+        "drawCalls": 150,
+        "triangles": 49673,
+        "geometries": 226,
+        "textures": 187,
+        "sceneMeshes": 150,
+        "instancedMeshes": 15,
+        "colliderCount": 799,
+        "estimatedTextureMemoryBytes": 134463488,
+        "environmentTransferBytes": 33711096
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00150003750092,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "panSample": {
+        "frames": 240,
+        "fps": 60.00150003750092,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0,
+        "degrees": 360
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 8548,
+          "frameCalls": 3,
+          "drawCalls": 259,
+          "triangles": 89727,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "low",
+        "water": "gerstner"
+      }
+    }
+  ],
+  "shooting": [],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "[warning] [VoiceChat] Mic access denied"
+  ],
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[info] [Renderer] Initialized webgl2",
+    "[debug] [vite] connected.",
+    "[warning] [VoiceChat] Mic access denied",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock.",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock."
+  ],
+  "repair": null,
+  "water": {
+    "passed": true,
+    "reason": null,
+    "setup": {
+      "sessionId": "f08zvkm2C",
+      "phase": "active",
+      "localRole": "hunter",
+      "localAlive": true,
+      "serverRole": "hunter",
+      "serverAlive": true
+    },
+    "inputMode": "supported-mobile-input-headless-fallback",
+    "startPosition": {
+      "x": 7,
+      "feetY": 8,
+      "z": 53
+    },
+    "waterCandidates": [
+      {
+        "position": {
+          "x": 7,
+          "feetY": 8,
+          "z": 50
+        },
+        "blockingColliders": [
+          {
+            "min": [
+              5.79251949939628,
+              0.04846080815698417,
+              49.008359594704864
+            ],
+            "max": [
+              8.397875501401384,
+              1.9756993690772129,
+              50.82946511310043
+            ]
+          },
+          {
+            "min": [
+              2.0479014069206567,
+              -1.319271804394496,
+              48.343269345554305
+            ],
+            "max": [
+              11.951674886948618,
+              0.09308112457136497,
+              51.45840203060957
+            ]
+          }
+        ]
+      },
+      {
+        "position": {
+          "x": 7,
+          "feetY": 8,
+          "z": 53
+        },
+        "blockingColliders": []
+      },
+      {
+        "position": {
+          "x": 7,
+          "feetY": 8,
+          "z": 56
+        },
+        "blockingColliders": [
+          {
+            "min": [
+              -2.9558269000271515,
+              -1.310428097877161,
+              55.22586665962666
+            ],
+            "max": [
+              8.954962718262298,
+              0.24380366208144144,
+              59.77075022552034
+            ]
+          }
+        ]
+      },
+      {
+        "position": {
+          "x": 3,
+          "feetY": 8,
+          "z": 56
+        },
+        "blockingColliders": [
+          {
+            "min": [
+              -2.9558269000271515,
+              -1.310428097877161,
+              55.22586665962666
+            ],
+            "max": [
+              8.954962718262298,
+              0.24380366208144144,
+              59.77075022552034
+            ]
+          }
+        ]
+      }
+    ],
+    "jumpInput": "held Space after initial gravity frames",
+    "clientEnteredMs": 850,
+    "serverEnteredMs": 850,
+    "clientEntryToEventMs": 2950,
+    "serverObservedEntryToEventMs": 2950,
+    "events": [
+      {
+        "elapsedMs": 3800,
+        "payload": {
+          "victimSessionId": "f08zvkm2C",
+          "victimNickname": "AssetAudit",
+          "x": 7,
+          "y": -1.6,
+          "z": 53,
+          "cinematicMs": 2400,
+          "cameraX": 7.469776175611763,
+          "cameraY": 4.5,
+          "cameraZ": 60.98619498539997
+        }
+      }
+    ],
+    "samples": [
+      {
+        "elapsedMs": 0,
+        "phase": "active",
+        "jumpHeld": false,
+        "client": {
+          "x": 7,
+          "feetY": 8,
+          "z": 53,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 9.05577900006745,
+          "feetY": 0.06897318259860163,
+          "z": 49.89815678436216,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 128,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": 7.719719159849731,
+          "z": 53,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 9.056247412764154,
+          "feetY": 0.06778495275730478,
+          "z": 49.89845121276303,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 229,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": 7.182865639749561,
+          "z": 53,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 9.056247412764154,
+          "feetY": 0.06778495275730478,
+          "z": 49.89845121276303,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 330,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": 6.366012119649561,
+          "z": 53,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 9.056247412764154,
+          "feetY": 0.06778495275730478,
+          "z": 49.89845121276303,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 430,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": 5.269158599549556,
+          "z": 53,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 9.056247412764154,
+          "feetY": 0.06778495275730478,
+          "z": 49.89845121276303,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 532,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": 3.8907645200003667,
+          "z": 53,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": 4.141722919288068,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 632,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": 2.2336307200006997,
+          "z": 53,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": 2.531629119154886,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 733,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": 0.2964969200010339,
+          "z": 53,
+          "inWater": false,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": 0.6415353190217057,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 850,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.1489568805442056,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 950,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1051,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1152,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1254,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1355,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1456,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1557,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1661,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1762,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1864,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 1964,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2065,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2166,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2267,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2367,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2469,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2570,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2671,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2772,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2873,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 2975,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3075,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3175,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3278,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3379,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3480,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3580,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3681,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3782,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": true,
+          "role": "hunter"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": true,
+          "role": "hunter",
+          "health": 100
+        }
+      },
+      {
+        "elapsedMs": 3882,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": false,
+          "role": "spectator"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": false,
+          "role": "spectator",
+          "health": 0
+        }
+      },
+      {
+        "elapsedMs": 3983,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": false,
+          "role": "spectator"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": false,
+          "role": "spectator",
+          "health": 0
+        }
+      },
+      {
+        "elapsedMs": 3983,
+        "phase": "active",
+        "jumpHeld": true,
+        "client": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "inWater": true,
+          "isAlive": false,
+          "role": "spectator"
+        },
+        "server": {
+          "x": 7,
+          "feetY": -1.6,
+          "z": 53,
+          "isAlive": false,
+          "role": "spectator",
+          "health": 0
+        }
+      }
+    ],
+    "final": {
+      "elapsedMs": 3983,
+      "phase": "active",
+      "jumpHeld": true,
+      "client": {
+        "x": 7,
+        "feetY": -1.6,
+        "z": 53,
+        "inWater": true,
+        "isAlive": false,
+        "role": "spectator"
+      },
+      "server": {
+        "x": 7,
+        "feetY": -1.6,
+        "z": 53,
+        "isAlive": false,
+        "role": "spectator",
+        "health": 0
+      }
+    },
+    "pointerLock": {
+      "locked": false,
+      "reason": "WrongDocumentError: The root document of this element is not valid for pointer lock."
+    },
+    "file": "docs/v2/harbor/fleet-rp04/final-webgl2-low-v3/final-webgl2-low-v3-water-check.png"
+  },
+  "boats": {
+    "protocol": "designated-deck-v1",
+    "passed": true,
+    "role": "hunter",
+    "inputMode": "supported-mobile-input-headless-fallback",
+    "results": [
+      {
+        "name": "RIG_FERRIS_HARBOR_BOAT_BARGE",
+        "contactSurface": "designated-deck",
+        "plannedTrack": {
+          "id": "barge",
+          "x": 0.4,
+          "z": 56.5,
+          "source": "client/tests/helpers/candidateHarborFleet.ts:FLEET_TRACKS"
+        },
+        "selectedDeck": {
+          "boxIndex": 0,
+          "selectionRule": "lowest-usable-plane-at-fixed-track",
+          "boundsAtSelection": {
+            "min": [
+              -2.9672068899055972,
+              -1.7147688561242997,
+              55.241439568342955
+            ],
+            "max": [
+              8.970669352909363,
+              0.044930659006152784,
+              59.75963857733461
+            ]
+          },
+          "heightAtSelection": -0.08355367188367635,
+          "spawn": {
+            "x": 0.4,
+            "feetY": 0.11644632811632366,
+            "z": 56.5
+          },
+          "spawnDrop": 0.2
+        },
+        "deckSamples": [
+          {
+            "elapsedMs": 1818.800000011921,
+            "deckBoxIndex": 0,
+            "x": 0.361264205530762,
+            "feetY": -0.38513516479479826,
+            "z": 56.46830463784935,
+            "deckHeight": -0.38513516479479826,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 1919.3999999761581,
+            "deckBoxIndex": 0,
+            "x": 0.3588785429955039,
+            "feetY": -0.3809473454900968,
+            "z": 56.46795610892575,
+            "deckHeight": -0.3809473454900968,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2020.0999999642372,
+            "deckBoxIndex": 0,
+            "x": 0.3566697131999117,
+            "feetY": -0.37383927675301853,
+            "z": 56.467770802646974,
+            "deckHeight": -0.37383927675301853,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2121.199999988079,
+            "deckBoxIndex": 0,
+            "x": 0.354655206837565,
+            "feetY": -0.3638431603821628,
+            "z": 56.467739884764995,
+            "deckHeight": -0.3638431603821628,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2223,
+            "deckBoxIndex": 0,
+            "x": 0.35284892360201114,
+            "feetY": -0.3509901573650206,
+            "z": 56.46785507802318,
+            "deckHeight": -0.3509901573650206,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2324.5,
+            "deckBoxIndex": 0,
+            "x": 0.3512772107963462,
+            "feetY": -0.3354897895595186,
+            "z": 56.46810656145436,
+            "deckHeight": -0.3354897895595186,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2425.300000011921,
+            "deckBoxIndex": 0,
+            "x": 0.3499391185979297,
+            "feetY": -0.3173373332557622,
+            "z": 56.46848827109294,
+            "deckHeight": -0.3173373332557622,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2527.199999988079,
+            "deckBoxIndex": 0,
+            "x": 0.34884991209931515,
+            "feetY": -0.29673966172485655,
+            "z": 56.46899306483693,
+            "deckHeight": -0.29673966172485655,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2629,
+            "deckBoxIndex": 0,
+            "x": 0.3480171101933047,
+            "feetY": -0.27385375912248344,
+            "z": 56.469616439133254,
+            "deckHeight": -0.27385375912248344,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2731.5,
+            "deckBoxIndex": 0,
+            "x": 0.347379969580059,
+            "feetY": -0.24459356044533997,
+            "z": 56.47048765969041,
+            "deckHeight": -0.24459356044533997,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2831.699999988079,
+            "deckBoxIndex": 0,
+            "x": 0.3471253910317529,
+            "feetY": -0.2176160121755092,
+            "z": 56.47135505755463,
+            "deckHeight": -0.2176160121755092,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2932.5,
+            "deckBoxIndex": 0,
+            "x": 0.3471425978671605,
+            "feetY": -0.18909393137907027,
+            "z": 56.472335701908115,
+            "deckHeight": -0.18909393137907027,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3033.800000011921,
+            "deckBoxIndex": 0,
+            "x": 0.3474336988746356,
+            "feetY": -0.1593352257675097,
+            "z": 56.473430426664734,
+            "deckHeight": -0.1593352257675097,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3135.099999964237,
+            "deckBoxIndex": 0,
+            "x": 0.3480011178394071,
+            "feetY": -0.12854118797654968,
+            "z": 56.474645969656756,
+            "deckHeight": -0.12854118797654968,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3236.300000011921,
+            "deckBoxIndex": 0,
+            "x": 0.34883738064876235,
+            "feetY": -0.09731540457948185,
+            "z": 56.47597472601524,
+            "deckHeight": -0.09731540457948185,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3337.199999988079,
+            "deckBoxIndex": 0,
+            "x": 0.3499460660279081,
+            "feetY": -0.06568117974519472,
+            "z": 56.47743245016735,
+            "deckHeight": -0.06568117974519472,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3438.300000011921,
+            "deckBoxIndex": 0,
+            "x": 0.3513205467549514,
+            "feetY": -0.03406484057776926,
+            "z": 56.47901959053047,
+            "deckHeight": -0.03406484057776926,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3538.800000011921,
+            "deckBoxIndex": 0,
+            "x": 0.35295430214991175,
+            "feetY": -0.0027913986821133108,
+            "z": 56.48073980022593,
+            "deckHeight": -0.0027913986821133108,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3640.599999964237,
+            "deckBoxIndex": 0,
+            "x": 0.35483855459484825,
+            "feetY": 0.027805694585650298,
+            "z": 56.482595535126144,
+            "deckHeight": 0.027805694585650298,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3741.699999988079,
+            "deckBoxIndex": 0,
+            "x": 0.35696424049319475,
+            "feetY": 0.05743259324813588,
+            "z": 56.48458952955579,
+            "deckHeight": 0.05743259324813588,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3842.800000011921,
+            "deckBoxIndex": 0,
+            "x": 0.3593105569374959,
+            "feetY": 0.08568089021599634,
+            "z": 56.48671394335843,
+            "deckHeight": 0.08568089021599634,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3944.399999976158,
+            "deckBoxIndex": 0,
+            "x": 0.3618671179676234,
+            "feetY": 0.11233700521049705,
+            "z": 56.4889704620955,
+            "deckHeight": 0.11233700521049705,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4047.800000011921,
+            "deckBoxIndex": 0,
+            "x": 0.3650892160367283,
+            "feetY": 0.14102524677920447,
+            "z": 56.49176017818817,
+            "deckHeight": 0.14102524677920447,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4148.399999976158,
+            "deckBoxIndex": 0,
+            "x": 0.3680196005723526,
+            "feetY": 0.16316046083828395,
+            "z": 56.494264717675954,
+            "deckHeight": 0.16316046083828395,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4248.5,
+            "deckBoxIndex": 0,
+            "x": 0.3710820715968799,
+            "feetY": 0.18281951457349566,
+            "z": 56.49686213391391,
+            "deckHeight": 0.18281951457349566,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4349.5,
+            "deckBoxIndex": 0,
+            "x": 0.3742524243393164,
+            "feetY": 0.19980787465553895,
+            "z": 56.4995384073942,
+            "deckHeight": 0.19980787465553895,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4450.199999988079,
+            "deckBoxIndex": 0,
+            "x": 0.377484307205719,
+            "feetY": 0.21386522214396442,
+            "z": 56.502259708735686,
+            "deckHeight": 0.21386522214396442,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4551.599999964237,
+            "deckBoxIndex": 0,
+            "x": 0.3807541939173227,
+            "feetY": 0.22487808840866097,
+            "z": 56.505010312685144,
+            "deckHeight": 0.22487808840866097,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4652.599999964237,
+            "deckBoxIndex": 0,
+            "x": 0.3840104029038369,
+            "feetY": 0.2326728046508303,
+            "z": 56.50774966458204,
+            "deckHeight": 0.2326728046508303,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4753.699999988079,
+            "deckBoxIndex": 0,
+            "x": 0.3872255536151994,
+            "feetY": 0.237177199475617,
+            "z": 56.51045660435647,
+            "deckHeight": 0.237177199475617,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4854.199999988079,
+            "deckBoxIndex": 0,
+            "x": 0.3903485019108479,
+            "feetY": 0.23830759522848965,
+            "z": 56.513089024266,
+            "deckHeight": 0.23830759522848965,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4955.899999976158,
+            "deckBoxIndex": 0,
+            "x": 0.3933378352192989,
+            "feetY": 0.23605048696940878,
+            "z": 56.51561217681202,
+            "deckHeight": 0.23605048696940878,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5056.899999976158,
+            "deckBoxIndex": 0,
+            "x": 0.3961610096975918,
+            "feetY": 0.2303952544761948,
+            "z": 56.51799814304512,
+            "deckHeight": 0.2303952544761948,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5158.300000011921,
+            "deckBoxIndex": 0,
+            "x": 0.3987692802809488,
+            "feetY": 0.22140745616389124,
+            "z": 56.520204806746094,
+            "deckHeight": 0.22140745616389124,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5259.599999964237,
+            "deckBoxIndex": 0,
+            "x": 0.40112543872132767,
+            "feetY": 0.20916631923332885,
+            "z": 56.522199441437685,
+            "deckHeight": 0.20916631923332885,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5361.300000011921,
+            "deckBoxIndex": 0,
+            "x": 0.40320116748947665,
+            "feetY": 0.19375375631689062,
+            "z": 56.5239566596585,
+            "deckHeight": 0.19375375631689062,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5464.5,
+            "deckBoxIndex": 0,
+            "x": 0.40521767533635344,
+            "feetY": 0.17202794336986948,
+            "z": 56.525661781986436,
+            "deckHeight": 0.17202794336986948,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5564.599999964237,
+            "deckBoxIndex": 0,
+            "x": 0.406572722824166,
+            "feetY": 0.15037197391736268,
+            "z": 56.52680399910201,
+            "deckHeight": 0.15037197391736268,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5666.5,
+            "deckBoxIndex": 0,
+            "x": 0.407560468238402,
+            "feetY": 0.1261266821639735,
+            "z": 56.527631114627965,
+            "deckHeight": 0.1261266821639735,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5767.300000011921,
+            "deckBoxIndex": 0,
+            "x": 0.4081630745561178,
+            "feetY": 0.09961261874597094,
+            "z": 56.52812728717508,
+            "deckHeight": 0.09961261874597094,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5868.300000011921,
+            "deckBoxIndex": 0,
+            "x": 0.4083734252244522,
+            "feetY": 0.07102250540087784,
+            "z": 56.52828607554129,
+            "deckHeight": 0.07102250540087784,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5968.899999976158,
+            "deckBoxIndex": 0,
+            "x": 0.4081873759586494,
+            "feetY": 0.04067256391448171,
+            "z": 56.5281040327739,
+            "deckHeight": 0.04067256391448171,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6070.099999964237,
+            "deckBoxIndex": 0,
+            "x": 0.40760704489291255,
+            "feetY": 0.008835705765366075,
+            "z": 56.52758341284628,
+            "deckHeight": 0.008835705765366075,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6170.800000011921,
+            "deckBoxIndex": 0,
+            "x": 0.4066438180677263,
+            "feetY": -0.024054183525930695,
+            "z": 56.526734863827954,
+            "deckHeight": -0.024054183525930695,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6272.5,
+            "deckBoxIndex": 0,
+            "x": 0.40531190957248997,
+            "feetY": -0.0577340111494008,
+            "z": 56.52557164983866,
+            "deckHeight": -0.0577340111494008,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6373,
+            "deckBoxIndex": 0,
+            "x": 0.4036263460520302,
+            "feetY": -0.09195892104680914,
+            "z": 56.52410796376631,
+            "deckHeight": -0.09195892104680914,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6473.599999964237,
+            "deckBoxIndex": 0,
+            "x": 0.40162082151007406,
+            "feetY": -0.12620784953316566,
+            "z": 56.52237429677558,
+            "deckHeight": -0.12620784953316566,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6574.599999964237,
+            "deckBoxIndex": 0,
+            "x": 0.3993250674248956,
+            "feetY": -0.160162970948862,
+            "z": 56.52039763221643,
+            "deckHeight": -0.160162970948862,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          }
+        ],
+        "contactSamples": 48,
+        "wetSamples": 0,
+        "serverSamples": 48,
+        "outOfDeckSamples": 0,
+        "minFeet": -0.38513516479479826,
+        "maxFeet": 0.23830759522848965,
+        "maxDeckContactError": 0,
+        "alive": true,
+        "serverAlive": true,
+        "lowDeckThresholdExercised": true,
+        "passed": true
+      },
+      {
+        "name": "RIG_FERRIS_HARBOR_BOAT_LAUNCH",
+        "contactSurface": "designated-deck",
+        "plannedTrack": {
+          "id": "launch",
+          "x": -9.8,
+          "z": 49.4,
+          "source": "client/tests/helpers/candidateHarborFleet.ts:FLEET_TRACKS"
+        },
+        "selectedDeck": {
+          "boxIndex": 1,
+          "selectionRule": "lowest-usable-plane-at-fixed-track",
+          "boundsAtSelection": {
+            "min": [
+              -11.460295825544966,
+              -1.416721648344615,
+              48.24430971755272
+            ],
+            "max": [
+              -4.539704173376058,
+              -0.07215361954454369,
+              50.55569333472096
+            ]
+          },
+          "heightAtSelection": -0.17690732293669864,
+          "spawn": {
+            "x": -9.8,
+            "feetY": 0.02309267706330137,
+            "z": 49.4
+          },
+          "spawnDrop": 0.2
+        },
+        "deckSamples": [
+          {
+            "elapsedMs": 1823.8999999761581,
+            "deckBoxIndex": 1,
+            "x": -9.781815880404155,
+            "feetY": -0.08677906603174312,
+            "z": 49.41535426912211,
+            "deckHeight": -0.08677906603174312,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 1925.1000000238419,
+            "deckBoxIndex": 1,
+            "x": -9.780764958058532,
+            "feetY": -0.09248359547951301,
+            "z": 49.41589389287056,
+            "deckHeight": -0.09248359547951301,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2026,
+            "deckBoxIndex": 1,
+            "x": -9.779799136127014,
+            "feetY": -0.09934726535977623,
+            "z": 49.41635279376717,
+            "deckHeight": -0.09934726535977623,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2126.699999988079,
+            "deckBoxIndex": 1,
+            "x": -9.778934794282813,
+            "feetY": -0.10727978753587175,
+            "z": 49.41672322892245,
+            "deckHeight": -0.10727978753587175,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2227.100000023842,
+            "deckBoxIndex": 1,
+            "x": -9.778180597613401,
+            "feetY": -0.11623104090002823,
+            "z": 49.417001361789175,
+            "deckHeight": -0.11623104090002823,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2327.899999976158,
+            "deckBoxIndex": 1,
+            "x": -9.777547569891132,
+            "feetY": -0.12611073589080335,
+            "z": 49.41718263884126,
+            "deckHeight": -0.12611073589080335,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2429.100000023842,
+            "deckBoxIndex": 1,
+            "x": -9.777041726305349,
+            "feetY": -0.13689347139635888,
+            "z": 49.4172641444912,
+            "deckHeight": -0.13689347139635888,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2530.199999988079,
+            "deckBoxIndex": 1,
+            "x": -9.776677611014312,
+            "feetY": -0.14827456193871935,
+            "z": 49.41724328207246,
+            "deckHeight": -0.14827456193871935,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2631.899999976158,
+            "deckBoxIndex": 1,
+            "x": -9.776453529845599,
+            "feetY": -0.16031771414193208,
+            "z": 49.41712000719846,
+            "deckHeight": -0.16031771414193208,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2732.899999976158,
+            "deckBoxIndex": 1,
+            "x": -9.776374618793627,
+            "feetY": -0.17288358701610285,
+            "z": 49.416894047903796,
+            "deckHeight": -0.17288358701610285,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2834.100000023842,
+            "deckBoxIndex": 1,
+            "x": -9.776442706861188,
+            "feetY": -0.18579245192782035,
+            "z": 49.41656792529713,
+            "deckHeight": -0.18579245192782035,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2935.399999976158,
+            "deckBoxIndex": 1,
+            "x": -9.7766576520767,
+            "feetY": -0.1989711561455496,
+            "z": 49.41614316066624,
+            "deckHeight": -0.1989711561455496,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3035.899999976158,
+            "deckBoxIndex": 1,
+            "x": -9.777016258184705,
+            "feetY": -0.21222889283952073,
+            "z": 49.41562543357533,
+            "deckHeight": -0.21222889283952073,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3137.699999988079,
+            "deckBoxIndex": 1,
+            "x": -9.777516291882748,
+            "feetY": -0.22550421457824776,
+            "z": 49.41501711769932,
+            "deckHeight": -0.22550421457824776,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3240.199999988079,
+            "deckBoxIndex": 1,
+            "x": -9.77826550889987,
+            "feetY": -0.24070550233767907,
+            "z": 49.41420666803778,
+            "deckHeight": -0.24070550233767907,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3341.199999988079,
+            "deckBoxIndex": 1,
+            "x": -9.779045458558226,
+            "feetY": -0.2534435884686407,
+            "z": 49.41342861002634,
+            "deckHeight": -0.2534435884686407,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3442.300000011921,
+            "deckBoxIndex": 1,
+            "x": -9.779939786899565,
+            "feetY": -0.2657164313936574,
+            "z": 49.41258478837097,
+            "deckHeight": -0.2657164313936574,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3543,
+            "deckBoxIndex": 1,
+            "x": -9.780938173520537,
+            "feetY": -0.2774101691914074,
+            "z": 49.41168302780106,
+            "deckHeight": -0.2774101691914074,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3643.800000011921,
+            "deckBoxIndex": 1,
+            "x": -9.78202834349434,
+            "feetY": -0.2884033971121678,
+            "z": 49.41073238136186,
+            "deckHeight": -0.2884033971121678,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3744.699999988079,
+            "deckBoxIndex": 1,
+            "x": -9.783196982047784,
+            "feetY": -0.29857962869363996,
+            "z": 49.40974223694697,
+            "deckHeight": -0.29857962869363996,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3845.600000023842,
+            "deckBoxIndex": 1,
+            "x": -9.784429943963822,
+            "feetY": -0.30783074374905106,
+            "z": 49.408722163948156,
+            "deckHeight": -0.30783074374905106,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3946.300000011921,
+            "deckBoxIndex": 1,
+            "x": -9.785711168813723,
+            "feetY": -0.3160498441801276,
+            "z": 49.407682810384024,
+            "deckHeight": -0.3160498441801276,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4047.300000011921,
+            "deckBoxIndex": 1,
+            "x": -9.787029412770737,
+            "feetY": -0.3231709798501786,
+            "z": 49.40663052301656,
+            "deckHeight": -0.3231709798501786,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4148.5,
+            "deckBoxIndex": 1,
+            "x": -9.788365444362649,
+            "feetY": -0.3290930530029199,
+            "z": 49.405577689326655,
+            "deckHeight": -0.3290930530029199,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4250.100000023842,
+            "deckBoxIndex": 1,
+            "x": -9.789705278528729,
+            "feetY": -0.3337575112670481,
+            "z": 49.40453214644037,
+            "deckHeight": -0.3337575112670481,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4351.300000011921,
+            "deckBoxIndex": 1,
+            "x": -9.791036501290733,
+            "feetY": -0.33711561699494463,
+            "z": 49.40350027959405,
+            "deckHeight": -0.33711561699494463,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4452.300000011921,
+            "deckBoxIndex": 1,
+            "x": -9.792339146470178,
+            "feetY": -0.33911526181913143,
+            "z": 49.402494103173744,
+            "deckHeight": -0.33911526181913143,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4553.100000023842,
+            "deckBoxIndex": 1,
+            "x": -9.79359937226338,
+            "feetY": -0.3397391403518828,
+            "z": 49.4015207347605,
+            "deckHeight": -0.3397391403518828,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4653.600000023842,
+            "deckBoxIndex": 1,
+            "x": -9.794812482301472,
+            "feetY": -0.3389694691333496,
+            "z": 49.400580152592,
+            "deckHeight": -0.3389694691333496,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4757.199999988079,
+            "deckBoxIndex": 1,
+            "x": -9.796135564889228,
+            "feetY": -0.33634006800183835,
+            "z": 49.399544711556175,
+            "deckHeight": -0.33634006800183835,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4857.800000011921,
+            "deckBoxIndex": 1,
+            "x": -9.797189468726765,
+            "feetY": -0.33258823699659057,
+            "z": 49.39870698561398,
+            "deckHeight": -0.33258823699659057,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4959.100000023842,
+            "deckBoxIndex": 1,
+            "x": -9.798153026996886,
+            "feetY": -0.3275134491263919,
+            "z": 49.397924368897954,
+            "deckHeight": -0.3275134491263919,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5059.899999976158,
+            "deckBoxIndex": 1,
+            "x": -9.799019795544794,
+            "feetY": -0.32114081833222363,
+            "z": 49.397198598869295,
+            "deckHeight": -0.32114081833222363,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5161.300000011921,
+            "deckBoxIndex": 1,
+            "x": -9.799776174791198,
+            "feetY": -0.313589324287068,
+            "z": 49.39653790599525,
+            "deckHeight": -0.313589324287068,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5262.300000011921,
+            "deckBoxIndex": 1,
+            "x": -9.800422305571988,
+            "feetY": -0.30485728034922654,
+            "z": 49.39593916946439,
+            "deckHeight": -0.30485728034922654,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5363.100000023842,
+            "deckBoxIndex": 1,
+            "x": -9.800948789310935,
+            "feetY": -0.2950775890777909,
+            "z": 49.39540816288079,
+            "deckHeight": -0.2950775890777909,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5464.100000023842,
+            "deckBoxIndex": 1,
+            "x": -9.801351854663267,
+            "feetY": -0.2843392645687034,
+            "z": 49.39494636155251,
+            "deckHeight": -0.2843392645687034,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5565.899999976158,
+            "deckBoxIndex": 1,
+            "x": -9.80162800193076,
+            "feetY": -0.27276442246020993,
+            "z": 49.3945558925956,
+            "deckHeight": -0.27276442246020993,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5667.300000011921,
+            "deckBoxIndex": 1,
+            "x": -9.801775763023253,
+            "feetY": -0.26043343694982557,
+            "z": 49.39423717585164,
+            "deckHeight": -0.26043343694982557,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5767.800000011921,
+            "deckBoxIndex": 1,
+            "x": -9.801793573011137,
+            "feetY": -0.24751124543678893,
+            "z": 49.393992509210676,
+            "deckHeight": -0.24751124543678893,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5869.300000011921,
+            "deckBoxIndex": 1,
+            "x": -9.801681534953625,
+            "feetY": -0.2340901302394136,
+            "z": 49.39382228097183,
+            "deckHeight": -0.2340901302394136,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5973.5,
+            "deckBoxIndex": 1,
+            "x": -9.801389108605408,
+            "feetY": -0.21805007148943545,
+            "z": 49.393719616950484,
+            "deckHeight": -0.21805007148943545,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6073.699999988079,
+            "deckBoxIndex": 1,
+            "x": -9.801003844063079,
+            "feetY": -0.20414716195988647,
+            "z": 49.39371406246016,
+            "deckHeight": -0.20414716195988647,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6174.699999988079,
+            "deckBoxIndex": 1,
+            "x": -9.800496886393532,
+            "feetY": -0.19019434362785292,
+            "z": 49.3937848863153,
+            "deckHeight": -0.19019434362785292,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6275.899999976158,
+            "deckBoxIndex": 1,
+            "x": -9.799873283323207,
+            "feetY": -0.17635198857521328,
+            "z": 49.39393241261863,
+            "deckHeight": -0.17635198857521328,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6376.899999976158,
+            "deckBoxIndex": 1,
+            "x": -9.799142079271977,
+            "feetY": -0.16281962913245573,
+            "z": 49.394155572910876,
+            "deckHeight": -0.16281962913245573,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6478.100000023842,
+            "deckBoxIndex": 1,
+            "x": -9.798307115863938,
+            "feetY": -0.14966912842176838,
+            "z": 49.39445477110189,
+            "deckHeight": -0.14966912842176838,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6578.800000011921,
+            "deckBoxIndex": 1,
+            "x": -9.797378203588188,
+            "feetY": -0.13706483704118366,
+            "z": 49.394828629843566,
+            "deckHeight": -0.13706483704118366,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          }
+        ],
+        "contactSamples": 48,
+        "wetSamples": 0,
+        "serverSamples": 48,
+        "outOfDeckSamples": 0,
+        "minFeet": -0.3397391403518828,
+        "maxFeet": -0.08677906603174312,
+        "maxDeckContactError": 0,
+        "alive": true,
+        "serverAlive": true,
+        "lowDeckThresholdExercised": true,
+        "passed": true
+      },
+      {
+        "name": "RIG_FERRIS_HARBOR_BOAT_SKIFF_GREEN",
+        "contactSurface": "designated-deck",
+        "plannedTrack": {
+          "id": "skiff-green",
+          "x": 17.5,
+          "z": 48.7,
+          "source": "client/tests/helpers/candidateHarborFleet.ts:FLEET_TRACKS"
+        },
+        "selectedDeck": {
+          "boxIndex": 0,
+          "selectionRule": "lowest-usable-plane-at-fixed-track",
+          "boundsAtSelection": {
+            "min": [
+              15.94203731699813,
+              -1.409813323225537,
+              47.99415262600749
+            ],
+            "max": [
+              20.055516220120374,
+              -0.32114313863385346,
+              49.40416371553327
+            ]
+          },
+          "heightAtSelection": -0.34863930221888156,
+          "spawn": {
+            "x": 17.5,
+            "feetY": -0.14863930221888155,
+            "z": 48.7
+          },
+          "spawnDrop": 0.2
+        },
+        "deckSamples": [
+          {
+            "elapsedMs": 1818.800000011921,
+            "deckBoxIndex": 0,
+            "x": 17.495124252759233,
+            "feetY": -0.4926638899095373,
+            "z": 48.690517107730706,
+            "deckHeight": -0.4926638899095373,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 1920,
+            "deckBoxIndex": 0,
+            "x": 17.494304349449667,
+            "feetY": -0.49317691433169003,
+            "z": 48.69011671611317,
+            "deckHeight": -0.49317691433169003,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 2020.5,
+            "deckBoxIndex": 0,
+            "x": 17.49347864896756,
+            "feetY": -0.49241673425377347,
+            "z": 48.68975817406958,
+            "deckHeight": -0.49241673425377347,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 2121.900000035763,
+            "deckBoxIndex": 0,
+            "x": 17.492650304310416,
+            "feetY": -0.49037318542360125,
+            "z": 48.689441391743834,
+            "deckHeight": -0.49037318542360125,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 2222.900000035763,
+            "deckBoxIndex": 0,
+            "x": 17.49183236167426,
+            "feetY": -0.48705505743572286,
+            "z": 48.689170328630354,
+            "deckHeight": -0.48705505743572286,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2323.300000011921,
+            "deckBoxIndex": 0,
+            "x": 17.491032825861772,
+            "feetY": -0.4824769335067096,
+            "z": 48.68894666390285,
+            "deckHeight": -0.4824769335067096,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2423.800000011921,
+            "deckBoxIndex": 0,
+            "x": 17.490263444747402,
+            "feetY": -0.4766903960446839,
+            "z": 48.688772854819284,
+            "deckHeight": -0.4766903960446839,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2525.2000000476837,
+            "deckBoxIndex": 0,
+            "x": 17.48953091170328,
+            "feetY": -0.4697299657528103,
+            "z": 48.68864980476061,
+            "deckHeight": -0.4697299657528103,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2628.100000023842,
+            "deckBoxIndex": 0,
+            "x": 17.488735097838973,
+            "feetY": -0.46021966039211,
+            "z": 48.68857214111852,
+            "deckHeight": -0.46021966039211,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2729.300000011921,
+            "deckBoxIndex": 0,
+            "x": 17.48811295193584,
+            "feetY": -0.4509707050002542,
+            "z": 48.6885629534509,
+            "deckHeight": -0.4509707050002542,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2830.5,
+            "deckBoxIndex": 0,
+            "x": 17.487553773718172,
+            "feetY": -0.440805739532225,
+            "z": 48.68860711606324,
+            "deckHeight": -0.440805739532225,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2930.600000023842,
+            "deckBoxIndex": 0,
+            "x": 17.487064212975923,
+            "feetY": -0.42982993722731344,
+            "z": 48.68870465674794,
+            "deckHeight": -0.42982993722731344,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3031.2000000476837,
+            "deckBoxIndex": 0,
+            "x": 17.4866501538573,
+            "feetY": -0.4181588630530059,
+            "z": 48.688855265628554,
+            "deckHeight": -0.4181588630530059,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3132.2000000476837,
+            "deckBoxIndex": 0,
+            "x": 17.48631666060954,
+            "feetY": -0.4059171558070734,
+            "z": 48.6890583022067,
+            "deckHeight": -0.4059171558070734,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3232.800000011921,
+            "deckBoxIndex": 0,
+            "x": 17.48606772691173,
+            "feetY": -0.3932234224641497,
+            "z": 48.68931308168898,
+            "deckHeight": -0.3932234224641497,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3333.7000000476837,
+            "deckBoxIndex": 0,
+            "x": 17.48590726417844,
+            "feetY": -0.38025706697488376,
+            "z": 48.68961748123104,
+            "deckHeight": -0.38025706697488376,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3435,
+            "deckBoxIndex": 0,
+            "x": 17.485837020650866,
+            "feetY": -0.3671220875524547,
+            "z": 48.68997074283238,
+            "deckHeight": -0.3671220875524547,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3536,
+            "deckBoxIndex": 0,
+            "x": 17.485858813863086,
+            "feetY": -0.3539340763433638,
+            "z": 48.69037194579021,
+            "deckHeight": -0.3539340763433638,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3637.2000000476837,
+            "deckBoxIndex": 0,
+            "x": 17.48597295149679,
+            "feetY": -0.34092143827228727,
+            "z": 48.690816466235646,
+            "deckHeight": -0.34092143827228727,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3738.2000000476837,
+            "deckBoxIndex": 0,
+            "x": 17.486178063302326,
+            "feetY": -0.32822759772084464,
+            "z": 48.69130138930757,
+            "deckHeight": -0.32822759772084464,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3839.7000000476837,
+            "deckBoxIndex": 0,
+            "x": 17.486474204115527,
+            "feetY": -0.3159089758958031,
+            "z": 48.691827351262575,
+            "deckHeight": -0.3159089758958031,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3940.300000011921,
+            "deckBoxIndex": 0,
+            "x": 17.48685780106902,
+            "feetY": -0.3041698929075235,
+            "z": 48.692388762547886,
+            "deckHeight": -0.3041698929075235,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4041.5,
+            "deckBoxIndex": 0,
+            "x": 17.487325133080013,
+            "feetY": -0.2931404619122429,
+            "z": 48.69298207851616,
+            "deckHeight": -0.2931404619122429,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4144.700000047684,
+            "deckBoxIndex": 0,
+            "x": 17.487971599999508,
+            "feetY": -0.2813092862772448,
+            "z": 48.693711258965216,
+            "deckHeight": -0.2813092862772448,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4245.800000011921,
+            "deckBoxIndex": 0,
+            "x": 17.488605582418504,
+            "feetY": -0.27220808203423585,
+            "z": 48.6943623898307,
+            "deckHeight": -0.27220808203423585,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4346.600000023842,
+            "deckBoxIndex": 0,
+            "x": 17.48930676870883,
+            "feetY": -0.2641767460787953,
+            "z": 48.69503319839094,
+            "deckHeight": -0.2641767460787953,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4448,
+            "deckBoxIndex": 0,
+            "x": 17.490070366030732,
+            "feetY": -0.25728865266093126,
+            "z": 48.695721131838795,
+            "deckHeight": -0.25728865266093126,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4548.600000023842,
+            "deckBoxIndex": 0,
+            "x": 17.490881358694534,
+            "feetY": -0.2516859417710958,
+            "z": 48.6964150904829,
+            "deckHeight": -0.2516859417710958,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4650.100000023842,
+            "deckBoxIndex": 0,
+            "x": 17.491739118688233,
+            "feetY": -0.2473726206165907,
+            "z": 48.697116909120794,
+            "deckHeight": -0.2473726206165907,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4751.300000011921,
+            "deckBoxIndex": 0,
+            "x": 17.49262854330607,
+            "feetY": -0.24443882860468197,
+            "z": 48.697816426228414,
+            "deckHeight": -0.24443882860468197,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4852.5,
+            "deckBoxIndex": 0,
+            "x": 17.493545263169036,
+            "feetY": -0.2428960326651452,
+            "z": 48.69851241263908,
+            "deckHeight": -0.2428960326651452,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4953.900000035763,
+            "deckBoxIndex": 0,
+            "x": 17.494474638784123,
+            "feetY": -0.24278566939273843,
+            "z": 48.69919585363647,
+            "deckHeight": -0.24278566939273843,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5055,
+            "deckBoxIndex": 0,
+            "x": 17.495409042033145,
+            "feetY": -0.24410546948985928,
+            "z": 48.69986322405323,
+            "deckHeight": -0.24410546948985928,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5155.300000011921,
+            "deckBoxIndex": 0,
+            "x": 17.49633790040558,
+            "feetY": -0.24685297288191205,
+            "z": 48.70050886408262,
+            "deckHeight": -0.24685297288191205,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5255.600000023842,
+            "deckBoxIndex": 0,
+            "x": 17.497248741964977,
+            "feetY": -0.25099542432128985,
+            "z": 48.70112593226608,
+            "deckHeight": -0.25099542432128985,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5356.800000011921,
+            "deckBoxIndex": 0,
+            "x": 17.498133718269987,
+            "feetY": -0.2565058854495922,
+            "z": 48.701710785202934,
+            "deckHeight": -0.2565058854495922,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5457.5,
+            "deckBoxIndex": 0,
+            "x": 17.498977348275957,
+            "feetY": -0.26329625883512375,
+            "z": 48.70225477989312,
+            "deckHeight": -0.26329625883512375,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5561.100000023842,
+            "deckBoxIndex": 0,
+            "x": 17.49990200409592,
+            "feetY": -0.2727716990203531,
+            "z": 48.702834999115176,
+            "deckHeight": -0.2727716990203531,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5662.600000023842,
+            "deckBoxIndex": 0,
+            "x": 17.50063194862364,
+            "feetY": -0.2821266695117716,
+            "z": 48.70327976652163,
+            "deckHeight": -0.2821266695117716,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5762.700000047684,
+            "deckBoxIndex": 0,
+            "x": 17.501294445749178,
+            "feetY": -0.29251185929579626,
+            "z": 48.70367122133881,
+            "deckHeight": -0.29251185929579626,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5863.400000035763,
+            "deckBoxIndex": 0,
+            "x": 17.50188264348761,
+            "feetY": -0.30383951660247427,
+            "z": 48.70400614924,
+            "deckHeight": -0.30383951660247427,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5964.700000047684,
+            "deckBoxIndex": 0,
+            "x": 17.502386637341882,
+            "feetY": -0.3159333208125026,
+            "z": 48.704279634828715,
+            "deckHeight": -0.3159333208125026,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6065.600000023842,
+            "deckBoxIndex": 0,
+            "x": 17.502802567528317,
+            "feetY": -0.3287075472964712,
+            "z": 48.7044901656,
+            "deckHeight": -0.3287075472964712,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6166.100000023842,
+            "deckBoxIndex": 0,
+            "x": 17.50312452690393,
+            "feetY": -0.34200300730890804,
+            "z": 48.70463511793654,
+            "deckHeight": -0.34200300730890804,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6267.200000047684,
+            "deckBoxIndex": 0,
+            "x": 17.503349185495473,
+            "feetY": -0.3557030382471408,
+            "z": 48.70471319157478,
+            "deckHeight": -0.3557030382471408,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6367.900000035763,
+            "deckBoxIndex": 0,
+            "x": 17.50347335804271,
+            "feetY": -0.36964941722503436,
+            "z": 48.70472325746121,
+            "deckHeight": -0.36964941722503436,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6468.300000011921,
+            "deckBoxIndex": 0,
+            "x": 17.503495430736535,
+            "feetY": -0.3836941890843995,
+            "z": 48.704665022329955,
+            "deckHeight": -0.3836941890843995,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6569.800000011921,
+            "deckBoxIndex": 0,
+            "x": 17.503414882277237,
+            "feetY": -0.397702721053451,
+            "z": 48.70453869785154,
+            "deckHeight": -0.397702721053451,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          }
+        ],
+        "contactSamples": 48,
+        "wetSamples": 0,
+        "serverSamples": 44,
+        "outOfDeckSamples": 0,
+        "minFeet": -0.49317691433169003,
+        "maxFeet": -0.24278566939273843,
+        "maxDeckContactError": 0,
+        "alive": true,
+        "serverAlive": true,
+        "lowDeckThresholdExercised": true,
+        "passed": true
+      },
+      {
+        "name": "RIG_FERRIS_HARBOR_BOAT_SKIFF_RED",
+        "contactSurface": "designated-deck",
+        "plannedTrack": {
+          "id": "skiff-red",
+          "x": -15.5,
+          "z": 48.6,
+          "source": "client/tests/helpers/candidateHarborFleet.ts:FLEET_TRACKS"
+        },
+        "selectedDeck": {
+          "boxIndex": 0,
+          "selectionRule": "lowest-usable-plane-at-fixed-track",
+          "boundsAtSelection": {
+            "min": [
+              -17.057118289194076,
+              -1.4340056075323697,
+              47.89480734372257
+            ],
+            "max": [
+              -12.945061613227619,
+              -0.3479904433319277,
+              49.30730948355058
+            ]
+          },
+          "heightAtSelection": -0.37489209257114037,
+          "spawn": {
+            "x": -15.5,
+            "feetY": -0.17489209257114036,
+            "z": 48.6
+          },
+          "spawnDrop": 0.2
+        },
+        "deckSamples": [
+          {
+            "elapsedMs": 1816.199999988079,
+            "deckBoxIndex": 0,
+            "x": -15.508488182671874,
+            "feetY": -0.40314052539860373,
+            "z": 48.60656674353224,
+            "deckHeight": -0.40314052539860373,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 1916.6000000238419,
+            "deckBoxIndex": 0,
+            "x": -15.508936772774383,
+            "feetY": -0.39911828169496644,
+            "z": 48.60696666018125,
+            "deckHeight": -0.39911828169496644,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 2018.300000011921,
+            "deckBoxIndex": 0,
+            "x": -15.50933532589698,
+            "feetY": -0.3946345586375477,
+            "z": 48.60735878456931,
+            "deckHeight": -0.3946345586375477,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 2120.300000011921,
+            "deckBoxIndex": 0,
+            "x": -15.509676035482713,
+            "feetY": -0.38977970155817154,
+            "z": 48.60773897238898,
+            "deckHeight": -0.38977970155817154,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 2221.199999988079,
+            "deckBoxIndex": 0,
+            "x": -15.509955728296436,
+            "feetY": -0.38460332156502963,
+            "z": 48.608107001224,
+            "deckHeight": -0.38460332156502963,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 2324.5,
+            "deckBoxIndex": 0,
+            "x": -15.5101991209808,
+            "feetY": -0.3782659516181191,
+            "z": 48.608517936340654,
+            "deckHeight": -0.3782659516181191,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 2424.600000023842,
+            "deckBoxIndex": 0,
+            "x": -15.510333504284898,
+            "feetY": -0.3726545802755399,
+            "z": 48.60885310343164,
+            "deckHeight": -0.3726545802755399,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 2525.699999988079,
+            "deckBoxIndex": 0,
+            "x": -15.51039662764549,
+            "feetY": -0.3669836349697824,
+            "z": 48.60916955023282,
+            "deckHeight": -0.3669836349697824,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 2625.900000035763,
+            "deckBoxIndex": 0,
+            "x": -15.510387502073709,
+            "feetY": -0.361316909664846,
+            "z": 48.60946653837093,
+            "deckHeight": -0.361316909664846,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 2726.699999988079,
+            "deckBoxIndex": 0,
+            "x": -15.510305508449386,
+            "feetY": -0.3557373990954081,
+            "z": 48.60974230322085,
+            "deckHeight": -0.3557373990954081,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2827.800000011921,
+            "deckBoxIndex": 0,
+            "x": -15.510151490967056,
+            "feetY": -0.35034655084605537,
+            "z": 48.609994366210984,
+            "deckHeight": -0.35034655084605537,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2928.199999988079,
+            "deckBoxIndex": 0,
+            "x": -15.509926475440842,
+            "feetY": -0.34520675053563177,
+            "z": 48.61022185535988,
+            "deckHeight": -0.34520675053563177,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3028.900000035763,
+            "deckBoxIndex": 0,
+            "x": -15.50963186109057,
+            "feetY": -0.34038734807620386,
+            "z": 48.61042343210874,
+            "deckHeight": -0.34038734807620386,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3130.199999988079,
+            "deckBoxIndex": 0,
+            "x": -15.509273327477633,
+            "feetY": -0.3360051296255241,
+            "z": 48.61059597206814,
+            "deckHeight": -0.3360051296255241,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3230.800000011921,
+            "deckBoxIndex": 0,
+            "x": -15.508853067654972,
+            "feetY": -0.33209994878177546,
+            "z": 48.610739136937305,
+            "deckHeight": -0.33209994878177546,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3331.800000011921,
+            "deckBoxIndex": 0,
+            "x": -15.508378177900024,
+            "feetY": -0.3287543563536595,
+            "z": 48.61085087534613,
+            "deckHeight": -0.3287543563536595,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3433.800000011921,
+            "deckBoxIndex": 0,
+            "x": -15.50784646433132,
+            "feetY": -0.32597276998824415,
+            "z": 48.61093113392452,
+            "deckHeight": -0.32597276998824415,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3534.699999988079,
+            "deckBoxIndex": 0,
+            "x": -15.507275153547658,
+            "feetY": -0.32388202950124595,
+            "z": 48.61097689209321,
+            "deckHeight": -0.32388202950124595,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3636.699999988079,
+            "deckBoxIndex": 0,
+            "x": -15.506660966844056,
+            "feetY": -0.3224722522789344,
+            "z": 48.61098789145495,
+            "deckHeight": -0.3224722522789344,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3736.900000035763,
+            "deckBoxIndex": 0,
+            "x": -15.506021089602402,
+            "feetY": -0.3218119610586081,
+            "z": 48.61096292706899,
+            "deckHeight": -0.3218119610586081,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3838.199999988079,
+            "deckBoxIndex": 0,
+            "x": -15.50535320683516,
+            "feetY": -0.321908446929915,
+            "z": 48.61090072683347,
+            "deckHeight": -0.321908446929915,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3938.800000011921,
+            "deckBoxIndex": 0,
+            "x": -15.504676917306819,
+            "feetY": -0.32278349016875313,
+            "z": 48.61080173093292,
+            "deckHeight": -0.32278349016875313,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4041.300000011921,
+            "deckBoxIndex": 0,
+            "x": -15.50387419695482,
+            "feetY": -0.32480623319546414,
+            "z": 48.610636995013486,
+            "deckHeight": -0.32480623319546414,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4142.300000011921,
+            "deckBoxIndex": 0,
+            "x": -15.503193637372743,
+            "feetY": -0.3273837355518481,
+            "z": 48.610455016933656,
+            "deckHeight": -0.3273837355518481,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4242.900000035763,
+            "deckBoxIndex": 0,
+            "x": -15.50252569440228,
+            "feetY": -0.3307311270011376,
+            "z": 48.610234737883005,
+            "deckHeight": -0.3307311270011376,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4343.600000023842,
+            "deckBoxIndex": 0,
+            "x": -15.50187987353523,
+            "feetY": -0.33482301266408376,
+            "z": 48.60997671018729,
+            "deckHeight": -0.33482301266408376,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4444.5,
+            "deckBoxIndex": 0,
+            "x": -15.501264223756113,
+            "feetY": -0.3396310778313921,
+            "z": 48.609681317415706,
+            "deckHeight": -0.3396310778313921,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4545.900000035763,
+            "deckBoxIndex": 0,
+            "x": -15.500688889193718,
+            "feetY": -0.34509569075690255,
+            "z": 48.6093505184533,
+            "deckHeight": -0.34509569075690255,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4646.900000035763,
+            "deckBoxIndex": 0,
+            "x": -15.50015952250748,
+            "feetY": -0.3511876046318925,
+            "z": 48.6089843422728,
+            "deckHeight": -0.3511876046318925,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4747.600000023842,
+            "deckBoxIndex": 0,
+            "x": -15.499685210777805,
+            "feetY": -0.35782793388010725,
+            "z": 48.60858552548449,
+            "deckHeight": -0.35782793388010725,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4849.300000011921,
+            "deckBoxIndex": 0,
+            "x": -15.499272581577188,
+            "feetY": -0.3649458243576638,
+            "z": 48.608156193952055,
+            "deckHeight": -0.3649458243576638,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4950.300000011921,
+            "deckBoxIndex": 0,
+            "x": -15.498926571510049,
+            "feetY": -0.3724910854779897,
+            "z": 48.60769737987057,
+            "deckHeight": -0.3724910854779897,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5051.400000035763,
+            "deckBoxIndex": 0,
+            "x": -15.498653586500364,
+            "feetY": -0.38035598008533394,
+            "z": 48.60721310829119,
+            "deckHeight": -0.38035598008533394,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5151.800000011921,
+            "deckBoxIndex": 0,
+            "x": -15.49845762034443,
+            "feetY": -0.38846324931041293,
+            "z": 48.60670593727891,
+            "deckHeight": -0.38846324931041293,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5253,
+            "deckBoxIndex": 0,
+            "x": -15.49834208968711,
+            "feetY": -0.3967208779766844,
+            "z": 48.6061791598644,
+            "deckHeight": -0.3967208779766844,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5353.300000011921,
+            "deckBoxIndex": 0,
+            "x": -15.498309400156288,
+            "feetY": -0.4050350187143536,
+            "z": 48.605636333904755,
+            "deckHeight": -0.4050350187143536,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5455.199999988079,
+            "deckBoxIndex": 0,
+            "x": -15.498360906626202,
+            "feetY": -0.41330618585122225,
+            "z": 48.60508125155357,
+            "deckHeight": -0.41330618585122225,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5558,
+            "deckBoxIndex": 0,
+            "x": -15.498527595576284,
+            "feetY": -0.42276854680040626,
+            "z": 48.60442387699057,
+            "deckHeight": -0.42276854680040626,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5658.199999988079,
+            "deckBoxIndex": 0,
+            "x": -15.498761253708048,
+            "feetY": -0.4306235524952264,
+            "z": 48.60385557703696,
+            "deckHeight": -0.4306235524952264,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5759.300000011921,
+            "deckBoxIndex": 0,
+            "x": -15.499075724129957,
+            "feetY": -0.43811123636185967,
+            "z": 48.60328928858284,
+            "deckHeight": -0.43811123636185967,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5860.199999988079,
+            "deckBoxIndex": 0,
+            "x": -15.499468706790244,
+            "feetY": -0.445163093827253,
+            "z": 48.60272766088167,
+            "deckHeight": -0.445163093827253,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5961.400000035763,
+            "deckBoxIndex": 0,
+            "x": -15.49993578423943,
+            "feetY": -0.4516799781117056,
+            "z": 48.60217563634132,
+            "deckHeight": -0.4516799781117056,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6062.699999988079,
+            "deckBoxIndex": 0,
+            "x": -15.500471846222618,
+            "feetY": -0.457575265034221,
+            "z": 48.601637564122036,
+            "deckHeight": -0.457575265034221,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6163.600000023842,
+            "deckBoxIndex": 0,
+            "x": -15.50107088076197,
+            "feetY": -0.46277074260871737,
+            "z": 48.60111772230418,
+            "deckHeight": -0.46277074260871737,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6264.5,
+            "deckBoxIndex": 0,
+            "x": -15.501726052518316,
+            "feetY": -0.4671907856587224,
+            "z": 48.60062027342597,
+            "deckHeight": -0.4671907856587224,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6365.900000035763,
+            "deckBoxIndex": 0,
+            "x": -15.502430518015291,
+            "feetY": -0.4707736429322904,
+            "z": 48.60014876571728,
+            "deckHeight": -0.4707736429322904,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6466.800000011921,
+            "deckBoxIndex": 0,
+            "x": -15.503174660174304,
+            "feetY": -0.473453302228436,
+            "z": 48.59970795214624,
+            "deckHeight": -0.473453302228436,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6567,
+            "deckBoxIndex": 0,
+            "x": -15.503949642930102,
+            "feetY": -0.47518543969543475,
+            "z": 48.59930131200762,
+            "deckHeight": -0.47518543969543475,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          }
+        ],
+        "contactSamples": 48,
+        "wetSamples": 0,
+        "serverSamples": 39,
+        "outOfDeckSamples": 0,
+        "minFeet": -0.47518543969543475,
+        "maxFeet": -0.3218119610586081,
+        "maxDeckContactError": 0,
+        "alive": true,
+        "serverAlive": true,
+        "lowDeckThresholdExercised": true,
+        "passed": true
+      },
+      {
+        "name": "RIG_FERRIS_HARBOR_BOAT_WORKBOAT",
+        "contactSurface": "designated-deck",
+        "plannedTrack": {
+          "id": "workboat",
+          "x": 9.05,
+          "z": 49.9,
+          "source": "client/tests/helpers/candidateHarborFleet.ts:FLEET_TRACKS"
+        },
+        "selectedDeck": {
+          "boxIndex": 1,
+          "selectionRule": "lowest-usable-plane-at-fixed-track",
+          "boundsAtSelection": {
+            "min": [
+              2.0420536995905607,
+              -1.472706324527274,
+              48.34169234692892
+            ],
+            "max": [
+              11.956297169289718,
+              0.025910587274789454,
+              51.46024495935422
+            ]
+          },
+          "heightAtSelection": -0.02573795743332208,
+          "spawn": {
+            "x": 9.05,
+            "feetY": 0.17426204256667793,
+            "z": 49.9
+          },
+          "spawnDrop": 0.2
+        },
+        "deckSamples": [
+          {
+            "elapsedMs": 1820.300000011921,
+            "deckBoxIndex": 1,
+            "x": 9.063249620516245,
+            "feetY": -0.032294129862311394,
+            "z": 49.89155817192672,
+            "deckHeight": -0.032294129862311394,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 1924,
+            "deckBoxIndex": 1,
+            "x": 9.064237604404612,
+            "feetY": -0.041290891988632006,
+            "z": 49.89069348346633,
+            "deckHeight": -0.041290891988632006,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": false
+          },
+          {
+            "elapsedMs": 2025.199999988079,
+            "deckBoxIndex": 1,
+            "x": 9.065005790245428,
+            "feetY": -0.04940825253787562,
+            "z": 49.889944625247736,
+            "deckHeight": -0.04940825253787562,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2126.199999988079,
+            "deckBoxIndex": 1,
+            "x": 9.065690751964347,
+            "feetY": -0.057790872283609795,
+            "z": 49.88919172206244,
+            "deckHeight": -0.057790872283609795,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2227,
+            "deckBoxIndex": 1,
+            "x": 9.066281983733308,
+            "feetY": -0.06630772346840685,
+            "z": 49.888439494838394,
+            "deckHeight": -0.06630772346840685,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2328.300000011921,
+            "deckBoxIndex": 1,
+            "x": 9.066771778079248,
+            "feetY": -0.07484408078311877,
+            "z": 49.88769113632503,
+            "deckHeight": -0.07484408078311877,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2429.599999964237,
+            "deckBoxIndex": 1,
+            "x": 9.06715432088058,
+            "feetY": -0.08329674318960145,
+            "z": 49.88694834197679,
+            "deckHeight": -0.08329674318960145,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2530.800000011921,
+            "deckBoxIndex": 1,
+            "x": 9.06742352203819,
+            "feetY": -0.09153959585254678,
+            "z": 49.88621507695677,
+            "deckHeight": -0.09153959585254678,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2631.699999988079,
+            "deckBoxIndex": 1,
+            "x": 9.06757558756213,
+            "feetY": -0.0994925914326582,
+            "z": 49.88549102857326,
+            "deckHeight": -0.0994925914326582,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2732.5,
+            "deckBoxIndex": 1,
+            "x": 9.067606226592233,
+            "feetY": -0.10693191324667783,
+            "z": 49.88479020244292,
+            "deckHeight": -0.10693191324667783,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2833,
+            "deckBoxIndex": 1,
+            "x": 9.067515248943119,
+            "feetY": -0.11385860636836742,
+            "z": 49.88410529505883,
+            "deckHeight": -0.11385860636836742,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 2934.699999988079,
+            "deckBoxIndex": 1,
+            "x": 9.067301738393432,
+            "feetY": -0.12013883954575466,
+            "z": 49.883442710364754,
+            "deckHeight": -0.12013883954575466,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3035.899999976158,
+            "deckBoxIndex": 1,
+            "x": 9.066967326251278,
+            "feetY": -0.12566432220190848,
+            "z": 49.8828073756365,
+            "deckHeight": -0.12566432220190848,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3137.099999964237,
+            "deckBoxIndex": 1,
+            "x": 9.06651394562173,
+            "feetY": -0.13035946963357792,
+            "z": 49.88220174989753,
+            "deckHeight": -0.13035946963357792,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3240.699999988079,
+            "deckBoxIndex": 1,
+            "x": 9.065840928398885,
+            "feetY": -0.13467467929765486,
+            "z": 49.88153916334998,
+            "deckHeight": -0.13467467929765486,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3341.899999976158,
+            "deckBoxIndex": 1,
+            "x": 9.065147507115896,
+            "feetY": -0.13730334222678153,
+            "z": 49.881013679973144,
+            "deckHeight": -0.13730334222678153,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3442.800000011921,
+            "deckBoxIndex": 1,
+            "x": 9.064352289392772,
+            "feetY": -0.13889579309885858,
+            "z": 49.88053051419055,
+            "deckHeight": -0.13889579309885858,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3543.800000011921,
+            "deckBoxIndex": 1,
+            "x": 9.063464156433941,
+            "feetY": -0.1394099789560398,
+            "z": 49.880094372274115,
+            "deckHeight": -0.1394099789560398,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3645.099999964237,
+            "deckBoxIndex": 1,
+            "x": 9.062493613946867,
+            "feetY": -0.13881940016089356,
+            "z": 49.87970981322761,
+            "deckHeight": -0.13881940016089356,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3745.699999988079,
+            "deckBoxIndex": 1,
+            "x": 9.061449393204747,
+            "feetY": -0.13711335282026393,
+            "z": 49.8793802602136,
+            "deckHeight": -0.13711335282026393,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3846.699999988079,
+            "deckBoxIndex": 1,
+            "x": 9.060343079179322,
+            "feetY": -0.13428837657588688,
+            "z": 49.87911002250218,
+            "deckHeight": -0.13428837657588688,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 3947.300000011921,
+            "deckBoxIndex": 1,
+            "x": 9.059190849512099,
+            "feetY": -0.13037041569946306,
+            "z": 49.87890382949541,
+            "deckHeight": -0.13037041569946306,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4047.800000011921,
+            "deckBoxIndex": 1,
+            "x": 9.058001766897881,
+            "feetY": -0.1253762699663823,
+            "z": 49.87876467731358,
+            "deckHeight": -0.1253762699663823,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4148.800000011921,
+            "deckBoxIndex": 1,
+            "x": 9.05679495297048,
+            "feetY": -0.11936689428088187,
+            "z": 49.87869665919048,
+            "deckHeight": -0.11936689428088187,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4249.800000011921,
+            "deckBoxIndex": 1,
+            "x": 9.055581764548762,
+            "feetY": -0.1123824621044871,
+            "z": 49.878702647095196,
+            "deckHeight": -0.1123824621044871,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4351.300000011921,
+            "deckBoxIndex": 1,
+            "x": 9.054378749467029,
+            "feetY": -0.10449953743413753,
+            "z": 49.87878548632473,
+            "deckHeight": -0.10449953743413753,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4452.5,
+            "deckBoxIndex": 1,
+            "x": 9.053201449221394,
+            "feetY": -0.09579746874710593,
+            "z": 49.8789473896597,
+            "deckHeight": -0.09579746874710593,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4553.399999976158,
+            "deckBoxIndex": 1,
+            "x": 9.052064281040039,
+            "feetY": -0.08636162521885749,
+            "z": 49.879190242175774,
+            "deckHeight": -0.08636162521885749,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4654.599999964237,
+            "deckBoxIndex": 1,
+            "x": 9.05098587188985,
+            "feetY": -0.07631813384347375,
+            "z": 49.879514107404574,
+            "deckHeight": -0.07631813384347375,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4757.199999988079,
+            "deckBoxIndex": 1,
+            "x": 9.049817338315037,
+            "feetY": -0.06394447090932076,
+            "z": 49.87999570418256,
+            "deckHeight": -0.06394447090932076,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4857.199999988079,
+            "deckBoxIndex": 1,
+            "x": 9.04891034991822,
+            "feetY": -0.05292607680021566,
+            "z": 49.880496076941824,
+            "deckHeight": -0.05292607680021566,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 4958.300000011921,
+            "deckBoxIndex": 1,
+            "x": 9.048103533146774,
+            "feetY": -0.0416444099343668,
+            "z": 49.88107627783441,
+            "deckHeight": -0.0416444099343668,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5058.699999988079,
+            "deckBoxIndex": 1,
+            "x": 9.047411092659122,
+            "feetY": -0.03026077977799979,
+            "z": 49.88173188235459,
+            "deckHeight": -0.03026077977799979,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5159.599999964237,
+            "deckBoxIndex": 1,
+            "x": 9.046841383095423,
+            "feetY": -0.018873850212158372,
+            "z": 49.882461266470514,
+            "deckHeight": -0.018873850212158372,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5260.899999976158,
+            "deckBoxIndex": 1,
+            "x": 9.046404244849873,
+            "feetY": -0.007627089151734823,
+            "z": 49.88325942767085,
+            "deckHeight": -0.007627089151734823,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5361.399999976158,
+            "deckBoxIndex": 1,
+            "x": 9.046107089843877,
+            "feetY": 0.0033472668393895733,
+            "z": 49.884121101039305,
+            "deckHeight": 0.0033472668393895733,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5462.899999976158,
+            "deckBoxIndex": 1,
+            "x": 9.04595552144935,
+            "feetY": 0.013918898536137148,
+            "z": 49.88504018312107,
+            "deckHeight": 0.013918898536137148,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5563.599999964237,
+            "deckBoxIndex": 1,
+            "x": 9.045953231344583,
+            "feetY": 0.023961187514729865,
+            "z": 49.88600979225338,
+            "deckHeight": 0.023961187514729865,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5664.300000011921,
+            "deckBoxIndex": 1,
+            "x": 9.046101927143313,
+            "feetY": 0.033352042542409865,
+            "z": 49.887022345925686,
+            "deckHeight": 0.033352042542409865,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5766.199999988079,
+            "deckBoxIndex": 1,
+            "x": 9.046401292521585,
+            "feetY": 0.04197658797962289,
+            "z": 49.88806965364447,
+            "deckHeight": 0.04197658797962289,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5866.5,
+            "deckBoxIndex": 1,
+            "x": 9.046848980870443,
+            "feetY": 0.04972656083717908,
+            "z": 49.88914302327493,
+            "deckHeight": 0.04972656083717908,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 5967.399999976158,
+            "deckBoxIndex": 1,
+            "x": 9.047440642777396,
+            "feetY": 0.056503318855208096,
+            "z": 49.89023337837685,
+            "deckHeight": 0.056503318855208096,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6068.399999976158,
+            "deckBoxIndex": 1,
+            "x": 9.0481699868964,
+            "feetY": 0.062220023726829776,
+            "z": 49.89133138366401,
+            "deckHeight": 0.062220023726829776,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6169.5,
+            "deckBoxIndex": 1,
+            "x": 9.049028873015507,
+            "feetY": 0.06679969357754134,
+            "z": 49.89242757541219,
+            "deckHeight": 0.06679969357754134,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6271.199999988079,
+            "deckBoxIndex": 1,
+            "x": 9.050007435386735,
+            "feetY": 0.07017832105596278,
+            "z": 49.893512493436134,
+            "deckHeight": 0.07017832105596278,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6374.099999964237,
+            "deckBoxIndex": 1,
+            "x": 9.051286543507993,
+            "feetY": 0.07253855657633745,
+            "z": 49.89475294752475,
+            "deckHeight": 0.07253855657633745,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6474.199999988079,
+            "deckBoxIndex": 1,
+            "x": 9.052483416371036,
+            "feetY": 0.07315787661214757,
+            "z": 49.89578174766469,
+            "deckHeight": 0.07315787661214757,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          },
+          {
+            "elapsedMs": 6575.099999964237,
+            "deckBoxIndex": 1,
+            "x": 9.05376048943338,
+            "feetY": 0.07246354631141882,
+            "z": 49.896771735694685,
+            "deckHeight": 0.07246354631141882,
+            "contactError": 0,
+            "onDesignatedDeck": true,
+            "inWater": false,
+            "serverPositionMatched": true
+          }
+        ],
+        "contactSamples": 48,
+        "wetSamples": 0,
+        "serverSamples": 46,
+        "outOfDeckSamples": 0,
+        "minFeet": -0.1394099789560398,
+        "maxFeet": 0.07315787661214757,
+        "maxDeckContactError": 0,
+        "alive": true,
+        "serverAlive": true,
+        "lowDeckThresholdExercised": true,
+        "passed": true
+      }
+    ],
+    "file": "docs/v2/harbor/fleet-rp04/final-webgl2-low-v3/final-webgl2-low-v3-boat-check.png"
+  },
+  "shorelineSequence": {
+    "observationalOnly": true,
+    "manualVisualReviewPending": true,
+    "view": {
+      "position": [
+        40,
+        1.8,
+        51.5
+      ],
+      "target": [
+        36,
+        -0.65,
+        47.5
+      ],
+      "fov": 55,
+      "fogScale": 1
+    },
+    "waterKind": "gerstner",
+    "targetFrameIntervalMs": 1000,
+    "sampleMethod": "Actual harborWater.sampleHeight(x,z); CPU surface samples bracket each native CDP screenshot, not pixel-height measurements",
+    "scope": "Six close south-quay waterline frames during natural animation; no shader time, boat pose, live physics or materials were changed",
+    "samplePoints": [
+      {
+        "x": 32,
+        "z": 47.515
+      },
+      {
+        "x": 32,
+        "z": 47.9
+      },
+      {
+        "x": 32,
+        "z": 48.7
+      },
+      {
+        "x": 36,
+        "z": 47.515
+      },
+      {
+        "x": 36,
+        "z": 47.9
+      },
+      {
+        "x": 36,
+        "z": 48.7
+      },
+      {
+        "x": 40,
+        "z": 47.515
+      },
+      {
+        "x": 40,
+        "z": 47.9
+      },
+      {
+        "x": 40,
+        "z": 48.7
+      }
+    ],
+    "frames": [
+      {
+        "index": 0,
+        "targetElapsedMs": 0,
+        "observedElapsedMs": 0,
+        "captureStartedAt": "2026-09-10T15:15:02.218Z",
+        "captureCompletedAt": "2026-09-10T15:15:02.471Z",
+        "before": {
+          "performanceMs": 59833.80000001192,
+          "timeOriginMs": 1789053242355.1,
+          "timestamp": "2026-09-10T15:15:02.188Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.9199094623437309,
+              "performanceMs": 59833.69999998808
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.9305439575798327,
+              "performanceMs": 59833.69999998808
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.9557100968555966,
+              "performanceMs": 59833.69999998808
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.8808858641551799,
+              "performanceMs": 59833.69999998808
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.8923013232982127,
+              "performanceMs": 59833.80000001192
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.9169620513761245,
+              "performanceMs": 59833.80000001192
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.7806592727021009,
+              "performanceMs": 59833.80000001192
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.7920078532050051,
+              "performanceMs": 59833.80000001192
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.8142854828681695,
+              "performanceMs": 59833.80000001192
+            }
+          ]
+        },
+        "after": {
+          "performanceMs": 60088.19999998808,
+          "timeOriginMs": 1789053242355.1,
+          "timestamp": "2026-09-10T15:15:02.443Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.9058492795387562,
+              "performanceMs": 60088.19999998808
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.9152009123233918,
+              "performanceMs": 60088.19999998808
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.938643025728243,
+              "performanceMs": 60088.19999998808
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.8990082690675253,
+              "performanceMs": 60088.19999998808
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.9098744935102613,
+              "performanceMs": 60088.19999998808
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.9345308117029214,
+              "performanceMs": 60088.19999998808
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.8123489151056469,
+              "performanceMs": 60088.19999998808
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.8237391221749311,
+              "performanceMs": 60088.19999998808
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.847266441548886,
+              "performanceMs": 60088.19999998808
+            }
+          ]
+        },
+        "file": "docs/v2/harbor/fleet-rp04/final-webgl2-low-v3/final-webgl2-low-v3-shore-sequence-00.png"
+      },
+      {
+        "index": 1,
+        "targetElapsedMs": 1000,
+        "observedElapsedMs": 999.1999999880791,
+        "captureStartedAt": "2026-09-10T15:15:03.216Z",
+        "captureCompletedAt": "2026-09-10T15:15:03.477Z",
+        "before": {
+          "performanceMs": 60833,
+          "timeOriginMs": 1789053242355.1,
+          "timestamp": "2026-09-10T15:15:03.188Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.8047029991816312,
+              "performanceMs": 60833
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.8079968037482868,
+              "performanceMs": 60833
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.8205623925234578,
+              "performanceMs": 60833
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.8926514414123213,
+              "performanceMs": 60833
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.8995798704500723,
+              "performanceMs": 60833
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.9187837170731892,
+              "performanceMs": 60833
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.8865076318001955,
+              "performanceMs": 60833
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.8957748663524207,
+              "performanceMs": 60833
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.918218628885867,
+              "performanceMs": 60833
+            }
+          ]
+        },
+        "after": {
+          "performanceMs": 61095.30000001192,
+          "timeOriginMs": 1789053242355.1,
+          "timestamp": "2026-09-10T15:15:03.450Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.7559265080804957,
+              "performanceMs": 61095.30000001192
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.7564929371162429,
+              "performanceMs": 61095.30000001192
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.7635115061855893,
+              "performanceMs": 61095.30000001192
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.8673843647504645,
+              "performanceMs": 61095.30000001192
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.8721936815096476,
+              "performanceMs": 61095.30000001192
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.8875847187971067,
+              "performanceMs": 61095.30000001192
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.896177865438273,
+              "performanceMs": 61095.30000001192
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.9039379102677775,
+              "performanceMs": 61095.30000001192
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.9242122145150837,
+              "performanceMs": 61095.30000001192
+            }
+          ]
+        },
+        "file": "docs/v2/harbor/fleet-rp04/final-webgl2-low-v3/final-webgl2-low-v3-shore-sequence-01.png"
+      },
+      {
+        "index": 2,
+        "targetElapsedMs": 2000,
+        "observedElapsedMs": 1999.3999999761581,
+        "captureStartedAt": "2026-09-10T15:15:04.217Z",
+        "captureCompletedAt": "2026-09-10T15:15:04.469Z",
+        "before": {
+          "performanceMs": 61833.19999998808,
+          "timeOriginMs": 1789053242355.1,
+          "timestamp": "2026-09-10T15:15:04.188Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.6333864162219228,
+              "performanceMs": 61833.19999998808
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.6261693093893099,
+              "performanceMs": 61833.19999998808
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.6159455354154237,
+              "performanceMs": 61833.19999998808
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.7561281465116116,
+              "performanceMs": 61833.19999998808
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.7539467088743657,
+              "performanceMs": 61833.19999998808
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.7550910837755942,
+              "performanceMs": 61833.19999998808
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.8622201118596288,
+              "performanceMs": 61833.19999998808
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.8642802970534195,
+              "performanceMs": 61833.19999998808
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.8742609785460128,
+              "performanceMs": 61833.19999998808
+            }
+          ]
+        },
+        "after": {
+          "performanceMs": 62086.5,
+          "timeOriginMs": 1789053242355.1,
+          "timestamp": "2026-09-10T15:15:04.441Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.6070283020577576,
+              "performanceMs": 62086.5
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.5974311699423033,
+              "performanceMs": 62086.5
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.5814733199759323,
+              "performanceMs": 62086.5
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.7137918948090383,
+              "performanceMs": 62086.5
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.7091068271712306,
+              "performanceMs": 62086.5
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.7046764766151875,
+              "performanceMs": 62086.5
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.8324449417479595,
+              "performanceMs": 62086.5
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.8322201493047692,
+              "performanceMs": 62086.5
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.8375403682776658,
+              "performanceMs": 62086.5
+            }
+          ]
+        },
+        "file": "docs/v2/harbor/fleet-rp04/final-webgl2-low-v3/final-webgl2-low-v3-shore-sequence-02.png"
+      },
+      {
+        "index": 3,
+        "targetElapsedMs": 3000,
+        "observedElapsedMs": 2998.899999976158,
+        "captureStartedAt": "2026-09-10T15:15:05.216Z",
+        "captureCompletedAt": "2026-09-10T15:15:05.479Z",
+        "before": {
+          "performanceMs": 62832.69999998808,
+          "timeOriginMs": 1789053242355.1,
+          "timestamp": "2026-09-10T15:15:05.187Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.609196261256198,
+              "performanceMs": 62832.69999998808
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.59485555044001,
+              "performanceMs": 62832.69999998808
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.5658246872630933,
+              "performanceMs": 62832.69999998808
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.6209840472641845,
+              "performanceMs": 62832.69999998808
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.6098022623450808,
+              "performanceMs": 62832.69999998808
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.5895310418538807,
+              "performanceMs": 62832.69999998808
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.719078865453276,
+              "performanceMs": 62832.69999998808
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.7119906388021267,
+              "performanceMs": 62832.69999998808
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.701911702676587,
+              "performanceMs": 62832.69999998808
+            }
+          ]
+        },
+        "after": {
+          "performanceMs": 63095.80000001192,
+          "timeOriginMs": 1789053242355.1,
+          "timestamp": "2026-09-10T15:15:05.450Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.641735093552803,
+              "performanceMs": 63095.69999998808
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.6268972412226299,
+              "performanceMs": 63095.69999998808
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.5955414532474688,
+              "performanceMs": 63095.69999998808
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.6109321537892571,
+              "performanceMs": 63095.69999998808
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.5981668637544927,
+              "performanceMs": 63095.80000001192
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.573443617917432,
+              "performanceMs": 63095.80000001192
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.6817671236482518,
+              "performanceMs": 63095.80000001192
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.6725421665232321,
+              "performanceMs": 63095.80000001192
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.6571660652593678,
+              "performanceMs": 63095.80000001192
+            }
+          ]
+        },
+        "file": "docs/v2/harbor/fleet-rp04/final-webgl2-low-v3/final-webgl2-low-v3-shore-sequence-03.png"
+      },
+      {
+        "index": 4,
+        "targetElapsedMs": 4000,
+        "observedElapsedMs": 3999,
+        "captureStartedAt": "2026-09-10T15:15:06.217Z",
+        "captureCompletedAt": "2026-09-10T15:15:06.470Z",
+        "before": {
+          "performanceMs": 63832.80000001192,
+          "timeOriginMs": 1789053242355.1,
+          "timestamp": "2026-09-10T15:15:06.187Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.7968890119942807,
+              "performanceMs": 63832.80000001192
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.7845218162805787,
+              "performanceMs": 63832.80000001192
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.7550320323275778,
+              "performanceMs": 63832.80000001192
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.6646521221287152,
+              "performanceMs": 63832.80000001192
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.6506249492850081,
+              "performanceMs": 63832.80000001192
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.6197977351918075,
+              "performanceMs": 63832.80000001192
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.6301086838612492,
+              "performanceMs": 63832.80000001192
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.617024105201764,
+              "performanceMs": 63832.80000001192
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.5904796789984358,
+              "performanceMs": 63832.80000001192
+            }
+          ]
+        },
+        "after": {
+          "performanceMs": 64086.89999997616,
+          "timeOriginMs": 1789053242355.1,
+          "timestamp": "2026-09-10T15:15:06.442Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -0.8608307078083296,
+              "performanceMs": 64086.89999997616
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -0.8505443797418073,
+              "performanceMs": 64086.89999997616
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -0.8245158189730506,
+              "performanceMs": 64086.89999997616
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.7081957667065436,
+              "performanceMs": 64086.89999997616
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.6949211852127644,
+              "performanceMs": 64086.89999997616
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.6645372162155475,
+              "performanceMs": 64086.89999997616
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.6363713567215041,
+              "performanceMs": 64086.89999997616
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.6228851151020266,
+              "performanceMs": 64086.89999997616
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.5943118389101579,
+              "performanceMs": 64086.89999997616
+            }
+          ]
+        },
+        "file": "docs/v2/harbor/fleet-rp04/final-webgl2-low-v3/final-webgl2-low-v3-shore-sequence-04.png"
+      },
+      {
+        "index": 5,
+        "targetElapsedMs": 5000,
+        "observedElapsedMs": 4999.899999976158,
+        "captureStartedAt": "2026-09-10T15:15:07.218Z",
+        "captureCompletedAt": "2026-09-10T15:15:07.473Z",
+        "before": {
+          "performanceMs": 64833.69999998808,
+          "timeOriginMs": 1789053242355.1,
+          "timestamp": "2026-09-10T15:15:07.188Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -1.027567702979132,
+              "performanceMs": 64833.69999998808
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -1.0262287520986433,
+              "performanceMs": 64833.69999998808
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -1.0174754715347702,
+              "performanceMs": 64833.69999998808
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.880137653428985,
+              "performanceMs": 64833.69999998808
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.8726084435658191,
+              "performanceMs": 64833.69999998808
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.8516474107474776,
+              "performanceMs": 64833.69999998808
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.7312329997690827,
+              "performanceMs": 64833.69999998808
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.7198882350586469,
+              "performanceMs": 64833.69999998808
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.6924871767728861,
+              "performanceMs": 64833.69999998808
+            }
+          ]
+        },
+        "after": {
+          "performanceMs": 65089.5,
+          "timeOriginMs": 1789053242355.1,
+          "timestamp": "2026-09-10T15:15:07.444Z",
+          "waterKind": "gerstner",
+          "cameraPosition": [
+            40,
+            1.8,
+            51.5
+          ],
+          "cameraTarget": [
+            36,
+            -0.65,
+            47.5
+          ],
+          "samples": [
+            {
+              "x": 32,
+              "z": 47.515,
+              "height": -1.0612502366258758,
+              "performanceMs": 65089.5
+            },
+            {
+              "x": 32,
+              "z": 47.9,
+              "height": -1.0633600993924608,
+              "performanceMs": 65089.5
+            },
+            {
+              "x": 32,
+              "z": 48.7,
+              "height": -1.0618234776581754,
+              "performanceMs": 65089.5
+            },
+            {
+              "x": 36,
+              "z": 47.515,
+              "height": -0.9381828599038389,
+              "performanceMs": 65089.5
+            },
+            {
+              "x": 36,
+              "z": 47.9,
+              "height": -0.9335100260168998,
+              "performanceMs": 65089.5
+            },
+            {
+              "x": 36,
+              "z": 48.7,
+              "height": -0.9180486012653364,
+              "performanceMs": 65089.5
+            },
+            {
+              "x": 40,
+              "z": 47.515,
+              "height": -0.7823407935001359,
+              "performanceMs": 65089.5
+            },
+            {
+              "x": 40,
+              "z": 47.9,
+              "height": -0.7728105164454967,
+              "performanceMs": 65089.5
+            },
+            {
+              "x": 40,
+              "z": 48.7,
+              "height": -0.748342641884317,
+              "performanceMs": 65089.5
+            }
+          ]
+        },
+        "file": "docs/v2/harbor/fleet-rp04/final-webgl2-low-v3/final-webgl2-low-v3-shore-sequence-05.png"
+      }
+    ]
+  },
+  "sourceSHA256": "f9f1b562de516dc4deb06a564d8209a9c8ef07d8d3cf85b98a5747034317f7d4",
+  "candidateRoot": "fleet-rp04/assets",
+  "candidateRequests": [
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/zones/construction-ad.glb?v=20260910-rp03",
+      "relative": "zones/construction-ad.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/zones/construction-ad.glb",
+      "bytes": 2685880,
+      "sha256": "cbae198daf1de59fcc51d57c6899cd8f89ddcd685bfc3bd1228189aa04628049"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/zones/garden-ac.glb?v=20260910-rp03",
+      "relative": "zones/garden-ac.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/zones/garden-ac.glb",
+      "bytes": 2418196,
+      "sha256": "eba957f86623f8921d7e10dd426a6c88c3e074b9681200abf33a7a4e0dfbe762"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/warehouse.glb?v=20260909-rl01",
+      "relative": "warehouse.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/warehouse.glb",
+      "bytes": 5620760,
+      "sha256": "d41a9ac251d9ea7116e192d3d7be4a0bffcd9b249621da1ed6806282afb086f5"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/cinematic/harbor-cinematic.glb?v=20260910-rp03",
+      "relative": "cinematic/harbor-cinematic.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/cinematic/harbor-cinematic.glb",
+      "bytes": 5206904,
+      "sha256": "3bf4b229e928e52488aaf90154686c466b7e5a84b2f61febd2ac16e5018d5fcc"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/zones/container-bd.glb?v=20260910-rp04-3e593113",
+      "relative": "zones/container-bd.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/zones/container-bd.glb",
+      "bytes": 6001596,
+      "sha256": "3e593113f9e820e80d24430b736adda7e22ae9f28ed350065a85be26db1a8ca5"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/zones/ferris-harbor.glb?v=20260910-rp04-b51a69ec",
+      "relative": "zones/ferris-harbor.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/zones/ferris-harbor.glb",
+      "bytes": 3990856,
+      "sha256": "b51a69ec535d54b440f35a9aa11fe69b8fc7adc8ba777e840daf75bfa3cc08bc"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/zones/response-station.glb?v=20260909-rp02",
+      "relative": "zones/response-station.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/zones/response-station.glb",
+      "bytes": 1623596,
+      "sha256": "8f8aaf89f4e4a93e34a5be9a67dc63ba2f6b83d6fed445074dfac7887c07af1f"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/zones/rescue-quay.glb?v=20260909-rp02",
+      "relative": "zones/rescue-quay.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/zones/rescue-quay.glb",
+      "bytes": 1375540,
+      "sha256": "e077c85bee11cb3b912172d03b0f6a89d5058b97c21c64a82fdfe1b82f27e71e"
+    },
+    {
+      "original": "http://localhost:5174/assets/maps/harbor-v2/zones/operations-ab.glb?v=20260910-rp03",
+      "relative": "zones/operations-ab.glb",
+      "redirected": "http://localhost:5174/staging-assets/fleet-rp04/assets/zones/operations-ab.glb",
+      "bytes": 3143904,
+      "sha256": "539236b2f4f5988bcb4d1b28f4c6c53de7c2b6a5c6ce740f1659315d7e8a1239"
+    }
+  ]
+}

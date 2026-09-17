@@ -26,7 +26,10 @@ def _to_blender(v):
     return Vector((x, -z, y))
 
 
-def render_views(out_dir: Path, views, resolution=(1280, 720), hide_collections=("COLLISION", "REFERENCE", "PREVIEW_ONLY", "RENDER_LOD1")) -> list[Path]:
+def render_views(out_dir: Path, views, resolution=(1280, 720), hide_collections=("COLLISION", "REFERENCE", "PREVIEW_ONLY", "RENDER_LOD1"),
+                 clip_start: float = 0.1) -> list[Path]:
+    """``clip_start`` > 0.1 makes cut-away views (e.g. a top-down floorplan with the roof
+    clipped: camera 60 m up, clip_start 55.9 removes everything above y 4.1)."""
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     scene = bpy.context.scene
@@ -65,6 +68,8 @@ def render_views(out_dir: Path, views, resolution=(1280, 720), hide_collections=
     scene.collection.objects.link(sun)
     sun.rotation_euler = (math.radians(62), 0, math.radians(-140))
     cam_data = bpy.data.cameras.new("TMP_PREVIEW_CAM")
+    cam_data.clip_start = clip_start
+    cam_data.clip_end = 1000.0
     cam = bpy.data.objects.new("TMP_PREVIEW_CAM", cam_data)
     scene.collection.objects.link(cam)
     scene.camera = cam

@@ -1,0 +1,34 @@
+{
+  "container_neutral": {
+    "source": "box_profile_metal_sheet",
+    "base": "container_neutral_base.png",
+    "normal": "container_neutral_normal.png",
+    "orm": "container_neutral_orm.png",
+    "tile": 3.05,
+    "size": 1024
+  },
+  "steel_dark": {
+    "source": "metal_plate_02",
+    "base": "steel_dark_base.png",
+    "normal": "steel_dark_normal.png",
+    "orm": "steel_dark_orm.png",
+    "tile": 1.0,
+    "size": 512
+  },
+  "concrete_yard": {
+    "source": "concrete_floor_worn_001",
+    "base": "concrete_yard_base.png",
+    "normal": "concrete_yard_normal.png",
+    "orm": "concrete_yard_orm.png",
+    "tile": 3.0,
+    "size": 512
+  },
+  "product_atlas": {
+    "source": "procedural label atlas (harbor_market.product_atlas)",
+    "base": "product_atlas_base.png",
+    "normal": "product_atlas_normal.png",
+    "orm": "product_atlas_orm.png",
+    "tile": 1.0,
+    "size": 512
+  }
+}

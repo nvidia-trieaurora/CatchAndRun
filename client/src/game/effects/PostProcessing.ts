@@ -11,16 +11,22 @@ import type { GameRenderer } from "../rendering/RendererFactory";
 export class PostProcessing {
   enabled = false;
   private pipeline: WebGPUPostProcessing;
+  private scenePass: ReturnType<typeof pass>;
 
   constructor(renderer: GameRenderer, scene: THREE.Scene, camera: THREE.Camera) {
     this.pipeline = new WebGPUPostProcessing(renderer);
-    const scenePass = pass(scene, camera);
+    const scenePass = this.scenePass = pass(scene, camera);
     const sceneColor = scenePass.getTextureNode("output");
     const bloomPass = bloom(sceneColor, 0.22, 0.28, 0.92);
     this.pipeline.outputNode = sceneColor.add(bloomPass);
   }
 
   setSize(_width: number, _height: number) {}
+
+  /** Use the actual world-pass attachment format when preparing map shaders. */
+  getSceneRenderTarget(): THREE.RenderTarget {
+    return this.scenePass.renderTarget;
+  }
 
   render() {
     this.pipeline.render();

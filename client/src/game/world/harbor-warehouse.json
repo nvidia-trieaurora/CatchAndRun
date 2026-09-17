@@ -7,10 +7,10 @@
   },
   "killZoneY": -5,
   "waterHazards": [
-    { "id": "ocean-north", "min": { "x": -72, "y": -5, "z": -60 }, "max": { "x": 80, "y": 25, "z": -43.01 } },
-    { "id": "ocean-south", "min": { "x": -72, "y": -5, "z": 47.01 }, "max": { "x": 80, "y": 25, "z": 64 } },
-    { "id": "ocean-west", "min": { "x": -72, "y": -5, "z": -43 }, "max": { "x": -55.01, "y": 25, "z": 47 } },
-    { "id": "ocean-east", "min": { "x": 63.01, "y": -5, "z": -43 }, "max": { "x": 80, "y": 25, "z": 47 } }
+    { "id": "ocean-north", "min": { "x": -72, "y": -5, "z": -60 }, "max": { "x": 80, "y": -0.9, "z": -43.01 } },
+    { "id": "ocean-south", "min": { "x": -72, "y": -5, "z": 47.01 }, "max": { "x": 80, "y": -0.9, "z": 64 } },
+    { "id": "ocean-west", "min": { "x": -72, "y": -5, "z": -43 }, "max": { "x": -55.01, "y": -0.9, "z": 47 } },
+    { "id": "ocean-east", "min": { "x": 63.01, "y": -5, "z": -43 }, "max": { "x": 80, "y": -0.9, "z": 47 } }
   ],
   "hunterSpawnPoints": [
     { "position": { "x": -40, "y": 0, "z": 0 }, "rotation": -1.57, "zone": "hunterSpawn" },

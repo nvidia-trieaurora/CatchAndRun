@@ -1,0 +1,11 @@
+{
+  "promotedAt": "2026-09-10T16:10:03.579Z",
+  "sha256": "b51a69ec535d54b440f35a9aa11fe69b8fc7adc8ba777e840daf75bfa3cc08bc",
+  "beforeSHA256": "76a6bb0a733a5f1bcf692041336d772dc44b0d28f806b56c6aaf18c9738bd07f",
+  "bytes": 3990856,
+  "backup": "art-source/harbor-v2/_staging/fleet-rp04/pre-rp04-76a6bb0a733a.glb",
+  "gate": "docs/v2/harbor/fleet-rp04/final-gate-04/summary.json",
+  "review": "docs/v2/harbor/fleet-rp04/visual-review.json",
+  "sourceSHA256": "70e5105104f47c443197fc0a54e9e9cd9638bb3b8669917b3239017ddf331ac9",
+  "scope": "Fleet fittings only: one GLB changed, eight unchanged. Bounded physics/browser checks, not whole-island realism or stable60FPS certification."
+}

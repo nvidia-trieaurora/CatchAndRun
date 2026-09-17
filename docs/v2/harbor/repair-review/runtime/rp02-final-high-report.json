@@ -1,0 +1,157 @@
+{
+  "capturedAt": "2026-09-09T15:29:20.867Z",
+  "viewport": {
+    "width": 1600,
+    "height": 900,
+    "deviceScaleFactor": 1
+  },
+  "headless": true,
+  "gpuFlags": [
+    "enable-unsafe-webgpu",
+    "enable-features=Vulkan,WebGPU",
+    "ignore-gpu-blocklist",
+    "use-angle=metal"
+  ],
+  "audioMuted": true,
+  "profileDirectory": "/var/folders/21/jnt5qrg12nzcbgh9msb8q9280000gp/T/cr-cdp-catchandrun-7eKTS3",
+  "url": "http://localhost:5173/?renderer=webgl2",
+  "backend": "webgl2",
+  "quality": "high",
+  "presets": [
+    {
+      "preset": "rescueQuay",
+      "view": "view-rescueQuay",
+      "file": "docs/v2/harbor/repair-review/runtime/rp02-final-high-rescueQuay.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 60.00960153638889,
+        "frameTimeP95Ms": 17.399999976158142,
+        "drawCalls": 256,
+        "triangles": 271731,
+        "geometries": 304,
+        "textures": 278,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00300015000746,
+        "p95Ms": 16.700000000004366,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 24054,
+          "frameCalls": 15,
+          "drawCalls": 240,
+          "triangles": 360734,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "rescueWorkshop",
+      "view": "view-rescueWorkshop",
+      "file": "docs/v2/harbor/repair-review/runtime/rp02-final-high-rescueWorkshop.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 59.997600096139195,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 256,
+        "triangles": 271731,
+        "geometries": 304,
+        "textures": 278,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00300015000746,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 31134,
+          "frameCalls": 15,
+          "drawCalls": 197,
+          "triangles": 271584,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    },
+    {
+      "preset": "ferrisTicket",
+      "view": "view-ferrisTicket",
+      "file": "docs/v2/harbor/repair-review/runtime/rp02-final-high-ferrisTicket.png",
+      "metrics": {
+        "backend": "webgl2",
+        "visualVersion": "v2",
+        "fpsAverage": 59.99400059994001,
+        "frameTimeP95Ms": 17.400000005960464,
+        "drawCalls": 256,
+        "triangles": 271731,
+        "geometries": 311,
+        "textures": 282,
+        "sceneMeshes": 256,
+        "instancedMeshes": 23,
+        "colliderCount": 785,
+        "estimatedTextureMemoryBytes": 187089152,
+        "environmentTransferBytes": 27690420
+      },
+      "frameSample": {
+        "frames": 240,
+        "fps": 60.00150003750092,
+        "p95Ms": 16.799999999995634,
+        "maxMs": 16.80000000000291,
+        "over50Ms": 0
+      },
+      "rendererStats": {
+        "render": {
+          "calls": 38064,
+          "frameCalls": 15,
+          "drawCalls": 345,
+          "triangles": 469358,
+          "points": 0,
+          "lines": 0,
+          "timestamp": 0
+        },
+        "quality": "high",
+        "water": "gerstner"
+      }
+    }
+  ],
+  "shooting": [],
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "[warning] [VoiceChat] Mic access denied"
+  ],
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[info] [Renderer] Initialized webgl2",
+    "[debug] [vite] connected.",
+    "[warning] [VoiceChat] Mic access denied",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock.",
+    "[exception] Uncaught (in promise) WrongDocumentError: The root document of this element is not valid for pointer lock."
+  ],
+  "repair": null,
+  "water": null
+}
